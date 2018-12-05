@@ -1,0 +1,40 @@
+﻿@model FRSkinTester.Models.UploadModelPostResult
+
+@{
+    ViewBag.Title = "Upload Result";
+}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2>Upload success!</h2>
+    </div>
+    <div class="panel-body">
+        <div>
+            <h4>Your skin's URLs</h4>
+            <hr />
+            <div class="col-md-12">
+                This URL is what you share with others to preview your skin.
+            </div>
+            <div class="col-md-8">
+                <div class="input-group">
+                    <input id="PreviewLink" type="text" class="form-control" value="@Url.Action("Preview", "Home", new { SkinId = Model.SkinId }, "http")">
+                    <span class="input-group-btn">
+                        <button class="btn btn-success" type="button" onclick="document.getElementById('PreviewLink').select(); document.execCommand('copy'); this.innerHTML = 'Copied!'">Copy!</button>
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <hr />
+                <b>You can use this link to delete your skin from the database, keep this safe!</b><br />
+                Deleting the skin will not delete already generated previews of people's dragons, so embeds and stuff won't break on forums.
+            </div>
+            <div class="col-md-8">
+                <div class="input-group">
+                    <input id="DeleteLink" type="text" class="form-control" value="@Url.Action("Delete", "Home", new { SkinId = Model.SkinId, SecretKey = Model.SecretKey }, "http")">
+                    <span class="input-group-btn">
+                        <button class="btn btn-warning" type="button" onclick="document.getElementById('DeleteLink').select(); document.execCommand('copy'); this.innerHTML = 'Copied!'">Copy!</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

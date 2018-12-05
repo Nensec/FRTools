@@ -1,0 +1,123 @@
+﻿@model FRSkinTester.Models.UploadModelPost
+
+@{
+    ViewBag.Title = "Upload";
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2>Upload your skin</h2>
+    </div>
+    <div class="panel-body" style="min-height:370px">
+
+        @using (Html.BeginForm("Upload", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal col-md-12">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.TextBoxFor(model => model.Title, htmlAttributes: new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            @Html.TextAreaFor(model => model.Description, htmlAttributes: new { @class = "form-control", size = 3 })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DragonType, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            <select class="form-control" name="@(Html.NameFor(model => model.DragonType))" id="@(Html.IdFor(model => model.DragonType))">
+                                <option value="14">Bogsneak</option>
+                                <option value="12">Coatl</option>
+                                <option value="1">Fae</option>
+                                <option value="2">Guardian</option>
+                                <option value="8">Imperial</option>
+                                <option value="3">Mirror</option>
+                                <option value="11">Nocturne</option>
+                                <option value="4">Pearlcatcher</option>
+                                <option value="5">Ridgeback</option>
+                                <option value="13">Skydancer</option>
+                                <option value="9">Snapper</option>
+                                <option value="7">Spiral</option>
+                                <option value="6">Tundra</option>
+                                <option value="10">Wildclaw</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Gender, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            <select class="form-control" name="@(Html.NameFor(model => model.Gender))" id="@(Html.IdFor(model => model.Gender))">
+                                <option value="0">Male</option>
+                                <option value="1">Female</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Skin, htmlAttributes: new { @class = "control-label col-md-4" })
+                        <div class="col-md-8">
+                            <span class="control-fileupload">
+                                <label for="file" class="text-left">Please choose a file on your computer.</label>
+                                <input type="file" accept=".png" name="@(Html.NameFor(model => model.Skin))" id="@(Html.IdFor(model => model.Skin))" />
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-4 col-md-8">
+                            <input type="submit" value="Upload Skin" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <img id="Dummy" height="350" width="350" style="z-index:1;position:absolute" src="http://www1.flightrising.com/dgen/dressing-room/dummy?breed=14&gender=0" />
+                    <img id="Preview" height="350" width="350" style="z-index:2;position:absolute;display:none;" />
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    $('#@(Html.IdFor(model => model.DragonType)), #@(Html.IdFor(model => model.Gender))').change(function () {
+        var dragonType = $('#@(Html.IdFor(model => model.DragonType))').val();
+        var gender = $('#@(Html.IdFor(model => model.Gender))').val();
+
+        $('#Dummy').show().attr('src', `http://www1.flightrising.com/dgen/dressing-room/dummy?breed=${dragonType}&gender=${gender}`);
+    });
+
+    $('#@(Html.IdFor(model => model.Skin))').change(function () {
+        var t = $(this).val();
+        var labelText = 'File : ' + t.substr(12, t.length);
+        $(this).prev('label').text(labelText);
+        var file = this.files[0];
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            if (file && file.type === 'image/png') {
+                var img = new Image();
+                img.onload = function () {
+                    $('#Preview').show().attr('src', e.target.result);
+                };
+                img.src = e.target.result;
+            }
+            else {
+                $('#Preview').hide();
+            }
+        };
+
+        reader.readAsDataURL(file);
+    });
+</script>

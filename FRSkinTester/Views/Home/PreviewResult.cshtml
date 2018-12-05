@@ -1,0 +1,19 @@
+﻿@model FRSkinTester.Models.PreviewModelPostResult
+
+@{
+    ViewBag.Title = "Preview";
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2>
+            Here is your preview, hope you like it!
+        </h2>
+    </div>
+    <div class="panel-body">
+        <div>
+            <img class="center-block" src="@(Model.ImageResultUrl)" />
+        </div>
+    </div>
+</div>
+<p><a class="btn btn-primary" href="@Url.Action("Preview", new { SkinId = Model.SkinId })">Try on another dragon? &raquo;</a></p>
