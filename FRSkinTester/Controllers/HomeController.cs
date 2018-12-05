@@ -74,6 +74,8 @@ namespace FRSkinTester.Controllers
 
                 return View(new PreviewModelPost
                 {
+                    Title = skin.Title,
+                    Description = skin.Description,
                     SkinId = model.SkinId,
                     PreviewUrl = await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType))
                 });

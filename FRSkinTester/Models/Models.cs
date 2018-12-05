@@ -58,6 +58,8 @@ namespace FRSkinTester.Models
         [Display(Name = "Your dragon id")]
         [Required]
         public int DragonId { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
         public string SkinId { get; set; }
         public string PreviewUrl { get; set; }
     }
