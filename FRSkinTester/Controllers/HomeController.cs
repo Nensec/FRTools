@@ -175,6 +175,8 @@ namespace FRSkinTester.Controllers
                 {
                     var azureImageService = new AzureImageService();
                     await azureImageService.DeleteImage($@"skins\{model.SkinId}.png");
+                    ctx.Skins.Remove(skin);
+                    await ctx.SaveChangesAsync();
                 }
             }
             return View();
