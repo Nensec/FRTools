@@ -77,7 +77,7 @@ namespace FRSkinTester.Controllers
                     Title = skin.Title,
                     Description = skin.Description,
                     SkinId = model.SkinId,
-                    PreviewUrl = await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType))
+                    PreviewUrl = (await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType))).url
                 });
             }
         }
@@ -101,14 +101,54 @@ namespace FRSkinTester.Controllers
                 return View();
             }
 
-            var url = await GenerateOrFetchPreview(model.SkinId, model.DragonId.ToString(), dwagonUrl);
-            if(url == null)
+            var (url, dragon) = await GenerateOrFetchPreview(model.SkinId, model.DragonId.ToString(), dwagonUrl);
+            if (url == null)
                 return View();
 
             return View("PreviewResult", new PreviewModelPostResult
             {
                 SkinId = model.SkinId,
-                ImageResultUrl = url
+                ImageResultUrl = url,
+                Dragon = dragon
+            });
+        }
+
+        public async Task<ActionResult> PreviewScryer(PreviewModelGet model)
+        {
+            using (var ctx = new DataContext())
+            {
+                var skin = ctx.Skins.FirstOrDefault(x => x.GeneratedId == model.SkinId);
+                if (skin == null)
+                {
+                    TempData["Error"] = "Skin not found";
+                    return RedirectToAction("Index");
+                }
+
+                return View(new PreviewScryerModelPost
+                {
+                    Title = skin.Title,
+                    Description = skin.Description,
+                    SkinId = model.SkinId,
+                    PreviewUrl = (await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType))).url
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> PreviewScryer(PreviewScryerModelPost model)
+        {
+            if (!ModelState.IsValid)
+                return View();
+
+            var (url, dragon) = await GenerateOrFetchPreview(model.SkinId, null, model.ScyerUrl);
+            if (url == null)
+                return View();
+
+            return View("PreviewResult", new PreviewModelPostResult
+            {
+                SkinId = model.SkinId,
+                ImageResultUrl = url,
+                Dragon = dragon
             });
         }
 
@@ -118,9 +158,39 @@ namespace FRSkinTester.Controllers
             return imgTag.Groups[1].Value;
         }
 
-        private async Task<string> GenerateOrFetchPreview(string skinId, string dragonId, string dragonUrl)
+        private async Task<(string url, Dragon dragon)> GenerateOrFetchPreview(string skinId, string dragonId, string dragonUrl)
         {
             var azureImageService = new AzureImageService();
+
+            var dragon = new Dragon();
+
+            Match regexParse;
+            if((regexParse = Regex.Match(dragonUrl, @"gender=([\d]*)")).Success)
+                dragon.Gender = (Gender)int.Parse(regexParse.Groups[1].Value);
+            if ((regexParse = Regex.Match(dragonUrl, @"breed=([\d]*)")).Success)
+                dragon.DragonType = (DragonType)int.Parse(regexParse.Groups[1].Value);
+            if ((regexParse = Regex.Match(dragonUrl, @"element=([\d]*)")).Success)
+                dragon.Element = (Element)int.Parse(regexParse.Groups[1].Value);
+            if ((regexParse = Regex.Match(dragonUrl, @"eyetype=([\d]*)")).Success)
+                dragon.EyeType = (EyeType)int.Parse(regexParse.Groups[1].Value);
+            if ((regexParse = Regex.Match(dragonUrl, @"bodygene=([\d]*)")).Success)
+                dragon.BodyGene = (BodyGene)int.Parse(regexParse.Groups[1].Value);
+            if ((regexParse = Regex.Match(dragonUrl, @"winggene=([\d]*)")).Success)
+                dragon.WingGene = (WingGene)int.Parse(regexParse.Groups[1].Value);
+            if ((regexParse = Regex.Match(dragonUrl, @"tertgene=([\d]*)")).Success)
+                dragon.TertiaryGene = (TertiaryGene)int.Parse(regexParse.Groups[1].Value);
+            if ((regexParse = Regex.Match(dragonUrl, @"body=([\d]*)")).Success)
+                dragon.BodyColor = (Models.Color)int.Parse(regexParse.Groups[1].Value);
+            if ((regexParse = Regex.Match(dragonUrl, @"wings=([\d]*)")).Success)
+                dragon.WingColor = (Models.Color)int.Parse(regexParse.Groups[1].Value);
+            if ((regexParse = Regex.Match(dragonUrl, @"tert=([\d]*)")).Success)
+                dragon.TertiaryColor = (Models.Color)int.Parse(regexParse.Groups[1].Value);
+
+            if (dragonId == null)
+            {
+                // scryer dragon
+                dragonId = $"{(int)dragon.Gender}_{(int)dragon.DragonType}_{(int)dragon.Element}_{(int)dragon.EyeType}_{(int)dragon.BodyGene}_{(int)dragon.WingGene}_{(int)dragon.TertiaryGene}_{(int)dragon.BodyColor}_{(int)dragon.WingColor}_{(int)dragon.TertiaryColor}";
+            }
 
             if (!await azureImageService.Exists($@"previews\{skinId}\{dragonId}.png", out var url))
             {
@@ -137,11 +207,26 @@ namespace FRSkinTester.Controllers
                     {
                         // Something wrong fetching the image from FR
                         TempData["Error"] = "Could not get dragon from Flight Rising:<br/>" + ex.Message;
-                        return null;
+                        return (null, null);
                     }
 
                     var skinImageStream = azureImageService.GetImage($@"skins\{skinId}.png");
                     var skinImage = Image.FromStream(await skinImageStream);
+                    var eyeMask = (Bitmap)Image.FromFile(Server.MapPath($@"\Masks\{(int)dragon.DragonType}_{(int)dragon.Gender}_{(int)dragon.EyeType}_{(dragon.EyeType == EyeType.Primal ? (int)dragon.Element : 0)}.png"));
+
+                    for (int x = 0; x < eyeMask.Width; x++)
+                    {
+                        for (int y = 0; y < eyeMask.Height; y++)
+                        {
+                            var pixel = eyeMask.GetPixel(x, y);
+                            if (pixel.A > 0)
+                            {
+                                var skinPixel = ((Bitmap)skinImage).GetPixel(x, y);
+                                if (skinPixel.A > 0)
+                                    ((Bitmap)skinImage).SetPixel(x, y, System.Drawing.Color.FromArgb(255 - pixel.A, skinPixel.R, skinPixel.G, skinPixel.B));
+                            }
+                        }
+                    }
 
                     using (var graphics = Graphics.FromImage(dwagonImage))
                     {
@@ -158,7 +243,7 @@ namespace FRSkinTester.Controllers
                 }
             }
 
-            return url;
+            return (url, dragon);
         }
 
         public async Task<ActionResult> Delete(DeleteSkinPost model)
