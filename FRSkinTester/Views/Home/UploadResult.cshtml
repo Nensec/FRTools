@@ -1,4 +1,4 @@
-﻿@model FRSkinTester.Models.UploadModelPostResult
+﻿@model FRSkinTester.Models.UploadModelPostViewModel
 
 @{
     ViewBag.Title = "Upload Result";
@@ -11,25 +11,37 @@
         <div>
             <h4>Your skin's URLs</h4>
             <hr />
-            <div class="col-md-12">
+            <p class="col-md-12">
                 This URL is what you share with others to preview your skin.
-            </div>
+            </p>
             <div class="col-md-8">
-                <div class="input-group">
-                    <input id="PreviewLink" type="text" class="form-control" value="@Url.Action("Preview", "Home", new { SkinId = Model.SkinId }, "http")">
-                    <span class="input-group-btn">
-                        <button class="btn btn-success" type="button" onclick="document.getElementById('PreviewLink').select(); document.execCommand('copy'); this.innerHTML = 'Copied!'">Copy!</button>
-                    </span>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input id="PreviewLink" type="text" class="form-control" value="@Url.Action("Preview", "Home", new { SkinId = Model.SkinId }, "http")">
+                        <span class="input-group-btn">
+                            <button class="btn btn-success" type="button" onclick="document.getElementById('PreviewLink').select(); document.execCommand('copy'); this.innerHTML = 'Copied!'">Copy!</button>
+                        </span>
+                    </div>
                 </div>
             </div>
+            <div class="col-md-8">
+                <div class="form-group">
+                    <div class="input-group">
+                        <input id="PreviewLink" type="text" class="form-control" value="@Url.Action("PreviewScryer", "Home", new { SkinId = Model.SkinId }, "http")">
+                        <span class="input-group-btn">
+                            <button class="btn btn-success" type="button" onclick="document.getElementById('PreviewLink').select(); document.execCommand('copy'); this.innerHTML = 'Copied!'">Copy!</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
             <div class="col-md-12">
                 <hr />
-                <b>You can use this link to delete your skin from the database, keep this safe!</b><br />
-                Deleting the skin will not delete already generated previews of people's dragons, so embeds and stuff won't break on forums.
+                <h3>You can use this link to manage your skin, keep this safe!</h3><br />
             </div>
             <div class="col-md-8">
                 <div class="input-group">
-                    <input id="DeleteLink" type="text" class="form-control" value="@Url.Action("Delete", "Home", new { SkinId = Model.SkinId, SecretKey = Model.SecretKey }, "http")">
+                    <input id="DeleteLink" type="text" class="form-control" value="@Url.Action("Manage", "Home", new { SkinId = Model.SkinId, SecretKey = Model.SecretKey }, "http")">
                     <span class="input-group-btn">
                         <button class="btn btn-warning" type="button" onclick="document.getElementById('DeleteLink').select(); document.execCommand('copy'); this.innerHTML = 'Copied!'">Copy!</button>
                     </span>

@@ -4,6 +4,7 @@ using FRSkinTester.Infrastructure.DataModels;
 using FRSkinTester.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -73,7 +74,7 @@ namespace FRSkinTester.Controllers
 
                     ctx.Skins.Add(skin);
                     await ctx.SaveChangesAsync();
-                    return View("UploadResult", new UploadModelPostResult
+                    return View("UploadResult", new UploadModelPostViewModel
                     {
                         SkinId = randomizedId,
                         SecretKey = secretKey
@@ -149,18 +150,28 @@ namespace FRSkinTester.Controllers
                     TempData["Error"] = $"This skin is meant for a <b>{(Gender)skin.GenderType}</b>, the dragon you provided is a <b>{dragon.Gender}</b>";
                     return RedirectToAction("Preview", new { model.SkinId });
                 }
+
+
+                var url = await GenerateOrFetchPreview(model.SkinId, model.DragonId.ToString(), dwagonUrl, dragon);
+                if (url == null)
+                    return RedirectToAction("Preview", new { model.SkinId });
+
+                skin.Previews.Add(new Preview
+                {
+                    DragonId = model.DragonId,
+                    PreviewImage = url,                    
+                    DragonData = dragon.ToString()
+                });
+
+                await ctx.SaveChangesAsync();
+
+                return View("PreviewResult", new PreviewModelPostViewModel
+                {
+                    SkinId = model.SkinId,
+                    ImageResultUrl = url,
+                    Dragon = dragon
+                });
             }
-
-            var url = await GenerateOrFetchPreview(model.SkinId, model.DragonId.ToString(), dwagonUrl, dragon);
-            if (url == null)            
-                return RedirectToAction("Preview", new { model.SkinId });
-
-            return View("PreviewResult", new PreviewModelPostResult
-            {
-                SkinId = model.SkinId,
-                ImageResultUrl = url,
-                Dragon = dragon
-            });
         }
 
         public async Task<ActionResult> PreviewScryer(PreviewModelGet model)
@@ -212,18 +223,28 @@ namespace FRSkinTester.Controllers
                     TempData["Error"] = $"This skin is meant for a <b>{(Gender)skin.GenderType}</b>, the dragon you provided is a <b>{dragon.Gender}</b>";
                     return RedirectToAction("PreviewScryer", new { model.SkinId });
                 }
+
+
+                var url = await GenerateOrFetchPreview(model.SkinId, null, model.ScryerUrl, dragon);
+                if (url == null)
+                    return RedirectToAction("PreviewScryer", new { model.SkinId });
+
+                skin.Previews.Add(new Preview
+                {
+                    ScryerUrl = model.ScryerUrl,
+                    PreviewImage = url,
+                    DragonData = dragon.ToString()
+                });
+
+                await ctx.SaveChangesAsync();
+
+                return View("PreviewResult", new PreviewModelPostViewModel
+                {
+                    SkinId = model.SkinId,
+                    ImageResultUrl = url,
+                    Dragon = dragon
+                });
             }
-
-            var url = await GenerateOrFetchPreview(model.SkinId, null, model.ScryerUrl, dragon);
-            if (url == null)
-                return RedirectToAction("PreviewScryer", new { model.SkinId });
-
-            return View("PreviewResult", new PreviewModelPostResult
-            {
-                SkinId = model.SkinId,
-                ImageResultUrl = url,
-                Dragon = dragon
-            });
         }
 
         private string ScrapeImageUrl(string scryerHtmlPage)
@@ -268,13 +289,7 @@ namespace FRSkinTester.Controllers
             if (dragon == null)
                 dragon = ParseUrlForDragon(dragonUrl);
 
-            if (dragonId == null)
-            {
-                // scryer dragon
-                dragonId = $"{(int)dragon.Gender}_{(int)dragon.DragonType}_{(int)dragon.Element}_{(int)dragon.EyeType}_{(int)dragon.BodyGene}_{(int)dragon.WingGene}_{(int)dragon.TertiaryGene}_{(int)dragon.BodyColor}_{(int)dragon.WingColor}_{(int)dragon.TertiaryColor}";
-            }
-
-            if (!await azureImageService.Exists($@"previews\{skinId}\{dragonId}.png", out var url))
+            if (!await azureImageService.Exists($@"previews\{skinId}\{dragonId ?? dragon.ToString()}.png", out var url))
             {
                 using (var client = new WebClient())
                 {
@@ -294,7 +309,7 @@ namespace FRSkinTester.Controllers
 
                     var skinImageStream = azureImageService.GetImage($@"skins\{skinId}.png");
                     var skinImage = Image.FromStream(await skinImageStream);
-                    var eyeMask = (Bitmap)Image.FromFile(Server.MapPath($@"\Masks\{(int)dragon.DragonType}_{(int)dragon.Gender}_{(int)dragon.EyeType}_{(dragon.EyeType == EyeType.Primal ? (int)dragon.Element : 0)}.png"));
+                    var eyeMask = (Bitmap)Image.FromFile(Server.MapPath($@"\Masks\{(int)dragon.DragonType}_{(int)dragon.Gender}_{(dragon.EyeType == EyeType.Primal || dragon.EyeType == EyeType.MultiGaze ? (int)dragon.EyeType : 0)}_{(dragon.EyeType == EyeType.Primal ? (int)dragon.Element : 0)}.png"));
 
                     for (int x = 0; x < eyeMask.Width; x++)
                     {
@@ -320,12 +335,65 @@ namespace FRSkinTester.Controllers
                         dwagonImage.Save(memStream, ImageFormat.Png);
                         memStream.Position = 0;
 
-                        url = await azureImageService.WriteImage($@"previews\{skinId}\{dragonId}.png", memStream);
+                        url = await azureImageService.WriteImage($@"previews\{skinId}\{dragonId ?? dragon.ToString()}.png", memStream);
                     }
                 }
             }
 
             return url;
+        }
+
+        public async Task<ActionResult> Manage(ManageModelGet model)
+        {
+            using (var ctx = new DataContext())
+            {
+                var skin = ctx.Skins.Include(x => x.Previews).FirstOrDefault(x => x.GeneratedId == model.SkinId && x.SecretKey == model.SecretKey);
+                if (skin == null)
+                {
+                    TempData["Error"] = "Skin not found or secret invalid";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return View(new ManageModelViewModel
+                    {
+                        Skin = skin,
+                        PreviewUrl = await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)
+                    });
+                }
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Manage(ManageModelPost model)
+        {
+            using (var ctx = new DataContext())
+            {
+                var skin = ctx.Skins.FirstOrDefault(x => x.GeneratedId == model.SkinId && x.SecretKey == model.SecretKey);
+                if (skin == null)
+                {
+                    TempData["Error"] = "Skin not found or secret invalid";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    if (skin.GenderType != (int)model.Gender || skin.DragonType != (int)model.DragonType)
+                    {
+                        var azureImageService = new AzureImageService();
+                        await azureImageService.DeleteImage($@"previews\{model.SkinId}\preview.png");
+                    }
+
+                    skin.Title = model.Title;
+                    skin.Description = model.Description;
+                    skin.GenderType = (int)model.Gender;
+                    skin.DragonType = (int)model.DragonType;
+
+                    await ctx.SaveChangesAsync();
+
+                    TempData["Info"] = "Changes have been saved!";
+                    return RedirectToAction("Manage", new { model.SkinId, model.SecretKey });
+                }
+            }
         }
 
         public async Task<ActionResult> Delete(DeleteSkinPost model)

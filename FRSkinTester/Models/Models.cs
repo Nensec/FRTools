@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FRSkinTester.Infrastructure.DataModels;
+using System.ComponentModel.DataAnnotations;
 using System.Web;
 
 namespace FRSkinTester.Models
@@ -337,7 +338,7 @@ namespace FRSkinTester.Models
         public HttpPostedFileBase Skin { get; set; }
     }
 
-    public class UploadModelPostResult
+    public class UploadModelPostViewModel
     {
         public string SkinId { get; set; }
         public string SecretKey { get; set; }
@@ -370,7 +371,7 @@ namespace FRSkinTester.Models
         public string ScryerUrl { get; set; }
     }
 
-    public class PreviewModelPostResult
+    public class PreviewModelPostViewModel
     {
         public string ImageResultUrl { get; set; }
         public string SkinId { get; set; }
@@ -395,5 +396,62 @@ namespace FRSkinTester.Models
         public Color WingColor { get; set; }
         public TertiaryGene TertiaryGene { get; set; }
         public Color TertiaryColor { get; set; }
+
+        public static Dragon FromString(string data)
+        {
+            var split = data.Split('_');
+            var dragon = new Dragon
+            {
+                Gender = (Gender)int.Parse(split[0]),
+                DragonType = (DragonType)int.Parse(split[1])
+            };
+
+            if (split.Length > 2)
+                dragon.Element = (Element)int.Parse(split[2]);
+            if (split.Length > 3)
+                dragon.EyeType = (EyeType)int.Parse(split[3]);
+            if (split.Length > 4)
+                dragon.BodyGene = (BodyGene)int.Parse(split[4]);
+            if (split.Length > 5)
+                dragon.WingGene = (WingGene)int.Parse(split[5]);
+            if (split.Length > 6)
+                dragon.TertiaryGene = (TertiaryGene)int.Parse(split[6]);
+            if (split.Length > 7)
+                dragon.BodyColor = (Color)int.Parse(split[7]);
+            if (split.Length > 8)
+                dragon.WingColor = (Color)int.Parse(split[8]);
+            if (split.Length > 9)
+                dragon.TertiaryColor = (Color)int.Parse(split[9]);
+
+            return dragon;
+        }
+
+        public override string ToString() => $"{(int)Gender}_{(int)DragonType}_{(int)Element}_{(int)EyeType}_{(int)BodyGene}_{(int)WingGene}_{(int)TertiaryGene}_{(int)BodyColor}_{(int)WingColor}_{(int)TertiaryColor}";
+    }
+
+    public class ManageModelGet
+    {
+        public string SkinId { get; set; }
+        public string SecretKey { get; set; }
+    }
+
+    public class ManageModelViewModel
+    {
+        public Skin Skin { get; set; }
+        public string PreviewUrl { get; set; }
+    }
+
+    public class ManageModelPost
+    {
+        [Display(Name = "Name of your skin")]
+        public string Title { get; set; }
+        [Display(Name = "Description")]
+        public string Description { get; set; }
+        [Display(Name = "Dragon type")]
+        public DragonType DragonType { get; set; }
+        [Display(Name = "Gender")]
+        public Gender Gender { get; set; }
+        public string SkinId { get; set; }
+        public string SecretKey { get; set; }
     }
 }
