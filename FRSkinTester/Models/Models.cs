@@ -365,9 +365,9 @@ namespace FRSkinTester.Models
 
     public class PreviewScryerModelPost : PreviewModelBase
     {
-        [Display(Name = "Scryer image URL")]
+        [Display(Name = "Scry image URL")]
         [Required]
-        public string ScyerUrl { get; set; }
+        public string ScryerUrl { get; set; }
     }
 
     public class PreviewModelPostResult
