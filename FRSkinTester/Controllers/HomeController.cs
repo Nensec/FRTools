@@ -39,8 +39,8 @@ namespace FRSkinTester.Controllers
 
             using (var ctx = new DataContext())
             {
-                var randomizedId = GenerateId(5, null, ctx.Skins.Select(x => x.GeneratedId).ToList());
-                var secretKey = GenerateId(7, randomizedId.Select(x => (int)x).Sum());
+                var randomizedId = GenerateId(5, ctx.Skins.Select(x => x.GeneratedId).ToList());
+                var secretKey = GenerateId(7);
                 try
                 {
                     using (var image = Image.FromStream(model.Skin.InputStream))
@@ -417,16 +417,16 @@ namespace FRSkinTester.Controllers
             return View();
         }
 
-        private string GenerateId(int length = 7, int? seed = null, IEnumerable<string> mustNotMatch = null)
+        private Random _random = new Random(Guid.NewGuid().GetHashCode());
+        private string GenerateId(int length = 7, IEnumerable<string> mustNotMatch = null)
         {
             string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
             string id = "";
-            var rand = seed != null ? new Random(seed.Value) : new Random();
             for (int i = 0; i < length; i++)
-                id += chars.Skip(rand.Next(chars.Length)).First();
+                id += chars.Skip(_random.Next(chars.Length)).First();
             if (mustNotMatch?.Contains(id) == true)
             {
-                return GenerateId(length, seed, mustNotMatch);
+                return GenerateId(length, mustNotMatch);
             }
             return id;
         }
