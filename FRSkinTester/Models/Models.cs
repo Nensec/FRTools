@@ -110,6 +110,7 @@ namespace FRSkinTester.Models
         Filigree,
         Firefly,
         Ringlets,
+        Peacock
     }
 
     public enum WingGene

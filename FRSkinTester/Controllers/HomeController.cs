@@ -410,6 +410,7 @@ namespace FRSkinTester.Controllers
                 {
                     var azureImageService = new AzureImageService();
                     await azureImageService.DeleteImage($@"skins\{model.SkinId}.png");
+                    skin.Previews.Clear();
                     ctx.Skins.Remove(skin);
                     await ctx.SaveChangesAsync();
                 }
