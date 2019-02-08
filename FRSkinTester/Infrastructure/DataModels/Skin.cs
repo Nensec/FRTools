@@ -14,6 +14,7 @@ namespace FRSkinTester.Infrastructure.DataModels
         public int GenderType { get; set; }
         public string GeneratedId { get; set; }
         public string SecretKey { get; set; }
+        public double? Coverage { get; set; }
 
         public virtual List<Preview> Previews { get; set; } = new List<Preview>();
     }

@@ -41,17 +41,16 @@ namespace FRSkinTester.Controllers
             {
                 var randomizedId = GenerateId(5, ctx.Skins.Select(x => x.GeneratedId).ToList());
                 var secretKey = GenerateId(7);
+                Bitmap skinImage = null;
                 try
                 {
-                    using (var image = Image.FromStream(model.Skin.InputStream))
+                    skinImage = (Bitmap)Image.FromStream(model.Skin.InputStream);
+                    if (skinImage.Width != 350 || skinImage.Height != 350)
                     {
-
-                        if (image.Width != 350 || image.Height != 350)
-                        {
-                            TempData["Error"] = "Image needs to be 350px x 350px. Just like FR.";
-                            return View();
-                        }
+                        TempData["Error"] = "Image needs to be 350px x 350px. Just like FR.";
+                        return View();
                     }
+
                 }
                 catch
                 {
@@ -62,6 +61,22 @@ namespace FRSkinTester.Controllers
                 {
                     model.Skin.InputStream.Position = 0;
                     var url = await azureImageService.WriteImage($@"skins\{randomizedId}.png", model.Skin.InputStream);
+
+                    Bitmap dragonImage = null;
+                    using (var client = new WebClient())
+                    {
+                        var dwagonImageBytes = client.DownloadDataTaskAsync(string.Format(DressingRoomDummyUrl, (int)model.DragonType, (int)model.Gender));
+                        try
+                        {
+                            using (var memStream = new MemoryStream(await dwagonImageBytes, false))
+                                dragonImage = (Bitmap)Image.FromStream(memStream);
+                        }
+                        catch
+                        {
+                        }
+                    }
+
+
                     var skin = new Skin
                     {
                         GeneratedId = randomizedId,
@@ -69,9 +84,10 @@ namespace FRSkinTester.Controllers
                         Title = model.Title,
                         Description = model.Description,
                         DragonType = (int)model.DragonType,
-                        GenderType = (int)model.Gender
+                        GenderType = (int)model.Gender,
+                        Coverage = GetCoveragePercentage(skinImage, dragonImage)
                     };
-
+                    skinImage.Dispose();
                     ctx.Skins.Add(skin);
                     await ctx.SaveChangesAsync();
                     return View("UploadResult", new UploadModelPostViewModel
@@ -98,13 +114,15 @@ namespace FRSkinTester.Controllers
                     TempData["Error"] = "Skin not found";
                     return RedirectToAction("Index");
                 }
-
+                if (skin.Coverage == null)
+                    await UpdateCoverage(skin, ctx);
                 return View(new PreviewModelPost
                 {
                     Title = skin.Title,
                     Description = skin.Description,
                     SkinId = model.SkinId,
-                    PreviewUrl = await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)
+                    PreviewUrl = await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null),
+                    Coverage = skin.Coverage
                 });
             }
         }
@@ -151,7 +169,6 @@ namespace FRSkinTester.Controllers
                     return RedirectToAction("Preview", new { model.SkinId });
                 }
 
-
                 var url = await GenerateOrFetchPreview(model.SkinId, model.DragonId.ToString(), dwagonUrl, dragon);
                 if (url == null)
                     return RedirectToAction("Preview", new { model.SkinId });
@@ -159,7 +176,7 @@ namespace FRSkinTester.Controllers
                 skin.Previews.Add(new Preview
                 {
                     DragonId = model.DragonId,
-                    PreviewImage = url,                    
+                    PreviewImage = url,
                     DragonData = dragon.ToString()
                 });
 
@@ -184,13 +201,16 @@ namespace FRSkinTester.Controllers
                     TempData["Error"] = "Skin not found";
                     return RedirectToAction("Index");
                 }
+                if (skin.Coverage == null)
+                    await UpdateCoverage(skin, ctx);
 
                 return View(new PreviewScryerModelPost
                 {
                     Title = skin.Title,
                     Description = skin.Description,
                     SkinId = model.SkinId,
-                    PreviewUrl = await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)
+                    PreviewUrl = await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null),
+                    Coverage = skin.Coverage
                 });
             }
         }
@@ -294,11 +314,11 @@ namespace FRSkinTester.Controllers
                 using (var client = new WebClient())
                 {
                     var dwagonImageBytes = client.DownloadDataTaskAsync(dragonUrl);
-                    Image dwagonImage = null;
+                    Bitmap dwagonImage = null;
                     try
                     {
                         using (var memStream = new MemoryStream(await dwagonImageBytes, false))
-                            dwagonImage = Image.FromStream(memStream);
+                            dwagonImage = (Bitmap)Image.FromStream(memStream);
                     }
                     catch (Exception ex)
                     {
@@ -341,6 +361,56 @@ namespace FRSkinTester.Controllers
             }
 
             return url;
+        }
+
+        private double? GetCoveragePercentage(Bitmap skinImage, Bitmap dragonImage)
+        {
+            if (dragonImage == null)
+                return null;
+
+            var alphaSum = 0d;
+            var pixelCount = 0d;
+
+            for (var x = 0; x < 350; x++)
+                for (var y = 0; y < 350; y++)
+                {
+                    var skinPixel = skinImage.GetPixel(x, y);
+                    var dragonPixel = dragonImage.GetPixel(x, y);
+                    if (dragonPixel.A > 95)
+                    {
+                        if (skinPixel.A > 0)
+                            alphaSum += skinPixel.A;
+                        pixelCount++;
+                    }
+                }
+
+            return Math.Round(alphaSum / pixelCount / 255 * 100, 2);
+        }
+
+        private async Task UpdateCoverage(Skin skin, DataContext ctx)
+        {
+            var azureImageService = new AzureImageService();
+            var skinImage = (Bitmap)Image.FromStream(await azureImageService.GetImage($@"skins\{skin.GeneratedId}.png"));
+            Bitmap dummyImage = null;
+
+            using (var client = new WebClient())
+            {
+                var dwagonImageBytes = client.DownloadDataTaskAsync(string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType));
+                try
+                {
+                    using (var memStream = new MemoryStream(await dwagonImageBytes, false))
+                        dummyImage = (Bitmap)Image.FromStream(memStream);
+                }
+                catch
+                {
+                    return;
+                }
+            }
+
+            skin.Coverage = GetCoveragePercentage(skinImage, dummyImage);
+            skinImage.Dispose();
+            dummyImage.Dispose();
+            await ctx.SaveChangesAsync();
         }
 
         public async Task<ActionResult> Manage(ManageModelGet model)

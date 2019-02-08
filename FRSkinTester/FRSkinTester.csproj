@@ -175,6 +175,10 @@
     <Compile Include="Migrations\201812102238126_Added preview table.Designer.cs">
       <DependentUpon>201812102238126_Added preview table.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201902082130362_Skin coverage field.cs" />
+    <Compile Include="Migrations\201902082130362_Skin coverage field.Designer.cs">
+      <DependentUpon>201902082130362_Skin coverage field.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Models.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -612,6 +616,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812102238126_Added preview table.resx">
       <DependentUpon>201812102238126_Added preview table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902082130362_Skin coverage field.resx">
+      <DependentUpon>201902082130362_Skin coverage field.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
