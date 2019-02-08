@@ -425,6 +425,8 @@ namespace FRSkinTester.Controllers
                 }
                 else
                 {
+                    if (skin.Coverage == null)
+                        await UpdateCoverage(skin, ctx);
                     return View(new ManageModelViewModel
                     {
                         Skin = skin,
