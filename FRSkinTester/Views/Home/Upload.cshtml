@@ -146,6 +146,16 @@
     });
 
     updateCoverage = function (skinImage, dragonImage) {
+        if (dragonImage === undefined) {
+            dragonImage = dragonImg;
+        } else {
+            dragonImg = dragonImage;
+        }
+
+        var dragonContext = $('#dragon')[0].getContext('2d');
+        dragonContext.clearRect(0, 0, 350, 350);
+        dragonContext.drawImage(dragonImage, 0, 0, 350, 350, 0, 0, 350, 350);
+
         if (!$('#Preview').is(':visible')) {
             $('#CoverageContainer').hide();
             return;
@@ -156,31 +166,21 @@
         } else {
             skinImg = skinImage;
         }
-        if (dragonImage === undefined) {
-            dragonImage = dragonImg;
-        } else {
-            dragonImg = dragonImage;
-        }
 
         var skinContext = $('#skin')[0].getContext('2d');
-        var dragonContext = $('#dragon')[0].getContext('2d');
         skinContext.clearRect(0, 0, 350, 350);
-        dragonContext.clearRect(0, 0, 350, 350);
-        skinContext.drawImage(skinImage, 0, 0);
-        dragonContext.drawImage(dragonImage, 0, 0);
+        skinContext.drawImage(skinImage, 0, 0, 350, 350);
 
         var alphaSum = 0;
         var pixelCount = 0;
 
-        for (x = 0; x < 350; x++) {
-            for (y = 0; y < 350; y++) {
-                var skinPixel = skinContext.getImageData(x, y, 1, 1);
-                var dragonPixel = dragonContext.getImageData(x, y, 1, 1);
-                if (dragonPixel.data[3] > 95) {
-                    if (skinPixel.data[3] > 0)
-                        alphaSum += skinPixel.data[3];
-                    pixelCount++;
-                }
+        var skinData = skinContext.getImageData(0, 0, 350, 350).data;
+        var dragonData = dragonContext.getImageData(0, 0, 350, 350).data;
+
+        for (var i = 0, n = skinData.length; i < n; i += 4) {
+            if (dragonData[i + 3] > 95) {
+                alphaSum += skinData[i + 3];
+                pixelCount++;
             }
         }
 
@@ -189,5 +189,5 @@
     };
 </script>
 
-<canvas id="skin" style="display:none;"></canvas>
-<canvas id="dragon" style="display:none;"></canvas>
+<canvas width="350" height="350" id="skin" style="display:none;"></canvas>
+<canvas width="350" height="350" id="dragon" style="display:none;"></canvas>
