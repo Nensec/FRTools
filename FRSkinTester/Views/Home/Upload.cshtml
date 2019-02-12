@@ -82,8 +82,19 @@
                 </div>
 
                 <div class="col-md-6">
-                    <img id="Dummy" height="350" width="350" style="z-index:1;position:absolute" src="http://www1.flightrising.com/dgen/dressing-room/dummy?breed=14&gender=0" />
-                    <img id="Preview" height="350" width="350" style="z-index:2;position:absolute;display:none;" />
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="center-block" style="width:350px;height:350px;">
+                                <img id="Dummy" style="z-index:1;position:absolute;" src="@Url.Action("GetDummyDragon")?dragonType=14&gender=0" />
+                                <img id="Preview" style="z-index:2;position:absolute;display:none;" />
+                            </div>
+                            <div id="CoverageContainer" style="display:none;">
+                                <p class="text-center">
+                                    Coverage: <b><span id="Coverage"></span>%</b>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         }
@@ -95,7 +106,12 @@
         var dragonType = $('#@(Html.IdFor(model => model.DragonType))').val();
         var gender = $('#@(Html.IdFor(model => model.Gender))').val();
 
-        $('#Dummy').show().attr('src', `http://www1.flightrising.com/dgen/dressing-room/dummy?breed=${dragonType}&gender=${gender}`);
+        $('#Dummy').show().attr('src', `@Url.Action("GetDummyDragon")?dragonType=${dragonType}&gender=${gender}`);
+        var dragonImage = new Image();
+        dragonImage.onload = function () {
+            updateCoverage(undefined, dragonImage);
+        };
+        dragonImage.src = $('#Dummy').attr('src');
     });
 
     $('#@(Html.IdFor(model => model.Skin))').change(function () {
@@ -107,11 +123,12 @@
 
         reader.onload = function (e) {
             if (file && file.type === 'image/png') {
-                var img = new Image();
-                img.onload = function () {
+                var skinImage = new Image();
+                skinImage.onload = function () {
                     $('#Preview').show().attr('src', e.target.result);
+                    updateCoverage(skinImage);
                 };
-                img.src = e.target.result;
+                skinImage.src = e.target.result;
             }
             else {
                 $('#Preview').hide();
@@ -120,4 +137,57 @@
 
         reader.readAsDataURL(file);
     });
+
+    var skinImg, dragonImg;
+
+    $('document').ready(function () {
+        dragonImg = new Image();
+        dragonImg.src = $('#Dummy').attr('src');
+    });
+
+    updateCoverage = function (skinImage, dragonImage) {
+        if (!$('#Preview').is(':visible')) {
+            $('#CoverageContainer').hide();
+            return;
+        }
+
+        if (skinImage === undefined) {
+            skinImage = skinImg;
+        } else {
+            skinImg = skinImage;
+        }
+        if (dragonImage === undefined) {
+            dragonImage = dragonImg;
+        } else {
+            dragonImg = dragonImage;
+        }
+
+        var skinContext = $('#skin')[0].getContext('2d');
+        var dragonContext = $('#dragon')[0].getContext('2d');
+        skinContext.clearRect(0, 0, 350, 350);
+        dragonContext.clearRect(0, 0, 350, 350);
+        skinContext.drawImage(skinImage, 0, 0);
+        dragonContext.drawImage(dragonImage, 0, 0);
+
+        var alphaSum = 0;
+        var pixelCount = 0;
+
+        for (x = 0; x < 350; x++) {
+            for (y = 0; y < 350; y++) {
+                var skinPixel = skinContext.getImageData(x, y, 1, 1);
+                var dragonPixel = dragonContext.getImageData(x, y, 1, 1);
+                if (dragonPixel.data[3] > 95) {
+                    if (skinPixel.data[3] > 0)
+                        alphaSum += skinPixel.data[3];
+                    pixelCount++;
+                }
+            }
+        }
+
+        var coverage = (alphaSum / pixelCount / 255 * 100).toFixed(2);
+        $('#CoverageContainer').show().find('#Coverage').html(coverage);
+    };
 </script>
+
+<canvas id="skin" style="display:none;"></canvas>
+<canvas id="dragon" style="display:none;"></canvas>

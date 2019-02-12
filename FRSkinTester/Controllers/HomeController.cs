@@ -503,5 +503,15 @@ namespace FRSkinTester.Controllers
             }
             return id;
         }
+
+        static Dictionary<(int, int), byte[]> _dummyCache = new Dictionary<(int, int), byte[]>();
+
+        public async Task<ActionResult> GetDummyDragon(int dragonType, int gender)
+        {
+            if(!_dummyCache.TryGetValue((dragonType, gender), out var bytes))
+                using (var client = new WebClient())
+                    _dummyCache[(dragonType, gender)] = bytes = await client.DownloadDataTaskAsync(string.Format(DressingRoomDummyUrl, dragonType, gender));
+            return File(bytes, "image/png");
+        }
     }
 }
