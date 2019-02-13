@@ -39,6 +39,7 @@ namespace FRSkinTester.Controllers
         }
 
         [HttpPost]
+        [Route("Preview/{skinId}", Name = "PreviewPost")]
         public async Task<ActionResult> Preview(PreviewModelPost model)
         {
             if (!ModelState.IsValid)
@@ -129,6 +130,7 @@ namespace FRSkinTester.Controllers
         }
 
         [HttpPost]
+        [Route("Preview/{skinId}/Scry", Name = "PreviewScryerPost")]
         public async Task<ActionResult> PreviewScryer(PreviewScryerModelPost model)
         {
             if (!ModelState.IsValid)

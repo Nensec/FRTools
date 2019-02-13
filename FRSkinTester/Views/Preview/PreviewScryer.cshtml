@@ -9,7 +9,7 @@
         <h2>Preview skin: @(Model.Title)</h2>
     </div>
     <div class="panel-body">
-        @using (Html.BeginForm())
+        @using (Html.BeginRouteForm("PreviewScryerPost", new { SkinId = Model.SkinId }))
         {
             @Html.AntiForgeryToken()
             @Html.HiddenFor(model => model.SkinId)
