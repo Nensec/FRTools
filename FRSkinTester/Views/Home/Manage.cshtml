@@ -52,7 +52,7 @@
                 <div class="col-md-8">
                     <div class="form-group">
                         <div class="input-group">
-                            <input id="PreviewLink" type="text" class="form-control" value="@Url.Action("Preview", "Home", new { SkinId = Model.Skin.GeneratedId }, "http")">
+                            <input id="PreviewLink" type="text" class="form-control" value="@Url.RouteUrl("Preview", new { SkinId = Model.Skin.GeneratedId }, "http")">
                             <span class="input-group-btn">
                                 <button class="btn btn-success" type="button" onclick="document.getElementById('PreviewLink').select(); document.execCommand('copy'); this.innerHTML = 'Copied!'">Copy!</button>
                             </span>
@@ -62,7 +62,7 @@
                 <div class="col-md-8">
                     <div class="form-group">
                         <div class="input-group">
-                            <input id="PreviewScryLink" type="text" class="form-control" value="@Url.Action("PreviewScryer", "Home", new { SkinId = Model.Skin.GeneratedId }, "http")">
+                            <input id="PreviewScryLink" type="text" class="form-control" value="@Url.RouteUrl("PreviewScryer", new { SkinId = Model.Skin.GeneratedId }, "http")">
                             <span class="input-group-btn">
                                 <button class="btn btn-success" type="button" onclick="document.getElementById('PreviewScryLink').select(); document.execCommand('copy'); this.innerHTML = 'Copied!'">Copy!</button>
                             </span>
@@ -143,7 +143,7 @@
                 <div class="form-group">
                     This will permanently delete your skin!&nbsp;
                     <span>
-                        <a class="btn btn-xs btn-danger" href="@Url.Action("Delete", new { SkinId = Model.Skin.GeneratedId, SecretKey = Model.Skin.SecretKey })" onclick="return userConfirm();">Delete your skin</a>
+                        <a class="btn btn-xs btn-danger" href="@Url.RouteUrl("Delete", new { SkinId = Model.Skin.GeneratedId, SecretKey = Model.Skin.SecretKey })" onclick="return userConfirm();">Delete your skin</a>
                     </span>
                 </div>
             </div>
