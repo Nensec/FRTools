@@ -16,5 +16,6 @@ namespace FRSkinTester.Infrastructure
         }
 
         public DbSet<Skin> Skins { get; set; }
+        public DbSet<DragonCache> DragonCache { get; set; }
     }
 }

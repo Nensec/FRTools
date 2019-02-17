@@ -189,8 +189,15 @@ namespace FRSkinTester.Controllers
         public async Task<ActionResult> GetDummyDragon(int dragonType, int gender)
         {
             if(!_dummyCache.TryGetValue((dragonType, gender), out var bytes))
-                using (var client = new WebClient())
-                    _dummyCache[(dragonType, gender)] = bytes = await client.DownloadDataTaskAsync(string.Format(DressingRoomDummyUrl, dragonType, gender));
+            {
+                var dummyDragon = await GetDragonBaseImage(string.Format(DressingRoomDummyUrl, dragonType, gender), null, new AzureImageService());
+                using (var memStream = new MemoryStream())
+                {
+                    dummyDragon.Save(memStream, ImageFormat.Png);
+                    _dummyCache[(dragonType, gender)] = bytes = memStream.ToArray();
+                }
+            }
+
             return File(bytes, "image/png");
         }
     }

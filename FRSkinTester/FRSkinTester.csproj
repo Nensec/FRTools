@@ -167,6 +167,7 @@
     </Compile>
     <Compile Include="Infrastructure\AzureImageService.cs" />
     <Compile Include="Infrastructure\DataContext.cs" />
+    <Compile Include="Infrastructure\DataModels\DragonCache.cs" />
     <Compile Include="Infrastructure\DataModels\Skin.cs" />
     <Compile Include="Infrastructure\DataModels\Preview.cs" />
     <Compile Include="Migrations\201812041640175_Skins table.cs" />
@@ -180,6 +181,10 @@
     <Compile Include="Migrations\201902082130362_Skin coverage field.cs" />
     <Compile Include="Migrations\201902082130362_Skin coverage field.Designer.cs">
       <DependentUpon>201902082130362_Skin coverage field.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902171740244_Added caching for dragons.cs" />
+    <Compile Include="Migrations\201902171740244_Added caching for dragons.Designer.cs">
+      <DependentUpon>201902171740244_Added caching for dragons.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Models.cs" />
@@ -621,6 +626,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201902082130362_Skin coverage field.resx">
       <DependentUpon>201902082130362_Skin coverage field.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902171740244_Added caching for dragons.resx">
+      <DependentUpon>201902171740244_Added caching for dragons.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
