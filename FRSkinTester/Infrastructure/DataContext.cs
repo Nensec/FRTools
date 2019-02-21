@@ -15,6 +15,11 @@ namespace FRSkinTester.Infrastructure
         {
         }
 
+        public static DataContext Create()
+        {
+            return new DataContext();
+        }
+
         public DbSet<Skin> Skins { get; set; }
         public DbSet<DragonCache> DragonCache { get; set; }
     }
