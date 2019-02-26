@@ -2,7 +2,6 @@
 using FRSkinTester.Infrastructure;
 using FRSkinTester.Infrastructure.DataModels;
 using FRSkinTester.Models;
-using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Drawing;
@@ -10,7 +9,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
@@ -18,6 +16,7 @@ namespace FRSkinTester.Controllers
 {
     public class HomeController : BaseController
     {
+        [Route(Name = "Home")]
         public ActionResult Index()
         {
             return View();

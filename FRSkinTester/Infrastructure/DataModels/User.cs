@@ -6,5 +6,6 @@ namespace FRSkinTester.Infrastructure.DataModels
     {
         public int Id { get; }
         public string UserName { get; set; }
+        public string Email { get; set; }
     }
 }

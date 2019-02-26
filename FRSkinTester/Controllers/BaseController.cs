@@ -9,14 +9,18 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.Routing;
 
 namespace FRSkinTester.Controllers
 {
     public class BaseController : Controller
     {
+        public UserInfo UserInfo { get; set; }
+
         protected const string DressingRoomDummyUrl = "http://www1.flightrising.com/dgen/dressing-room/dummy?breed={0}&gender={1}";
         protected const string ScryerUrl = "http://flightrising.com/includes/scryer_getdragon.php?zord={0}";
 
@@ -201,6 +205,7 @@ namespace FRSkinTester.Controllers
         }
 
         private Random _random = new Random(Guid.NewGuid().GetHashCode());
+
         protected string GenerateId(int length = 7, IEnumerable<string> mustNotMatch = null)
         {
             string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -212,6 +217,15 @@ namespace FRSkinTester.Controllers
                 return GenerateId(length, mustNotMatch);
             }
             return id;
+        }
+
+        protected ActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            return RedirectToAction("Index", "Home");
         }
     }
 }

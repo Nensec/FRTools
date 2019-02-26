@@ -411,4 +411,9 @@ namespace FRSkinTester.Models
         public string SkinId { get; set; }
         public string SecretKey { get; set; }
     }
+
+    public class ExternalLoginListViewModel
+    {
+        public string ReturnUrl { get; set; }
+    }
 }

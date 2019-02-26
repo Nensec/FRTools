@@ -1,9 +1,15 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.MicrosoftAccount;
+using Microsoft.Owin.Security.Twitter;
 using Owin;
+using Owin.Security.Providers.DeviantArt;
+using Owin.Security.Providers.Google;
+using Owin.Security.Providers.Tumblr;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Security.Claims;
 using System.Web;
@@ -26,7 +32,35 @@ namespace FRSkinTester.App_Start
 
             AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.NameIdentifier;
 
-            app.usegoogleauthentication
+            app.UseGoogleAuthentication(new GoogleAuthenticationOptions
+            {
+                ClientId = ConfigurationManager.AppSettings["GoogleClientId"],
+                ClientSecret = ConfigurationManager.AppSettings["GoogleSecret"]
+            });
+
+            app.UseTwitterAuthentication(new TwitterAuthenticationOptions
+            {
+                ConsumerKey = ConfigurationManager.AppSettings["TwitterClientId"],
+                ConsumerSecret = ConfigurationManager.AppSettings["TwitterSecret"]
+            });
+
+            app.UseMicrosoftAccountAuthentication(new MicrosoftAccountAuthenticationOptions
+            {
+                ClientId = ConfigurationManager.AppSettings["MicrosoftClientId"],
+                ClientSecret = ConfigurationManager.AppSettings["MicrosoftSecret"]
+            });
+
+            app.UseTumblrAuthentication(new TumblrAuthenticationOptions
+            {
+                AppKey = ConfigurationManager.AppSettings["TumblrClientId"],
+                AppSecret = ConfigurationManager.AppSettings["TumblrSecret"]
+            });
+
+            app.UseDeviantArtAuthentication(new DeviantArtAuthenticationOptions
+            {
+                ClientId = ConfigurationManager.AppSettings["DeviantArtClientId"],
+                ClientSecret = ConfigurationManager.AppSettings["DeviantArtSecret"]
+            });
         }
     }
 }

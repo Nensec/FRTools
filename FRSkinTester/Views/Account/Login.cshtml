@@ -1,0 +1,35 @@
+﻿@model FRSkinTester.Models.ExternalLoginListViewModel
+@using Microsoft.Owin.Security
+
+@{
+    ViewBag.Title = "Login";
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2>
+            Login
+        </h2>
+    </div>
+    <div class="panel-body">
+        <p>Logging in is only needed for artists who wish to manage their skins more easily by linking the uploads to their account, logging in (and therefor registering) is <i>not required</i> to use this tool</p>
+
+        @{
+            var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+
+            using (Html.BeginForm("ExternalLogin", "Account"))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.ReturnUrl)
+                <div id="socialLoginList">
+                    <p>
+                        @foreach (AuthenticationDescription p in loginProviders)
+                        {
+                            <button type="submit" class="btn btn-default" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account">@p.AuthenticationType</button>
+                        }
+                    </p>
+                </div>
+            }
+        }
+    </div>
+</div>
