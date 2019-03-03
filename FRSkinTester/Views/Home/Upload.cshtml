@@ -4,6 +4,13 @@
     ViewBag.Title = "Upload";
 }
 
+@section meta{
+    <meta property="og:title" content="Upload a new skin" />
+    <meta property="og:image" content="" />
+    <meta property="og:url" content="@Url.RouteUrl("Upload")" />
+    <meta property="og:description" content="Upload your skin on this page, you will be given a link to share where users can preview your skin on their dragons or scries" />
+}
+
 <div class="panel panel-default">
     <div class="panel-heading">
         <h2>Upload your skin</h2>

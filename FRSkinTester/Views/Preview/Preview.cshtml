@@ -4,6 +4,13 @@
     ViewBag.Title = "Preview";
 }
 
+@section meta{
+    <meta property="og:title" content="Skin preview@(Model.Title != null ? $" of '{Model.Title}'" : "")" />
+    <meta property="og:image" content="@(Model.PreviewUrl)" />
+    <meta property="og:url" content="@Url.RouteUrl("Preview", new { SkinId = Model.SkinId })"/>
+    <meta property="og:description" content="@(Model.Description ?? "No description provided")" />
+}
+
 <div class="panel panel-default">
     <div class="panel-heading">
         <h2>Preview skin: @(Model.Title)</h2>
