@@ -2,11 +2,10 @@
 using FRSkinTester.Infrastructure.DataModels;
 using FRSkinTester.Models;
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 
 namespace FRSkinTester.Controllers
@@ -23,18 +22,27 @@ namespace FRSkinTester.Controllers
                 if (skin == null)
                 {
                     TempData["Error"] = "Skin not found";
-                    return RedirectToAction("Index");
+                    return RedirectToRoute("Home");
                 }
                 if (skin.Coverage == null)
                     await UpdateCoverage(skin, ctx);
-                return View(new PreviewModelPost
+
+                try
                 {
-                    Title = skin.Title,
-                    Description = skin.Description,
-                    SkinId = model.SkinId,
-                    PreviewUrl = await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null),
-                    Coverage = skin.Coverage
-                });
+                    return View(new PreviewModelPost
+                    {
+                        Title = skin.Title,
+                        Description = skin.Description,
+                        SkinId = model.SkinId,
+                        PreviewUrl = await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null),
+                        Coverage = skin.Coverage
+                    });
+                }
+                catch (FileNotFoundException)
+                {
+                    TempData["Error"] = "Skin not found";
+                    return RedirectToRoute("Home");
+                }
             }
         }
 
@@ -118,14 +126,22 @@ namespace FRSkinTester.Controllers
                 if (skin.Coverage == null)
                     await UpdateCoverage(skin, ctx);
 
-                return View(new PreviewScryerModelPost
+                try
                 {
-                    Title = skin.Title,
-                    Description = skin.Description,
-                    SkinId = model.SkinId,
-                    PreviewUrl = await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null),
-                    Coverage = skin.Coverage
-                });
+                    return View(new PreviewScryerModelPost
+                    {
+                        Title = skin.Title,
+                        Description = skin.Description,
+                        SkinId = model.SkinId,
+                        PreviewUrl = await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null),
+                        Coverage = skin.Coverage
+                    });
+                }
+                catch (FileNotFoundException)
+                {
+                    TempData["Error"] = "Skin not found";
+                    return RedirectToRoute("Home");
+                }
             }
         }
 
