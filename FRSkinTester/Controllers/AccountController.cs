@@ -1,10 +1,9 @@
 ﻿using FRSkinTester.Infrastructure;
 using FRSkinTester.Infrastructure.DataModels;
+using FRSkinTester.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using System;
-using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
@@ -22,10 +21,7 @@ namespace FRSkinTester.Controllers
         public UserManager<User, int> UserManager => _userManager ?? (_userManager = HttpContext.GetOwinContext().GetUserManager<UserManager<User, int>>());
 
         [Route("Login", Name = "Login")]
-        public ActionResult Login()
-        {
-            return View();
-        }
+        public ActionResult Login(string returnUrl) => View(new ExternalLoginListViewModel { ReturnUrl = returnUrl });
 
         [Route("LogOut", Name = "LogOut")]
         public ActionResult LogOut()
@@ -38,11 +34,8 @@ namespace FRSkinTester.Controllers
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         [Route("ExternalLogin")]
-        public ActionResult ExternalLogin(string provider)
-        {
-            string returnUrl = Url.RouteUrl("Home");
-            return new ChallengeResult(provider, Url.RouteUrl("ExternalLoginCallback", new { ReturnUrl = returnUrl }));
-        }
+        public ActionResult ExternalLogin(string provider, string returnUrl) =>
+            new ChallengeResult(provider, Url.RouteUrl("ExternalLoginCallback", new { ReturnUrl = returnUrl }));
 
         [AllowAnonymous]
         [Route("ExternalLoginCallback", Name = "ExternalLoginCallback")]
@@ -60,22 +53,49 @@ namespace FRSkinTester.Controllers
             {
                 case SignInStatus.Success:
                     if (returnUrl != null)
-                        return Redirect(returnUrl);
+                        return RedirectToLocal(returnUrl);
                     return RedirectToRoute("Home");
                 case SignInStatus.Failure:
                 default:
                     if (ModelState.IsValid)
                     {
-                        var identity = new User { UserName = loginInfo.DefaultUserName, Email = loginInfo.Email };
-                        var newUser = await UserManager.CreateAsync(identity);
-                        if (newUser.Succeeded)
+                        async Task<(IdentityResult, User)> CreateNewUser(string username, string email)
                         {
-                            newUser = await UserManager.AddLoginAsync(identity.Id, loginInfo.Login);
-                            if (newUser.Succeeded)
+                            var user = new User
                             {
-                                await SignInManager.SignInAsync(identity, isPersistent: false, rememberBrowser: false);
+                                UserName = username,
+                                Email = email
+                            };
+
+                            return (await UserManager.CreateAsync(user), user);
+                        };
+
+                        async Task<ActionResult> LoginUser(User user)
+                        {
+                            var loginResult = await UserManager.AddLoginAsync(user.Id, loginInfo.Login);
+                            if (loginResult.Succeeded)
+                            {
+                                await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                                 return RedirectToLocal(returnUrl);
                             }
+                            else
+                            {
+                                TempData["Error"] = "Could not login user";
+                                return RedirectToRoute("Login");
+                            }
+                        };
+
+                        var (newUser, identity) = await CreateNewUser(loginInfo.DefaultUserName ?? loginInfo.ExternalIdentity.FindFirst(ClaimTypes.NameIdentifier).Value, loginInfo.Email);
+
+                        if (newUser.Succeeded)
+                            return await LoginUser(identity);
+                        else
+                        {
+                            (newUser, identity) = await CreateNewUser(identity.UserName + GenerateId(5), identity.Email);
+                            if (newUser.Succeeded)
+                                return await LoginUser(identity);
+                            TempData["Error"] = "Could not create user";
+                            return RedirectToRoute("Login");
                         }
                     }
 

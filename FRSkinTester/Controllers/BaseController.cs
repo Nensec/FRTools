@@ -9,18 +9,14 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using System.Web.Routing;
 
 namespace FRSkinTester.Controllers
 {
     public class BaseController : Controller
     {
-        public UserInfo UserInfo { get; set; }
-
         protected const string DressingRoomDummyUrl = "http://www1.flightrising.com/dgen/dressing-room/dummy?breed={0}&gender={1}";
         protected const string ScryerUrl = "http://flightrising.com/includes/scryer_getdragon.php?zord={0}";
 

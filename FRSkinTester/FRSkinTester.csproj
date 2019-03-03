@@ -103,6 +103,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -204,9 +205,10 @@
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Infrastructure\ChallengeResult.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\PreviewController.cs" />
+    <Compile Include="Controllers\SkinController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -215,9 +217,12 @@
     <Compile Include="Infrastructure\DataModels\DragonCache.cs" />
     <Compile Include="Infrastructure\DataModels\Skin.cs" />
     <Compile Include="Infrastructure\DataModels\Preview.cs" />
-    <Compile Include="Infrastructure\DataModels\User.cs" />
+    <Compile Include="Infrastructure\DataModels\AccountModels\User.cs" />
     <Compile Include="Infrastructure\Managers\UserManager.cs" />
-    <Compile Include="Infrastructure\UserInfo.cs" />
+    <Compile Include="Infrastructure\DataModels\AccountModels\Role.cs" />
+    <Compile Include="Infrastructure\DataModels\AccountModels\UserClaim.cs" />
+    <Compile Include="Infrastructure\DataModels\AccountModels\UserLogin.cs" />
+    <Compile Include="Infrastructure\DataModels\AccountModels\UserRole.cs" />
     <Compile Include="Migrations\201812041640175_Skins table.cs" />
     <Compile Include="Migrations\201812041640175_Skins table.Designer.cs">
       <DependentUpon>201812041640175_Skins table.cs</DependentUpon>
@@ -234,8 +239,19 @@
     <Compile Include="Migrations\201902171740244_Added caching for dragons.Designer.cs">
       <DependentUpon>201902171740244_Added caching for dragons.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201902270326131_User login tables.cs" />
+    <Compile Include="Migrations\201902270326131_User login tables.Designer.cs">
+      <DependentUpon>201902270326131_User login tables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903030022031_Add FR info to User.cs" />
+    <Compile Include="Migrations\201903030022031_Add FR info to User.Designer.cs">
+      <DependentUpon>201903030022031_Add FR info to User.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\Models.cs" />
+    <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\Enums.cs" />
+    <Compile Include="Models\ManageModels.cs" />
+    <Compile Include="Models\SkinModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -243,8 +259,10 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\social_icons.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\social_icons.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Masks\10_0_0_0.png" />
@@ -617,6 +635,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="debug.config" />
+    <Content Include="fonts\social_icons.eot" />
+    <Content Include="fonts\social_icons.ttf" />
+    <Content Include="fonts\social_icons.woff" />
+    <Content Include="fonts\social_icons.woff2" />
     <None Include="Properties\PublishProfiles\frskintester - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
@@ -644,6 +666,9 @@
     <Content Include="Views\Preview\PreviewResult.cshtml" />
     <Content Include="Views\Preview\PreviewScryer.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Manage\Index.cshtml" />
+    <Content Include="Views\Manage\Verify.cshtml" />
+    <Content Include="Views\Manage\_verifyForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -673,6 +698,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201902171740244_Added caching for dragons.resx">
       <DependentUpon>201902171740244_Added caching for dragons.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902270326131_User login tables.resx">
+      <DependentUpon>201902270326131_User login tables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903030022031_Add FR info to User.resx">
+      <DependentUpon>201903030022031_Add FR info to User.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

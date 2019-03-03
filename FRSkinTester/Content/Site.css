@@ -94,3 +94,9 @@ input[type=file] {
         margin-bottom: 0px;
         cursor: text;
     }
+
+@media (min-width: 768px) {
+    .navbar-right {
+        margin-right: 0;
+    }
+}

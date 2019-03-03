@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using FRSkinTester.Infrastructure;
+using FRSkinTester.Infrastructure.DataModels;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.MicrosoftAccount;
@@ -8,11 +12,8 @@ using Owin.Security.Providers.DeviantArt;
 using Owin.Security.Providers.Google;
 using Owin.Security.Providers.Tumblr;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Security.Claims;
-using System.Web;
 using System.Web.Helpers;
 
 [assembly: OwinStartup(typeof(FRSkinTester.App_Start.Startup))]
@@ -22,10 +23,21 @@ namespace FRSkinTester.App_Start
     {
         public void Configuration(IAppBuilder app)
         {
+            app.CreatePerOwinContext(() => new DataContext());
+            app.CreatePerOwinContext<UserManager<User, int>>((o, c) => new UserManager<User, int>(new UserStore<User, Role, int, UserLogin, UserRole, UserClaim>(c.Get<DataContext>())));
+            app.CreatePerOwinContext<SignInManager<User, int>>((o, c) => new SignInManager<User, int>(c.GetUserManager<UserManager<User, int>>(), c.Authentication));
+
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-                LoginPath = new PathString("/Login")
+                LoginPath = new PathString("/Login"),
+                Provider = new CookieAuthenticationProvider
+                {
+                    OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<UserManager<User, int>, User, int>(
+                        TimeSpan.FromMinutes(30),
+                        async (manager, user) => await manager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ExternalCookie),
+                        user => user.GetUserId<int>())
+                }
             });
 
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);

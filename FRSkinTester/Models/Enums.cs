@@ -1,5 +1,6 @@
-﻿using FRSkinTester.Infrastructure.DataModels;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 
 namespace FRSkinTester.Models
@@ -322,98 +323,5 @@ namespace FRSkinTester.Models
         Nightshade,
         Eldritch,
         Shale
-    }
-
-    public class UploadModelPost
-    {
-        [Display(Name = "Name of your skin")]
-        public string Title { get; set; }
-        [Display(Name = "Description")]
-        public string Description { get; set; }
-        [Display(Name = "Dragon type")]
-        public DragonType DragonType { get; set; }
-        [Display(Name = "Gender")]
-        public Gender Gender { get; set; }
-        [Display(Name = "Skin file")]
-        [Required]
-        public HttpPostedFileBase Skin { get; set; }
-    }
-
-    public class UploadModelPostViewModel
-    {
-        public string SkinId { get; set; }
-        public string SecretKey { get; set; }
-    }
-
-    public class PreviewModelGet
-    {
-        public string SkinId { get; set; }
-    }
-
-    public class PreviewModelBase
-    {
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string SkinId { get; set; }
-        public string PreviewUrl { get; set; }
-        public double? Coverage { get; set; }
-    }
-
-    public class PreviewModelPost : PreviewModelBase
-    {
-        [Display(Name = "Your dragon id")]
-        [Required]
-        public int DragonId { get; set; }
-    }
-
-    public class PreviewScryerModelPost : PreviewModelBase
-    {
-        [Display(Name = "Scry image URL")]
-        [Required]
-        public string ScryerUrl { get; set; }
-    }
-
-    public class PreviewModelPostViewModel
-    {
-        public string ImageResultUrl { get; set; }
-        public string SkinId { get; set; }
-        public DragonCache Dragon { get; set; }
-    }
-
-    public class DeleteSkinPost
-    {
-        public string SkinId { get; set; }
-        public string SecretKey { get; set; }
-    }
-
-    public class ManageModelGet
-    {
-        public string SkinId { get; set; }
-        public string SecretKey { get; set; }
-    }
-
-    public class ManageModelViewModel
-    {
-        public Skin Skin { get; set; }
-        public string PreviewUrl { get; set; }
-    }
-
-    public class ManageModelPost
-    {
-        [Display(Name = "Name of your skin")]
-        public string Title { get; set; }
-        [Display(Name = "Description")]
-        public string Description { get; set; }
-        [Display(Name = "Dragon type")]
-        public DragonType DragonType { get; set; }
-        [Display(Name = "Gender")]
-        public Gender Gender { get; set; }
-        public string SkinId { get; set; }
-        public string SecretKey { get; set; }
-    }
-
-    public class ExternalLoginListViewModel
-    {
-        public string ReturnUrl { get; set; }
     }
 }
