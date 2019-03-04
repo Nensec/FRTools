@@ -1,7 +1,10 @@
 ﻿using FRSkinTester.Infrastructure;
+using FRSkinTester.Infrastructure.DataModels;
 using FRSkinTester.Models;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Runtime.Caching;
@@ -15,37 +18,99 @@ namespace FRSkinTester.Controllers
     [Authorize]
     public class ManageController : BaseController
     {
-        [Route("Account", Name = "ManageAccount")]
-        public ActionResult Index() => View();
+        [Route("Manage", Name = "ManageAccount")]
+        public ActionResult Index()
+        {
+            var model = new AccountViewModel();
+            var userid = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
+            using (var ctx = new DataContext())
+            {
+                var user = ctx.Users
+                    .Include(x => x.Skins.Select(s => s.Previews))
+                    .FirstOrDefault(x => x.Id == userid);
+                model.User = user;
+                model.Skins = user.Skins.ToList();
+            }
+            return View(model);
+        }
 
         // Opting to just store the guids in memory rather than save them in the database
         static MemoryCache _verifyCache = new MemoryCache("verifyCache");
 
 
-        /* TODO:
-         * make user account editable
-         * allow linking of existing secret keys to account
-         * make new uploads automagically tied to account if logged it
-         * make previews tied to account if logged in
-        */
-
-        public ActionResult EditUser()
+        [Route("Manage/Account", Name = "ManageUser")]
+        public ActionResult ManageUser()
         {
-            return View();
+            var userid = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
+            using (var ctx = new DataContext())
+            {
+                var user = ctx.Users.Find(userid);
+
+                var model = new UserPostViewModel
+                {
+                    Username = user.UserName,
+                    Email = user.Email
+                };
+                return View(model);
+            }
         }
 
         [HttpPost]
-        public ActionResult EditUser(object model)
+        [Route("Manage/Account", Name = "ManageUserPost")]
+        public async Task<ActionResult> ManageUser(UserPostViewModel model)
         {
-            return View();
+            try
+            {
+                var userid = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
+                using (var ctx = new DataContext())
+                {
+                    var user = ctx.Users.Find(userid);
+                    user.UserName = string.IsNullOrWhiteSpace(model.Username) ? user.UserName : model.Username;
+                    user.Email = model.Email;
+                    await ctx.SaveChangesAsync();
+                    await HttpContext.GetOwinContext().Get<SignInManager<User, int>>().SignInAsync(user, true, true);
+                }
+                TempData["Success"] = "Changes have been saved!";
+                return RedirectToRoute("ManageAccount");
+            }
+            catch
+            {
+                TempData["Error"] = "Something went wrong with your request";
+                return View();
+            }
         }
 
-        public ActionResult LinkExistingSkin(string skinId, string secretKey)
+        [Route("Manage/Link", Name = "LinkExisting")]
+        public ActionResult LinkExistingSkin() => View();
+
+        [HttpPost]
+        [Route("Manage/Link", Name = "LinkExistingPost")]
+        public ActionResult LinkExistingSkin(ClaimSkinPostViewModel model)
         {
-            return View();
+            using (var ctx = new DataContext())
+            {
+                var skin = ctx.Skins.FirstOrDefault(x => x.GeneratedId == model.SkinId && x.SecretKey == model.SecretKey);
+                if (skin == null)
+                {
+                    TempData["Error"] = "Skin not found or secret invalid";
+                    return View();
+                }
+                int userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
+
+                if (skin.Creator != null)
+                {
+                    TempData["Error"] = "This skin is already linked to an acocunt, skins can only be claimed by a single account.";
+                    return View();
+                }
+
+                skin.Creator = ctx.Users.Find(userId);
+                ctx.SaveChanges();
+            }
+            TempData["Success"] = $"Succesfully linked skin '{model.SkinId}' to your account!";
+            return RedirectToRoute("ManageAccount");
         }
 
-        [Route("Account/Verify", Name = "VerifyFR")]
+        [Route("Manage/Verify", Name = "VerifyFR")]
         public ActionResult Verify()
         {
             var userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
@@ -55,7 +120,7 @@ namespace FRSkinTester.Controllers
             return View(new VerifyFRViewModel { Guid = verifyGuid.Value });
         }
 
-        [Route("Account/Verify", Name = "VerifyFRPost")]
+        [Route("Manage/Verify", Name = "VerifyFRPost")]
         [HttpPost]
         public async Task<ActionResult> Verify(VerifyFRPostViewModel model)
         {

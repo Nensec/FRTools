@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace AthenaV3.Business.Services.Image
+namespace FRSkinTester.Infrastructure
 {
     public class AzureImageService
     {

@@ -1,7 +1,7 @@
-﻿using AthenaV3.Business.Services.Image;
-using FRSkinTester.Infrastructure;
+﻿using FRSkinTester.Infrastructure;
 using FRSkinTester.Infrastructure.DataModels;
 using FRSkinTester.Models;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 
 namespace FRSkinTester.Controllers
@@ -18,7 +19,7 @@ namespace FRSkinTester.Controllers
     public class SkinController : BaseController
     {
         [Route("Preview/{skinId}", Name = "Preview")]
-        [Route("Home/Preview")]
+        [Route("Home/Preview")] // TODO: delete dis
         public async Task<ActionResult> Preview(PreviewModelGet model)
         {
             using (var ctx = new DataContext())
@@ -37,7 +38,8 @@ namespace FRSkinTester.Controllers
                     Description = skin.Description,
                     SkinId = model.SkinId,
                     PreviewUrl = await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null),
-                    Coverage = skin.Coverage
+                    Coverage = skin.Coverage,
+                    Creator = skin.Creator
                 });
             }
         }
@@ -108,7 +110,7 @@ namespace FRSkinTester.Controllers
         }
 
         [Route("Preview/{skinId}/Scry", Name = "PreviewScryer")]
-        [Route("Home/PreviewScryer")]
+        [Route("Home/PreviewScryer")] // TODO: delete dis
         public async Task<ActionResult> PreviewScryer(PreviewModelGet model)
         {
             using (var ctx = new DataContext())
@@ -128,7 +130,8 @@ namespace FRSkinTester.Controllers
                     Description = skin.Description,
                     SkinId = model.SkinId,
                     PreviewUrl = await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null),
-                    Coverage = skin.Coverage
+                    Coverage = skin.Coverage,
+                    Creator = skin.Creator
                 });
             }
         }
@@ -235,7 +238,6 @@ namespace FRSkinTester.Controllers
                         }
                     }
 
-
                     var skin = new Skin
                     {
                         GeneratedId = randomizedId,
@@ -247,6 +249,13 @@ namespace FRSkinTester.Controllers
                         Coverage = GetCoveragePercentage(skinImage, dragonImage)
                     };
                     skinImage.Dispose();
+
+                    if (Request.IsAuthenticated)
+                    {
+                        var userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
+                        skin.Creator = ctx.Users.FirstOrDefault(x => x.Id == userId);
+                    }
+
                     ctx.Skins.Add(skin);
                     await ctx.SaveChangesAsync();
                     return View("UploadResult", new UploadModelPostViewModel
@@ -263,8 +272,9 @@ namespace FRSkinTester.Controllers
             }
         }
 
-        [Route("Manage/{skinId}/{secretKey}", Name = "Manage")]
-        [Route("Home/Manage")]
+        [Route("Manage/Skin/{skinId}/{secretKey}", Name = "Manage")]
+        [Route("Manage/{skinId}/{secretKey}")] // TODO: delete dis
+        [Route("Home/Manage")] // TODO: delete dis
         public async Task<ActionResult> Manage(ManageModelGet model)
         {
             using (var ctx = new DataContext())
@@ -273,10 +283,24 @@ namespace FRSkinTester.Controllers
                 if (skin == null)
                 {
                     TempData["Error"] = "Skin not found or secret invalid";
-                    return RedirectToAction("Index");
+                    return RedirectToRoute("Home");
                 }
                 else
                 {
+                    if (skin.Creator != null)
+                    {
+                        if (!Request.IsAuthenticated)
+                        {
+                            TempData["Error"] = "This skin is linked to an acocunt, please log in to manage this skin.";
+                            return RedirectToRoute("Home");
+                        }
+                        else if (skin.Creator.Id != HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>())
+                        {
+                            TempData["Error"] = "This skin is linked to a different account than the one that is logged in, you can only manage your own skins.";
+                            return RedirectToRoute("Home");
+                        }
+                    }
+
                     if (skin.Coverage == null)
                         await UpdateCoverage(skin, ctx);
                     return View(new ManageModelViewModel
@@ -288,7 +312,7 @@ namespace FRSkinTester.Controllers
             }
         }
 
-        [Route("Manage", Name = "ManagePost")]
+        [Route("Manage/Skin", Name = "ManagePost")]
         [HttpPost]
         public async Task<ActionResult> Manage(ManageModelPost model)
         {
@@ -298,10 +322,24 @@ namespace FRSkinTester.Controllers
                 if (skin == null)
                 {
                     TempData["Error"] = "Skin not found or secret invalid";
-                    return RedirectToAction("Index");
+                    return RedirectToRoute("Home");
                 }
                 else
                 {
+                    if (skin.Creator != null)
+                    {
+                        if (!Request.IsAuthenticated)
+                        {
+                            TempData["Error"] = "This skin is linked to an acocunt, please log in to manage this skin.";
+                            return RedirectToRoute("Home");
+                        }
+                        else if (skin.Creator.Id != HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>())
+                        {
+                            TempData["Error"] = "This skin is linked to a different account than the one that is logged in, you can only manage your own or unclaimed skins.";
+                            return RedirectToRoute("Home");
+                        }
+                    }
+
                     if (skin.GenderType != (int)model.Gender || skin.DragonType != (int)model.DragonType)
                     {
                         var azureImageService = new AzureImageService();
@@ -322,7 +360,7 @@ namespace FRSkinTester.Controllers
         }
 
         [Route("Delete", Name = "Delete")]
-        [Route("Home/Delete")]
+        [Route("Home/Delete")] // TODO: delete dis
         public async Task<ActionResult> Delete(DeleteSkinPost model)
         {
             using (var ctx = new DataContext())

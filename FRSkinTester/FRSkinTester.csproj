@@ -247,6 +247,10 @@
     <Compile Include="Migrations\201903030022031_Add FR info to User.Designer.cs">
       <DependentUpon>201903030022031_Add FR info to User.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903040425574_Add User to Skin and Preview.cs" />
+    <Compile Include="Migrations\201903040425574_Add User to Skin and Preview.Designer.cs">
+      <DependentUpon>201903040425574_Add User to Skin and Preview.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\Enums.cs" />
@@ -657,18 +661,20 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Home\Upload.cshtml" />
-    <Content Include="Views\Home\UploadResult.cshtml" />
-    <Content Include="Views\Home\Delete.cshtml" />
-    <Content Include="Views\Home\Manage.cshtml" />
-    <Content Include="Views\Home\_ManageEditSkin.cshtml" />
-    <Content Include="Views\Preview\Preview.cshtml" />
-    <Content Include="Views\Preview\PreviewResult.cshtml" />
-    <Content Include="Views\Preview\PreviewScryer.cshtml" />
+    <Content Include="Views\Skin\Upload.cshtml" />
+    <Content Include="Views\Skin\UploadResult.cshtml" />
+    <Content Include="Views\Skin\Delete.cshtml" />
+    <Content Include="Views\Skin\Manage.cshtml" />
+    <Content Include="Views\Skin\_ManageEditSkin.cshtml" />
+    <Content Include="Views\Skin\Preview.cshtml" />
+    <Content Include="Views\Skin\PreviewResult.cshtml" />
+    <Content Include="Views\Skin\PreviewScryer.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Manage\Index.cshtml" />
     <Content Include="Views\Manage\Verify.cshtml" />
     <Content Include="Views\Manage\_verifyForm.cshtml" />
+    <Content Include="Views\Manage\LinkExistingSkin.cshtml" />
+    <Content Include="Views\Manage\ManageUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -704,6 +710,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903030022031_Add FR info to User.resx">
       <DependentUpon>201903030022031_Add FR info to User.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903040425574_Add User to Skin and Preview.resx">
+      <DependentUpon>201903040425574_Add User to Skin and Preview.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

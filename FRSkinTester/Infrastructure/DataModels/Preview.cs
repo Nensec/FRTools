@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace FRSkinTester.Infrastructure.DataModels
+﻿namespace FRSkinTester.Infrastructure.DataModels
 {
     public class Preview
     {
@@ -13,5 +8,7 @@ namespace FRSkinTester.Infrastructure.DataModels
         public string ScryerUrl { get; set; }
         public string PreviewImage { get; set; }
         public string DragonData { get; set; }
+
+        public User Requestor { get; set; }
     }
 }

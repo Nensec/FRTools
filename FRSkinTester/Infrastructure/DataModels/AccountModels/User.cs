@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
+using System.Collections.Generic;
 
 namespace FRSkinTester.Infrastructure.DataModels
 {
@@ -6,5 +7,7 @@ namespace FRSkinTester.Infrastructure.DataModels
     {
         public int? FRId { get; set; }
         public string FRName { get; set; }
+
+        public virtual ICollection<Skin> Skins { get; set; } = new HashSet<Skin>();
     }
 }

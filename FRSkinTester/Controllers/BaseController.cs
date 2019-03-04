@@ -1,5 +1,4 @@
-﻿using AthenaV3.Business.Services.Image;
-using FRSkinTester.Infrastructure;
+﻿using FRSkinTester.Infrastructure;
 using FRSkinTester.Infrastructure.DataModels;
 using FRSkinTester.Models;
 using System;

@@ -1,4 +1,4 @@
-﻿@model FRSkinTester.Models.ExternalLoginListViewModel
+﻿@model FRSkinTester.Models.AccountViewModel
 
 @{
     ViewBag.Title = "Account management";
@@ -12,5 +12,35 @@
     </div>
     <div class="panel-body">
 
+    </div>
+</div>
+
+<div class="panel panel-success">
+    <div class="panel-heading">
+        These are your skins
+    </div>
+    <div class="panel-body">
+        <p>
+            The bigger the image, the more popular it is!<br />
+            Click on an image to go to its manage page.
+        </p>
+        @if (Model.Skins.Any())
+        {
+            <div class="grid">
+                <div class="grid-sizer"></div>
+                @foreach (var skin in Model.Skins)
+                {
+                    <div class="col-sm-2">
+                        <a href="@Url.RouteUrl("Manage", new { SkinId = skin.GeneratedId, SecretKey = skin.SecretKey })">
+                            <img style="max-width:100%; max-height:100%" src="@($"https://frskintester.blob.core.windows.net/previews/{skin.GeneratedId}/preview.png")" />
+                        </a>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p>You do not have any skins linked to your account</p>
+        }
     </div>
 </div>

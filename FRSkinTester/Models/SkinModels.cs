@@ -37,6 +37,7 @@ namespace FRSkinTester.Models
         public string SkinId { get; set; }
         public string PreviewUrl { get; set; }
         public double? Coverage { get; set; }
+        public User Creator { get; set; }
     }
 
     public class PreviewModelPost : PreviewModelBase
