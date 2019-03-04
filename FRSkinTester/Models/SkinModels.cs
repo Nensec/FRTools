@@ -23,6 +23,7 @@ namespace FRSkinTester.Models
     {
         public string SkinId { get; set; }
         public string SecretKey { get; set; }
+        public string PreviewUrl { get; set; }
     }
 
     public class PreviewModelGet

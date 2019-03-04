@@ -4,7 +4,9 @@ using FRSkinTester.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
+using System.Configuration;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Runtime.Caching;
@@ -21,7 +23,10 @@ namespace FRSkinTester.Controllers
         [Route("Manage", Name = "ManageAccount")]
         public ActionResult Index()
         {
-            var model = new AccountViewModel();
+            var model = new AccountViewModel
+            {
+                CDNBasePath = ConfigurationManager.AppSettings["CDNBasePath"]
+            };
             var userid = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
             using (var ctx = new DataContext())
             {
@@ -36,7 +41,6 @@ namespace FRSkinTester.Controllers
 
         // Opting to just store the guids in memory rather than save them in the database
         static MemoryCache _verifyCache = new MemoryCache("verifyCache");
-
 
         [Route("Manage/Account", Name = "ManageUser")]
         public ActionResult ManageUser()
@@ -73,9 +77,16 @@ namespace FRSkinTester.Controllers
                 TempData["Success"] = "Changes have been saved!";
                 return RedirectToRoute("ManageAccount");
             }
-            catch
+            catch(Exception ex)
             {
-                TempData["Error"] = "Something went wrong with your request";
+                var actualException = ex;
+                while (actualException.InnerException != null)
+                    actualException = actualException.InnerException;
+
+                if (actualException is SqlException sqlEx && sqlEx.Number == 2601)
+                    TempData["Error"] = "That username is already taken, please pick a different one";
+                else
+                    TempData["Error"] = "Something went wrong with your request";
                 return View();
             }
         }

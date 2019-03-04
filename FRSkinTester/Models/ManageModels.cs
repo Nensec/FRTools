@@ -9,6 +9,7 @@ namespace FRSkinTester.Models
     {
         public User User { get; set; }
         public List<Skin> Skins { get; set; }
+        public string CDNBasePath { get; set; }
     }
 
     public class VerifyFRViewModel

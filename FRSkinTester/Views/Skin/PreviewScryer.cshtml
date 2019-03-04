@@ -19,6 +19,30 @@
 
                 <div class="col-md-6">
                     <div class="form-group">
+                        <label class="text-right col-md-4">Creator</label>
+                        <div class="col-md-8">
+                            @if (Model.Creator != null)
+                            {
+                                if (Model.Creator.FRId != null)
+                                {
+                                    <a href="@($"http://www1.flightrising.com/clan-profile/{Model.Creator.FRId}")" title="Visit the creator's Flight Rising profile!">@Model.Creator.FRName</a>
+                                    <span class="glyphicon glyphicon-ok text-success" data-toggle="tooltip" title="This user account is verified on Flight Rising"></span>
+                                }
+                                else
+                                {
+                                    <p>
+                                        @Model.Creator.UserName
+                                        <span class="glyphicon glyphicon-info-sign text-info" data-toggle="tooltip" title="This user account has not been verified on Flight Rising"></span>
+                                    </p>
+                                }
+                            }
+                            else
+                            {
+                                <p><i>Anonymous</i></p>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group">
                         @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-4" })
                         <div class="col-md-8">
                             <textarea class="form-control" rows="3" readonly>@(Model.Description)</textarea>

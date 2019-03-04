@@ -32,7 +32,7 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Upload skin", "Upload", "Home")</li>
+                    <li>@Html.RouteLink("Upload skin", "Upload")</li>
                 </ul>
                 @if (Request.IsAuthenticated)
                 {

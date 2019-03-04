@@ -10,7 +10,7 @@
     </div>
     <div class="panel-body" style="min-height:370px">
 
-        @using (Html.BeginForm("Upload", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        @using (Html.BeginRouteForm("UploadPost", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
             @Html.AntiForgeryToken()
 

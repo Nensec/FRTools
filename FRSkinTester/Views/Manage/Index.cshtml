@@ -4,35 +4,81 @@
     ViewBag.Title = "Account management";
 }
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h2>
-            Account management
-        </h2>
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2>
+                    Account management
+                </h2>
+            </div>
+            <div class="panel-body">
+                <p>
+                    This is your account management page. Currently it houses all the skins linked to your account and the ability to adjust your info.
+                </p>
+                <p>
+                    You can change your account details here: @Html.RouteLink("Manage Account", "ManageUser", null, new { @class = "btn btn-primary" })
+                </p>
+            </div>
+        </div>
     </div>
-    <div class="panel-body">
+    <div class="col-md-6">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                Flight Rising account link
+            </div>
+            <div class="panel-body">
+                <p>
+                    Linking this account to a Flight Rising account allows for verification and linking to your Flight Rising profile.
+                    This can help to ensure to users that skins uploaded using your account are actually made by you.
+                    The verification process is one-way, meaning it will allow this site to <b>read</b> from Flight Rising only.
+                </p>
+                @if (Model.User.FRId == null)
+                {
+                    <p>
+                        Your account is currently not linked to any Flight Rising account.
+                    </p>
+                    <p>
+                        You can do so here: @Html.RouteLink("Link Flight Rising", "VerifyFR", null, new { @class = "btn btn-primary" })
+                    </p>
+                }
+                else
+                {
+                    <p>
+                        Your account is currently linked to Flight Rising account <b>@(Model.User.FRName) (@(Model.User.FRId)).</b>
+                    </p>
+                }
 
+            </div>
+        </div>
     </div>
 </div>
-
 <div class="panel panel-success">
     <div class="panel-heading">
         These are your skins
     </div>
     <div class="panel-body">
         <p>
-            The bigger the image, the more popular it is!<br />
             Click on an image to go to its manage page.
         </p>
         @if (Model.Skins.Any())
         {
-            <div class="grid">
-                <div class="grid-sizer"></div>
-                @foreach (var skin in Model.Skins)
+            <div class="well clearfix">
+                @foreach (var skin in Model.Skins.Select((x, i) => (x, i)))
                 {
                     <div class="col-sm-2">
-                        <a href="@Url.RouteUrl("Manage", new { SkinId = skin.GeneratedId, SecretKey = skin.SecretKey })">
-                            <img style="max-width:100%; max-height:100%" src="@($"https://frskintester.blob.core.windows.net/previews/{skin.GeneratedId}/preview.png")" />
+                        <a href="@Url.RouteUrl("Manage", new { SkinId = skin.Item1.GeneratedId, SecretKey = skin.Item1.SecretKey })">
+                            <img id="Skin@(skin.Item2)" data-toggle="popover" style="max-width:100%; max-height:100%" src="@($"{Model.CDNBasePath}/previews/{skin.Item1.GeneratedId}/preview.png")" />
+                            <div id="Skin@(skin.Item2)_popover" class="hide">
+                                <ul style="list-style:none; padding:0">
+                                    <li><b>Id:</b> @(skin.Item1.GeneratedId)</li>
+                                    <li><b>Title:</b> @(skin.Item1.Title ?? "<i>No title</i>")</li>
+                                    <li><b>Description:</b> @(skin.Item1.Description ?? "<i>No description</i>")</li>
+                                    <li><b>Coverage:</b> @(skin.Item1.Coverage)% (@(skin.Item1.Coverage < 31 ? "Accent" : "Skin"))</li>
+                                    <li><b>Skin info:</b> @((FRSkinTester.Models.Gender)skin.Item1.GenderType) @((FRSkinTester.Models.DragonType)skin.Item1.DragonType)</li>
+                                    <li><b>Preview stats:</b> @($"{skin.Item1.Previews.Count} Total ({skin.Item1.Previews.Count(x => x.DragonId != null)} real, {skin.Item1.Previews.Count(x => x.DragonId == null)} scries)")</li>
+                                </ul>
+                            </div>
                         </a>
                     </div>
                 }
@@ -44,3 +90,27 @@
         }
     </div>
 </div>
+
+@section scripts{
+    <script>
+        $("[data-toggle=popover]").each(function (i, obj) {
+
+            $(this).popover({
+                html: true,
+                content: function () {
+                    var id = $(this).attr('id');
+                    return $(`#${id}_popover`).html();
+                },
+                trigger: 'hover focus'
+            });
+
+        });
+    </script>
+}
+
+<style>
+    .popover {
+        width: 300px;
+        max-width: 300px;
+    }
+</style>

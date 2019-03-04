@@ -261,7 +261,8 @@ namespace FRSkinTester.Controllers
                     return View("UploadResult", new UploadModelPostViewModel
                     {
                         SkinId = randomizedId,
-                        SecretKey = secretKey
+                        SecretKey = secretKey,
+                        PreviewUrl = await GenerateOrFetchPreview(randomizedId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null),
                     });
                 }
                 catch
