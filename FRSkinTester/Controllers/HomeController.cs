@@ -18,6 +18,7 @@ namespace FRSkinTester.Controllers
 {
     public class HomeController : BaseController
     {
+        [Route(Name = "Home")]
         public ActionResult Index()
         {
             return View();
