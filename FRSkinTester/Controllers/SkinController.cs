@@ -32,15 +32,23 @@ namespace FRSkinTester.Controllers
                 }
                 if (skin.Coverage == null)
                     await UpdateCoverage(skin, ctx);
-                return View(new PreviewModelPost
+                try
                 {
-                    Title = skin.Title,
-                    Description = skin.Description,
-                    SkinId = model.SkinId,
-                    PreviewUrl = await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null),
-                    Coverage = skin.Coverage,
-                    Creator = skin.Creator
-                });
+                    return View(new PreviewModelPost
+                    {
+                        Title = skin.Title,
+                        Description = skin.Description,
+                        SkinId = model.SkinId,
+                        PreviewUrl = await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null),
+                        Coverage = skin.Coverage,
+                        Creator = skin.Creator
+                    });
+                }
+                catch (FileNotFoundException)
+                {
+                    TempData["Error"] = "Skin not found";
+                    return RedirectToRoute("Home");
+                }
             }
         }
 
@@ -124,15 +132,23 @@ namespace FRSkinTester.Controllers
                 if (skin.Coverage == null)
                     await UpdateCoverage(skin, ctx);
 
-                return View(new PreviewScryerModelPost
+                try
                 {
-                    Title = skin.Title,
-                    Description = skin.Description,
-                    SkinId = model.SkinId,
-                    PreviewUrl = await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null),
-                    Coverage = skin.Coverage,
-                    Creator = skin.Creator
-                });
+                    return View(new PreviewScryerModelPost
+                    {
+                        Title = skin.Title,
+                        Description = skin.Description,
+                        SkinId = model.SkinId,
+                        PreviewUrl = await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null),
+                        Coverage = skin.Coverage,
+                        Creator = skin.Creator
+                    });
+                }
+                catch (FileNotFoundException)
+                {
+                    TempData["Error"] = "Skin not found";
+                    return RedirectToRoute("Home");
+                }
             }
         }
 
