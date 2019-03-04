@@ -260,5 +260,6 @@ paket-files/
 __pycache__/
 *.pyc
 *.pubxml
-/FRSkinTester/debug.config
-/FRSkinTester/Web.Release.config
+debug.config
+Web.Release.config
+Web.Debug.config

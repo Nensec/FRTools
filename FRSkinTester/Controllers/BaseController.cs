@@ -1,5 +1,4 @@
-﻿using AthenaV3.Business.Services.Image;
-using FRSkinTester.Infrastructure;
+﻿using FRSkinTester.Infrastructure;
 using FRSkinTester.Infrastructure.DataModels;
 using FRSkinTester.Models;
 using System;
@@ -201,6 +200,7 @@ namespace FRSkinTester.Controllers
         }
 
         private Random _random = new Random(Guid.NewGuid().GetHashCode());
+
         protected string GenerateId(int length = 7, IEnumerable<string> mustNotMatch = null)
         {
             string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -212,6 +212,15 @@ namespace FRSkinTester.Controllers
                 return GenerateId(length, mustNotMatch);
             }
             return id;
+        }
+
+        protected ActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            return RedirectToAction("Index", "Home");
         }
     }
 }

@@ -1,0 +1,44 @@
+﻿@model FRSkinTester.Models.ExternalLoginListViewModel
+@using Microsoft.Owin.Security
+
+@section head{
+    <link href="~/Content/social_icons.css" rel="stylesheet">
+}
+
+@{
+    ViewBag.Title = "Login";
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2>
+            Login
+        </h2>
+    </div>
+    <div class="panel-body">
+        <p>
+            You can create an account to help manage your skins if you are an artist trying to sell your skins and/or manage the previews you made.<br />
+            Logging in (and therefor registering) is <i>not required</i> to use this tool<br />
+            <br />
+            Currently the site supports the following providers to sign you in:
+        </p>
+
+        @{
+            var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+
+            using (Html.BeginForm("ExternalLogin", "Account"))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.ReturnUrl)
+                <div id="providerList">
+                    @foreach (AuthenticationDescription p in loginProviders)
+                    {
+                        <div class="col-md-4" style="margin-bottom:10px">
+                            <button type="submit" class="btn btn-block btn-lg btn-social btn-@(p.AuthenticationType.ToLower())" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><span class="icon-@(p.AuthenticationType.ToLower())"></span>@p.AuthenticationType</button>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>

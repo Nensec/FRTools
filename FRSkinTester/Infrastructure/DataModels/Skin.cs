@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
 namespace FRSkinTester.Infrastructure.DataModels
 {
@@ -15,6 +12,8 @@ namespace FRSkinTester.Infrastructure.DataModels
         public string GeneratedId { get; set; }
         public string SecretKey { get; set; }
         public double? Coverage { get; set; }
+
+        public virtual User Creator { get; set; }
 
         public virtual List<Preview> Previews { get; set; } = new List<Preview>();
     }

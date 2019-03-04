@@ -51,16 +51,59 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.2\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.2\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Owin, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.2\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Azure.KeyVault.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Azure.KeyVault.Core.1.0.0\lib\net40\Microsoft.Azure.KeyVault.Core.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Owin, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.4.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.4.0.1\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.4.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.3.0.1\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.MicrosoftAccount, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.MicrosoftAccount.4.0.1\lib\net45\Microsoft.Owin.Security.MicrosoftAccount.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OAuth, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.3.0.1\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Twitter, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.Twitter.4.0.1\lib\net45\Microsoft.Owin.Security.Twitter.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.WindowsAzure.Storage, Version=9.3.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\WindowsAzure.Storage.9.3.3\lib\net45\Microsoft.WindowsAzure.Storage.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin.Security.Providers.DeviantArt, Version=2.0.0.0, Culture=neutral, PublicKeyToken=1328b8c16b108c43, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Security.Providers.DeviantArt.2.26.0\lib\net45\Owin.Security.Providers.DeviantArt.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin.Security.Providers.Google, Version=2.0.0.0, Culture=neutral, PublicKeyToken=1328b8c16b108c43, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Security.Providers.Google.2.26.0\lib\net45\Owin.Security.Providers.Google.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin.Security.Providers.Tumblr, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.Security.Providers.Tumblr.1.0.1\lib\net45\Owin.Security.Providers.Tumblr.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -159,9 +202,13 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\Startup.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Infrastructure\ChallengeResult.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\PreviewController.cs" />
+    <Compile Include="Controllers\SkinController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -170,6 +217,12 @@
     <Compile Include="Infrastructure\DataModels\DragonCache.cs" />
     <Compile Include="Infrastructure\DataModels\Skin.cs" />
     <Compile Include="Infrastructure\DataModels\Preview.cs" />
+    <Compile Include="Infrastructure\DataModels\AccountModels\User.cs" />
+    <Compile Include="Infrastructure\Managers\UserManager.cs" />
+    <Compile Include="Infrastructure\DataModels\AccountModels\Role.cs" />
+    <Compile Include="Infrastructure\DataModels\AccountModels\UserClaim.cs" />
+    <Compile Include="Infrastructure\DataModels\AccountModels\UserLogin.cs" />
+    <Compile Include="Infrastructure\DataModels\AccountModels\UserRole.cs" />
     <Compile Include="Migrations\201812041640175_Skins table.cs" />
     <Compile Include="Migrations\201812041640175_Skins table.Designer.cs">
       <DependentUpon>201812041640175_Skins table.cs</DependentUpon>
@@ -186,8 +239,23 @@
     <Compile Include="Migrations\201902171740244_Added caching for dragons.Designer.cs">
       <DependentUpon>201902171740244_Added caching for dragons.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201902270326131_User login tables.cs" />
+    <Compile Include="Migrations\201902270326131_User login tables.Designer.cs">
+      <DependentUpon>201902270326131_User login tables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903030022031_Add FR info to User.cs" />
+    <Compile Include="Migrations\201903030022031_Add FR info to User.Designer.cs">
+      <DependentUpon>201903030022031_Add FR info to User.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903040425574_Add User to Skin and Preview.cs" />
+    <Compile Include="Migrations\201903040425574_Add User to Skin and Preview.Designer.cs">
+      <DependentUpon>201903040425574_Add User to Skin and Preview.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\Models.cs" />
+    <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\Enums.cs" />
+    <Compile Include="Models\ManageModels.cs" />
+    <Compile Include="Models\SkinModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -200,8 +268,10 @@
     <Content Include="Content\logo.svg" />
     <Content Include="favicon-16x16.png" />
     <Content Include="favicon-32x32.png" />
+    <Content Include="Content\social_icons.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\social_icons.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Masks\10_0_0_0.png" />
@@ -573,6 +643,11 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="debug.config" />
+    <Content Include="fonts\social_icons.eot" />
+    <Content Include="fonts\social_icons.ttf" />
+    <Content Include="fonts\social_icons.woff" />
+    <Content Include="fonts\social_icons.woff2" />
     <None Include="Properties\PublishProfiles\frskintester - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
@@ -594,14 +669,20 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Home\Upload.cshtml" />
-    <Content Include="Views\Home\UploadResult.cshtml" />
-    <Content Include="Views\Home\Delete.cshtml" />
-    <Content Include="Views\Home\Manage.cshtml" />
-    <Content Include="Views\Home\_ManageEditSkin.cshtml" />
-    <Content Include="Views\Preview\Preview.cshtml" />
-    <Content Include="Views\Preview\PreviewResult.cshtml" />
-    <Content Include="Views\Preview\PreviewScryer.cshtml" />
+    <Content Include="Views\Skin\Upload.cshtml" />
+    <Content Include="Views\Skin\UploadResult.cshtml" />
+    <Content Include="Views\Skin\Delete.cshtml" />
+    <Content Include="Views\Skin\Manage.cshtml" />
+    <Content Include="Views\Skin\_ManageEditSkin.cshtml" />
+    <Content Include="Views\Skin\Preview.cshtml" />
+    <Content Include="Views\Skin\PreviewResult.cshtml" />
+    <Content Include="Views\Skin\PreviewScryer.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Manage\Index.cshtml" />
+    <Content Include="Views\Manage\Verify.cshtml" />
+    <Content Include="Views\Manage\_verifyForm.cshtml" />
+    <Content Include="Views\Manage\LinkExistingSkin.cshtml" />
+    <Content Include="Views\Manage\ManageUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -631,6 +712,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201902171740244_Added caching for dragons.resx">
       <DependentUpon>201902171740244_Added caching for dragons.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902270326131_User login tables.resx">
+      <DependentUpon>201902270326131_User login tables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903030022031_Add FR info to User.resx">
+      <DependentUpon>201903030022031_Add FR info to User.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903040425574_Add User to Skin and Preview.resx">
+      <DependentUpon>201903040425574_Add User to Skin and Preview.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

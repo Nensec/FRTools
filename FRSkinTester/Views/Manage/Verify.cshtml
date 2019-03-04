@@ -1,0 +1,21 @@
+﻿@model FRSkinTester.Models.VerifyFRViewModel
+
+@{
+    ViewBag.Title = "Verify Flight Rising account";
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2>
+            Verify account
+        </h2>
+    </div>
+    <div class="panel-body">
+        <p>
+            Please log in to Flight Rising and go to your profile page.<br />
+            Next edit your Clan Information and add the following token to it (don't worry, you can remove it once you are verified): <b>@(Model.Guid.ToString())</b> (this token is only valid for a short period!)<br />
+            Make sure you saved your edited Clan Information.
+        </p>
+        @Html.Partial("_verifyForm", new FRSkinTester.Models.VerifyFRPostViewModel())
+    </div>
+</div>
