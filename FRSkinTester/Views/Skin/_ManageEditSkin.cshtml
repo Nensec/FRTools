@@ -1,8 +1,11 @@
 ﻿@model FRSkinTester.Models.ManageModelPost
 
-@using (Html.BeginForm())
+@using (Html.BeginRouteForm("ManagePost"))
 {
     @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(model => model.SkinId)
+    @Html.HiddenFor(model => model.SecretKey)
 
     <div class="form-horizontal">
         <div class="form-group">
