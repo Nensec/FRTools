@@ -49,23 +49,23 @@
                 Your share link
             </div>
             <div class="panel-body">
-                <div class="col-md-8">
+                <div class="col-md-10">
                     <div class="form-group">
-                        <div class="input-group">
-                            <input id="PreviewLink" type="text" class="form-control" value="@Url.RouteUrl("Preview", new { SkinId = Model.Skin.GeneratedId }, "http")">
-                            <span class="input-group-btn">
-                                <button class="btn btn-success" type="button" onclick="document.getElementById('PreviewLink').select(); document.execCommand('copy'); this.innerHTML = 'Copied!'">Copy!</button>
-                            </span>
+                        <label class="col-md-4 control-label" for="PreviewLink">
+                            Existing dragon preview
+                        </label>
+                        <div class="col-md-8">
+                            @Html.CopyTextBox(Url.RouteUrl("Preview", new { SkinId = Model.Skin.GeneratedId }, "https"), "PreviewLink")
                         </div>
                     </div>
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-10">
                     <div class="form-group">
-                        <div class="input-group">
-                            <input id="PreviewScryLink" type="text" class="form-control" value="@Url.RouteUrl("PreviewScryer", new { SkinId = Model.Skin.GeneratedId }, "http")">
-                            <span class="input-group-btn">
-                                <button class="btn btn-success" type="button" onclick="document.getElementById('PreviewScryLink').select(); document.execCommand('copy'); this.innerHTML = 'Copied!'">Copy!</button>
-                            </span>
+                        <label class="col-md-4 control-label" for="PreviewScryLink">
+                            Scry dragon preview
+                        </label>
+                        <div class="col-md-8">
+                            @Html.CopyTextBox(Url.RouteUrl("PreviewScryer", new { SkinId = Model.Skin.GeneratedId }, "https"), "PreviewScryLink")
                         </div>
                     </div>
                 </div>

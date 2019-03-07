@@ -218,6 +218,7 @@
     <Compile Include="Infrastructure\DataModels\Skin.cs" />
     <Compile Include="Infrastructure\DataModels\Preview.cs" />
     <Compile Include="Infrastructure\DataModels\AccountModels\User.cs" />
+    <Compile Include="Infrastructure\Helpers\CopyTextBoxHelper.cs" />
     <Compile Include="Infrastructure\Managers\UserManager.cs" />
     <Compile Include="Infrastructure\DataModels\AccountModels\Role.cs" />
     <Compile Include="Infrastructure\DataModels\AccountModels\UserClaim.cs" />

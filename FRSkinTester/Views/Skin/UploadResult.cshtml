@@ -27,11 +27,8 @@
                             <label class="col-md-4 control-label" for="PreviewLink">
                                 Existing dragon preview
                             </label>
-                            <div class="input-group col-md-8">
-                                <input id="PreviewLink" type="text" class="form-control" value="@Url.RouteUrl("Preview", new { SkinId = Model.SkinId }, "http")">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-success" type="button" onclick="document.getElementById('PreviewLink').select(); document.execCommand('copy'); this.innerHTML = 'Copied!'">Copy!</button>
-                                </span>
+                            <div class="col-md-8">
+                                @Html.CopyTextBox(Url.RouteUrl("Preview", new { SkinId = Model.SkinId }, "https"), "PreviewLink")
                             </div>
                         </div>
                     </div>
@@ -40,11 +37,8 @@
                             <label class="col-md-4 control-label" for="PreviewScryLink">
                                 Scry dragon preview
                             </label>
-                            <div class="input-group col-md-8">
-                                <input id="PreviewScryLink" type="text" class="form-control" value="@Url.RouteUrl("PreviewScryer", new { SkinId = Model.SkinId }, "http")">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-success" type="button" onclick="document.getElementById('PreviewScryLink').select(); document.execCommand('copy'); this.innerHTML = 'Copied!'">Copy!</button>
-                                </span>
+                            <div class="col-md-8">
+                                @Html.CopyTextBox(Url.RouteUrl("PreviewScryer", new { SkinId = Model.SkinId }, "https"), "PreviewScryerLink")
                             </div>
                         </div>
                     </div>
@@ -63,12 +57,13 @@
                             <h3>You can use this link to manage your skin, keep this safe!</h3><br />
                         </div>
                         <div class="col-md-10">
-                            <label class="col-md-4 control-label" for="DeleteLink">Management page</label>
-                            <div class="input-group col-md-8">
-                                <input id="DeleteLink" type="text" class="form-control" value="@Url.RouteUrl("Manage", new { SkinId = Model.SkinId, SecretKey = Model.SecretKey }, "http")">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-warning" type="button" onclick="document.getElementById('DeleteLink').select(); document.execCommand('copy'); this.innerHTML = 'Copied!'">Copy!</button>
-                                </span>
+                            <div class="form-group">
+                                <label class="col-md-4 control-label" for="ManageLink">
+                                    Management page
+                                </label>
+                                <div class="col-md-8">
+                                    @Html.CopyTextBox(Url.RouteUrl("Manage", new { SkinId = Model.SkinId, SecretKey = Model.SecretKey }, "https"), "ManageLink")
+                                </div>
                             </div>
                         </div>
                     }
