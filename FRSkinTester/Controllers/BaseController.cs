@@ -63,6 +63,8 @@ namespace FRSkinTester.Controllers
                 dragon.WingColor = (Models.Color)int.Parse(regexParse.Groups[1].Value);
             if ((regexParse = Regex.Match(dragonUrl, @"tert=([\d]*)")).Success)
                 dragon.TertiaryColor = (Models.Color)int.Parse(regexParse.Groups[1].Value);
+            if ((regexParse = Regex.Match(dragonUrl, @"age=([\d]*)")).Success)
+                dragon.Age = (Age)int.Parse(regexParse.Groups[1].Value);
 
             using (var ctx = new DataContext())
             {

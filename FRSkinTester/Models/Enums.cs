@@ -324,4 +324,10 @@ namespace FRSkinTester.Models
         Eldritch,
         Shale
     }
+
+    public enum Age
+    {
+        Hatchling,
+        Adult
+    }
 }

@@ -251,6 +251,10 @@
     <Compile Include="Migrations\201903040425574_Add User to Skin and Preview.Designer.cs">
       <DependentUpon>201903040425574_Add User to Skin and Preview.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903070341474_Added Age to DragonCache.cs" />
+    <Compile Include="Migrations\201903070341474_Added Age to DragonCache.Designer.cs">
+      <DependentUpon>201903070341474_Added Age to DragonCache.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\Enums.cs" />
@@ -721,6 +725,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903040425574_Add User to Skin and Preview.resx">
       <DependentUpon>201903040425574_Add User to Skin and Preview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903070341474_Added Age to DragonCache.resx">
+      <DependentUpon>201903070341474_Added Age to DragonCache.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

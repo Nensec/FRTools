@@ -73,6 +73,11 @@ namespace FRSkinTester.Controllers
             }
 
             var dragon = ParseUrlForDragon(dwagonUrl);
+            if(dragon.Age == Age.Hatchling)
+            {
+                TempData["Error"] = $"Skins can only be previewed on adult dragons";
+                return RedirectToAction("Preview", new { model.SkinId });
+            }
 
             using (var ctx = new DataContext())
             {
@@ -160,6 +165,11 @@ namespace FRSkinTester.Controllers
                 return RedirectToAction("PreviewScryer", new { model.SkinId });
 
             var dragon = ParseUrlForDragon(model.ScryerUrl);
+            if (dragon.Age == Age.Hatchling)
+            {
+                TempData["Error"] = $"Skins can only be previewed on adult dragons";
+                return RedirectToAction("PreviewScryer", new { model.SkinId });
+            }
 
             using (var ctx = new DataContext())
             {
