@@ -26,6 +26,37 @@ namespace FRSkinTester.Infrastructure.DataModels
 
         public string GenerateAzureUrl() => $@"dragoncache\{SHA1Hash}.png";
 
+
+        public static DragonCache FromString(string data)
+        {
+            var split = data.Split('_');
+            var dragon = new DragonCache
+            {
+                Gender = (Gender)int.Parse(split[0]),
+                DragonType = (DragonType)int.Parse(split[1])
+            };
+
+            if (split.Length > 2)
+                dragon.Element = (Element)int.Parse(split[2]);
+            if (split.Length > 3)
+                dragon.EyeType = (EyeType)int.Parse(split[3]);
+            if (split.Length > 4)
+                dragon.BodyGene = (BodyGene)int.Parse(split[4]);
+            if (split.Length > 5)
+                dragon.WingGene = (WingGene)int.Parse(split[5]);
+            if (split.Length > 6)
+                dragon.TertiaryGene = (TertiaryGene)int.Parse(split[6]);
+            if (split.Length > 7)
+                dragon.BodyColor = (Color)int.Parse(split[7]);
+            if (split.Length > 8)
+                dragon.WingColor = (Color)int.Parse(split[8]);
+            if (split.Length > 9)
+                dragon.TertiaryColor = (Color)int.Parse(split[9]);
+            if (split.Length > 10)
+                dragon.Age = (Age)int.Parse(split[10]);
+            return dragon;
+        }
+
         public override string ToString() => $"{(int)Gender}_{(int)DragonType}_{(int)Element}_{(int)EyeType}_{(int)BodyGene}_{(int)WingGene}_{(int)TertiaryGene}_{(int)BodyColor}_{(int)WingColor}_{(int)TertiaryColor}_{(int)Age}";
     }
 }
