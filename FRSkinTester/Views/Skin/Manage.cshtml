@@ -51,10 +51,10 @@
             <div class="panel-body">
                 <div class="col-md-10">
                     <div class="form-group">
-                        <label class="col-md-4 control-label" for="PreviewLink">
+                        <label style="padding-top:7px" class="col-md-4 control-label" for="PreviewLink">
                             Existing dragon preview
                         </label>
-                        <div class="col-md-8">
+                        <div style="padding-top:7px" class="col-md-8">
                             @Html.CopyTextBox(Url.RouteUrl("Preview", new { SkinId = Model.Skin.GeneratedId }, "https"), "PreviewLink")
                         </div>
                     </div>
