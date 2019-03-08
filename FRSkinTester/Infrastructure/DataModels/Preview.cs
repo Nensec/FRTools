@@ -1,4 +1,6 @@
-﻿namespace FRSkinTester.Infrastructure.DataModels
+﻿using System;
+
+namespace FRSkinTester.Infrastructure.DataModels
 {
     public class Preview
     {
@@ -8,6 +10,7 @@
         public string ScryerUrl { get; set; }
         public string PreviewImage { get; set; }
         public string DragonData { get; set; }
+        public DateTime? PreviewTime { get; set; }
 
         public User Requestor { get; set; }
     }

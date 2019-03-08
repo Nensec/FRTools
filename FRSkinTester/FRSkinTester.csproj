@@ -256,6 +256,10 @@
     <Compile Include="Migrations\201903070341474_Added Age to DragonCache.Designer.cs">
       <DependentUpon>201903070341474_Added Age to DragonCache.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903081155126_Added PreviewTime to Preview.cs" />
+    <Compile Include="Migrations\201903081155126_Added PreviewTime to Preview.Designer.cs">
+      <DependentUpon>201903081155126_Added PreviewTime to Preview.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\Enums.cs" />
@@ -729,6 +733,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903070341474_Added Age to DragonCache.resx">
       <DependentUpon>201903070341474_Added Age to DragonCache.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903081155126_Added PreviewTime to Preview.resx">
+      <DependentUpon>201903081155126_Added PreviewTime to Preview.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

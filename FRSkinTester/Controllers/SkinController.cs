@@ -72,54 +72,7 @@ namespace FRSkinTester.Controllers
                 return RedirectToAction("Preview", new { model.SkinId });
             }
 
-            var dragon = ParseUrlForDragon(dwagonUrl);
-            if(dragon.Age == Age.Hatchling)
-            {
-                TempData["Error"] = $"Skins can only be previewed on adult dragons";
-                return RedirectToAction("Preview", new { model.SkinId });
-            }
-
-            using (var ctx = new DataContext())
-            {
-                var skin = ctx.Skins.FirstOrDefault(x => x.GeneratedId == model.SkinId);
-                if (skin == null)
-                {
-                    TempData["Error"] = "Skin not found";
-                    return RedirectToAction("Index");
-                }
-
-                if (skin.DragonType != (int)dragon.DragonType)
-                {
-                    TempData["Error"] = $"This skin is meant for a <b>{(DragonType)skin.DragonType} {(Gender)skin.GenderType}</b>, the dragon you provided is a <b>{dragon.DragonType} {dragon.Gender}</b>";
-                    return RedirectToAction("Preview", new { model.SkinId });
-                }
-
-                if (skin.GenderType != (int)dragon.Gender)
-                {
-                    TempData["Error"] = $"This skin is meant for a <b>{(Gender)skin.GenderType}</b>, the dragon you provided is a <b>{dragon.Gender}</b>";
-                    return RedirectToAction("Preview", new { model.SkinId });
-                }
-
-                var url = await GenerateOrFetchPreview(model.SkinId, model.DragonId.ToString(), dwagonUrl, dragon);
-                if (url == null)
-                    return RedirectToAction("Preview", new { model.SkinId });
-
-                skin.Previews.Add(new Preview
-                {
-                    DragonId = model.DragonId,
-                    PreviewImage = url,
-                    DragonData = dragon.ToString()
-                });
-
-                await ctx.SaveChangesAsync();
-
-                return View("PreviewResult", new PreviewModelPostViewModel
-                {
-                    SkinId = model.SkinId,
-                    ImageResultUrl = url,
-                    Dragon = dragon
-                });
-            }
+            return await GeneratePreview(model.SkinId, dwagonUrl, model.DragonId);
         }
 
         [Route("Preview/{skinId}/Scry", Name = "PreviewScryer")]
@@ -164,57 +117,62 @@ namespace FRSkinTester.Controllers
             if (!ModelState.IsValid)
                 return RedirectToAction("PreviewScryer", new { model.SkinId });
 
-            var dragon = ParseUrlForDragon(model.ScryerUrl);
+            return await GeneratePreview(model.SkinId, model.ScryerUrl);
+        }
+
+        private async Task<ActionResult> GeneratePreview(string skinId, string dragonUrl, int? dragonId = null)
+        {
+            var dragon = ParseUrlForDragon(dragonUrl);
             if (dragon.Age == Age.Hatchling)
             {
                 TempData["Error"] = $"Skins can only be previewed on adult dragons";
-                return RedirectToAction("PreviewScryer", new { model.SkinId });
+                return RedirectToAction(ControllerContext.RouteData.Values["action"].ToString(), new { skinId });
             }
 
             using (var ctx = new DataContext())
             {
-                var skin = ctx.Skins.FirstOrDefault(x => x.GeneratedId == model.SkinId);
+                var skin = ctx.Skins.FirstOrDefault(x => x.GeneratedId == skinId);
                 if (skin == null)
                 {
                     TempData["Error"] = "Skin not found";
-                    return RedirectToAction("Index");
+                    return RedirectToRoute("Home");
                 }
 
                 if (skin.DragonType != (int)dragon.DragonType)
                 {
                     TempData["Error"] = $"This skin is meant for a <b>{(DragonType)skin.DragonType} {(Gender)skin.GenderType}</b>, the dragon you provided is a <b>{dragon.DragonType} {dragon.Gender}</b>";
-                    return RedirectToAction("PreviewScryer", new { model.SkinId });
+                    return RedirectToAction(ControllerContext.RouteData.Values["action"].ToString(), new { skinId });
                 }
 
                 if (skin.GenderType != (int)dragon.Gender)
                 {
                     TempData["Error"] = $"This skin is meant for a <b>{(Gender)skin.GenderType}</b>, the dragon you provided is a <b>{dragon.Gender}</b>";
-                    return RedirectToAction("PreviewScryer", new { model.SkinId });
+                    return RedirectToAction(ControllerContext.RouteData.Values["action"].ToString(), new { skinId });
                 }
 
-
-                var url = await GenerateOrFetchPreview(model.SkinId, null, model.ScryerUrl, dragon);
+                var url = await GenerateOrFetchPreview(skinId, dragonId?.ToString(), dragonUrl, dragon);
                 if (url == null)
-                    return RedirectToAction("PreviewScryer", new { model.SkinId });
+                    return RedirectToAction(ControllerContext.RouteData.Values["action"].ToString(), new { skinId });
 
                 skin.Previews.Add(new Preview
                 {
-                    ScryerUrl = model.ScryerUrl,
+                    DragonId = dragonId,
+                    ScryerUrl = dragonId == null ? dragonUrl : null,
                     PreviewImage = url,
-                    DragonData = dragon.ToString()
+                    DragonData = dragon.ToString(),
+                    PreviewTime = DateTime.UtcNow
                 });
 
                 await ctx.SaveChangesAsync();
 
                 return View("PreviewResult", new PreviewModelPostViewModel
                 {
-                    SkinId = model.SkinId,
+                    SkinId = skinId,
                     ImageResultUrl = url,
                     Dragon = dragon
                 });
             }
         }
-
 
         [Route("Upload", Name = "Upload")]
         public ActionResult Upload() => View(new UploadModelPost());
