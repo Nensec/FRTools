@@ -78,7 +78,7 @@
                 success: function (blog) {
                     post = blog.response.posts[0];
                     if (post)
-                        $('#blogPost').html($(`<h4>${post.title} - ${post.date}</h4><p>${post.body_abstract ? post.body_abstract : post.caption}</p><a href="${post.post_url}">Read full post</a>`));
+                        $('#blogPost').html($(`<h4>${post.title} - ${post.date}</h4><p>${post.body_abstract ? post.body_abstract : post.caption ? post.caption : post.body}</p><a href="${post.post_url}">Read full post</a>`));
                     else
                         $('#blogPost').html('<p>No post yet!</p>');
                 }
