@@ -4,6 +4,10 @@
     ViewBag.Title = "Account management";
 }
 
+@section head {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js" type="text/javascript"></script>
+}
+
 <div class="row">
     <div class="col-md-6">
         <div class="panel panel-default">
@@ -63,9 +67,19 @@
         </p>
         @if (Model.Skins.Any())
         {
+            <script>
+                var previewData = {};
+            </script>
             <div class="well clearfix">
                 @foreach (var skin in Model.Skins.Select((x, i) => (x, i)))
                 {
+                    <script>
+                        @{ var previewData = skin.Item1.Previews.Where(x => x.PreviewTime != null).Select(x => x.PreviewTime).GroupBy(x => x.Value.Date).Select(x => (x.First().Value.ToString("dd/MM/yyyy"), x.Count())); }
+                        previewData.data_Skin@(skin.Item2) = {
+                            labels: [@Html.Raw(string.Join(", ", previewData.Select(x => $"'{x.Item1}'")))],
+                            data: [@string.Join(", ", previewData.Select(x => x.Item2))]
+                        };
+                    </script>
                     <div class="col-sm-2">
                         <a href="@Url.RouteUrl("Manage", new { SkinId = skin.Item1.GeneratedId, SecretKey = skin.Item1.SecretKey })">
                             <img id="Skin@(skin.Item2)" data-toggle="popover" style="max-width:100%; max-height:100%" src="@($"{Model.CDNBasePath}/previews/{skin.Item1.GeneratedId}/preview.png")" />
@@ -78,6 +92,7 @@
                                     <li><b>Skin info:</b> @((FRSkinTester.Models.Gender)skin.Item1.GenderType) @((FRSkinTester.Models.DragonType)skin.Item1.DragonType)</li>
                                     <li><b>Preview stats:</b> @($"{skin.Item1.Previews.Count} Total ({skin.Item1.Previews.Count(x => x.DragonId != null)} real, {skin.Item1.Previews.Count(x => x.DragonId == null)} scries)")</li>
                                 </ul>
+                                <canvas id="Chart_Skin@(skin.Item2)" style="width:100px; height:50px; @(skin.Item1.Previews.Count == 0 ? "display:none;" : "")" ></canvas>
                             </div>
                         </a>
                     </div>
@@ -94,16 +109,30 @@
 @section scripts{
     <script>
         $("[data-toggle=popover]").each(function (i, obj) {
-
             $(this).popover({
                 html: true,
                 content: function () {
                     var id = $(this).attr('id');
-                    return $(`#${id}_popover`).html();
+                    var popover = $(`#${id}_popover`);
+                    return popover.html();
                 },
                 trigger: 'hover focus'
             });
-
+            $(this).on('shown.bs.popover', function () {
+                var id = $(this).attr('id');
+                var chart = new Chart(document.getElementById(`Chart_${id}`).getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: previewData[`data_${id}`].labels,
+                        datasets: [{
+                            label: 'Previews',
+                            data: previewData[`data_${id}`].data,
+                            borderColor: '#bce8f1',
+                            backgroundColor: '#d9edf7'
+                        }]
+                    }
+                });
+            });
         });
     </script>
 }
