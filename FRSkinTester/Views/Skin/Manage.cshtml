@@ -136,27 +136,34 @@
                 Fancy graphs and stats
             </div>
             <div class="panel-body">
-                @{ var previewsPerDay = previews.Where(x => x.Item1.PreviewTime != null).GroupBy(x => x.Item1.PreviewTime.Value.Date).Select(x => (x.Key, x.Count())); }
-                <div>
-                    <p>
-                        @{ var scries = previews.Count(x => x.Item1.DragonId == null); }
-                        <b>Previews:</b> @(previews.Count) total <span class="small">(@(previews.Count(x => x.Item1.DragonId != null)) real, @(scries) @(scries == 1 ? "scry" : "scries"))</span><br />
-                        <b>Avg. Daily:</b> @(previewsPerDay.Average(x => x.Item2)) previews
-                    </p>
-                </div>
-                <canvas id="PreviewGraph" style="height:200px; width:100%;"></canvas>
-                <div style="margin-bottom:5px">
-                    <b>Color usage</b>
-                </div>
-                <canvas id="PrimaryColorGraph" style="height:140px; width:33%;float:left;"></canvas>
-                <canvas id="SecondaryColorGraph" style="height:140px; width:33%;float:left;"></canvas>
-                <canvas id="TertiaryColorGraph" style="height:140px; width:33%;float:left;"></canvas>
-                <div style="margin-bottom:5px">
-                    <b>Gene usage</b>
-                </div>                
-                <canvas id="PrimaryGeneGraph" style="height:140px; width:33%;float:left;"></canvas>
-                <canvas id="SecondaryGeneGraph" style="height:140px; width:33%;float:left;"></canvas>
-                <canvas id="TertiaryGeneGraph" style="height:140px; width:33%;float:left;"></canvas>
+                @if (previews.Any())
+                {
+                    var previewsPerDay = previews.Where(x => x.Item1.PreviewTime != null).GroupBy(x => x.Item1.PreviewTime.Value.Date).Select(x => (x.Key, x.Count()));
+                    <div>
+                        <p>
+                            @{ var scries = previews.Count(x => x.Item1.DragonId == null); }
+                            <b>Previews:</b> @(previews.Count) total <span class="small">(@(previews.Count(x => x.Item1.DragonId != null)) real, @(scries) @(scries == 1 ? "scry" : "scries"))</span><br />
+                            <b>Avg. Daily:</b> @(previewsPerDay.Any() ? previewsPerDay.Average(x => x.Item2) : 0) previews
+                        </p>
+                    </div>
+                    <canvas id="PreviewGraph" style="height:200px; width:100%;"></canvas>
+                    <div style="margin-bottom:5px">
+                        <b>Color usage</b>
+                    </div>
+                    <canvas id="PrimaryColorGraph" style="height:140px; width:33%;float:left;"></canvas>
+                    <canvas id="SecondaryColorGraph" style="height:140px; width:33%;float:left;"></canvas>
+                    <canvas id="TertiaryColorGraph" style="height:140px; width:33%;float:left;"></canvas>
+                    <div style="margin-bottom:5px">
+                        <b>Gene usage</b>
+                    </div>
+                    <canvas id="PrimaryGeneGraph" style="height:140px; width:33%;float:left;"></canvas>
+                    <canvas id="SecondaryGeneGraph" style="height:140px; width:33%;float:left;"></canvas>
+                    <canvas id="TertiaryGeneGraph" style="height:140px; width:33%;float:left;"></canvas>
+                }
+                else
+                {
+                    <p>Nobody has generated any previews yet : (</p>
+                }
             </div>
         </div>
     </div>
@@ -212,7 +219,7 @@
             options: {
                 plugins: { colorschemes: { scheme: 'brewer.Set3-12' } },
                 responsive: false,
-                legend: { display: false }  
+                legend: { display: false }
             }
         });
         new Chart(document.getElementById(`SecondaryColorGraph`).getContext('2d'), {
