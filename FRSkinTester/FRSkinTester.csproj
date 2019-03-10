@@ -659,6 +659,8 @@
     <Content Include="fonts\social_icons.woff2" />
     <None Include="Properties\PublishProfiles\frskintester - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\Chart.bundle.min.js" />
+    <Content Include="Scripts\chartjs-plugin-colorschemes.min.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />

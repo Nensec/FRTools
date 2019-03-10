@@ -25,6 +25,10 @@ namespace FRSkinTester
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+
+            bundles.Add(new ScriptBundle("~/bundles/chartjs").Include(
+                    "~/Scripts/Chart.bundle.min.js",
+                    "~/Scripts/chartjs-plugin-colorschemes.min.js"));
         }
     }
 }

@@ -2,6 +2,12 @@
 
 @{
     ViewBag.Title = "Manage";
+    var previews = Model.Skin.Previews.Select((x, i) => (x, i)).ToList();
+    var previewDragons = previews.Select(x => FRSkinTester.Infrastructure.DataModels.DragonCache.FromString(x.Item1.DragonData));
+}
+
+@section head {
+    @Scripts.Render("~/bundles/chartjs")
 }
 
 <div class="row">
@@ -18,12 +24,12 @@
                 </p>
                 <div>
                     @Html.Partial("_ManageEditSkin", new FRSkinTester.Models.ManageModelPost
-                    {
-                        Title = Model.Skin.Title,
-                        Description = Model.Skin.Description,
-                        DragonType = (FRSkinTester.Models.DragonType)Model.Skin.DragonType,
-                        Gender = (FRSkinTester.Models.Gender)Model.Skin.GenderType
-                    })
+               {
+                   Title = Model.Skin.Title,
+                   Description = Model.Skin.Description,
+                   DragonType = (FRSkinTester.Models.DragonType)Model.Skin.DragonType,
+                   Gender = (FRSkinTester.Models.Gender)Model.Skin.GenderType
+               })
                 </div>
             </div>
         </div>
@@ -43,26 +49,24 @@
         </div>
     </div>
 
-    <div class="col-md-12">
+    <div class="col-md-7">
         <div class="panel panel-warning">
             <div class="panel-heading">
                 Your share link
             </div>
             <div class="panel-body">
-                <div class="col-md-10">
+                <div class="form-horizontal">
                     <div class="form-group">
-                        <label style="padding-top:7px" class="col-md-4 control-label" for="PreviewLink">
-                            Existing dragon preview
+                        <label style="padding-top:7px; text-align:left" class="col-md-4 control-label" for="PreviewLink">
+                            Dragon preview
                         </label>
-                        <div style="padding-top:7px" class="col-md-8">
+                        <div class="col-md-8">
                             @Html.CopyTextBox(Url.RouteUrl("Preview", new { SkinId = Model.Skin.GeneratedId }, "https"), "PreviewLink")
                         </div>
                     </div>
-                </div>
-                <div class="col-md-10">
                     <div class="form-group">
-                        <label class="col-md-4 control-label" for="PreviewScryLink">
-                            Scry dragon preview
+                        <label style="padding-top:7px; text-align:left" class="col-md-4 control-label" for="PreviewScryLink">
+                            Scry preview
                         </label>
                         <div class="col-md-8">
                             @Html.CopyTextBox(Url.RouteUrl("PreviewScryer", new { SkinId = Model.Skin.GeneratedId }, "https"), "PreviewScryLink")
@@ -71,9 +75,6 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="col-md-12">
         <div class="panel panel-success">
             <div class="panel-heading">
                 These are the previews people have generated with your skin
@@ -81,55 +82,81 @@
             <div class="panel-body">
                 @if (Model.Skin.Previews.Any())
                 {
-                    <div id="carousel-previews" class="carousel slide" data-ride="carousel">
+                    <div class="col-sm-2" style="padding:0;">
                         <!-- Indicators -->
                         <ol class="carousel-indicators">
-                            @foreach (var preview in Model.Skin.Previews.Select(x => Model.Skin.Previews.IndexOf(x)))
+                            @foreach (var preview in previews)
                             {
-                                <li data-target="#carousel-previews" data-slide-to="@(preview)" @(preview == 0 ? "class=\"active\"" : "")></li>
+                                <li data-target="#carousel-previews" data-slide-to="@(preview.Item2)" @(preview.Item2 == 0 ? "class=\"active\"" : "")>
+                                    <img src="@(preview.Item1.PreviewImage)" />
+                                </li>
                             }
                         </ol>
+                    </div>
+                    <div class="col-sm-10">
+                        <div id="carousel-previews" class="carousel slide" data-ride="carousel">
+                            <!-- Wrapper for slides -->
+                            <div class="carousel-inner" role="listbox">
+                                @foreach (var preview in previews)
+                                {
+                                    <div class="item @(preview.Item2 == 0 ? "active" : "")">
+                                        <div class="row">
+                                            <img id="Preview@(preview.Item2)" class="center-block" src="@(preview.Item1.PreviewImage)" data-toggle="popover">
+                                            <div id="Preview@(preview.Item2)_popover" class="hide">
+                                                @{ var dragon = FRSkinTester.Infrastructure.DataModels.DragonCache.FromString(preview.Item1.DragonData); }
+                                                <ul style="list-style:none; padding:0">
+                                                    <li><b>Colors:</b> @(dragon.BodyColor) / @(dragon.WingColor) / @(dragon.TertiaryColor)</li>
+                                                    <li><b>Genes:</b> @(dragon.BodyGene) / @(dragon.WingGene) / @(dragon.TertiaryGene)</li>
 
-                        <!-- Wrapper for slides -->
-                        <div class="carousel-inner" role="listbox">
-                            @foreach (var preview in Model.Skin.Previews.Select((x, i) => (x, i)))
-                            {
-                                <div class="item @(preview.Item2 == 0 ? "active" : "")">
-                                    <div class="row">
-                                        <img id="Preview@(preview.Item2)" class="center-block" src="@(preview.Item1.PreviewImage)" data-toggle="popover">
-                                        <div id="Preview@(preview.Item2)_popover" class="hide">
-                                            @{ var dragon = FRSkinTester.Infrastructure.DataModels.DragonCache.FromString(preview.Item1.DragonData); }
-                                            <ul style="list-style:none; padding:0">
-                                                <li><b>Colors:</b> @(dragon.BodyColor) / @(dragon.WingColor) / @(dragon.TertiaryColor)</li>
-                                                <li><b>Genes:</b> @(dragon.BodyGene) / @(dragon.WingGene) / @(dragon.TertiaryGene)</li>
-
-                                                <li><b>Element:</b> @(dragon.Element)</li>
-                                                <li><b>Eyetype:</b> @(dragon.EyeType)</li>
-                                            </ul>                                            
+                                                    <li><b>Element:</b> @(dragon.Element)</li>
+                                                    <li><b>Eyetype:</b> @(dragon.EyeType)</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="text-center">
+                                            <b>@(preview.Item1.DragonId != null ? "Real dragon" : "Scry dragon")</b>
                                         </div>
                                     </div>
-                                    <div class="text-center">
-                                        <b>@(preview.Item1.DragonId != null ? "Real dragon" : "Scry dragon")</b>
-                                    </div>
-                                </div>
-                            }
+                                }
+                            </div>
                         </div>
-
-                        <!-- Controls -->
-                        <a class="left" href="#carousel-previews" role="button" data-slide="prev">
-                            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-                            <span class="sr-only">Previous</span>
-                        </a>
-                        <a class="right" href="#carousel-previews" role="button" data-slide="next">
-                            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-                            <span class="sr-only">Next</span>
-                        </a>
                     </div>
                 }
                 else
                 {
                     <p>Nobody has generated any previews yet : (</p>
                 }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-5">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                Fancy graphs and stats
+            </div>
+            <div class="panel-body">
+                @{ var previewsPerDay = previews.Where(x => x.Item1.PreviewTime != null).GroupBy(x => x.Item1.PreviewTime.Value.Date).Select(x => (x.Key, x.Count())); }
+                <div>
+                    <p>
+                        @{ var scries = previews.Count(x => x.Item1.DragonId == null); }
+                        <b>Previews:</b> @(previews.Count) total <span class="small">(@(previews.Count(x => x.Item1.DragonId != null)) real, @(scries) @(scries == 1 ? "scry" : "scries"))</span><br />
+                        <b>Avg. Daily:</b> @(previewsPerDay.Average(x => x.Item2)) previews
+                    </p>
+                </div>
+                <canvas id="PreviewGraph" style="height:200px; width:100%;"></canvas>
+                <div style="margin-bottom:5px">
+                    <b>Color usage</b>
+                </div>
+                <canvas id="PrimaryColorGraph" style="height:140px; width:33%;float:left;"></canvas>
+                <canvas id="SecondaryColorGraph" style="height:140px; width:33%;float:left;"></canvas>
+                <canvas id="TertiaryColorGraph" style="height:140px; width:33%;float:left;"></canvas>
+                <div style="margin-bottom:5px">
+                    <b>Gene usage</b>
+                </div>                
+                <canvas id="PrimaryGeneGraph" style="height:140px; width:33%;float:left;"></canvas>
+                <canvas id="SecondaryGeneGraph" style="height:140px; width:33%;float:left;"></canvas>
+                <canvas id="TertiaryGeneGraph" style="height:140px; width:33%;float:left;"></canvas>
             </div>
         </div>
     </div>
@@ -153,25 +180,161 @@
 
 <script>
     userConfirm = function () {
-        return confirm(" This will permanently delete your skin from this tool, are you sure?");
+        return confirm("This will permanently delete your skin from this tool, are you sure?");
     };
+    @{
+        var previewTimeData = previews.Where(x => x.Item1.PreviewTime != null).Select(x => x.Item1.PreviewTime).GroupBy(x => x.Value.Date).Select(x => (x.First().Value.ToString("dd/MM/yyyy"), x.Count()));
+        var previewColorData = previewDragons.Select(x => (x.BodyColor, x.WingColor, x.TertiaryColor)).ToList();
+        var previewGeneData = previewDragons.Select(x => (x.BodyGene, x.WingGene, x.TertiaryGene)).ToList();
+    }
+    $(document).ready(function () {
+        new Chart(document.getElementById(`PreviewGraph`).getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: [@Html.Raw(string.Join(", ", previewTimeData.Select(x => $"'{x.Item1}'")))],
+                datasets: [{
+                    label: 'Previews',
+                    data: [@string.Join(", ", previewTimeData.Select(x => x.Item2))],
+                    borderColor: '#bce8f1',
+                    backgroundColor: '#d9edf7'
+                }]
+            }
+        });
+        new Chart(document.getElementById(`PrimaryColorGraph`).getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: [@Html.Raw(string.Join(", ", previewColorData.GroupBy(x => x.Item1).Select(x => $"'{x.Key.ToString()}'")))],
+                datasets: [{
+                    label: 'Primary',
+                    data: [@string.Join(", ", previewColorData.GroupBy(x => x.Item1).Select(x => x.Count()))]
+                }]
+            },
+            options: {
+                plugins: { colorschemes: { scheme: 'brewer.Set3-12' } },
+                responsive: false,
+                legend: { display: false }  
+            }
+        });
+        new Chart(document.getElementById(`SecondaryColorGraph`).getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: [@Html.Raw(string.Join(", ", previewColorData.GroupBy(x => x.Item2).Select(x => $"'{x.Key.ToString()}'")))],
+                datasets: [{
+                    label: 'Secondary',
+                    data: [@string.Join(", ", previewColorData.GroupBy(x => x.Item2).Select(x => x.Count()))]
+                }]
+            },
+            options: {
+                plugins: { colorschemes: { scheme: 'brewer.Set3-12' } },
+                responsive: false,
+                legend: { display: false }
+            }
+        });
+        new Chart(document.getElementById(`TertiaryColorGraph`).getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: [@Html.Raw(string.Join(", ", previewColorData.GroupBy(x => x.Item3).Select(x => $"'{x.Key.ToString()}'")))],
+                datasets: [{
+                    label: 'Tertiary',
+                    data: [@string.Join(", ", previewColorData.GroupBy(x => x.Item3).Select(x => x.Count()))]
+                }]
+            },
+            options: {
+                plugins: { colorschemes: { scheme: 'brewer.Set3-12' } },
+                responsive: false,
+                legend: { display: false }
+            }
+        });
+        new Chart(document.getElementById(`PrimaryGeneGraph`).getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: [@Html.Raw(string.Join(", ", previewGeneData.GroupBy(x => x.Item1).Select(x => $"'{x.Key.ToString()}'")))],
+                datasets: [{
+                    label: 'Primary',
+                    data: [@string.Join(", ", previewGeneData.GroupBy(x => x.Item1).Select(x => x.Count()))]
+                }]
+            },
+            options: {
+                plugins: { colorschemes: { scheme: 'brewer.Set2-8' } },
+                responsive: false,
+                legend: { display: false }
+            }
+        });
+        new Chart(document.getElementById(`SecondaryGeneGraph`).getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: [@Html.Raw(string.Join(", ", previewGeneData.GroupBy(x => x.Item2).Select(x => $"'{x.Key.ToString()}'")))],
+                datasets: [{
+                    label: 'Secondary',
+                    data: [@string.Join(", ", previewGeneData.GroupBy(x => x.Item2).Select(x => x.Count()))]
+                }]
+            },
+            options: {
+                plugins: { colorschemes: { scheme: 'brewer.Set2-8' } },
+                responsive: false,
+                legend: { display: false }
+            }
+        });
+        new Chart(document.getElementById(`TertiaryGeneGraph`).getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: [@Html.Raw(string.Join(", ", previewGeneData.GroupBy(x => x.Item3).Select(x => $"'{x.Key.ToString()}'")))],
+                datasets: [{
+                    label: 'Tertiary',
+                    data: [@string.Join(", ", previewGeneData.GroupBy(x => x.Item3).Select(x => x.Count()))]
+                }]
+            },
+            options: {
+                plugins: { colorschemes: { scheme: 'brewer.Set2-8' } },
+                responsive: false,
+                legend: { display: false }
+            }
+        });
+    });
 
     $("[data-toggle=popover]").each(function (i, obj) {
-
         $(this).popover({
             html: true,
             content: function () {
                 var id = $(this).attr('id');
                 return $(`#${id}_popover`).html();
             },
-            trigger: 'hover focus'
+            trigger: 'hover focus',
+            container: 'body'
         });
 
     });
 </script>
 
 <style>
-    .popover{
-        max-width:100%;
+    .popover {
+        max-width: 100%;
+        z-index: 100;
     }
+
+    .carousel-indicators {
+        position: initial;
+        margin-left: 0;
+        overflow-y: auto;
+        max-height: 370px;
+        direction: rtl;
+        padding-right: 0;
+        width: unset;
+        margin-bottom: 0;
+    }
+
+        .carousel-indicators li {
+            direction: ltr;
+            display: block;
+            background: unset;
+            border: unset;
+            text-indent: 0;
+            width: unset;
+            height: unset;
+        }
+
+            .carousel-indicators li img {
+                width: 100%;
+                height: 100%;
+            }
 </style>

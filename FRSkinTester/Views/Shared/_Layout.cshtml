@@ -72,40 +72,42 @@
             </div>
         </div>
     </div>
-    <div class="container body-content">
-        @if (TempData["Error"] != null)
-        {
-            <div class="alert alert-danger alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                @Html.Raw(TempData["Error"])
-            </div>
-        }
-        @if (TempData["Info"] != null)
-        {
-            <div class="alert alert-info alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                @Html.Raw(TempData["Info"])
-            </div>
-        }
-        @if (TempData["Success"] != null)
-        {
-            <div class="alert alert-success alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                @Html.Raw(TempData["Success"])
-            </div>
-        }
-        @RenderBody()
-        <hr />
-        <footer>
-            <div class="pull-left">
-                <p>Dragons &copy; - Stormlight Workshop LLC</p>
-                <p>Skins &copy; - respective owners</p>
-                <p>Code and idea &copy; @DateTime.Now.Year - Perry van Velzen</p>
-            </div>
-            <div class="pull-right">
-                <a href='https://ko-fi.com/X8X6RLCS' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
-            </div>
-        </footer>
+    <div class="container-wrapper">
+        <div class="container body-content">
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    @Html.Raw(TempData["Error"])
+                </div>
+            }
+            @if (TempData["Info"] != null)
+            {
+                <div class="alert alert-info alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    @Html.Raw(TempData["Info"])
+                </div>
+            }
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    @Html.Raw(TempData["Success"])
+                </div>
+            }
+            @RenderBody()
+            <hr />
+            <footer>
+                <div class="pull-left">
+                    <p>Dragons &copy; - Stormlight Workshop LLC</p>
+                    <p>Skins &copy; - respective owners</p>
+                    <p>Code and idea &copy; @DateTime.Now.Year - Perry van Velzen</p>
+                </div>
+                <div class="pull-right">
+                    <a href='https://ko-fi.com/X8X6RLCS' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+                </div>
+            </footer>
+        </div>
     </div>
 
     @RenderSection("scripts", required: false)
