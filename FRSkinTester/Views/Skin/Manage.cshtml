@@ -87,7 +87,9 @@
                         <ol class="carousel-indicators">
                             @foreach (var preview in previews)
                             {
-                                <li data-target="#carousel-previews" data-slide-to="@(preview.Item2)" @(preview.Item2 == 0 ? "class=\"active\"" : "")>
+                                <li data-item="@(preview.Item2)" data-target="#carousel-previews" data-slide-to="@(preview.Item2)" class="@(preview.Item2 == 0 ? "activeIndicator" : "")">
+                                    <div>
+                                    </div>
                                     <img src="@(preview.Item1.PreviewImage)" />
                                 </li>
                             }
@@ -99,7 +101,7 @@
                             <div class="carousel-inner" role="listbox">
                                 @foreach (var preview in previews)
                                 {
-                                    <div class="item @(preview.Item2 == 0 ? "active" : "")">
+                                    <div class="item @(preview.Item2 == 0 ? "active" : "")" data-item="@(preview.Item2)">
                                         <div class="row">
                                             <img id="Preview@(preview.Item2)" class="center-block" src="@(preview.Item1.PreviewImage)" data-toggle="popover">
                                             <div id="Preview@(preview.Item2)_popover" class="hide">
@@ -195,6 +197,11 @@
         var previewGeneData = previewDragons.Select(x => (x.BodyGene, x.WingGene, x.TertiaryGene)).ToList();
     }
     $(document).ready(function () {
+        $('#carousel-previews').on('slide.bs.carousel', function (event) {
+            var item = $(event.relatedTarget).attr('data-item');
+            $('.carousel-indicators li.activeIndicator').removeClass('activeIndicator');
+            var indicator = $(`.carousel-indicators li[data-item="${item}"]`).addClass('activeIndicator');
+        });
         new Chart(document.getElementById(`PreviewGraph`).getContext('2d'), {
             type: 'line',
             data: {
@@ -338,7 +345,14 @@
             text-indent: 0;
             width: unset;
             height: unset;
+            transition: all 1s ease-in-out;
+            -moz-transition: all 1s ease-in-out;
+            -webkit-transition: all 1s;
+            padding:3px;
         }
+            .carousel-indicators li.activeIndicator {
+                background-color: #d9edf7;
+            }
 
             .carousel-indicators li img {
                 width: 100%;
