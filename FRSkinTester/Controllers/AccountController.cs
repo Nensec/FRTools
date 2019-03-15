@@ -4,6 +4,7 @@ using FRSkinTester.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
@@ -44,6 +45,7 @@ namespace FRSkinTester.Controllers
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
             if (loginInfo == null)
             {
+                TempData["Error"] = "Could not retrieve external login information from request";
                 return RedirectToRoute("Login");
             }
 
@@ -80,7 +82,7 @@ namespace FRSkinTester.Controllers
                             }
                             else
                             {
-                                TempData["Error"] = "Could not login user";
+                                TempData["Error"] = $"Could not login user:<br/><br/><ul>{loginResult.Errors.Select(x => $"<li>{x}</li>")}</ul>";
                                 return RedirectToRoute("Login");
                             }
                         };
@@ -94,10 +96,12 @@ namespace FRSkinTester.Controllers
                             (newUser, identity) = await CreateNewUser(identity.UserName + GenerateId(5), identity.Email);
                             if (newUser.Succeeded)
                                 return await LoginUser(identity);
-                            TempData["Error"] = "Could not create user";
+                            TempData["Error"] = $"Could not create user:<br/><br/><ul>{newUser.Errors.Select(x => $" < li >{ x}</ li > ")}</ul>";
                             return RedirectToRoute("Login");
                         }
                     }
+
+                    TempData["Error"] = "Something went wrong submitting the request";
 
                     ViewBag.ReturnUrl = returnUrl;
                     return RedirectToRoute("Login");
