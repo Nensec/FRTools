@@ -12,7 +12,7 @@ namespace FRSkinTester.Controllers
     public class ProfileController : BaseController
     {
         [Authorize]
-        [Route("Profile")]
+        [Route("Profile", Name = "SelfProfile")]
         public ActionResult Index()
         {
             using (var ctx = new DataContext())
@@ -32,7 +32,7 @@ namespace FRSkinTester.Controllers
             }
         }
 
-        [Route("Profile/{username}")]
+        [Route("Profile/{username}", Name = "Profile")]
         public ActionResult Index(string username)
         {
             using (var ctx = new DataContext())
