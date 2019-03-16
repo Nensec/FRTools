@@ -30,6 +30,8 @@ namespace FRSkinTester.Models
         public string Username { get; set; }
         [Display(Name = "Email")]
         public string Email { get; set; }
+        [Display(Name = "Profile visibility")]
+        public Privacy Privacy { get; set; }
     }
 
     public class ClaimSkinPostViewModel

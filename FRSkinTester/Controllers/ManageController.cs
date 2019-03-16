@@ -53,7 +53,8 @@ namespace FRSkinTester.Controllers
                 var model = new UserPostViewModel
                 {
                     Username = user.UserName,
-                    Email = user.Email
+                    Email = user.Email,
+                    Privacy = user.Privacy
                 };
                 return View(model);
             }
@@ -71,6 +72,7 @@ namespace FRSkinTester.Controllers
                     var user = ctx.Users.Find(userid);
                     user.UserName = string.IsNullOrWhiteSpace(model.Username) ? user.UserName : model.Username;
                     user.Email = model.Email;
+                    user.Privacy = model.Privacy;
                     await ctx.SaveChangesAsync();
                     await HttpContext.GetOwinContext().Get<SignInManager<User, int>>().SignInAsync(user, true, true);
                 }
