@@ -27,12 +27,24 @@
                         </div>
                     </div>
                     @*<div class="form-group">
-                        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-4" })
+                            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-4" })
+                            <div class="col-md-8">
+                                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                            </div>
+                        </div>*@
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Privacy, htmlAttributes: new { @class = "control-label col-md-4" })
                         <div class="col-md-8">
-                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                            <select class="form-control" id="@Html.IdFor(model => model.Privacy)" name="@Html.NameFor(model => model.Privacy)">
+                                @foreach(var privacy in Enum.GetValues(typeof(FRSkinTester.Infrastructure.DataModels.Privacy)).Cast<FRSkinTester.Infrastructure.DataModels.Privacy>())
+                                {
+                                    <option value="@((int)privacy)" @(Model.Privacy == privacy ? "selected" : "")>@(privacy.GetDescription())</option>
+                                }
+                            </select>
+                            @Html.ValidationMessageFor(model => model.Privacy, "", new { @class = "text-danger" })
                         </div>
-                    </div>*@
+                    </div>
                     <div class="form-group">
                         <div class="col-md-offset-4 col-md-8">
                             <input type="submit" value="Save changes" class="btn btn-primary" />
