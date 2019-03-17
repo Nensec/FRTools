@@ -60,6 +60,11 @@
                                     @Html.CopyTextBox(Url.RouteUrl("Manage", new { SkinId = Model.SkinId, SecretKey = Model.SecretKey }, "https"), "ManageLink")
                                 </div>
                             </div>
+                            <p>
+                                <i style="font-size:10px;">
+                                    Did you know that if you <a href="@Url.RouteUrl(" Login")">login</a> all skins you upload will be linked to your account, allowing you easily manage them without having to remember this link!
+                                </i>
+                            </p>
                         </div>
                     }
                 </div>
