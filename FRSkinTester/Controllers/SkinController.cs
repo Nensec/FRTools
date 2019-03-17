@@ -154,13 +154,16 @@ namespace FRSkinTester.Controllers
                 if (url == null)
                     return RedirectToAction(ControllerContext.RouteData.Values["action"].ToString(), new { skinId });
 
+                var loggedInUserId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
+
                 skin.Previews.Add(new Preview
                 {
                     DragonId = dragonId,
                     ScryerUrl = dragonId == null ? dragonUrl : null,
                     PreviewImage = url,
                     DragonData = dragon.ToString(),
-                    PreviewTime = DateTime.UtcNow
+                    PreviewTime = DateTime.UtcNow,
+                    Requestor = ctx.Users.Find(loggedInUserId)
                 });
 
                 await ctx.SaveChangesAsync();

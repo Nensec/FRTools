@@ -50,7 +50,10 @@
                         <ul class="nav navbar-nav navbar-right">
 
                             <li>
-                                @Html.RouteLink($"Hello {User.Identity.Name}!", "ManageAccount", routeValues: null, htmlAttributes: new { title = "Manage your account" })
+                                @Html.RouteLink($"Hello {User.Identity.Name}!", "SelfProfile", routeValues: null, htmlAttributes: new { title = "View your profile" })
+                            </li>
+                            <li>
+                                @Html.RouteLink($"Manage account", "ManageAccount", routeValues: null, htmlAttributes: new { title = "Manage your account" })
                             </li>
                             <li>
                                 @Html.RouteLink("Link skin", "LinkExisting", new { title = "Link existing skin to your account" })
