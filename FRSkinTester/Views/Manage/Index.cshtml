@@ -74,7 +74,7 @@
                 @foreach (var skin in Model.Skins.Select((x, i) => (x, i)))
                 {
                     <script>
-                        @{ var previewData = skin.Item1.Previews.Where(x => x.PreviewTime != null).Select(x => x.PreviewTime).GroupBy(x => x.Value.Date).Select(x => (x.First().Value.ToString("dd/MM/yyyy"), x.Count())); }
+                        @{ var previewData = skin.Item1.Previews.Where(x => x.PreviewTime != null).Select(x => x.PreviewTime).OrderBy(x => x.Value).GroupBy(x => x.Value.Date).Select(x => (x.First().Value.ToString("dd/MM/yyyy"), x.Count())); }
                         previewData.data_Skin@(skin.Item2) = {
                             labels: [@Html.Raw(string.Join(", ", previewData.Select(x => $"'{x.Item1}'")))],
                             data: [@string.Join(", ", previewData.Select(x => x.Item2))]

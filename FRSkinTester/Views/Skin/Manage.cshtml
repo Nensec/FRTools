@@ -192,7 +192,7 @@
         return confirm("This will permanently delete your skin from this tool, are you sure?");
     };
     @{
-        var previewTimeData = previews.Where(x => x.Item1.PreviewTime != null).Select(x => x.Item1.PreviewTime).GroupBy(x => x.Value.Date).Select(x => (x.First().Value.ToString("dd/MM/yyyy"), x.Count()));
+        var previewTimeData = previews.Where(x => x.Item1.PreviewTime != null).Select(x => x.Item1.PreviewTime).OrderBy(x => x.Value).GroupBy(x => x.Value.Date).Select(x => (x.First().Value.ToString("dd/MM/yyyy"), x.Count()));
         var previewColorData = previewDragons.Select(x => (x.BodyColor, x.WingColor, x.TertiaryColor)).ToList();
         var previewGeneData = previewDragons.Select(x => (x.BodyGene, x.WingGene, x.TertiaryGene)).ToList();
     }
@@ -200,7 +200,7 @@
         $('#carousel-previews').on('slide.bs.carousel', function (event) {
             var item = $(event.relatedTarget).attr('data-item');
             $('.carousel-indicators li.activeIndicator').removeClass('activeIndicator');
-            var indicator = $(`.carousel-indicators li[data-item="${item}"]`).addClass('activeIndicator');
+            $(`.carousel-indicators li[data-item="${item}"]`).addClass('activeIndicator');
         });
         new Chart(document.getElementById(`PreviewGraph`).getContext('2d'), {
             type: 'line',
