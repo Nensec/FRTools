@@ -55,6 +55,8 @@ namespace FRSkinTester.Models
         Primal,
         Glowing,
         DarkSclera,
+        Goat,
+        Swirl
     }
 
     public enum BodyGene
