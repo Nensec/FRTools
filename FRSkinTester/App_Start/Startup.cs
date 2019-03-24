@@ -35,7 +35,7 @@ namespace FRSkinTester.App_Start
                 {
                     OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<UserManager<User, int>, User, int>(
                         TimeSpan.FromMinutes(30),
-                        async (manager, user) => await manager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ExternalCookie),
+                        async (manager, user) => await manager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie),
                         user => user.GetUserId<int>())
                 }
             });
