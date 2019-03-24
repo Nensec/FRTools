@@ -111,7 +111,7 @@
                                                         <li><b>Colors:</b> @(dragon.BodyColor) / @(dragon.WingColor) / @(dragon.TertiaryColor)</li>
                                                         <li><b>Genes:</b> @(dragon.BodyGene) / @(dragon.WingGene) / @(dragon.TertiaryGene)</li>
                                                         <li><b>Element:</b> @(dragon.Element)</li>
-                                                        <li><b>Eyetype:</b> @(dragon.EyeType)</li>
+                                                        <li><b>Eyetype:</b> @(dragon.EyeType.GetDescription())</li>
                                                         <li><b>Skin:</b> @Html.Raw(preview.Item1.Skin.Title ?? "<i>No title</i>") <span class="small">(@(preview.Item1.Skin.GeneratedId))</span></li>
                                                     </ul>
                                                 </div>

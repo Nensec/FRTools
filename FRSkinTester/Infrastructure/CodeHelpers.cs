@@ -11,7 +11,7 @@ namespace FRSkinTester
         {
             var fi = value.GetType().GetField(value.ToString());
 
-            return fi.GetCustomAttribute<DescriptionAttribute>()?.Description ?? fi.GetCustomAttribute<DisplayAttribute>().GetDescription();
+            return fi.GetCustomAttribute<DescriptionAttribute>()?.Description ?? fi.GetCustomAttribute<DisplayAttribute>()?.GetDescription() ?? value.ToString();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Web;
 
@@ -51,9 +52,11 @@ namespace FRSkinTester.Models
         Unusual,
         Rare,
         Faceted,
+        [Description("Multi-Gaze")]
         MultiGaze,
         Primal,
         Glowing,
+        [Description("Dark Sclera")]
         DarkSclera,
         Goat,
         Swirl

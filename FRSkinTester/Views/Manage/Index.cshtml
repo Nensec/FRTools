@@ -86,7 +86,7 @@
                             <div id="Skin@(skin.Item2)_popover" class="hide">
                                 <ul style="list-style:none; padding:0">
                                     <li><b>Id:</b> @(skin.Item1.GeneratedId)</li>
-                                    <li><b>Title:</b> @(skin.Item1.Title ?? "<i>No title</i>")</li>
+                                    <li><b>Title:</b> @Html.Raw(skin.Item1.Title ?? "<i>No title</i>")</li>
                                     <li><b>Description:</b> @(skin.Item1.Description ?? "<i>No description</i>")</li>
                                     <li><b>Coverage:</b> @(skin.Item1.Coverage)% (@(skin.Item1.Coverage < 31 ? "Accent" : "Skin"))</li>
                                     <li><b>Skin info:</b> @((FRSkinTester.Models.Gender)skin.Item1.GenderType) @((FRSkinTester.Models.DragonType)skin.Item1.DragonType)</li>
