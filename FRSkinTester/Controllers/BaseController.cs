@@ -18,13 +18,14 @@ namespace FRSkinTester.Controllers
     {
         protected const string DressingRoomDummyUrl = "http://www1.flightrising.com/dgen/dressing-room/dummy?breed={0}&gender={1}";
         protected const string ScryerUrl = "http://flightrising.com/includes/scryer_getdragon.php?zord={0}";
+        protected const string DragonProfileUrl = "http://flightrising.com/main.php?dragon={0}";
+        protected const string DressingRoomApparalUrl = "http://www1.flightrising.com/dgen/dressing-room/dragon?did={0}&apparel={1}";
 
         protected string ScrapeImageUrl(string scryerHtmlPage)
         {
             var imgTag = Regex.Match(scryerHtmlPage, @"<img[^>]*?src\s*=\s*[""']?([^'"" >]+?)[ '""][^>]*?>");
             return imgTag.Groups[1].Value;
         }
-
 
         protected DragonCache ParseUrlForDragon(string dragonUrl)
         {
@@ -75,18 +76,20 @@ namespace FRSkinTester.Controllers
             return dragon;
         }
 
-        protected async Task<string> GenerateOrFetchPreview(string skinId, string dragonId, string dragonUrl, DragonCache dragon)
+        protected async Task<string[]> GenerateOrFetchPreview(string skinId, string dragonId, string dragonUrl, DragonCache dragon)
         {
+            var result = new string[] { };
+
             var azureImageService = new AzureImageService();
 
             if (dragon == null)
                 dragon = ParseUrlForDragon(dragonUrl);
 
-            if (!await azureImageService.Exists($@"previews\{skinId}\{dragonId ?? dragon.ToString()}.png", out var url))
-            {
-                await GetDragonBaseImage(dragonUrl, dragon, azureImageService);
+            Bitmap dragonImage = null;
 
-                var dragonImage = await GetDragonBaseImage(dragonUrl, dragon, azureImageService);
+            if (!await azureImageService.Exists($@"previews\{skinId}\{dragonId ?? dragon.ToString()}.png", out var previewUrl))
+            {
+                dragonImage = await GetDragonBaseImage(dragonUrl, dragon, azureImageService);
 
                 Image skinImage;
                 using (var skinImageStream = await azureImageService.GetImage($@"skins\{skinId}.png"))
@@ -118,11 +121,39 @@ namespace FRSkinTester.Controllers
                     dragonImage.Save(memStream, ImageFormat.Png);
                     memStream.Position = 0;
 
-                    url = await azureImageService.WriteImage($@"previews\{skinId}\{dragonId ?? dragon.ToString()}.png", memStream);
+                    previewUrl = await azureImageService.WriteImage($@"previews\{skinId}\{dragonId ?? dragon.ToString()}.png", memStream);
                 }
             }
 
-            return url;
+            if (dragonId != null)
+            {
+                if (!await azureImageService.Exists($@"previews\{skinId}\{dragonId}_apparel.png", out var apparelPreviewUrl))
+                {
+                    var invisibleDragonWithApparel = await GetInvisibleDragonWithApparel(dragonId, azureImageService);
+
+                    if (invisibleDragonWithApparel != null)
+                    {
+                        if (dragonImage == null)
+                            dragonImage = (Bitmap)Image.FromStream(await azureImageService.GetImage($@"previews\{skinId}\{dragonId}.png"));
+
+                        using (var graphics = Graphics.FromImage(dragonImage))
+                        {
+                            graphics.DrawImage(invisibleDragonWithApparel, new Rectangle(0, 0, 350, 350));
+                        }
+
+                        using (var memStream = new MemoryStream())
+                        {
+                            dragonImage.Save(memStream, ImageFormat.Png);
+                            memStream.Position = 0;
+
+                            apparelPreviewUrl = await azureImageService.WriteImage($@"previews\{skinId}\{dragonId}_apparel.png", memStream);
+                        }
+                    }
+                }
+                return new[] { previewUrl, apparelPreviewUrl };
+            }
+
+            return new[] { previewUrl };
         }
 
         protected async Task<Bitmap> GetDragonBaseImage(string dragonUrl, DragonCache dragon, AzureImageService azureImageService)
@@ -131,25 +162,71 @@ namespace FRSkinTester.Controllers
                 dragon = ParseUrlForDragon(dragonUrl);
 
             Bitmap dwagonImage;
-            if (await azureImageService.Exists(dragon.GenerateAzureUrl(), out var cacheUrl))
+            string azureUrl = $@"dragoncache\{dragon.SHA1Hash}.png";
+
+            if (await azureImageService.Exists(azureUrl, out var cacheUrl))
             {
-                using (var stream = await azureImageService.GetImage(dragon.GenerateAzureUrl()))
+                using (var stream = await azureImageService.GetImage(azureUrl))
                     dwagonImage = (Bitmap)Image.FromStream(stream);
                 return dwagonImage;
             }
 
             using (var client = new WebClient())
             {
-                var dwagonImageBytes = client.DownloadDataTaskAsync(dragonUrl);
+                var dwagonImageBytesTask = client.DownloadDataTaskAsync(dragonUrl);
                 try
                 {
-                    using (var memStream = new MemoryStream(await dwagonImageBytes, false))
-                        await azureImageService.WriteImage(dragon.GenerateAzureUrl(), memStream);
+                    var dwagonImageBytes = await dwagonImageBytesTask;
+                    using (var memStream = new MemoryStream(dwagonImageBytes, false))
+                        await azureImageService.WriteImage(azureUrl, memStream);
 
-                    using (var memStream = new MemoryStream(await dwagonImageBytes, false))
+                    using (var memStream = new MemoryStream(dwagonImageBytes, false))
                     {
                         dwagonImage = (Bitmap)Image.FromStream(memStream);
                         return dwagonImage;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Something wrong fetching the image from FR
+                    TempData["Error"] = "Could not get dragon from Flight Rising:<br/>" + ex.Message;
+                    return null;
+                }
+            }
+        }
+
+        protected async Task<Bitmap> GetInvisibleDragonWithApparel(string dragonId, AzureImageService azureImageService)
+        {
+            Bitmap invisibleDwagon;
+            var azureUrl = $@"dragoncache\{dragonId}_invisible.png";
+            if (await azureImageService.Exists(azureUrl, out var cacheUrl))
+            {
+                using (var stream = await azureImageService.GetImage(azureUrl))
+                    invisibleDwagon = (Bitmap)Image.FromStream(stream);
+                return invisibleDwagon;
+            }
+
+            using (var client = new WebClient())
+            {
+                var dragonProfilePageTask = client.DownloadStringTaskAsync(string.Format(DragonProfileUrl, dragonId));
+                try
+                {
+                    var dragonProfileHtml = await dragonProfilePageTask;
+                    var apparel = Regex.Matches(dragonProfileHtml, @"appPrev\((\d*)\)");
+                    if (apparel.Count == 0)
+                        return null;
+
+                    var invisibleDragonBytesTask = client.DownloadDataTaskAsync(string.Format(DressingRoomApparalUrl, dragonId, string.Join(",", apparel.Cast<Match>().Where(x => x.Success).Select(x => x.Groups[1].Value).Concat(new[] { "22046" }))));
+
+                    var invisibleDwagonImageBytes = await invisibleDragonBytesTask;
+
+                    using (var memStream = new MemoryStream(invisibleDwagonImageBytes, false))
+                        await azureImageService.WriteImage(azureUrl, memStream);
+
+                    using (var memStream = new MemoryStream(invisibleDwagonImageBytes, false))
+                    {
+                        invisibleDwagon = (Bitmap)Image.FromStream(memStream);
+                        return invisibleDwagon;
                     }
                 }
                 catch (Exception ex)

@@ -3,7 +3,9 @@
 @{
     ViewBag.Title = "Manage";
     var previews = Model.Skin.Previews.Select((x, i) => (x, i)).ToList();
-    var previewDragons = previews.Select(x => FRSkinTester.Infrastructure.DataModels.DragonCache.FromString(x.Item1.DragonData));
+    var scries = previews.Where(x => x.Item1.DragonId == null).ToList();
+    var reals = previews.GroupBy(x => x.Item1.DragonId).SelectMany(x => x == null ? x : x.Take(1)).ToList();
+    var previewDragons = reals.Concat(scries).Select(x => FRSkinTester.Infrastructure.DataModels.DragonCache.FromString(x.Item1.DragonData));
 }
 
 @section head {
@@ -140,11 +142,10 @@
             <div class="panel-body">
                 @if (previews.Any())
                 {
-                    var previewsPerDay = previews.Where(x => x.Item1.PreviewTime != null).GroupBy(x => x.Item1.PreviewTime.Value.Date).Select(x => (x.Key, x.Count()));
+                    var previewsPerDay = scries.Concat(reals).Where(x => x.Item1.PreviewTime != null).GroupBy(x => x.Item1.PreviewTime.Value.Date).Select(x => (x.Key, x.Count()));
                     <div>
                         <p>
-                            @{ var scries = previews.Count(x => x.Item1.DragonId == null); }
-                            <b>Previews:</b> @(previews.Count) total <span class="small">(@(previews.Count(x => x.Item1.DragonId != null)) real, @(scries) @(scries == 1 ? "scry" : "scries"))</span><br />
+                            <b>Previews:</b> @(scries.Count + reals.Count) total <span class="small">(@(reals.Count) real, @(scries.Count) @(scries.Count == 1 ? "scry" : "scries"))</span><br />
                             <b>Avg. Daily:</b> @(previewsPerDay.Any() ? previewsPerDay.Average(x => x.Item2) : 0) previews
                         </p>
                     </div>
@@ -192,7 +193,7 @@
         return confirm("This will permanently delete your skin from this tool, are you sure?");
     };
     @{
-        var previewTimeData = previews.Where(x => x.Item1.PreviewTime != null).Select(x => x.Item1.PreviewTime).OrderBy(x => x.Value).GroupBy(x => x.Value.Date).Select(x => (x.First().Value.ToString("dd/MM/yyyy"), x.Count()));
+        var previewTimeData = reals.Concat(scries).Where(x => x.Item1.PreviewTime != null).Select(x => x.Item1.PreviewTime).OrderBy(x => x.Value).GroupBy(x => x.Value.Date).Select(x => (x.First().Value.ToString("dd/MM/yyyy"), x.Count()));
         var previewColorData = previewDragons.Select(x => (x.BodyColor, x.WingColor, x.TertiaryColor)).ToList();
         var previewGeneData = previewDragons.Select(x => (x.BodyGene, x.WingGene, x.TertiaryGene)).ToList();
     }

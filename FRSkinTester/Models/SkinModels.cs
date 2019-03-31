@@ -57,7 +57,7 @@ namespace FRSkinTester.Models
 
     public class PreviewModelPostViewModel
     {
-        public string ImageResultUrl { get; set; }
+        public string[] ImageResultUrls { get; set; }
         public string SkinId { get; set; }
         public DragonCache Dragon { get; set; }
     }

@@ -24,9 +24,6 @@ namespace FRSkinTester.Infrastructure.DataModels
         [Index]
         public string SHA1Hash { get; set; }
 
-        public string GenerateAzureUrl() => $@"dragoncache\{SHA1Hash}.png";
-
-
         public static DragonCache FromString(string data)
         {
             var split = data.Split('_');

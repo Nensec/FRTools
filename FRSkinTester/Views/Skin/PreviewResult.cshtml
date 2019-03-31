@@ -29,9 +29,22 @@
                 Eyes might not look right compared to the final, but they should still give a good indication of what will be. This is a work in progress!
             </div>
         }
-        <div>
-            <img class="center-block" src="@(Model.ImageResultUrl)" />
-        </div>
+        @if (Model.ImageResultUrls.Length == 1)
+        {
+            <div>
+                <img class="center-block" src="@(Model.ImageResultUrls[0])" />
+            </div>
+        }
+        else
+        {
+            <div class="col-md-6">
+                <img class="center-block" src="@(Model.ImageResultUrls[0])" />
+            </div>
+            <div class="col-md-6">
+                <img class="center-block" src="@(Model.ImageResultUrls[1])" />
+            </div>
+
+        }
         <p class="pull-left">
             <i style="font-size:10px;">
                 Notice anything wrong with the result? Let me know so I can fix it <a href="https://github.com/nensec/frskintester/issues">&gt;here&lt;</a>!

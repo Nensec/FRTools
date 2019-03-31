@@ -73,12 +73,15 @@
             <div class="well clearfix">
                 @foreach (var skin in Model.Skins.Select((x, i) => (x, i)))
                 {
+                    var previews = skin.Item1.Previews.Select((x, i) => (x, i)).ToList();
+                    var scries = previews.Where(x => x.Item1.DragonId == null).ToList();
+                    var reals = previews.GroupBy(x => x.Item1.DragonId).SelectMany(x => x == null ? x : x.Take(1)).ToList();
+
                     <script>
-                        @{ var previewData = skin.Item1.Previews.Where(x => x.PreviewTime != null).Select(x => x.PreviewTime).OrderBy(x => x.Value).GroupBy(x => x.Value.Date).Select(x => (x.First().Value.ToString("dd/MM/yyyy"), x.Count())); }
+                        @{ var previewData = reals.Concat(scries).Where(x => x.Item1.PreviewTime != null).Select(x => x.Item1.PreviewTime).OrderBy(x => x.Value).GroupBy(x => x.Value.Date).Select(x => (x.First().Value.ToString("dd/MM/yyyy"), x.Count())); }
                         previewData.data_Skin@(skin.Item2) = {
                             labels: [@Html.Raw(string.Join(", ", previewData.Select(x => $"'{x.Item1}'")))],
-                            data: [@string.Join(", ", previewData.Select(x => x.Item2))]
-                        };
+                        data: [@string.Join(", ", previewData.Select(x => x.Item2))]};
                     </script>
                     <div class="col-sm-2">
                         <a href="@Url.RouteUrl("Manage", new { SkinId = skin.Item1.GeneratedId, SecretKey = skin.Item1.SecretKey })">
@@ -90,7 +93,7 @@
                                     <li><b>Description:</b> @(skin.Item1.Description ?? "<i>No description</i>")</li>
                                     <li><b>Coverage:</b> @(skin.Item1.Coverage)% (@(skin.Item1.Coverage < 31 ? "Accent" : "Skin"))</li>
                                     <li><b>Skin info:</b> @((FRSkinTester.Models.Gender)skin.Item1.GenderType) @((FRSkinTester.Models.DragonType)skin.Item1.DragonType)</li>
-                                    <li><b>Preview stats:</b> @($"{skin.Item1.Previews.Count} Total ({skin.Item1.Previews.Count(x => x.DragonId != null)} real, {skin.Item1.Previews.Count(x => x.DragonId == null)} scries)")</li>
+                                    <li><b>Preview stats:</b> @($"{scries.Count + reals.Count} Total ({reals.Count} real, {scries.Count} scries)")</li>
                                 </ul>
                                 <canvas id="Chart_Skin@(skin.Item2)" style="width:100px; height:50px; @(skin.Item1.Previews.Count == 0 ? "display:none;" : "")"></canvas>
                             </div>
