@@ -75,7 +75,7 @@
                 {
                     var previews = skin.Item1.Previews.Select((x, i) => (x, i)).ToList();
                     var scries = previews.Where(x => x.Item1.DragonId == null).ToList();
-                    var reals = previews.GroupBy(x => x.Item1.DragonId).SelectMany(x => x == null ? x : x.Take(1)).ToList();
+                    var reals = previews.Where(x => x.Item1.DragonId != null).GroupBy(x => x.Item1.DragonId).Select(x => x.First()).ToList();
 
                     <script>
                         @{ var previewData = reals.Concat(scries).Where(x => x.Item1.PreviewTime != null).Select(x => x.Item1.PreviewTime).OrderBy(x => x.Value).GroupBy(x => x.Value.Date).Select(x => (x.First().Value.ToString("dd/MM/yyyy"), x.Count())); }

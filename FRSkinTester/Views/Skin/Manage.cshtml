@@ -4,7 +4,7 @@
     ViewBag.Title = "Manage";
     var previews = Model.Skin.Previews.Select((x, i) => (x, i)).ToList();
     var scries = previews.Where(x => x.Item1.DragonId == null).ToList();
-    var reals = previews.GroupBy(x => x.Item1.DragonId).SelectMany(x => x == null ? x : x.Take(1)).ToList();
+    var reals = previews.Where(x => x.Item1.DragonId != null).GroupBy(x => x.Item1.DragonId).Select(x => x.First()).ToList();
     var previewDragons = reals.Concat(scries).Select(x => FRSkinTester.Infrastructure.DataModels.DragonCache.FromString(x.Item1.DragonData));
 }
 
@@ -349,8 +349,9 @@
             transition: all 1s ease-in-out;
             -moz-transition: all 1s ease-in-out;
             -webkit-transition: all 1s;
-            padding:3px;
+            padding: 3px;
         }
+
             .carousel-indicators li.activeIndicator {
                 background-color: #d9edf7;
             }
