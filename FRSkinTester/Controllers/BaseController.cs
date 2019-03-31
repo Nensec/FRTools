@@ -149,6 +149,8 @@ namespace FRSkinTester.Controllers
                             apparelPreviewUrl = await azureImageService.WriteImage($@"previews\{skinId}\{dragonId}_apparel.png", memStream);
                         }
                     }
+                    else
+                        return new[] { previewUrl };
                 }
                 return new[] { previewUrl, apparelPreviewUrl };
             }
