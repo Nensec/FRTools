@@ -125,7 +125,7 @@ namespace FRSkinTester.Controllers
                 }
             }
 
-            if (dragonId != null)
+            if (dragonId != null && dragonId != "preview")
             {
                 if (!await azureImageService.Exists($@"previews\{skinId}\{dragonId}_apparel.png", out var apparelPreviewUrl))
                 {
@@ -214,7 +214,9 @@ namespace FRSkinTester.Controllers
                 try
                 {
                     var dragonProfileHtml = await dragonProfilePageTask;
-                    var apparel = Regex.Matches(dragonProfileHtml, @"appPrev\((\d*)\)");
+                    var apparelFieldset = Regex.Matches(dragonProfileHtml, @"<fieldset([\s\S]*?)<\/fieldset>").Cast<Match>().Where(x => x.Success).ElementAt(1).Groups[1].Value;
+
+                    var apparel = Regex.Matches(apparelFieldset, @"appPrev\((\d*)\)");
                     if (apparel.Count == 0)
                         return null;
 
