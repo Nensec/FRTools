@@ -18,9 +18,10 @@ using System.Web.Mvc;
 namespace FRSkinTester.Controllers
 {
     [Authorize]
+    [RoutePrefix("manage")
     public class ManageController : BaseController
     {
-        [Route("Manage", Name = "ManageAccount")]
+        [Route(Name = "ManageAccount")]
         public ActionResult Index()
         {
             var model = new AccountViewModel
@@ -42,7 +43,7 @@ namespace FRSkinTester.Controllers
         // Opting to just store the guids in memory rather than save them in the database
         static MemoryCache _verifyCache = new MemoryCache("verifyCache");
 
-        [Route("Manage/Account", Name = "ManageUser")]
+        [Route("account", Name = "ManageUser")]
         public ActionResult ManageUser()
         {
             var userid = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
@@ -61,7 +62,7 @@ namespace FRSkinTester.Controllers
         }
 
         [HttpPost]
-        [Route("Manage/Account", Name = "ManageUserPost")]
+        [Route("account", Name = "ManageUserPost")]
         public async Task<ActionResult> ManageUser(UserPostViewModel model)
         {
             try
@@ -93,11 +94,11 @@ namespace FRSkinTester.Controllers
             }
         }
 
-        [Route("Manage/Link", Name = "LinkExisting")]
+        [Route("link", Name = "LinkExisting")]
         public ActionResult LinkExistingSkin() => View();
 
         [HttpPost]
-        [Route("Manage/Link", Name = "LinkExistingPost")]
+        [Route("link", Name = "LinkExistingPost")]
         public ActionResult LinkExistingSkin(ClaimSkinPostViewModel model)
         {
             using (var ctx = new DataContext())
@@ -123,7 +124,7 @@ namespace FRSkinTester.Controllers
             return RedirectToRoute("ManageAccount");
         }
 
-        [Route("Manage/Verify", Name = "VerifyFR")]
+        [Route("verify", Name = "VerifyFR")]
         public ActionResult Verify()
         {
             var userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
@@ -133,7 +134,7 @@ namespace FRSkinTester.Controllers
             return View(new VerifyFRViewModel { Guid = verifyGuid.Value });
         }
 
-        [Route("Manage/Verify", Name = "VerifyFRPost")]
+        [Route("verify", Name = "VerifyFRPost")]
         [HttpPost]
         public async Task<ActionResult> Verify(VerifyFRPostViewModel model)
         {

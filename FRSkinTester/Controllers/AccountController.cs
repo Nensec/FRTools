@@ -21,10 +21,10 @@ namespace FRSkinTester.Controllers
 
         public UserManager<User, int> UserManager => _userManager ?? (_userManager = HttpContext.GetOwinContext().GetUserManager<UserManager<User, int>>());
 
-        [Route("Login", Name = "Login")]
+        [Route("login", Name = "Login")]
         public ActionResult Login(string returnUrl) => View(new ExternalLoginListViewModel { ReturnUrl = returnUrl });
 
-        [Route("LogOut", Name = "LogOut")]
+        [Route("logout", Name = "LogOut")]
         public ActionResult LogOut()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
@@ -34,12 +34,12 @@ namespace FRSkinTester.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        [Route("ExternalLogin")]
+        [Route("externalLogin")]
         public ActionResult ExternalLogin(string provider, string returnUrl) =>
             new ChallengeResult(provider, Url.RouteUrl("ExternalLoginCallback", new { ReturnUrl = returnUrl }));
 
         [AllowAnonymous]
-        [Route("ExternalLoginCallback", Name = "ExternalLoginCallback")]
+        [Route("externalLoginCallback", Name = "ExternalLoginCallback")]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();

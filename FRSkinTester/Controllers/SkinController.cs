@@ -18,8 +18,7 @@ namespace FRSkinTester.Controllers
 {
     public class SkinController : BaseController
     {
-        [Route("Preview/{skinId}", Name = "Preview")]
-        [Route("Home/Preview")] // TODO: delete dis
+        [Route("preview/{skinId}", Name = "Preview")]
         public async Task<ActionResult> Preview(PreviewModelGet model)
         {
             using (var ctx = new DataContext())
@@ -53,7 +52,7 @@ namespace FRSkinTester.Controllers
         }
 
         [HttpPost]
-        [Route("Preview/{skinId}", Name = "PreviewPost")]
+        [Route("preview/{skinId}", Name = "PreviewPost")]
         public async Task<ActionResult> Preview(PreviewModelPost model)
         {
             if (!ModelState.IsValid)
@@ -75,8 +74,7 @@ namespace FRSkinTester.Controllers
             return await GeneratePreview(model.SkinId, dwagonUrl, model.DragonId);
         }
 
-        [Route("Preview/{skinId}/Scry", Name = "PreviewScryer")]
-        [Route("Home/PreviewScryer")] // TODO: delete dis
+        [Route("preview/{skinId}/Scry", Name = "PreviewScryer")]
         public async Task<ActionResult> PreviewScryer(PreviewModelGet model)
         {
             using (var ctx = new DataContext())
@@ -111,7 +109,7 @@ namespace FRSkinTester.Controllers
         }
 
         [HttpPost]
-        [Route("Preview/{skinId}/Scry", Name = "PreviewScryerPost")]
+        [Route("preview/{skinId}/Scry", Name = "PreviewScryerPost")]
         public async Task<ActionResult> PreviewScryer(PreviewScryerModelPost model)
         {
             if (!ModelState.IsValid)
@@ -181,10 +179,10 @@ namespace FRSkinTester.Controllers
             }
         }
 
-        [Route("Upload", Name = "Upload")]
+        [Route("upload", Name = "Upload")]
         public ActionResult Upload() => View(new UploadModelPost());
 
-        [Route("Upload", Name = "UploadPost")]
+        [Route("upload", Name = "UploadPost")]
         [HttpPost]
         public async Task<ActionResult> Upload(UploadModelPost model)
         {
@@ -264,9 +262,7 @@ namespace FRSkinTester.Controllers
             }
         }
 
-        [Route("Manage/Skin/{skinId}/{secretKey}", Name = "Manage")]
-        [Route("Manage/{skinId}/{secretKey}")] // TODO: delete dis
-        [Route("Home/Manage")] // TODO: delete dis
+        [Route("manage/skin/{skinId}/{secretKey}", Name = "Manage")]
         public async Task<ActionResult> Manage(ManageModelGet model)
         {
             using (var ctx = new DataContext())
@@ -304,7 +300,7 @@ namespace FRSkinTester.Controllers
             }
         }
 
-        [Route("Manage/Skin", Name = "ManagePost")]
+        [Route("manage/skin", Name = "ManagePost")]
         [HttpPost]
         public async Task<ActionResult> Manage(ManageModelPost model)
         {
@@ -351,8 +347,7 @@ namespace FRSkinTester.Controllers
             }
         }
 
-        [Route("Delete", Name = "Delete")]
-        [Route("Home/Delete")] // TODO: delete dis
+        [Route("delete", Name = "Delete")]
         public async Task<ActionResult> Delete(DeleteSkinPost model)
         {
             using (var ctx = new DataContext())

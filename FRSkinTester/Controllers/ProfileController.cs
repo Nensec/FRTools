@@ -9,10 +9,11 @@ using System.Web.Mvc;
 
 namespace FRSkinTester.Controllers
 {
+    [RoutePrefix("profile")]
     public class ProfileController : BaseController
     {
         [Authorize]
-        [Route("Profile", Name = "SelfProfile")]
+        [Route(Name = "SelfProfile")]
         public ActionResult Index()
         {
             using (var ctx = new DataContext())
@@ -32,7 +33,7 @@ namespace FRSkinTester.Controllers
             }
         }
 
-        [Route("Profile/{username}", Name = "Profile")]
+        [Route("{username}", Name = "Profile")]
         public ActionResult Index(string username)
         {
             using (var ctx = new DataContext())
