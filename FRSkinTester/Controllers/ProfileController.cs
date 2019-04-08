@@ -26,9 +26,8 @@ namespace FRSkinTester.Controllers
                     Previews = user.Previews.ToList(),
                     Skins = user.Skins.ToList(),
                     IsOwn = true
-                    
+
                 };
-                TempData["Info"] = "You are looking at your own profile, this will show all data regardless of your customization settings";
                 return View(vm);
             }
         }
@@ -56,6 +55,24 @@ namespace FRSkinTester.Controllers
                     vm.Skins = user.Skins.ToList();
                 return View(vm);
             }
+        }
+
+        [Route("unlink", Name = "UnlinkPreview")]
+        [HttpPost]
+        public ActionResult UnlinkPreview(int previewId)
+        {
+            using (var ctx = new DataContext())
+            {
+                var userid = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
+                var user = ctx.Users.Include(x => x.Previews.Select(p => p.Skin)).FirstOrDefault(x => x.Id == userid);
+                var preview = user.Previews.FirstOrDefault(x => x.Id == previewId);
+                if (preview != null)
+                {
+                    preview.Requestor = null;
+                    ctx.SaveChanges();
+                }
+            }
+            return Json(new { previewId });
         }
     }
 }

@@ -6,6 +6,13 @@
     var skins = Model.Skins?.Select((x, i) => (x, i)).ToList();
 }
 
+@if (Model.IsOwn)
+{
+    <div class="alert alert-info">
+        You are looking at your own profile, you will see everything regardless of settings. To see your profile as others see it visit <a href="@Url.RouteUrl("Profile", new { username = Model.User.UserName })">this link</a>
+    </div>
+}
+
 <div class="panel panel-default">
     <div class="panel-heading">
         <h2>
@@ -74,8 +81,28 @@
 
     @if (!Model.Privacy.HasFlag(FRSkinTester.Infrastructure.DataModels.Privacy.HidePreviews) || Model.IsOwn)
     {
+        if (Model.IsOwn)
+        {
+            <script>
+                removePreview = function (previewId) {
+                    if (confirm("Are you sure you want to remove this preview from your profile?")) {
+                        $.ajax({
+                            type: "POST",
+                            url: '@(Url.RouteUrl("UnlinkPreview"))',
+                            data: { 'previewId': previewId },
+                            success: function () {
+                                $('#carousel-previews').carousel('next');
+                                setTimeout(function () {
+                                    $(`[data-id=${previewId}]`).remove();
+                                }, 650);
+                            }
+                        });
+                    }
+                }
+            </script>
+        }
         <div class="col-md-@(Model.Privacy.HasFlag(FRSkinTester.Infrastructure.DataModels.Privacy.HideSkins) && !Model.IsOwn ? "12" : "6")">
-            <div class="panel panel-warning">
+            <div class="panel panel-warning" id="PreviewsPanel">
                 <div class="panel-heading">
                     <h2>
                         Previews generated
@@ -91,7 +118,7 @@
                             <ol class="carousel-indicators">
                                 @foreach (var preview in previews)
                                 {
-                                    <li data-item="@(preview.Item2)" data-target="#carousel-previews" data-slide-to="@(preview.Item2)" class="@(preview.Item2 == 0 ? "activeIndicator" : "")">
+                                    <li data-id="@(preview.Item1.Id)" data-item="@(preview.Item2)" data-target="#carousel-previews" data-slide-to="@(preview.Item2)" class="@(preview.Item2 == 0 ? "activeIndicator" : "")">
                                         <img src="@(preview.Item1.PreviewImage)" />
                                     </li>
                                 }
@@ -102,7 +129,7 @@
                                 <div class="carousel-inner" role="listbox">
                                     @foreach (var preview in previews)
                                     {
-                                        <div class="item @(preview.Item2 == 0 ? "active" : "")" data-item="@(preview.Item2)">
+                                        <div class="item @(preview.Item2 == 0 ? "active" : "")" data-id="@(preview.Item1.Id)" data-item="@(preview.Item2)">
                                             <div class="row">
                                                 <img id="Preview@(preview.Item2)" class="center-block" src="@(preview.Item1.PreviewImage)" data-toggle="popover">
                                                 <div id="Preview@(preview.Item2)_popover" class="hide">
@@ -118,6 +145,12 @@
                                             </div>
                                             <div class="text-center">
                                                 <b>@(preview.Item1.DragonId != null ? "Real dragon" : "Scry dragon")</b> - @Html.RouteLink("Go to preview page", "Preview", new { SkinId = preview.Item1.Skin.GeneratedId })
+                                                @if (Model.IsOwn)
+                                                {
+                                                    <p>
+                                                        <a href="#" onclick="removePreview(@preview.Item1.Id)">Remove from profile</a>
+                                                    </p>
+                                                }
                                             </div>
                                         </div>
                                     }
