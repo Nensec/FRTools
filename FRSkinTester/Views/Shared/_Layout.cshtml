@@ -50,13 +50,13 @@
                         <ul class="nav navbar-nav navbar-right">
 
                             <li>
-                                @Html.RouteLink($"Hello {User.Identity.Name}!", "SelfProfile", routeValues: null, htmlAttributes: new { title = "View your profile" })
+                                @Html.RouteLink($"Hello {User.Identity.Name}!", "SelfProfile",  null, new { title = "View your profile" })
                             </li>
                             <li>
-                                @Html.RouteLink($"Manage account", "ManageAccount", routeValues: null, htmlAttributes: new { title = "Manage your account" })
+                                @Html.RouteLink($"Manage account", "ManageAccount", null, new { title = "Manage your account" })
                             </li>
                             <li>
-                                @Html.RouteLink("Link skin", "LinkExisting", new { title = "Link existing skin to your account" })
+                                @Html.RouteLink("Link skin", "LinkExisting", null, new { title = "Link existing skin to your account" })
                             </li>
                             <li><a href="javascript:document.getElementById('logoutForm').submit()"><span class="glyphicon glyphicon-off"></span> Log out</a></li>
                         </ul>
