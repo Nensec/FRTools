@@ -18,7 +18,7 @@ using System.Web.Mvc;
 namespace FRSkinTester.Controllers
 {
     [Authorize]
-    [RoutePrefix("manage")
+    [RoutePrefix("manage")]
     public class ManageController : BaseController
     {
         [Route(Name = "ManageAccount")]
