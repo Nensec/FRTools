@@ -1,4 +1,5 @@
-﻿using FRSkinTester.Infrastructure.DataModels;
+﻿using FRSkinTester.Infrastructure;
+using FRSkinTester.Infrastructure.DataModels;
 using System.ComponentModel.DataAnnotations;
 using System.Web;
 
@@ -46,6 +47,7 @@ namespace FRSkinTester.Models
         [Display(Name = "Your dragon id")]
         [Required]
         public int DragonId { get; set; }
+        public bool Force { get; set; }
     }
 
     public class PreviewScryerModelPost : PreviewModelBase
@@ -57,7 +59,7 @@ namespace FRSkinTester.Models
 
     public class PreviewModelPostViewModel
     {
-        public string[] ImageResultUrls { get; set; }
+        public PreviewResult Result { get; set; }
         public string SkinId { get; set; }
         public DragonCache Dragon { get; set; }
     }

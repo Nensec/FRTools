@@ -29,21 +29,35 @@
                 Eyes might not look right compared to the final, but they should still give a good indication of what will be. This is a work in progress!
             </div>
         }
-        @if (Model.ImageResultUrls.Length == 1)
-        {
-            <div>
-                <img class="center-block" src="@(Model.ImageResultUrls[0])" />
-            </div>
-        }
-        else
-        {
-            <div class="col-md-6">
-                <img class="center-block" src="@(Model.ImageResultUrls[0])" />
-            </div>
-            <div class="col-md-6">
-                <img class="center-block" src="@(Model.ImageResultUrls[1])" />
-            </div>
+        <div class="row">
+            @if (Model.Result.Urls.Length == 1)
+            {
+                <div>
+                    <img class="center-block" src="@(Model.Result.Urls[0])" />
+                </div>
+            }
+            else
+            {
+                <div class="col-md-6">
+                    <img class="center-block" src="@(Model.Result.Urls[0])" />
+                </div>
+                <div class="col-md-6">
+                    <img class="center-block" src="@(Model.Result.Urls[1])" />
+                </div>
 
+            }
+        </div>
+        @if (Model.Result.Cached && Model.Result.RealDragon != null)
+        {
+            using (Html.BeginRouteForm("PreviewPost", FormMethod.Post, htmlAttributes: new { id = "forceRegen" }))
+            {
+                @Html.HiddenFor(model => model.SkinId)
+                @Html.Hidden("DragonId", Model.Result.RealDragon)
+                @Html.Hidden("Force", true)
+            }
+            <div class="alert alert-info">
+                This result is a cached version, if you want to completely re-generate the preview (in case of a change in dragon or apparel) you can do so by clicking <a href="javascript:document.getElementById('forceRegen').submit()">here</a>
+            </div>
         }
         <p class="pull-left">
             <i style="font-size:10px;">

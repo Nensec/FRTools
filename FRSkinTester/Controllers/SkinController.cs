@@ -38,7 +38,7 @@ namespace FRSkinTester.Controllers
                         Title = skin.Title,
                         Description = skin.Description,
                         SkinId = model.SkinId,
-                        PreviewUrl = (await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null))[0],
+                        PreviewUrl = (await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
                         Coverage = skin.Coverage,
                         Creator = skin.Creator
                     });
@@ -71,7 +71,7 @@ namespace FRSkinTester.Controllers
                 return RedirectToAction("Preview", new { model.SkinId });
             }
 
-            return await GeneratePreview(model.SkinId, dwagonUrl, model.DragonId);
+            return await GeneratePreview(model.SkinId, dwagonUrl, model.DragonId, model.Force);
         }
 
         [Route("preview/{skinId}/Scry", Name = "PreviewScryer")]
@@ -95,7 +95,7 @@ namespace FRSkinTester.Controllers
                         Title = skin.Title,
                         Description = skin.Description,
                         SkinId = model.SkinId,
-                        PreviewUrl = (await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null))[0],
+                        PreviewUrl = (await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
                         Coverage = skin.Coverage,
                         Creator = skin.Creator
                     });
@@ -118,7 +118,7 @@ namespace FRSkinTester.Controllers
             return await GeneratePreview(model.SkinId, model.ScryerUrl);
         }
 
-        private async Task<ActionResult> GeneratePreview(string skinId, string dragonUrl, int? dragonId = null)
+        private async Task<ActionResult> GeneratePreview(string skinId, string dragonUrl, int? dragonId = null, bool force = false)
         {
             var dragon = ParseUrlForDragon(dragonUrl);
             if (dragon.Age == Age.Hatchling)
@@ -148,14 +148,12 @@ namespace FRSkinTester.Controllers
                     return RedirectToAction(ControllerContext.RouteData.Values["action"].ToString(), new { skinId });
                 }
 
-                var urls = await GenerateOrFetchPreview(skinId, dragonId?.ToString(), dragonUrl, dragon);
-                if (urls == null)
-                    return RedirectToAction(ControllerContext.RouteData.Values["action"].ToString(), new { skinId });
+                var previewResult = await GenerateOrFetchPreview(skinId, dragonId?.ToString(), dragonUrl, dragon, force);
 
                 var loggedInUserId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
 
                 var user = ctx.Users.Find(loggedInUserId);
-                foreach (var url in urls.Where(url => !skin.Previews.Any(x => x.Requestor == user && x.PreviewImage == url)))
+                foreach (var url in previewResult.Urls.Where(url => !skin.Previews.Any(x => x.Requestor == user && x.PreviewImage == url)))
                 {
                     skin.Previews.Add(new Preview
                     {
@@ -173,7 +171,7 @@ namespace FRSkinTester.Controllers
                 return View("PreviewResult", new PreviewModelPostViewModel
                 {
                     SkinId = skinId,
-                    ImageResultUrls = urls,
+                    Result = previewResult,
                     Dragon = dragon
                 });
             }
@@ -251,7 +249,7 @@ namespace FRSkinTester.Controllers
                     {
                         SkinId = randomizedId,
                         SecretKey = secretKey,
-                        PreviewUrl = (await GenerateOrFetchPreview(randomizedId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null))[0],
+                        PreviewUrl = (await GenerateOrFetchPreview(randomizedId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
                     });
                 }
                 catch
@@ -294,7 +292,7 @@ namespace FRSkinTester.Controllers
                     return View(new ManageModelViewModel
                     {
                         Skin = skin,
-                        PreviewUrl = (await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null))[0]
+                        PreviewUrl = (await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0]
                     });
                 }
             }

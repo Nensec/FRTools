@@ -226,6 +226,7 @@
     <Compile Include="Infrastructure\DataModels\AccountModels\UserClaim.cs" />
     <Compile Include="Infrastructure\DataModels\AccountModels\UserLogin.cs" />
     <Compile Include="Infrastructure\DataModels\AccountModels\UserRole.cs" />
+    <Compile Include="Infrastructure\PreviewResult.cs" />
     <Compile Include="Migrations\201812041640175_Skins table.cs" />
     <Compile Include="Migrations\201812041640175_Skins table.Designer.cs">
       <DependentUpon>201812041640175_Skins table.cs</DependentUpon>
