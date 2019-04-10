@@ -89,7 +89,8 @@ namespace FRSkinTester.Models
         Pinstripe,
         Python,
         Starmap,
-        Lionfish
+        Lionfish,
+        Laced
     }
 
     public enum TertiaryGene
@@ -147,6 +148,7 @@ namespace FRSkinTester.Models
         Morph,
         Noxtide,
         Constellation,
+        Laced
     }
 
     public enum Color
