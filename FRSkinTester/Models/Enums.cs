@@ -148,7 +148,7 @@ namespace FRSkinTester.Models
         Morph,
         Noxtide,
         Constellation,
-        Laced
+        Edged
     }
 
     public enum Color
