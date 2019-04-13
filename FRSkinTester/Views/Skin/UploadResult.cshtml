@@ -27,16 +27,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-10">
-                        <div class="form-group">
-                            <label style="padding-top:7px" class="col-md-4 control-label" for="PreviewScryLink">
-                                Scry dragon preview
-                            </label>
-                            <div class="col-md-8">
-                                @Html.CopyTextBox(Url.RouteUrl("PreviewScryer", new { SkinId = Model.SkinId }, "https"), "PreviewScryerLink")
-                            </div>
-                        </div>
-                    </div>
 
                     @if (Request.IsAuthenticated)
                     {
