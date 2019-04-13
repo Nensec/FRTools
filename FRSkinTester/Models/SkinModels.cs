@@ -32,7 +32,7 @@ namespace FRSkinTester.Models
         public string SkinId { get; set; }
     }
 
-    public class PreviewModelBase
+    public class PreviewModelViewModel
     {
         public string Title { get; set; }
         public string Description { get; set; }
@@ -42,19 +42,24 @@ namespace FRSkinTester.Models
         public User Creator { get; set; }
     }
 
-    public class PreviewModelPost : PreviewModelBase
+    [SmartRequired]
+    public partial class PreviewModelPost
     {
-        [Display(Name = "Your dragon id")]
-        [Required]
-        public int DragonId { get; set; }
-        public bool Force { get; set; }
-    }
+        public PreviewModelPost(string skinId) => SkinId = skinId;
+        public PreviewModelPost() { }
 
-    public class PreviewScryerModelPost : PreviewModelBase
-    {
+        [IgnoreRequired]
+        public string SkinId { get; set; }
+
+        [Display(Name = "Dragon ID")]
+        public int? DragonId { get; set; }
         [Display(Name = "Scry image URL")]
-        [Required]
         public string ScryerUrl { get; set; }
+        [Display(Name = "Dressing image URL")]
+        public string DressingRoomUrl { get; set; }
+
+        [IgnoreRequired]
+        public bool Force { get; set; }
     }
 
     public class PreviewModelPostViewModel

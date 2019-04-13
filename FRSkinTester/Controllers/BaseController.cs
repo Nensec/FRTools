@@ -76,9 +76,9 @@ namespace FRSkinTester.Controllers
             return dragon;
         }
 
-        protected async Task<PreviewResult> GenerateOrFetchPreview(string skinId, string dragonId, string dragonUrl, DragonCache dragon, bool force = false)
+        protected async Task<PreviewResult> GenerateOrFetchPreview(string skinId, string dragonId, string dragonUrl, DragonCache dragon, string dressingRoomUrl = null, bool force = false)
         {
-            var result = new PreviewResult { Forced = force, RealDragon = dragonId != "preview" ? dragonId : null };
+            var result = new PreviewResult { Forced = force, RealDragon = dragonId != "preview" ? dragonId : null, DressingRoomUrl = dressingRoomUrl };
 
             var azureImageService = new AzureImageService();
 
@@ -129,35 +129,69 @@ namespace FRSkinTester.Controllers
 
             result.Urls = new[] { previewUrl };
 
-            if (dragonId != null && dragonId != "preview")
+            async Task<string> GenerateApparelPreview(Bitmap invisibleDragon, string cacheUrl)
             {
-                string apparelPreviewUrl = null;
-                if (force || !await azureImageService.Exists($@"previews\{skinId}\{dragonId}_apparel.png", out apparelPreviewUrl))
+                if (dragonImage == null)
+                    dragonImage = (Bitmap)Image.FromStream(await azureImageService.GetImage($@"previews\{skinId}\{dragonId ?? dragon.ToString()}.png"));
+
+                using (var graphics = Graphics.FromImage(dragonImage))
+                {
+                    graphics.DrawImage(invisibleDragon, new Rectangle(0, 0, 350, 350));
+                }
+
+                using (var memStream = new MemoryStream())
+                {
+                    dragonImage.Save(memStream, ImageFormat.Png);
+                    memStream.Position = 0;
+
+                    return await azureImageService.WriteImage(cacheUrl, memStream);
+                }
+
+            }
+
+            string apparelPreviewUrl = null;
+            if (dressingRoomUrl != null)
+            {
+                var apparelIds = Regex.Match(dressingRoomUrl, @"apparel=(?:,*([\d]*))*").Groups[1].Captures.Cast<Capture>().Where(x => !string.IsNullOrWhiteSpace(x.Value)).Select(x => x.Value);
+                var cacheUrl = $@"previews\{skinId}\{dragon.ToString()}_apparel-{string.Join("_", apparelIds)}.png";
+                if (force || !await azureImageService.Exists(cacheUrl, out apparelPreviewUrl))
+                {
+                    var azureUrl = $@"dragoncache\{dragonId ?? dragon.ToString()}_invisible-{string.Join("_", apparelIds)}.png";
+                    if (dragonId != null)
+                        dressingRoomUrl = string.Format(DressingRoomApparalUrl, dragonId, string.Join(",", apparelIds.Concat(new[] { "22046" })));
+                    else
+                        dressingRoomUrl = string.Format(DressingRoomDummyUrl, (int)dragon.DragonType, (int)dragon.Gender) + $"&apparel={string.Join(",", apparelIds.Concat(new[] { "22046" }))}";
+
+                    using (var client = new WebClient())
+                    {
+                        var invisibleDragonBytesTask = client.DownloadDataTaskAsync(dressingRoomUrl);
+
+                        var invisibleDwagonImageBytes = await invisibleDragonBytesTask;
+                        using (var memStream = new MemoryStream(invisibleDwagonImageBytes, false))
+                            await azureImageService.WriteImage(azureUrl, memStream);
+
+                        using (var memStream = new MemoryStream(invisibleDwagonImageBytes, false))
+                        {
+                            var invisibleDwagon = (Bitmap)Image.FromStream(memStream);
+                            apparelPreviewUrl = await GenerateApparelPreview(invisibleDwagon, cacheUrl);
+                        }
+                    }
+                }
+            }
+            else if (dragonId != null && dragonId != "preview")
+            {
+                var cacheUrl = $@"previews\{skinId}\{dragonId}_apparel.png";
+                if (force || !await azureImageService.Exists(cacheUrl, out apparelPreviewUrl))
                 {
                     var invisibleDragonWithApparel = await GetInvisibleDragonWithApparel(dragonId, azureImageService, force);
 
                     if (invisibleDragonWithApparel != null)
-                    {
-                        if (dragonImage == null)
-                            dragonImage = (Bitmap)Image.FromStream(await azureImageService.GetImage($@"previews\{skinId}\{dragonId}.png"));
+                        apparelPreviewUrl = await GenerateApparelPreview(invisibleDragonWithApparel, cacheUrl);
 
-                        using (var graphics = Graphics.FromImage(dragonImage))
-                        {
-                            graphics.DrawImage(invisibleDragonWithApparel, new Rectangle(0, 0, 350, 350));
-                        }
-
-                        using (var memStream = new MemoryStream())
-                        {
-                            dragonImage.Save(memStream, ImageFormat.Png);
-                            memStream.Position = 0;
-
-                            apparelPreviewUrl = await azureImageService.WriteImage($@"previews\{skinId}\{dragonId}_apparel.png", memStream);
-                        }
-                    }
                 }
-                if(apparelPreviewUrl != null)
-                    result.Urls = new[] { previewUrl, apparelPreviewUrl };
             }
+            if (apparelPreviewUrl != null)
+                result.Urls = new[] { previewUrl, apparelPreviewUrl };
 
             return result;
         }

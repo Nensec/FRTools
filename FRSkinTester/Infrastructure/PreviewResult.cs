@@ -11,5 +11,6 @@ namespace FRSkinTester.Infrastructure
         public bool Forced { get; set; }
         public bool Cached { get; set; }
         public string RealDragon { get; set; }
+        public string DressingRoomUrl { get; set; }
     }
 }

@@ -10,6 +10,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -33,7 +34,7 @@ namespace FRSkinTester.Controllers
                     await UpdateCoverage(skin, ctx);
                 try
                 {
-                    return View(new PreviewModelPost
+                    return View(new PreviewModelViewModel
                     {
                         Title = skin.Title,
                         Description = skin.Description,
@@ -53,78 +54,66 @@ namespace FRSkinTester.Controllers
 
         [HttpPost]
         [Route("preview/{skinId}", Name = "PreviewPost")]
+        [Route("preview/{skinId}/Scry")] // TODO: Delete dis
         public async Task<ActionResult> Preview(PreviewModelPost model)
         {
             if (!ModelState.IsValid)
-                return RedirectToAction("Preview", new { model.SkinId });
+                return RedirectToRoute("Preview", new { model.SkinId });
 
-            string dwagonUrl = null;
-            using (var client = new WebClient())
+            if (model.DragonId != null)
             {
-                var htmlPage = await client.DownloadStringTaskAsync(new Uri(string.Format(ScryerUrl, model.DragonId)));
-                dwagonUrl = ScrapeImageUrl(htmlPage);
+                string dwagonUrl = null;
+                using (var client = new WebClient())
+                {
+                    var htmlPage = await client.DownloadStringTaskAsync(new Uri(string.Format(ScryerUrl, model.DragonId)));
+                    dwagonUrl = ScrapeImageUrl(htmlPage);
+                }
+
+                if (dwagonUrl.StartsWith(".."))
+                {
+                    TempData["Error"] = $"<b>{model.DragonId}</b> appears to be an invalid dragon id";
+                    return RedirectToRoute("Preview", new { model.SkinId });
+                }
+
+                return await GeneratePreview(model.SkinId, dwagonUrl, model.DragonId, model.Force);
+
+            }
+            else if(!string.IsNullOrWhiteSpace(model.ScryerUrl))
+            {
+                return await GeneratePreview(model.SkinId, model.ScryerUrl);
+            }
+            else if (!string.IsNullOrWhiteSpace(model.DressingRoomUrl))
+            {
+                return await GeneratePreview(model.SkinId, model.DressingRoomUrl, null, model.Force);
             }
 
-            if (dwagonUrl.StartsWith(".."))
-            {
-                TempData["Error"] = $"<b>{model.DragonId}</b> appears to be an invalid dragon id";
-                return RedirectToAction("Preview", new { model.SkinId });
-            }
-
-            return await GeneratePreview(model.SkinId, dwagonUrl, model.DragonId, model.Force);
-        }
-
-        [Route("preview/{skinId}/Scry", Name = "PreviewScryer")]
-        public async Task<ActionResult> PreviewScryer(PreviewModelGet model)
-        {
-            using (var ctx = new DataContext())
-            {
-                var skin = ctx.Skins.FirstOrDefault(x => x.GeneratedId == model.SkinId);
-                if (skin == null)
-                {
-                    TempData["Error"] = "Skin not found";
-                    return RedirectToAction("Index");
-                }
-                if (skin.Coverage == null)
-                    await UpdateCoverage(skin, ctx);
-
-                try
-                {
-                    return View(new PreviewScryerModelPost
-                    {
-                        Title = skin.Title,
-                        Description = skin.Description,
-                        SkinId = model.SkinId,
-                        PreviewUrl = (await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
-                        Coverage = skin.Coverage,
-                        Creator = skin.Creator
-                    });
-                }
-                catch (FileNotFoundException)
-                {
-                    TempData["Error"] = "Skin not found";
-                    return RedirectToRoute("Home");
-                }
-            }
-        }
-
-        [HttpPost]
-        [Route("preview/{skinId}/Scry", Name = "PreviewScryerPost")]
-        public async Task<ActionResult> PreviewScryer(PreviewScryerModelPost model)
-        {
-            if (!ModelState.IsValid)
-                return RedirectToAction("PreviewScryer", new { model.SkinId });
-
-            return await GeneratePreview(model.SkinId, model.ScryerUrl);
+            return RedirectToRoute("Preview", new { model.SkinId });
         }
 
         private async Task<ActionResult> GeneratePreview(string skinId, string dragonUrl, int? dragonId = null, bool force = false)
         {
-            var dragon = ParseUrlForDragon(dragonUrl);
+            DragonCache dragon = null;
+            bool isDressingRoomUrl = dragonUrl.Contains("/dgen/dressing-room");
+            string dressingRoomUrl = isDressingRoomUrl ? dragonUrl : null;
+            if (isDressingRoomUrl)
+            {
+                if (!dragonUrl.Contains("/dgen/dressing-room/dummy"))
+                {
+                    dragonId = int.Parse(Regex.Match(dragonUrl, @"did=([\d]*)").Groups[1].Value);
+                    using (var client = new WebClient())
+                    {
+                        var htmlPage = await client.DownloadStringTaskAsync(new Uri(string.Format(ScryerUrl, dragonId)));
+                        dragonUrl = ScrapeImageUrl(htmlPage);
+                    }
+                }
+            }
+
+            dragon = ParseUrlForDragon(dragonUrl);
+
             if (dragon.Age == Age.Hatchling)
             {
                 TempData["Error"] = $"Skins can only be previewed on adult dragons";
-                return RedirectToAction(ControllerContext.RouteData.Values["action"].ToString(), new { skinId });
+                return RedirectToRoute("Preview", new { skinId });
             }
 
             using (var ctx = new DataContext())
@@ -139,16 +128,16 @@ namespace FRSkinTester.Controllers
                 if (skin.DragonType != (int)dragon.DragonType)
                 {
                     TempData["Error"] = $"This skin is meant for a <b>{(DragonType)skin.DragonType} {(Gender)skin.GenderType}</b>, the dragon you provided is a <b>{dragon.DragonType} {dragon.Gender}</b>";
-                    return RedirectToAction(ControllerContext.RouteData.Values["action"].ToString(), new { skinId });
+                    return RedirectToRoute("Preview", new { skinId });
                 }
 
                 if (skin.GenderType != (int)dragon.Gender)
                 {
                     TempData["Error"] = $"This skin is meant for a <b>{(Gender)skin.GenderType}</b>, the dragon you provided is a <b>{dragon.Gender}</b>";
-                    return RedirectToAction(ControllerContext.RouteData.Values["action"].ToString(), new { skinId });
+                    return RedirectToRoute("Preview", new { skinId });
                 }
 
-                var previewResult = await GenerateOrFetchPreview(skinId, dragonId?.ToString(), dragonUrl, dragon, force);
+                var previewResult = await GenerateOrFetchPreview(skinId, dragonId?.ToString(), dragonUrl, dragon, dressingRoomUrl, force);
 
                 var loggedInUserId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
 

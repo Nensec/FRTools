@@ -52,7 +52,15 @@
             using (Html.BeginRouteForm("PreviewPost", FormMethod.Post, htmlAttributes: new { id = "forceRegen" }))
             {
                 @Html.HiddenFor(model => model.SkinId)
-                @Html.Hidden("DragonId", Model.Result.RealDragon)
+                if (Model.Result.DressingRoomUrl != null)
+                {
+                    @Html.Hidden("DressingRoomUrl", Model.Result.DressingRoomUrl)
+                }
+                else
+                {
+                    @Html.Hidden("DragonId", Model.Result.RealDragon)
+
+                }
                 @Html.Hidden("Force", true)
             }
             <div class="alert alert-info">

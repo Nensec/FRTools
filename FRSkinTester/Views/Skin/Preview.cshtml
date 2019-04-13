@@ -1,4 +1,4 @@
-﻿@model FRSkinTester.Models.PreviewModelPost
+﻿@model FRSkinTester.Models.PreviewModelViewModel
 
 @{
     ViewBag.Title = "Preview";
@@ -11,20 +11,14 @@
     <meta property="og:description" content="@(Model.Description ?? "No description provided")" />
 }
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h2>Preview skin: @(Model.Title)</h2>
-    </div>
-    <div class="panel-body">
-        @using (Html.BeginRouteForm("PreviewPost", new { SkinId = Model.SkinId }))
-        {
-            @Html.AntiForgeryToken()
-            @Html.HiddenFor(model => model.SkinId)
-
-            <div class="form-horizontal">
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-                <div class="col-md-6">
+<div class="row">
+    <div class="col-md-7">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2>Preview skin: @(Model.Title)</h2>
+            </div>
+            <div class="panel-body">
+                <div class="form-horizontal">
                     <div class="form-group">
                         <label class="text-right col-md-4">Creator</label>
                         <div class="col-md-8">
@@ -54,7 +48,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-4" })
+                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "text-right control-label col-md-4" })
                         <div class="col-md-8">
                             <textarea class="form-control" rows="3" readonly>@(Model.Description)</textarea>
                         </div>
@@ -65,31 +59,20 @@
                             <div>@(Model.Coverage)%</div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.DragonId, htmlAttributes: new { @class = "control-label col-md-4" })
-                        <div class="col-md-8">
-                            @Html.EditorFor(model => model.DragonId, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.DragonId, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="col-md-offset-4 col-md-8">
-                            <input type="submit" value="Preview on my dragon!" class="btn btn-primary" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-offset-4 col-md-8">
-                            <a class="btn btn-default" href="@Url.RouteUrl("PreviewScryer", new { SkinId = Model.SkinId })">Or try it on a scry &raquo;</a>
-                        </div>
-                    </div>
                 </div>
-
-                <div class="col-md-6">
+                <hr />
+                @Html.Partial("_PreviewForm", new FRSkinTester.Models.PreviewModelPost(Model.SkinId))
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="text-center">
                     <img src="@(Model.PreviewUrl)" />
                 </div>
             </div>
-        }
+        </div>
     </div>
 </div>
 
