@@ -11,7 +11,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    padding-top:15px;
+    padding-top: 15px;
 }
 
 input[type=file] {
@@ -125,3 +125,8 @@ input[type=file] {
     ::-webkit-scrollbar-thumb:hover {
         background: #555;
     }
+
+.dragonImage {
+    max-width:350px;
+    width:100%;
+}
