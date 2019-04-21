@@ -55,14 +55,14 @@ namespace FRSkinTester.Infrastructure
             return reference.Uri.ToString();
         }
 
-        public Task<bool> Exists(string path, out string url)
+        public bool Exists(string path, out string url)
         {
             var directory = GetStorageContainer(path);
 
             var fileName = Path.GetFileName(path);
             var reference = directory.GetBlockBlobReference(fileName);
-            url = reference.Uri.ToString();
-            return reference.ExistsAsync();
+            url = reference.Exists() ? reference.Uri.ToString() : null;
+            return url != null;
         }
 
         private CloudBlobDirectory GetStorageContainer(string path)

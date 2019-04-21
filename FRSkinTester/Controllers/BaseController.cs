@@ -87,7 +87,7 @@ namespace FRSkinTester.Controllers
 
             Bitmap dragonImage = null;
 
-            if (force || !await azureImageService.Exists($@"previews\{skinId}\{dragonId ?? dragon.ToString()}.png", out var previewUrl))
+            if (force || !azureImageService.Exists($@"previews\{skinId}\{dragonId ?? dragon.ToString()}.png", out var previewUrl))
             {
                 dragonImage = await GetDragonBaseImage(dragonUrl, dragon, azureImageService);
 
@@ -154,7 +154,7 @@ namespace FRSkinTester.Controllers
             {
                 var apparelIds = Regex.Match(dressingRoomUrl, @"apparel=(?:,*([\d]*))*").Groups[1].Captures.Cast<Capture>().Where(x => !string.IsNullOrWhiteSpace(x.Value)).Select(x => x.Value);
                 var cacheUrl = $@"previews\{skinId}\{dragon.ToString()}_apparel-{string.Join("_", apparelIds)}.png";
-                if (force || !await azureImageService.Exists(cacheUrl, out apparelPreviewUrl))
+                if (force || !azureImageService.Exists(cacheUrl, out apparelPreviewUrl))
                 {
                     var azureUrl = $@"dragoncache\{dragonId ?? dragon.ToString()}_invisible-{string.Join("_", apparelIds)}.png";
                     if (dragonId != null)
@@ -181,7 +181,7 @@ namespace FRSkinTester.Controllers
             else if (dragonId != null && dragonId != "preview")
             {
                 var cacheUrl = $@"previews\{skinId}\{dragonId}_apparel.png";
-                if (force || !await azureImageService.Exists(cacheUrl, out apparelPreviewUrl))
+                if (force || !azureImageService.Exists(cacheUrl, out apparelPreviewUrl))
                 {
                     var invisibleDragonWithApparel = await GetInvisibleDragonWithApparel(dragonId, azureImageService, force);
 
@@ -204,7 +204,7 @@ namespace FRSkinTester.Controllers
             Bitmap dwagonImage;
             string azureUrl = $@"dragoncache\{dragon.SHA1Hash}.png";
 
-            if (await azureImageService.Exists(azureUrl, out var cacheUrl))
+            if (azureImageService.Exists(azureUrl, out var cacheUrl))
             {
                 using (var stream = await azureImageService.GetImage(azureUrl))
                     dwagonImage = (Bitmap)Image.FromStream(stream);
@@ -239,7 +239,7 @@ namespace FRSkinTester.Controllers
         {
             Bitmap invisibleDwagon;
             var azureUrl = $@"dragoncache\{dragonId}_invisible.png";
-            if (!force && await azureImageService.Exists(azureUrl, out var cacheUrl))
+            if (!force && azureImageService.Exists(azureUrl, out var cacheUrl))
             {
                 using (var stream = await azureImageService.GetImage(azureUrl))
                     invisibleDwagon = (Bitmap)Image.FromStream(stream);
