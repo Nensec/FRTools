@@ -139,12 +139,27 @@
                                                         <li><b>Genes:</b> @(dragon.BodyGene) / @(dragon.WingGene) / @(dragon.TertiaryGene)</li>
                                                         <li><b>Element:</b> @(dragon.Element)</li>
                                                         <li><b>Eyetype:</b> @(dragon.EyeType.GetDescription())</li>
-                                                        <li><b>Skin:</b> @Html.Raw(preview.Item1.Skin.Title ?? "<i>No title</i>") <span class="small">(@(preview.Item1.Skin.GeneratedId))</span></li>
+                                                        @if (preview.Item1.Skin != null)
+                                                        {
+                                                            <li><b>Skin:</b> @Html.Raw(preview.Item1.Skin.Title ?? "<i>No title</i>") <span class="small">(@(preview.Item1.Skin.GeneratedId))</span></li>
+                                                        }
+                                                        else
+                                                        {
+                                                            <li><b>Skin: <i>Skin deleted</i></b></li>
+                                                        }
                                                     </ul>
                                                 </div>
                                             </div>
                                             <div class="text-center">
-                                                <b>@(preview.Item1.DragonId != null ? "Real dragon" : "Scry dragon")</b> - @Html.RouteLink("Go to preview page", "Preview", new { SkinId = preview.Item1.Skin.GeneratedId })
+                                                <b>@(preview.Item1.DragonId != null ? "Real dragon" : "Scry dragon")</b> - 
+                                                @if (preview.Item1.Skin != null)
+                                                {
+                                                    @Html.RouteLink("Go to preview page", "Preview", new { SkinId = preview.Item1.Skin.GeneratedId })
+                                                }
+                                                else
+                                                {
+                                                    <i>Skin deleted</i>
+                                                }
                                                 @if (Model.IsOwn)
                                                 {
                                                     <p>
