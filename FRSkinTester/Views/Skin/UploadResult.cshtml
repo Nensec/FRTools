@@ -5,63 +5,60 @@
 }
 
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-8">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h2>Upload success!</h2>
             </div>
             <div class="panel-body">
-                <div>
-                    <h4>Your skin's URLs</h4>
-                    <hr />
-                    <p class="col-md-12">
-                        This URL is what you share with others to preview your skin.
-                    </p>
-                    <div class="col-md-10">
-                        <div class="form-group">
-                            <label style="padding-top:7px" class="col-md-4 control-label" for="PreviewLink">
-                                Existing dragon preview
-                            </label>
-                            <div class="col-md-8">
-                                @Html.CopyTextBox(Url.RouteUrl("Preview", new { SkinId = Model.SkinId }, "https"), "PreviewLink")
-                            </div>
+                <div class="alert alert-info">
+                    Hey you, artist you! I need your help! People who preview with <b>Primal</b> or <b>Glowing</b> eyes get really ugly results because the eye masks are bad. You can help!<br />
+                    Click <a href="https://github.com/Nensec/FRSkinTester/issues/9">here</a> to go to the Github issue page where I am keeping track of eye mask updates!
+                </div>
+                <h4>Your skin's URLs</h4>
+                <hr />
+                <p class="col-md-12">
+                    This URL is what you share with others to preview your skin.
+                </p>
+                <div class="col-md-12">
+                    @Html.CopyTextBox(Url.RouteUrl("Preview", new { SkinId = Model.SkinId }, "https"), "PreviewLink")
+                </div>
+
+                @if (Request.IsAuthenticated)
+                {
+                    <div class="col-md-12">
+                        <hr />
+                        <p>Since you are logged in you can manage this skin from your management page: @Html.RouteLink("Here", "ManageAccount")</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-12">
+                        <hr />
+                        <h3>You can use this link to manage your skin, keep this safe!</h3><br />
+                        <div class="alert alert-danger">
+
+                            Do not give this link out to anyone! Do not copy paste this onto the forums or send it in a private message. You can delete your skin with this link!
                         </div>
                     </div>
-
-                    @if (Request.IsAuthenticated)
-                    {
-                        <div class="col-md-12">
-                            <hr />
-                            <p>Since you are logged in you can manage this skin from your management page: @Html.RouteLink("Here", "ManageAccount")</p>
+                    <div class="form-group">
+                        <label style="padding-top:7px" class="col-md-3 control-label" for="ManageLink">
+                            Management page
+                        </label>
+                        <div class="col-md-9">
+                            @Html.CopyTextBox(Url.RouteUrl("Manage", new { SkinId = Model.SkinId, SecretKey = Model.SecretKey }, "https"), "ManageLink")
                         </div>
-                    }
-                    else
-                    {
-                        <div class="col-md-12">
-                            <hr />
-                            <h3>You can use this link to manage your skin, keep this safe!</h3><br />
-                        </div>
-                        <div class="col-md-10">
-                            <div class="form-group">
-                                <label style="padding-top:7px" class="col-md-4 control-label" for="ManageLink">
-                                    Management page
-                                </label>
-                                <div class="col-md-8">
-                                    @Html.CopyTextBox(Url.RouteUrl("Manage", new { SkinId = Model.SkinId, SecretKey = Model.SecretKey }, "https"), "ManageLink")
-                                </div>
-                            </div>
-                            <p>
-                                <i style="font-size:10px;">
-                                    Did you know that if you <a href="@Url.RouteUrl("Login")">login</a> all skins you upload will be linked to your account, allowing you easily manage them without having to remember this link!
-                                </i>
-                            </p>
-                        </div>
-                    }
-                </div>
+                    </div>
+                    <p>
+                        <i style="font-size:10px;">
+                            Did you know that if you <a href="@Url.RouteUrl("Login")">login</a> all skins you upload will be linked to your account, allowing you easily manage them without having to remember this link!
+                        </i>
+                    </p>
+                }
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="text-center">
