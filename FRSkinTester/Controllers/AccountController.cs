@@ -45,7 +45,7 @@ namespace FRSkinTester.Controllers
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
             if (loginInfo == null)
             {
-                TempData["Error"] = "Could not retrieve external login information from request";
+                TempData["Error"] = "Could not retrieve external login information from request, please try again.<br/>If the issue persists then please let me know <a href=\"https://github.com/Nensec/FRSkinTester/issues/5\">here</a>.";
                 return RedirectToRoute("Login");
             }
 
