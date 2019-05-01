@@ -151,10 +151,19 @@
                                                 </div>
                                             </div>
                                             <div class="text-center">
-                                                <b>@(preview.Item1.DragonId != null ? "Real dragon" : "Scry dragon")</b> - 
+                                                <b>@(preview.Item1.DragonId != null ? "Real dragon" : "Scry dragon")</b>
+                                                @if (preview.Item1.ScryerUrl != null)
+                                                {
+                                                    @: - <a href="@($"http://www1.flightrising.com/scrying/predict?breed={(int)dragon.DragonType}&gender={(int)dragon.Gender}&age={(int)dragon.Age}&bodygene={(int)dragon.BodyGene}&body={(int)dragon.BodyColor}&winggene={(int)dragon.WingGene}&wings={(int)dragon.WingColor}&tertgene={(int)dragon.TertiaryGene}&tert={(int)dragon.TertiaryColor}&element={(int)dragon.Element}&eyetype={(int)dragon.EyeType}")" target="_blank">Visit scrying workshop</a>
+                                                }
+                                                else if (Model.IsOwn && preview.Item1.DragonId != null)
+                                                {
+                                                    @: - <a href="@($"http://www1.flightrising.com/main.php?dragon={preview.Item1.DragonId}")" target="_blank">See dragon</a> - <a href="@($"http://www1.flightrising.com/scrying/predict/{preview.Item1.DragonId}")" target="_blank">Visit scrying workshop</a>
+                                                }
+                                                <br />
                                                 @if (preview.Item1.Skin != null)
                                                 {
-                                                    @Html.RouteLink("Go to preview page", "Preview", new { SkinId = preview.Item1.Skin.GeneratedId })
+                                                    @Html.RouteLink("Create preview with this skin", "Preview", new { SkinId = preview.Item1.Skin.GeneratedId })
                                                 }
                                                 else
                                                 {

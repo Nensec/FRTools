@@ -95,11 +95,11 @@
                             <div class="carousel-inner" role="listbox">
                                 @foreach (var preview in previews)
                                 {
+                                    var dragon = FRSkinTester.Infrastructure.DataModels.DragonCache.FromString(preview.Item1.DragonData);
                                     <div class="item @(preview.Item2 == 0 ? "active" : "")" data-item="@(preview.Item2)">
                                         <div class="row">
                                             <img id="Preview@(preview.Item2)" class="center-block" src="@(preview.Item1.PreviewImage)" data-toggle="popover">
                                             <div id="Preview@(preview.Item2)_popover" class="hide">
-                                                @{ var dragon = FRSkinTester.Infrastructure.DataModels.DragonCache.FromString(preview.Item1.DragonData); }
                                                 <ul style="list-style:none; padding:0">
                                                     <li><b>Colors:</b> @(dragon.BodyColor) / @(dragon.WingColor) / @(dragon.TertiaryColor)</li>
                                                     <li><b>Genes:</b> @(dragon.BodyGene) / @(dragon.WingGene) / @(dragon.TertiaryGene)</li>
@@ -111,6 +111,10 @@
                                         </div>
                                         <div class="text-center">
                                             <b>@(preview.Item1.DragonId != null ? "Real dragon" : "Scry dragon")</b>
+                                            @if (preview.Item1.ScryerUrl != null)
+                                            {
+                                                @: - <a href="@($"http://www1.flightrising.com/scrying/predict?breed={(int)dragon.DragonType}&gender={(int)dragon.Gender}&age={(int)dragon.Age}&bodygene={(int)dragon.BodyGene}&body={(int)dragon.BodyColor}&winggene={(int)dragon.WingGene}&wings={(int)dragon.WingColor}&tertgene={(int)dragon.TertiaryGene}&tert={(int)dragon.TertiaryColor}&element={(int)dragon.Element}&eyetype={(int)dragon.EyeType}")" target="_blank">Visit scrying workshop</a>
+                                            }
                                         </div>
                                     </div>
                                 }
