@@ -1,0 +1,28 @@
+﻿@{
+    ViewBag.Title = "Preview";
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2>
+            Enter the ID of the preview
+        </h2>
+    </div>
+    <div class="panel-body">
+        <div class="form-horizontal">
+            @Html.Label("Skin ID", new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBox("id", null, new { @class = "form-control" })
+            </div>
+            <button id="submit" class="btn btn-primary">Go to preview</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#submit').click(function () {
+            location.href = `@Url.RouteUrl("PreviewHome")/${$('#id').val()}`;
+        });
+    });
+</script>

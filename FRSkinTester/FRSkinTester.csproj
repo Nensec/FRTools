@@ -701,6 +701,7 @@
     <Content Include="Views\Manage\ManageUser.cshtml" />
     <Content Include="Views\Profile\Index.cshtml" />
     <Content Include="Views\Skin\_PreviewForm.cshtml" />
+    <Content Include="Views\Skin\PreviewHome.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

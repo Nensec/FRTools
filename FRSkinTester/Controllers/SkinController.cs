@@ -19,6 +19,12 @@ namespace FRSkinTester.Controllers
 {
     public class SkinController : BaseController
     {
+        [Route("preview", Name = "PreviewHome")]
+        public ActionResult PreviewHome()
+        {
+            return View();
+        }
+
         [Route("preview/{skinId}", Name = "Preview")]
         public async Task<ActionResult> Preview(PreviewModelGet model)
         {
