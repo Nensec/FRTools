@@ -6,7 +6,7 @@
 
 @section meta{
     <meta property="og:title" content="Skin preview@(Model.Title != null ? $" of '{Model.Title}'" : "")" />
-    <meta property="og:image" content="@(Model.PreviewUrl)" />
+    <meta property="og:image" content="@(Model.CDNBasePath + Model.PreviewUrl)" />
     <meta property="og:url" content="@Url.RouteUrl("Preview", new { SkinId = Model.SkinId })" />
     <meta property="og:description" content="@(Model.Description ?? "No description provided")" />
 }
