@@ -1,11 +1,17 @@
 ﻿using FRSkinTester.Infrastructure;
 using FRSkinTester.Infrastructure.DataModels;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Web;
 
 namespace FRSkinTester.Models
 {
-    public class UploadModelPost
+    public class BaseSkinModel
+    {
+        public string CDNBasePath => ConfigurationManager.AppSettings["CDNBasePath"];
+    }
+
+    public class UploadModelPost : BaseSkinModel
     {
         [Display(Name = "Name of your skin")]
         public string Title { get; set; }
@@ -20,19 +26,19 @@ namespace FRSkinTester.Models
         public HttpPostedFileBase Skin { get; set; }
     }
 
-    public class UploadModelPostViewModel
+    public class UploadModelPostViewModel : BaseSkinModel
     {
         public string SkinId { get; set; }
         public string SecretKey { get; set; }
         public string PreviewUrl { get; set; }
     }
 
-    public class PreviewModelGet
+    public class PreviewModelGet : BaseSkinModel
     {
         public string SkinId { get; set; }
     }
 
-    public class PreviewModelViewModel
+    public class PreviewModelViewModel : BaseSkinModel
     {
         public string Title { get; set; }
         public string Description { get; set; }
@@ -43,7 +49,7 @@ namespace FRSkinTester.Models
     }
 
     [SmartRequired]
-    public partial class PreviewModelPost
+    public partial class PreviewModelPost : BaseSkinModel
     {
         public PreviewModelPost(string skinId) => SkinId = skinId;
         public PreviewModelPost() { }
@@ -62,32 +68,32 @@ namespace FRSkinTester.Models
         public bool Force { get; set; }
     }
 
-    public class PreviewModelPostViewModel
+    public class PreviewModelPostViewModel : BaseSkinModel
     {
         public PreviewResult Result { get; set; }
         public string SkinId { get; set; }
         public DragonCache Dragon { get; set; }
     }
 
-    public class DeleteSkinPost
+    public class DeleteSkinPost : BaseSkinModel
     {
         public string SkinId { get; set; }
         public string SecretKey { get; set; }
     }
 
-    public class ManageModelGet
+    public class ManageModelGet : BaseSkinModel
     {
         public string SkinId { get; set; }
         public string SecretKey { get; set; }
     }
 
-    public class ManageModelViewModel
+    public class ManageModelViewModel : BaseSkinModel
     {
         public Skin Skin { get; set; }
         public string PreviewUrl { get; set; }
     }
 
-    public class ManageModelPost
+    public class ManageModelPost : BaseSkinModel
     {
         [Display(Name = "Name of your skin")]
         public string Title { get; set; }
@@ -100,6 +106,4 @@ namespace FRSkinTester.Models
         public string SkinId { get; set; }
         public string SecretKey { get; set; }
     }
-
-
 }

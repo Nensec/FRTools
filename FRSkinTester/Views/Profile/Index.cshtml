@@ -119,7 +119,7 @@
                                 @foreach (var preview in previews)
                                 {
                                     <li data-id="@(preview.Item1.Id)" data-item="@(preview.Item2)" data-target="#carousel-previews" data-slide-to="@(preview.Item2)" class="@(preview.Item2 == 0 ? "activeIndicator" : "")">
-                                        <img src="@(preview.Item1.PreviewImage)" />
+                                        <img src="@(Model.CDNBasePath + preview.Item1.PreviewImage)" />
                                     </li>
                                 }
                             </ol>
@@ -131,7 +131,7 @@
                                     {
                                         <div class="item @(preview.Item2 == 0 ? "active" : "")" data-id="@(preview.Item1.Id)" data-item="@(preview.Item2)">
                                             <div class="row">
-                                                <img id="Preview@(preview.Item2)" class="center-block" src="@(preview.Item1.PreviewImage)" data-toggle="popover">
+                                                <img id="Preview@(preview.Item2)" class="center-block" src="@(Model.CDNBasePath + preview.Item1.PreviewImage)" data-toggle="popover">
                                                 <div id="Preview@(preview.Item2)_popover" class="hide">
                                                     @{ var dragon = FRSkinTester.Infrastructure.DataModels.DragonCache.FromString(preview.Item1.DragonData); }
                                                     <ul style="list-style:none; padding:0">

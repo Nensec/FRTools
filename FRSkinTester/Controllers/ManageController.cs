@@ -24,10 +24,7 @@ namespace FRSkinTester.Controllers
         [Route(Name = "ManageAccount")]
         public ActionResult Index()
         {
-            var model = new AccountViewModel
-            {
-                CDNBasePath = ConfigurationManager.AppSettings["CDNBasePath"]
-            };
+            var model = new AccountViewModel();
             var userid = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
             using (var ctx = new DataContext())
             {

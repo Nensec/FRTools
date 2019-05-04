@@ -2,29 +2,34 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 
 namespace FRSkinTester.Models
 {
-    public class AccountViewModel
+    public class BaseManageModel
+    {
+        public string CDNBasePath => ConfigurationManager.AppSettings["CDNBasePath"];
+    }
+
+    public class AccountViewModel : BaseManageModel
     {
         public User User { get; set; }
         public List<Skin> Skins { get; set; }
-        public string CDNBasePath { get; set; }
     }
 
-    public class VerifyFRViewModel
+    public class VerifyFRViewModel : BaseManageModel
     {
         public Guid Guid { get; set; }
     }
 
-    public class VerifyFRPostViewModel
+    public class VerifyFRPostViewModel : BaseManageModel
     {
         [Display(Name = "User/Lair Id")]
         [Required]
         public int LairId { get; set; }
     }
 
-    public class UserPostViewModel
+    public class UserPostViewModel : BaseManageModel
     {
         [Display(Name = "Username"), StringLength(50, MinimumLength = 1)]
         public string Username { get; set; }
@@ -34,7 +39,7 @@ namespace FRSkinTester.Models
         public Privacy Privacy { get; set; }
     }
 
-    public class ClaimSkinPostViewModel
+    public class ClaimSkinPostViewModel : BaseManageModel
     {
         [Display(Name = "Skin Id")]
         public string SkinId { get; set; }

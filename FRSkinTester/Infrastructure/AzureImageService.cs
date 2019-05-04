@@ -52,7 +52,7 @@ namespace FRSkinTester.Infrastructure
 
             await reference.UploadFromStreamAsync(stream);
 
-            return reference.Uri.ToString();
+            return reference.Uri.AbsolutePath;
         }
 
         public bool Exists(string path, out string url)
@@ -61,7 +61,7 @@ namespace FRSkinTester.Infrastructure
 
             var fileName = Path.GetFileName(path);
             var reference = directory.GetBlockBlobReference(fileName);
-            url = reference.Exists() ? reference.Uri.ToString() : null;
+            url = reference.Exists() ? reference.Uri.AbsolutePath : null;
             return url != null;
         }
 
