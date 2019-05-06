@@ -45,8 +45,13 @@ namespace FRSkinTester.Controllers
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
             if (loginInfo == null)
             {
-                TempData["Error"] = "Could not retrieve external login information from request, please try again.<br/>If the issue persists then please let me know <a href=\"https://github.com/Nensec/FRSkinTester/issues/5\">here</a>.";
-                return RedirectToRoute("Login");
+                // Since retrying the entire thing again seems to work, maybe just doing this call again will fix the null?
+                loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
+                if (loginInfo == null)
+                {
+                    TempData["Error"] = "Could not retrieve external login information from request, please try again.<br/>If the issue persists then please let me know <a href=\"https://github.com/Nensec/FRSkinTester/issues/5\">here</a>.";
+                    return RedirectToRoute("Login");
+                }
             }
 
             // Sign in the user with this external login provider if the user already has a login
