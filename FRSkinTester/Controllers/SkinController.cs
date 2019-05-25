@@ -103,6 +103,7 @@ namespace FRSkinTester.Controllers
             string dressingRoomUrl = isDressingRoomUrl ? dragonUrl : null;
             if (isDressingRoomUrl)
             {
+                var apparelDragon = ParseUrlForDragon(dragonUrl);
                 if (!dragonUrl.Contains("/dgen/dressing-room/dummy"))
                 {
                     dragonId = int.Parse(Regex.Match(dragonUrl, @"did=([\d]*)").Groups[1].Value);
@@ -112,9 +113,16 @@ namespace FRSkinTester.Controllers
                         dragonUrl = ScrapeImageUrl(htmlPage);
                     }
                 }
+                dragon = ParseUrlForDragon(dragonUrl);
+                dragon.Apparel = apparelDragon.Apparel;
+                if (dragon.GetApparel().Length == 0)
+                {
+                    TempData["Error"] = $"This dressing room URL contains no apparel";
+                    return RedirectToRoute("Preview", new { skinId });
+                }
             }
-
-            dragon = ParseUrlForDragon(dragonUrl);
+            else
+                dragon = ParseUrlForDragon(dragonUrl);
 
             if (dragon.Age == Age.Hatchling)
             {

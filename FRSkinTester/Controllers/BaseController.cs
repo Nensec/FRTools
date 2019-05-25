@@ -30,45 +30,45 @@ namespace FRSkinTester.Controllers
         protected DragonCache ParseUrlForDragon(string dragonUrl)
         {
             var dragon = new DragonCache();
-
-            Match regexParse;
-            if ((regexParse = Regex.Match(dragonUrl, @"gender=([\d]*)")).Success)
-                dragon.Gender = (Gender)int.Parse(regexParse.Groups[1].Value);
-            if ((regexParse = Regex.Match(dragonUrl, @"breed=([\d]*)")).Success)
-                dragon.DragonType = (DragonType)int.Parse(regexParse.Groups[1].Value);
-            if ((regexParse = Regex.Match(dragonUrl, @"auth=([a-z0-9]*)")).Success)
-                dragon.SHA1Hash = regexParse.Groups[1].Value;
-            else
-                dragon.SHA1Hash = $"DUMMY_{(int)dragon.DragonType}_{(int)dragon.Gender}";
-
             using (var ctx = new DataContext())
             {
-                DragonCache dbDragon = null;
+
+                Match regexParse;
+                if ((regexParse = Regex.Match(dragonUrl, @"gender=([\d]*)")).Success)
+                    dragon.Gender = (Gender)int.Parse(regexParse.Groups[1].Value);
+                if ((regexParse = Regex.Match(dragonUrl, @"breed=([\d]*)")).Success)
+                    dragon.DragonType = (DragonType)int.Parse(regexParse.Groups[1].Value);
+                if ((regexParse = Regex.Match(dragonUrl, @"auth=([a-z0-9]*)")).Success)
+                    dragon.SHA1Hash = regexParse.Groups[1].Value;
+                else
+                    dragon.SHA1Hash = $"DUMMY_{(int)dragon.DragonType}_{(int)dragon.Gender}";
+
+                var dbDragon = new DragonCache();
+
                 if ((dbDragon = ctx.DragonCache.FirstOrDefault(x => x.SHA1Hash == dragon.SHA1Hash)) != null)
-                    return dbDragon;
-            }
+                    dragon = dbDragon;
 
-            if ((regexParse = Regex.Match(dragonUrl, @"element=([\d]*)")).Success)
-                dragon.Element = (Element)int.Parse(regexParse.Groups[1].Value);
-            if ((regexParse = Regex.Match(dragonUrl, @"eyetype=([\d]*)")).Success)
-                dragon.EyeType = (EyeType)int.Parse(regexParse.Groups[1].Value);
-            if ((regexParse = Regex.Match(dragonUrl, @"bodygene=([\d]*)")).Success)
-                dragon.BodyGene = (BodyGene)int.Parse(regexParse.Groups[1].Value);
-            if ((regexParse = Regex.Match(dragonUrl, @"winggene=([\d]*)")).Success)
-                dragon.WingGene = (WingGene)int.Parse(regexParse.Groups[1].Value);
-            if ((regexParse = Regex.Match(dragonUrl, @"tertgene=([\d]*)")).Success)
-                dragon.TertiaryGene = (TertiaryGene)int.Parse(regexParse.Groups[1].Value);
-            if ((regexParse = Regex.Match(dragonUrl, @"body=([\d]*)")).Success)
-                dragon.BodyColor = (Models.Color)int.Parse(regexParse.Groups[1].Value);
-            if ((regexParse = Regex.Match(dragonUrl, @"wings=([\d]*)")).Success)
-                dragon.WingColor = (Models.Color)int.Parse(regexParse.Groups[1].Value);
-            if ((regexParse = Regex.Match(dragonUrl, @"tert=([\d]*)")).Success)
-                dragon.TertiaryColor = (Models.Color)int.Parse(regexParse.Groups[1].Value);
-            if ((regexParse = Regex.Match(dragonUrl, @"age=([\d]*)")).Success)
-                dragon.Age = (Age)int.Parse(regexParse.Groups[1].Value);
+                if ((regexParse = Regex.Match(dragonUrl, @"element=([\d]*)")).Success)
+                    dragon.Element = (Element)int.Parse(regexParse.Groups[1].Value);
+                if ((regexParse = Regex.Match(dragonUrl, @"eyetype=([\d]*)")).Success)
+                    dragon.EyeType = (EyeType)int.Parse(regexParse.Groups[1].Value);
+                if ((regexParse = Regex.Match(dragonUrl, @"bodygene=([\d]*)")).Success)
+                    dragon.BodyGene = (BodyGene)int.Parse(regexParse.Groups[1].Value);
+                if ((regexParse = Regex.Match(dragonUrl, @"winggene=([\d]*)")).Success)
+                    dragon.WingGene = (WingGene)int.Parse(regexParse.Groups[1].Value);
+                if ((regexParse = Regex.Match(dragonUrl, @"tertgene=([\d]*)")).Success)
+                    dragon.TertiaryGene = (TertiaryGene)int.Parse(regexParse.Groups[1].Value);
+                if ((regexParse = Regex.Match(dragonUrl, @"body=([\d]*)")).Success)
+                    dragon.BodyColor = (Models.Color)int.Parse(regexParse.Groups[1].Value);
+                if ((regexParse = Regex.Match(dragonUrl, @"wings=([\d]*)")).Success)
+                    dragon.WingColor = (Models.Color)int.Parse(regexParse.Groups[1].Value);
+                if ((regexParse = Regex.Match(dragonUrl, @"tert=([\d]*)")).Success)
+                    dragon.TertiaryColor = (Models.Color)int.Parse(regexParse.Groups[1].Value);
+                if ((regexParse = Regex.Match(dragonUrl, @"age=([\d]*)")).Success)
+                    dragon.Age = (Age)int.Parse(regexParse.Groups[1].Value);
+                if ((regexParse = Regex.Match(dragonUrl, @"apparel=([\d,]*)")).Success)
+                    dragon.Apparel = regexParse.Groups[1].Value;
 
-            using (var ctx = new DataContext())
-            {
                 ctx.DragonCache.Add(dragon);
                 ctx.SaveChanges();
             }
@@ -152,15 +152,15 @@ namespace FRSkinTester.Controllers
             string apparelPreviewUrl = null;
             if (dressingRoomUrl != null)
             {
-                var apparelIds = Regex.Match(dressingRoomUrl, @"apparel=(?:,*([\d]*))*").Groups[1].Captures.Cast<Capture>().Where(x => !string.IsNullOrWhiteSpace(x.Value)).Select(x => x.Value);
-                var cacheUrl = $@"previews\{skinId}\{dragon.ToString()}_apparel-{string.Join("_", apparelIds)}.png";
+                var apparelIds = dragon.GetApparel();
+                var cacheUrl = $@"previews\{skinId}\{dragonId ?? dragon.ToString()}_apparel.png";
                 if (force || !azureImageService.Exists(cacheUrl, out apparelPreviewUrl))
                 {
-                    var azureUrl = $@"dragoncache\{dragonId ?? dragon.ToString()}_invisible-{string.Join("_", apparelIds)}.png";
+                    var azureUrl = $@"dragoncache\{dragonId ?? dragon.ToString()}_invisible.png";
                     if (dragonId != null)
-                        dressingRoomUrl = string.Format(DressingRoomApparalUrl, dragonId, string.Join(",", apparelIds.Concat(new[] { "22046" })));
+                        dressingRoomUrl = string.Format(DressingRoomApparalUrl, dragonId, string.Join(",", apparelIds.Concat(new[] { 22046 })));
                     else
-                        dressingRoomUrl = string.Format(DressingRoomDummyUrl, (int)dragon.DragonType, (int)dragon.Gender) + $"&apparel={string.Join(",", apparelIds.Concat(new[] { "22046" }))}";
+                        dressingRoomUrl = string.Format(DressingRoomDummyUrl, (int)dragon.DragonType, (int)dragon.Gender) + $"&apparel={string.Join(",", apparelIds.Concat(new[] { 22046 }))}";
 
                     using (var client = new WebClient())
                     {

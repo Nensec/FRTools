@@ -1,6 +1,7 @@
 ﻿using FRSkinTester.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace FRSkinTester.Infrastructure.DataModels
 {
@@ -20,6 +21,7 @@ namespace FRSkinTester.Infrastructure.DataModels
         public EyeType EyeType { get; set; }
         public Element Element { get; set; }
         public Age Age { get; set; }
+        public string Apparel { get; set; }
         [StringLength(40)]
         [Index]
         public string SHA1Hash { get; set; }
@@ -51,9 +53,15 @@ namespace FRSkinTester.Infrastructure.DataModels
                 dragon.TertiaryColor = (Color)int.Parse(split[9]);
             if (split.Length > 10)
                 dragon.Age = (Age)int.Parse(split[10]);
+            if (split.Length > 11)
+                dragon.Apparel = split[11];
             return dragon;
         }
 
-        public override string ToString() => $"{(int)Gender}_{(int)DragonType}_{(int)Element}_{(int)EyeType}_{(int)BodyGene}_{(int)WingGene}_{(int)TertiaryGene}_{(int)BodyColor}_{(int)WingColor}_{(int)TertiaryColor}_{(int)Age}";
+        public override string ToString() => $"{(int)Gender}_{(int)DragonType}_{(int)Element}_{(int)EyeType}_{(int)BodyGene}_{(int)WingGene}_{(int)TertiaryGene}_{(int)BodyColor}_{(int)WingColor}_{(int)TertiaryColor}_{(int)Age}_{Apparel}";
+
+        public void SetApparel(int[] apparelIds) => Apparel = string.Join(",", apparelIds);
+
+        public int[] GetApparel() => string.IsNullOrEmpty(Apparel) ? new int[] { } : Apparel.Split(',').Select(x => int.Parse(x)).ToArray();
     }
 }
