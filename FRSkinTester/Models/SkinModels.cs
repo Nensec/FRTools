@@ -9,6 +9,21 @@ namespace FRSkinTester.Models
     public class BaseSkinModel
     {
         public string CDNBasePath => ConfigurationManager.AppSettings["CDNBasePath"];
+
+        public adnmaster.Bitly.BitlyClient BitlyClient { get; } = new adnmaster.Bitly.BitlyClient(ConfigurationManager.AppSettings["BitlyClientId"]);
+
+        public BaseSkinModel() => BitlyClient.ApplyAccessToken(ConfigurationManager.AppSettings["BitlyAT"]);
+        public string TryGenerateUrl(string url)
+        {
+            // bitly cannot create shortened links for localhost
+            if (url.Contains("localhost"))
+                return url;
+
+            var result = BitlyClient.Links.Shorten(url);
+            if(result.StatusCode != System.Net.HttpStatusCode.OK)            
+                return url;
+            return result.Data.ShortUrl;
+        }
     }
 
     public class UploadModelPost : BaseSkinModel

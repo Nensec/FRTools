@@ -63,7 +63,7 @@
                             Dragon preview
                         </label>
                         <div class="col-md-8">
-                            @Html.CopyTextBox(Url.RouteUrl("Preview", new { SkinId = Model.Skin.GeneratedId }, "https"), "PreviewLink")
+                            @Html.CopyTextBox(Model.TryGenerateUrl(Url.RouteUrl("Preview", new { SkinId = Model.Skin.GeneratedId }, "https")), "PreviewLink")
                         </div>
                     </div>
                 </div>

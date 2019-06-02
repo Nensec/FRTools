@@ -45,6 +45,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="adnmaster.Bitly, Version=1.2013.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\adnmaster.Bitly.1.2013.2\lib\net40\adnmaster.Bitly.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -99,6 +102,9 @@
     </Reference>
     <Reference Include="Owin.Security.Providers.Tumblr, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.Security.Providers.Tumblr.1.0.1\lib\net45\Owin.Security.Providers.Tumblr.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp, Version=104.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.104.1\lib\net4\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -670,6 +676,7 @@
     <Content Include="fonts\social_icons.ttf" />
     <Content Include="fonts\social_icons.woff" />
     <Content Include="fonts\social_icons.woff2" />
+    <Content Include="Documentation.zip" />
     <None Include="Properties\PublishProfiles\frskintester - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\Chart.bundle.min.js" />

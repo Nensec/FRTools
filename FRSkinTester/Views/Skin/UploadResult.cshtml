@@ -46,7 +46,7 @@
                             Management page
                         </label>
                         <div class="col-md-9">
-                            @Html.CopyTextBox(Url.RouteUrl("Manage", new { SkinId = Model.SkinId, SecretKey = Model.SecretKey }, "https"), "ManageLink")
+                            @Html.CopyTextBox(Model.TryGenerateUrl(Url.RouteUrl("Manage", new { SkinId = Model.SkinId, SecretKey = Model.SecretKey }, "https")), "ManageLink")
                         </div>
                     </div>
                     <p>
