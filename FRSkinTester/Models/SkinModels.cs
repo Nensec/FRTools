@@ -19,10 +19,17 @@ namespace FRSkinTester.Models
             if (url.Contains("localhost"))
                 return url;
 
-            var result = BitlyClient.Links.Shorten(url);
-            if(result.StatusCode != System.Net.HttpStatusCode.OK)            
+            try
+            {
+                var result = BitlyClient.Links.Shorten(url);
+                if (result.StatusCode != System.Net.HttpStatusCode.OK)
+                    return url;
+                return result.Data.ShortUrl;
+            }
+            catch
+            {
                 return url;
-            return result.Data.ShortUrl;
+            }
         }
     }
 
