@@ -68,16 +68,25 @@ namespace FRSkinTester.Models
         public string PreviewUrl { get; set; }
         public double? Coverage { get; set; }
         public User Creator { get; set; }
+        public DragonType DragonType { get; set; }
+        public Gender Gender { get; set; }
     }
 
     [SmartRequired]
     public partial class PreviewModelPost : BaseSkinModel
     {
-        public PreviewModelPost(string skinId) => SkinId = skinId;
+        public PreviewModelPost(string skinId, DragonType dragonType)
+        {
+            SkinId = skinId;
+            DragonType = dragonType;
+        }
+
         public PreviewModelPost() { }
 
         [IgnoreRequired]
         public string SkinId { get; set; }
+        [IgnoreRequired]
+        public DragonType DragonType { get; set; }
 
         [Display(Name = "Dragon ID")]
         public int? DragonId { get; set; }
@@ -88,6 +97,8 @@ namespace FRSkinTester.Models
 
         [IgnoreRequired]
         public bool Force { get; set; }
+
+        public bool IsAncientBreed => DragonType == DragonType.Gaoler;
     }
 
     public class PreviewModelPostViewModel : BaseSkinModel

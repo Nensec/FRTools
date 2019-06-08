@@ -102,7 +102,7 @@
                                             <div id="Preview@(preview.Item2)_popover" class="hide">
                                                 <ul style="list-style:none; padding:0">
                                                     <li><b>Colors:</b> @(dragon.BodyColor) / @(dragon.WingColor) / @(dragon.TertiaryColor)</li>
-                                                    <li><b>Genes:</b> @(dragon.BodyGene) / @(dragon.WingGene) / @(dragon.TertiaryGene)</li>
+                                                    <li><b>Genes:</b> @(dragon.GetBodyGene()) / @(dragon.GetWingGene()) / @(dragon.GetTertGene())</li>
 
                                                     <li><b>Element:</b> @(dragon.Element)</li>
                                                     <li><b>Eyetype:</b> @(dragon.EyeType.GetDescription())</li>
@@ -113,7 +113,7 @@
                                             <b>@(preview.Item1.DragonId != null ? "Real dragon" : "Scry dragon")</b>
                                             @if (preview.Item1.ScryerUrl != null)
                                             {
-                                                @: - <a href="@($"http://www1.flightrising.com/scrying/predict?breed={(int)dragon.DragonType}&gender={(int)dragon.Gender}&age={(int)dragon.Age}&bodygene={(int)dragon.BodyGene}&body={(int)dragon.BodyColor}&winggene={(int)dragon.WingGene}&wings={(int)dragon.WingColor}&tertgene={(int)dragon.TertiaryGene}&tert={(int)dragon.TertiaryColor}&element={(int)dragon.Element}&eyetype={(int)dragon.EyeType}")" target="_blank">Visit scrying workshop</a>
+                                                @: - <a href="@($"http://www1.flightrising.com/scrying/predict?breed={(int)dragon.DragonType}&gender={(int)dragon.Gender}&age={(int)dragon.Age}&bodygene={dragon.BodyGene}&body={(int)dragon.BodyColor}&winggene={dragon.WingGene}&wings={(int)dragon.WingColor}&tertgene={dragon.TertiaryGene}&tert={(int)dragon.TertiaryColor}&element={(int)dragon.Element}&eyetype={(int)dragon.EyeType}")" target="_blank">Visit scrying workshop</a>
                                             }
                                         </div>
                                     </div>
@@ -191,7 +191,7 @@
     @{
         var previewTimeData = reals.Concat(scries).Where(x => x.Item1.PreviewTime != null).Select(x => x.Item1.PreviewTime).OrderBy(x => x.Value).GroupBy(x => x.Value.Date).Select(x => (x.First().Value.ToString("dd/MM/yyyy"), x.Count()));
         var previewColorData = previewDragons.Select(x => (x.BodyColor, x.WingColor, x.TertiaryColor)).ToList();
-        var previewGeneData = previewDragons.Select(x => (x.BodyGene, x.WingGene, x.TertiaryGene)).ToList();
+        var previewGeneData = previewDragons.Select(x => (x.GetBodyGene(), x.GetWingGene(), x.GetTertGene())).ToList();
     }
     $(document).ready(function () {
         $('#carousel-previews').on('slide.bs.carousel', function (event) {

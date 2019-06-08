@@ -43,6 +43,7 @@
                         @Html.LabelFor(model => model.DragonType, htmlAttributes: new { @class = "control-label col-md-4" })
                         <div class="col-md-8">
                             <select class="form-control" name="@(Html.NameFor(model => model.DragonType))" id="@(Html.IdFor(model => model.DragonType))">
+                                <option disabled>- Modern -</option>
                                 <option value="14">Bogsneak</option>
                                 <option value="12">Coatl</option>
                                 <option value="1">Fae</option>
@@ -57,6 +58,8 @@
                                 <option value="7">Spiral</option>
                                 <option value="6">Tundra</option>
                                 <option value="10">Wildclaw</option>
+                                <option disabled>- Ancient -</option>
+                                <option value="17">Gaoler</option>
                             </select>
                         </div>
                     </div>

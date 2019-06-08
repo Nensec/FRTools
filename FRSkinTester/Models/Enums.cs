@@ -22,6 +22,59 @@ namespace FRSkinTester.Models
         Coatl,
         Skydancer,
         Bogsneak,
+        Gaoler = 17
+    }
+
+    public enum GaolerBodyGene
+    {
+        Basic = 0,
+        Giraffe = 27,
+        Wasp,
+        Shaggy,
+        Falcon,
+        Piebald,
+        Pinstripe,
+        Jaguar,
+        Bar,
+        Tapir,
+        Tiger,
+        Crystal,
+        Mosaic,
+        Phantom,
+    }
+
+    public enum GaolerWingGene
+    {
+        Basic = 0,
+        Hex = 27,
+        Bee,
+        Streak,
+        Peregrine,
+        Paint,
+        Trail,
+        Rosette,
+        Daub,
+        Striation,
+        Stripes,
+        Facet,
+        Breakup,
+        Spirit,
+    }
+
+    public enum GaolerTertGene
+    {
+        Basic = 0,
+        Ghost = 25,
+        Shardflank,
+        Gnarlhorns,
+        Smoke,
+        Thylacine,
+        Ringlets,
+        Underbelly,
+        Runes,
+        Scorpion,
+        Wintercoat,
+        Weathered,
     }
 
     public enum Gender

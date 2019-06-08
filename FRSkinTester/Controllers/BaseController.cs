@@ -27,6 +27,8 @@ namespace FRSkinTester.Controllers
             return imgTag.Groups[1].Value;
         }
 
+        protected bool IsAncientBreed(DragonType type) => type == DragonType.Gaoler;
+
         protected DragonCache ParseUrlForDragon(string dragonUrl)
         {
             var dragon = new DragonCache();
@@ -53,11 +55,11 @@ namespace FRSkinTester.Controllers
                 if ((regexParse = Regex.Match(dragonUrl, @"eyetype=([\d]*)")).Success)
                     dragon.EyeType = (EyeType)int.Parse(regexParse.Groups[1].Value);
                 if ((regexParse = Regex.Match(dragonUrl, @"bodygene=([\d]*)")).Success)
-                    dragon.BodyGene = (BodyGene)int.Parse(regexParse.Groups[1].Value);
+                    dragon.BodyGene = int.Parse(regexParse.Groups[1].Value);
                 if ((regexParse = Regex.Match(dragonUrl, @"winggene=([\d]*)")).Success)
-                    dragon.WingGene = (WingGene)int.Parse(regexParse.Groups[1].Value);
+                    dragon.WingGene = int.Parse(regexParse.Groups[1].Value);
                 if ((regexParse = Regex.Match(dragonUrl, @"tertgene=([\d]*)")).Success)
-                    dragon.TertiaryGene = (TertiaryGene)int.Parse(regexParse.Groups[1].Value);
+                    dragon.TertiaryGene = int.Parse(regexParse.Groups[1].Value);
                 if ((regexParse = Regex.Match(dragonUrl, @"body=([\d]*)")).Success)
                     dragon.BodyColor = (Models.Color)int.Parse(regexParse.Groups[1].Value);
                 if ((regexParse = Regex.Match(dragonUrl, @"wings=([\d]*)")).Success)
@@ -96,6 +98,16 @@ namespace FRSkinTester.Controllers
                     skinImage = Image.FromStream(skinImageStream);
 
                 var eyeMask = (Bitmap)Image.FromFile(Server.MapPath($@"\Masks\{(int)dragon.DragonType}_{(int)dragon.Gender}_{(dragon.EyeType == EyeType.Primal || dragon.EyeType == EyeType.MultiGaze ? (int)dragon.EyeType : 0)}_{(dragon.EyeType == EyeType.Primal ? (int)dragon.Element : 0)}.png"));
+
+                if(dragon.EyeType == EyeType.MultiGaze)
+                {
+                    using (var graphics = Graphics.FromImage(eyeMask))
+                    {
+                        var normaleye = Image.FromFile(Server.MapPath($@"\Masks\{(int)dragon.DragonType}_{(int)dragon.Gender}_0_0.png"));
+                        graphics.DrawImage(normaleye, new Rectangle(0, 0, 350, 350));
+                        graphics.Save();
+                    }
+                }
 
                 for (int x = 0; x < eyeMask.Width; x++)
                 {
@@ -178,7 +190,7 @@ namespace FRSkinTester.Controllers
                     }
                 }
             }
-            else if (dragonId != null && dragonId != "preview")
+            else if (dragonId != null && dragonId != "preview" && !IsAncientBreed(dragon.DragonType))
             {
                 var cacheUrl = $@"previews\{skinId}\{dragonId}_apparel.png";
                 if (force || !azureImageService.Exists(cacheUrl, out apparelPreviewUrl))

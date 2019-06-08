@@ -1,4 +1,5 @@
 ﻿using FRSkinTester.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -12,11 +13,11 @@ namespace FRSkinTester.Infrastructure.DataModels
 
         public DragonType DragonType { get; set; }
         public Gender Gender { get; set; }
-        public BodyGene BodyGene { get; set; }
+        public int BodyGene { get; set; }
         public Color BodyColor { get; set; }
-        public WingGene WingGene { get; set; }
+        public int WingGene { get; set; }
         public Color WingColor { get; set; }
-        public TertiaryGene TertiaryGene { get; set; }
+        public int TertiaryGene { get; set; }
         public Color TertiaryColor { get; set; }
         public EyeType EyeType { get; set; }
         public Element Element { get; set; }
@@ -40,11 +41,11 @@ namespace FRSkinTester.Infrastructure.DataModels
             if (split.Length > 3)
                 dragon.EyeType = (EyeType)int.Parse(split[3]);
             if (split.Length > 4)
-                dragon.BodyGene = (BodyGene)int.Parse(split[4]);
+                dragon.BodyGene = (int)Enum.Parse(dragon.DragonType == DragonType.Gaoler ? typeof(GaolerBodyGene) : typeof(BodyGene), split[4]);
             if (split.Length > 5)
-                dragon.WingGene = (WingGene)int.Parse(split[5]);
+                dragon.WingGene = (int)Enum.Parse(dragon.DragonType == DragonType.Gaoler ? typeof(GaolerWingGene) : typeof(WingGene), split[5]);
             if (split.Length > 6)
-                dragon.TertiaryGene = (TertiaryGene)int.Parse(split[6]);
+                dragon.TertiaryGene = (int)Enum.Parse(dragon.DragonType == DragonType.Gaoler ? typeof(GaolerTertGene) : typeof(TertiaryGene), split[6]);
             if (split.Length > 7)
                 dragon.BodyColor = (Color)int.Parse(split[7]);
             if (split.Length > 8)
@@ -58,10 +59,14 @@ namespace FRSkinTester.Infrastructure.DataModels
             return dragon;
         }
 
-        public override string ToString() => $"{(int)Gender}_{(int)DragonType}_{(int)Element}_{(int)EyeType}_{(int)BodyGene}_{(int)WingGene}_{(int)TertiaryGene}_{(int)BodyColor}_{(int)WingColor}_{(int)TertiaryColor}_{(int)Age}_{Apparel}";
+        public override string ToString() => $"{(int)Gender}_{(int)DragonType}_{(int)Element}_{(int)EyeType}_{Convert.ToInt32(BodyGene)}_{Convert.ToInt32(WingGene)}_{Convert.ToInt32(TertiaryGene)}_{(int)BodyColor}_{(int)WingColor}_{(int)TertiaryColor}_{(int)Age}_{Apparel}";
 
         public void SetApparel(int[] apparelIds) => Apparel = string.Join(",", apparelIds);
 
         public int[] GetApparel() => string.IsNullOrEmpty(Apparel) ? new int[] { } : Apparel.Split(',').Select(x => int.Parse(x)).ToArray();
+
+        public Enum GetBodyGene() => (Enum)Enum.Parse(DragonType == DragonType.Gaoler ? typeof(GaolerBodyGene) : typeof(BodyGene), BodyGene.ToString());
+        public Enum GetWingGene() => (Enum)Enum.Parse(DragonType == DragonType.Gaoler ? typeof(GaolerWingGene) : typeof(WingGene), WingGene.ToString());
+        public Enum GetTertGene() => (Enum)Enum.Parse(DragonType == DragonType.Gaoler ? typeof(GaolerTertGene) : typeof(TertiaryGene), TertiaryGene.ToString());
     }
 }

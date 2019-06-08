@@ -47,7 +47,9 @@ namespace FRSkinTester.Controllers
                         SkinId = model.SkinId,
                         PreviewUrl = (await GenerateOrFetchPreview(model.SkinId, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
                         Coverage = skin.Coverage,
-                        Creator = skin.Creator
+                        Creator = skin.Creator,
+                        DragonType = (DragonType)skin.DragonType,
+                        Gender = (Gender)skin.GenderType
                     });
                 }
                 catch (FileNotFoundException)
@@ -60,7 +62,6 @@ namespace FRSkinTester.Controllers
 
         [HttpPost]
         [Route("preview/{skinId}", Name = "PreviewPost")]
-        [Route("preview/{skinId}/Scry")] // TODO: Delete dis
         public async Task<ActionResult> Preview(PreviewModelPost model)
         {
             if (!ModelState.IsValid)
@@ -114,6 +115,11 @@ namespace FRSkinTester.Controllers
                     }
                 }
                 dragon = ParseUrlForDragon(dragonUrl);
+                if (IsAncientBreed(dragon.DragonType))
+                {
+                    TempData["Error"] = $"Ancient breeds cannot wear apparal, how did you even get a dressing room link in here?";
+                    return RedirectToRoute("Preview", new { skinId });
+                }
                 dragon.Apparel = apparelDragon.Apparel;
                 if (dragon.GetApparel().Length == 0)
                 {
