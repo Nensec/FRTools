@@ -23,7 +23,7 @@
         <p>
             @if (Model.User.FRId != null)
             {
-                @:This user has verified their account on Flight Rising, you can view their Flight Rising account <a href="@($"http://www1.flightrising.com/clan-profile/{Model.User.FRId}")" target="_blank">here</a>.
+                @:This user has verified their account on Flight Rising; you can view their Flight Rising account <a href="@($"http://www1.flightrising.com/clan-profile/{Model.User.FRId}")" target="_blank">here</a>.
             }
             else
             {
@@ -44,7 +44,7 @@
                 </div>
                 <div class="panel-body">
                     <p>
-                        These are skins that this user has uploaded to the site, click on an image to open it's preview page.
+                        These are skins that this user has uploaded to the site, click on an image to open its preview page.
                     </p>
                     @if (Model.Skins.Any())
                     {
