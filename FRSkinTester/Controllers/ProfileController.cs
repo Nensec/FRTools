@@ -32,7 +32,7 @@ namespace FRSkinTester.Controllers
             }
         }
 
-        [Route("{username}", Name = "Profile")]
+        [Route("{*username}", Name = "Profile")]
         public ActionResult Index(string username)
         {
             using (var ctx = new DataContext())
