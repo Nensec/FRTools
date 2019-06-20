@@ -34,7 +34,7 @@ namespace FRSkinTester.Controllers
                 if (skin == null)
                 {
                     TempData["Error"] = "Skin not found";
-                    return RedirectToAction("Index");
+                    return RedirectToRoute("Home");
                 }
                 if (skin.Coverage == null)
                     await UpdateCoverage(skin, ctx);
@@ -85,7 +85,7 @@ namespace FRSkinTester.Controllers
                 return await GeneratePreview(model.SkinId, dwagonUrl, model.DragonId, model.Force);
 
             }
-            else if(!string.IsNullOrWhiteSpace(model.ScryerUrl))
+            else if (!string.IsNullOrWhiteSpace(model.ScryerUrl))
             {
                 return await GeneratePreview(model.SkinId, model.ScryerUrl);
             }
@@ -349,7 +349,7 @@ namespace FRSkinTester.Controllers
                     await ctx.SaveChangesAsync();
 
                     TempData["Info"] = "Changes have been saved!";
-                    return RedirectToAction("Manage", new { model.SkinId, model.SecretKey });
+                    return RedirectToRoute("Manage", new { model.SkinId, model.SecretKey });
                 }
             }
         }
@@ -363,7 +363,7 @@ namespace FRSkinTester.Controllers
                 if (skin == null)
                 {
                     TempData["Error"] = "Skin not found or secret invalid";
-                    return RedirectToAction("Index");
+                    return RedirectToRoute("Home");
                 }
                 else
                 {
@@ -392,6 +392,43 @@ namespace FRSkinTester.Controllers
             }
 
             return File(bytes, "image/png");
+        }
+
+        [Route("browse", Name = "Browse")]
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
+        public async Task<ActionResult> Browse(BrowseFilterModel filter)
+        {
+            var model = new BrowseViewModel { Filter = filter };
+            using (var ctx = new DataContext())
+            {
+                var query = ctx.Skins                    
+                    .Where(x => filter.DragonTypes.Contains((DragonType)x.DragonType))
+                    .Where(x => filter.Genders.Contains((Gender)x.GenderType))
+                    .Where(x => filter.SkinTypes.Contains((BrowseFilterModel.SkinType)(x.Coverage >= 31 ? 1 : 0)));
+
+                if (!string.IsNullOrEmpty(filter.Name))
+                    query = query.Where(x => x.Title.Contains(filter.Name));
+
+                model.TotalResults = query.Count();
+
+                query = query.OrderBy(x => x.Id).Skip(filter.PageAmount * (filter.Page - 1)).Take(filter.PageAmount);
+
+                model.Results = query.Select(x => new PreviewModelViewModel
+                {
+                    Title = x.Title,
+                    Description = x.Description,
+                    SkinId = x.GeneratedId,
+                    Coverage = x.Coverage,
+                    Creator = x.Creator,
+                    DragonType = (DragonType)x.DragonType,
+                    Gender = (Gender)x.GenderType
+                }).ToList();
+
+                foreach (var result in model.Results)
+                    result.PreviewUrl = (await GenerateOrFetchPreview(result.SkinId, "preview", string.Format(DressingRoomDummyUrl, (int)result.DragonType, (int)result.Gender), null)).Urls[0];
+            }
+
+            return View(model);
         }
     }
 }

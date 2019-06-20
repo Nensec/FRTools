@@ -1,0 +1,117 @@
+﻿@model BrowseViewModel
+
+@{
+    ViewBag.Title = "Browse";
+}
+
+@using (Html.BeginRouteForm("Browse"))
+{
+    @Html.HiddenFor(model => model.Filter.Page)
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Filter
+        </div>
+        <div class="panel-body" style="padding-top:0">
+            <div class="form-horizontal">
+                <div class="row" style="position:relative;">
+                    <div class="col-md-12" title="Entered text will be searched as part of the 'Title' only!">
+                        @Html.LabelFor(model => model.Filter.Name, new { @class = "control-label" })
+                        @Html.TextBoxFor(model => model.Filter.Name, new { @class = "form-control", placeholder = "Enter name of skin.." })
+                    </div>
+                    <div class="col-md-4" title="Hold CTRL to select multiple, or hold SHIFT to select range">
+                        @Html.LabelFor(model => model.Filter.DragonTypes, new { @class = "control-label" })
+                        <select size="8" id="@Html.IdFor(model => model.Filter.DragonTypes)" name="@Html.NameFor(model => model.Filter.DragonTypes)" multiple class="form-control">
+                            @foreach (var dragonType in Enum.GetValues(typeof(DragonType)).Cast<DragonType>())
+                            {
+                                <option @((Model.Filter.DragonTypes.Contains(dragonType) ? "selected" : ""))>@(dragonType.ToString())</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4" title="Hold CTRL to select multiple, or hold SHIFT to select range">
+                        @Html.LabelFor(model => model.Filter.Genders, new { @class = "control-label" })
+                        <select size="2" id="@Html.IdFor(model => model.Filter.Genders)" name="@Html.NameFor(model => model.Filter.Genders)" multiple class="form-control">
+                            @foreach (var gender in Enum.GetValues(typeof(Gender)).Cast<Gender>())
+                            {
+                                <option @((Model.Filter.Genders.Contains(gender) ? "selected" : ""))>@(gender.ToString())</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4" title="Hold CTRL to select multiple, or hold SHIFT to select range">
+                        @Html.LabelFor(model => model.Filter.SkinTypes, new { @class = "control-label" })
+                        <select size="2" id="@Html.IdFor(model => model.Filter.SkinTypes)" name="@Html.NameFor(model => model.Filter.SkinTypes)" multiple class="form-control">
+                            @foreach (var skinType in Enum.GetValues(typeof(BrowseFilterModel.SkinType)).Cast<BrowseFilterModel.SkinType>())
+                            {
+                                <option @((Model.Filter.SkinTypes.Contains(skinType) ? "selected" : ""))>@(skinType.ToString())</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        @Html.LabelFor(model => model.Filter.PageAmount, new { @class = "control-label" })
+                        @Html.DropDownListFor(model => model.Filter.PageAmount, new[] { 5, 10, 25, 50 }.Select(x => new SelectListItem { Text = x.ToString() }), new { @class = "form-control" })
+                    </div>
+                    <div style="position:absolute; right:15px; bottom:0;">
+                        <input class="btn btn-primary" type="submit" onclick="$('#@(Html.IdFor(model => model.Filter.Page))').val(1);" value="Filter" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <p class="text-center">
+                Total results: <b>@(Model.TotalResults)</b>
+            </p>
+            <div class="row">
+                @foreach (var skin in Model.Results)
+                {
+                    <a href="@Url.RouteUrl("Preview", new { SkinId = skin.SkinId })">
+                        <div class="col-20-percent">
+                            <h5 class="text-center" style="max-width:100%; max-height:15px;">@(skin.Title ?? "No title")</h5>
+                            <div>
+                                <img class="img-responsive" src="@(skin.CDNBasePath + skin.PreviewUrl)" @((!string.IsNullOrEmpty(skin.Description) ? $"title=\"{skin.Description}\"" : "")) />
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+            <div class="clearfix">
+                @if (Model.TotalResults > Model.Filter.PageAmount)
+                {
+                    <div class="text-center">
+                        @foreach (var i in Enumerable.Range(1, (int)Math.Ceiling((double)Model.TotalResults / (double)(Model.Filter.PageAmount))))
+                        {
+                            if (i == Model.Filter.Page)
+                            {
+                                <b>@(i)</b>
+                            }
+                            else
+                            {
+                                <a href="#" onclick="$('#@(Html.IdFor(model => model.Filter.Page))').val(@(i)); $(this).closest('form').submit(); return false;">@i</a>
+                            }
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .col-20-percent {
+        width: 20%;
+        float: left;
+        position: relative;
+        min-height: 1px;
+        padding-right: 15px;
+        padding-left: 15px;
+        padding-bottom: 20px;
+        transition: all 1s ease-in-out;
+        -moz-transition: all 1s ease-in-out;
+        -webkit-transition: all 1s;
+    }
+
+        .col-20-percent:hover {
+            background-color: #d9edf7;
+        }
+</style>

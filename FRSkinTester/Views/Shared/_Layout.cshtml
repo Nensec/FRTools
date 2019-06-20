@@ -36,12 +36,12 @@
                 <a href="@Url.RouteUrl("Home")" class="navbar-brand" style="width:200px; padding-right:0">
                     <img src="~/Content/logo.svg" onerror="this.src='/Content/logo.png'" />
                 </a>
-                @*@Html.ActionLink("FR Skin Tester", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })*@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.RouteLink("Upload skin", "Upload")</li>
                     <li>@Html.RouteLink("Preview skin", "PreviewHome")</li>
+                    <li>@Html.RouteLink("Browse skins", "Browse", null, new { style = "font-weight:bold", title = "Browse skins that are uploaded to the tool" })</li>
                 </ul>
                 @if (Request.IsAuthenticated)
                 {
@@ -51,7 +51,7 @@
                         <ul class="nav navbar-nav navbar-right">
 
                             <li>
-                                @Html.RouteLink($"Hello {User.Identity.Name}!", "SelfProfile",  null, new { title = "View your profile" })
+                                @Html.RouteLink($"Hello {User.Identity.Name}!", "SelfProfile", null, new { title = "View your profile" })
                             </li>
                             <li>
                                 @Html.RouteLink($"Manage account", "ManageAccount", null, new { title = "Manage your account" })

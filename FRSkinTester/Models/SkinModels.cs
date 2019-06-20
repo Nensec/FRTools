@@ -1,7 +1,10 @@
 ﻿using FRSkinTester.Infrastructure;
 using FRSkinTester.Infrastructure.DataModels;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Configuration;
+using System.Linq;
 using System.Web;
 
 namespace FRSkinTester.Models
@@ -138,5 +141,45 @@ namespace FRSkinTester.Models
         public Gender Gender { get; set; }
         public string SkinId { get; set; }
         public string SecretKey { get; set; }
+    }
+
+    public class BrowseViewModel
+    {
+        public List<PreviewModelViewModel> Results { get; set; } = new List<PreviewModelViewModel>();
+        public int TotalResults { get; set; }
+        public BrowseFilterModel Filter { get; set; } = new BrowseFilterModel();
+    }
+
+    public class BrowseFilterModel
+    {
+        public enum SkinType
+        {
+            Accent,
+            Skin
+        }
+
+        private readonly List<int> _validPageAmounts = new List<int> { 5, 10, 25, 50 };
+        private int _pageAmount = 10;
+        private List<DragonType> _dragonTypes = Enum.GetValues(typeof(DragonType)).Cast<DragonType>().ToList();
+        private List<Gender> _genders = Enum.GetValues(typeof(Gender)).Cast<Gender>().ToList();
+        private List<SkinType> _skinTypes = Enum.GetValues(typeof(SkinType)).Cast<SkinType>().ToList();
+        private int _page = 1;
+
+        [Display(Name = "Name")]
+        public string Name { get; set; } = "";
+        [Display(Name = "Dragon breed")]
+        public List<DragonType> DragonTypes { get => _dragonTypes; set => _dragonTypes = value.Distinct().ToList(); }
+        [Display(Name = "Gender")]
+        public List<Gender> Genders { get => _genders; set => _genders = value.Distinct().ToList(); }
+        [Display(Name = "Skin type")]
+        public List<SkinType> SkinTypes { get => _skinTypes; set => _skinTypes = value.Distinct().ToList(); }
+
+        public int Page { get => _page; set => _page = value > 1 ? value : 1; }
+        [Display(Name = "Page size")]
+        public int PageAmount
+        {
+            get => _pageAmount;
+            set => _pageAmount = _validPageAmounts.Aggregate((x, y) => Math.Abs(x - value) < Math.Abs(y - value) ? x : y);
+        }
     }
 }
