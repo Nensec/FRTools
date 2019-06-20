@@ -411,7 +411,7 @@ namespace FRSkinTester.Controllers
 
                 model.TotalResults = query.Count();
 
-                query = query.OrderBy(x => x.Id).Skip(filter.PageAmount * (filter.Page - 1)).Take(filter.PageAmount);
+                query = query.OrderByDescending(x => x.Id).Skip(filter.PageAmount * (filter.Page - 1)).Take(filter.PageAmount);
 
                 model.Results = query.Select(x => new PreviewModelViewModel
                 {
