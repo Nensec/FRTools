@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
 
-namespace FRSkinTester.Infrastructure.DataModels
+namespace FRTools.Infrastructure.DataModels
 {
     public class UserRole : IdentityUserRole<int>
     {

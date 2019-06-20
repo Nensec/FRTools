@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FRSkinTester.Infrastructure.DataModels
+namespace FRTools.Infrastructure.DataModels
 {
     public class Preview
     {

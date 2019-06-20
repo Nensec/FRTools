@@ -1,4 +1,4 @@
-﻿using FRSkinTester.Infrastructure.DataModels;
+﻿using FRTools.Infrastructure.DataModels;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 
-namespace FRSkinTester.Infrastructure
+namespace FRTools.Infrastructure
 {
     // Is EF for this project overkilll? Yes, yes it is.
     // But I cba maintaining db scripts if I ever expand this project later.

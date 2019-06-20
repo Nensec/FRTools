@@ -1,4 +1,4 @@
-﻿@model FRSkinTester.Models.UserPostViewModel
+﻿@model FRTools.Models.UserPostViewModel
 
 @{
     ViewBag.Title = "Manage account";
@@ -37,7 +37,7 @@
                         @Html.LabelFor(model => model.Privacy, htmlAttributes: new { @class = "control-label col-md-4" })
                         <div class="col-md-8">
                             <select class="form-control" id="@Html.IdFor(model => model.Privacy)" name="@Html.NameFor(model => model.Privacy)">
-                                @foreach(var privacy in Enum.GetValues(typeof(FRSkinTester.Infrastructure.DataModels.Privacy)).Cast<FRSkinTester.Infrastructure.DataModels.Privacy>())
+                                @foreach(var privacy in Enum.GetValues(typeof(FRTools.Infrastructure.DataModels.Privacy)).Cast<FRTools.Infrastructure.DataModels.Privacy>())
                                 {
                                     <option value="@((int)privacy)" @(Model.Privacy == privacy ? "selected" : "")>@(privacy.GetDescription())</option>
                                 }

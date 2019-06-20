@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 
-namespace FRSkinTester
+namespace FRTools
 {
     public class FilterConfig
     {

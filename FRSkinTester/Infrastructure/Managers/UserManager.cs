@@ -1,7 +1,7 @@
-﻿using FRSkinTester.Infrastructure.DataModels;
+﻿using FRTools.Infrastructure.DataModels;
 using Microsoft.AspNet.Identity;
 
-namespace FRSkinTester.Infrastructure.Managers
+namespace FRTools.Infrastructure.Managers
 {
     public class UserManager : UserManager<User, int>
     {

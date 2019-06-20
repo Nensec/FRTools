@@ -1,13 +1,13 @@
-﻿using FRSkinTester.Infrastructure;
-using FRSkinTester.Infrastructure.DataModels;
-using FRSkinTester.Models;
+﻿using FRTools.Infrastructure;
+using FRTools.Infrastructure.DataModels;
+using FRTools.Models;
 using Microsoft.AspNet.Identity;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace FRSkinTester.Controllers
+namespace FRTools.Controllers
 {
     [RoutePrefix("profile")]
     public class ProfileController : BaseController

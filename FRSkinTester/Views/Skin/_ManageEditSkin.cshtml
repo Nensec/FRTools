@@ -1,4 +1,4 @@
-﻿@model FRSkinTester.Models.ManageModelPost
+﻿@model FRTools.Models.ManageModelPost
 
 @using (Html.BeginRouteForm("ManagePost"))
 {
@@ -26,7 +26,7 @@
             @Html.LabelFor(model => model.DragonType, htmlAttributes: new { @class = "control-label col-md-4" })
             <div class="col-md-8">
                 <select class="form-control" name="@(Html.NameFor(model => model.DragonType))" id="@(Html.IdFor(model => model.DragonType))">
-                    @foreach (var dragonType in Enum.GetValues(typeof(FRSkinTester.Models.DragonType)).Cast<FRSkinTester.Models.DragonType>().OrderBy(x => x.ToString()))
+                    @foreach (var dragonType in Enum.GetValues(typeof(FRTools.Models.DragonType)).Cast<FRTools.Models.DragonType>().OrderBy(x => x.ToString()))
                     {
                         <option @((dragonType == Model.DragonType ? "selected" : "")) value="@((int)dragonType)">@(dragonType.ToString())</option>
                     }
@@ -38,7 +38,7 @@
             @Html.LabelFor(model => model.Gender, htmlAttributes: new { @class = "control-label col-md-4" })
             <div class="col-md-8">
                 <select class="form-control" name="@(Html.NameFor(model => model.Gender))" id="@(Html.IdFor(model => model.Gender))">
-                    @foreach (var gender in Enum.GetValues(typeof(FRSkinTester.Models.Gender)).Cast<FRSkinTester.Models.Gender>().OrderBy(x => x.ToString()))
+                    @foreach (var gender in Enum.GetValues(typeof(FRTools.Models.Gender)).Cast<FRTools.Models.Gender>().OrderBy(x => x.ToString()))
                     {
                         <option @((gender == Model.Gender ? "selected" : "")) value="@((int)gender)">@(gender.ToString())</option>
                     }

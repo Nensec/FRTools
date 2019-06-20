@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace FRSkinTester.Infrastructure
+namespace FRTools.Infrastructure
 {
     [AttributeUsage(AttributeTargets.Class)]
     public class SmartRequiredAttribute : ValidationAttribute

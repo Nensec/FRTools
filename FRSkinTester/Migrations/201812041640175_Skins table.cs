@@ -1,4 +1,4 @@
-namespace FRSkinTester.Migrations
+namespace FRTools.Migrations
 {
     using System;
     using System.Data.Entity.Migrations;

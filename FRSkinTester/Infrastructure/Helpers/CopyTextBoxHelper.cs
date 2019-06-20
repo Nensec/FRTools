@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using System.Web.Mvc;
 
-namespace FRSkinTester.Infrastructure.Helpers
+namespace FRTools.Infrastructure.Helpers
 {
     public static class TextBoxExtentions
     {

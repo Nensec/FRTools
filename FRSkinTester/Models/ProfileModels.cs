@@ -1,8 +1,8 @@
-﻿using FRSkinTester.Infrastructure.DataModels;
+﻿using FRTools.Infrastructure.DataModels;
 using System.Collections.Generic;
 using System.Configuration;
 
-namespace FRSkinTester.Models
+namespace FRTools.Models
 {
     public class ViewProfileViewModel
     {

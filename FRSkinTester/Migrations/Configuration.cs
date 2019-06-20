@@ -1,18 +1,18 @@
-namespace FRSkinTester.Migrations
+namespace FRTools.Migrations
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<FRSkinTester.Infrastructure.DataContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<FRTools.Infrastructure.DataContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(FRSkinTester.Infrastructure.DataContext context)
+        protected override void Seed(FRTools.Infrastructure.DataContext context)
         {
             //  This method will be called after migrating to the latest version.
 

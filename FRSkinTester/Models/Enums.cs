@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Web;
 
-namespace FRSkinTester.Models
+namespace FRTools.Models
 {
     public enum DragonType
     {

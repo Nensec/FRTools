@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace FRSkinTester.Infrastructure.DataModels
+namespace FRTools.Infrastructure.DataModels
 {
     [Flags]
     public enum Privacy

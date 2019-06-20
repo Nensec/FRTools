@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2003
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRSkinTester", "FRSkinTester\FRSkinTester.csproj", "{5687D887-1F84-41C7-8921-EF5BEC7D4FC8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools", "FRSkinTester\FRTools.csproj", "{5687D887-1F84-41C7-8921-EF5BEC7D4FC8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

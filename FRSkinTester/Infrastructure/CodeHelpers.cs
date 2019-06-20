@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-namespace FRSkinTester
+namespace FRTools
 {
     public static class CodeHelpers
     {

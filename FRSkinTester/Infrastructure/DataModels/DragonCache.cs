@@ -1,10 +1,10 @@
-﻿using FRSkinTester.Models;
+﻿using FRTools.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
-namespace FRSkinTester.Infrastructure.DataModels
+namespace FRTools.Infrastructure.DataModels
 {
     public class DragonCache
     {

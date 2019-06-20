@@ -1,11 +1,11 @@
-﻿@model FRSkinTester.Models.ManageModelViewModel
+﻿@model FRTools.Models.ManageModelViewModel
 
 @{
     ViewBag.Title = "Manage";
     var previews = Model.Skin.Previews.Select((x, i) => (x, i)).ToList();
     var scries = previews.Where(x => x.Item1.DragonId == null).ToList();
     var reals = previews.Where(x => x.Item1.DragonId != null).GroupBy(x => x.Item1.DragonId).Select(x => x.First()).ToList();
-    var previewDragons = reals.Concat(scries).Select(x => FRSkinTester.Infrastructure.DataModels.DragonCache.FromString(x.Item1.DragonData));
+    var previewDragons = reals.Concat(scries).Select(x => FRTools.Infrastructure.DataModels.DragonCache.FromString(x.Item1.DragonData));
 }
 
 @section head {
@@ -25,12 +25,12 @@
                     Here you can edit your skin's details and view what people have previewed your skin on
                 </p>
                 <div>
-                    @Html.Partial("_ManageEditSkin", new FRSkinTester.Models.ManageModelPost
+                    @Html.Partial("_ManageEditSkin", new FRTools.Models.ManageModelPost
                {
                    Title = Model.Skin.Title,
                    Description = Model.Skin.Description,
-                   DragonType = (FRSkinTester.Models.DragonType)Model.Skin.DragonType,
-                   Gender = (FRSkinTester.Models.Gender)Model.Skin.GenderType
+                   DragonType = (FRTools.Models.DragonType)Model.Skin.DragonType,
+                   Gender = (FRTools.Models.Gender)Model.Skin.GenderType
                })
                 </div>
             </div>
@@ -95,7 +95,7 @@
                             <div class="carousel-inner" role="listbox">
                                 @foreach (var preview in previews)
                                 {
-                                    var dragon = FRSkinTester.Infrastructure.DataModels.DragonCache.FromString(preview.Item1.DragonData);
+                                    var dragon = FRTools.Infrastructure.DataModels.DragonCache.FromString(preview.Item1.DragonData);
                                     <div class="item @(preview.Item2 == 0 ? "active" : "")" data-item="@(preview.Item2)">
                                         <div class="row">
                                             <img id="Preview@(preview.Item2)" class="center-block" src="@(Model.CDNBasePath + preview.Item1.PreviewImage)" data-toggle="popover">

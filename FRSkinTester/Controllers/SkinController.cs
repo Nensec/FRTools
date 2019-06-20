@@ -1,6 +1,6 @@
-﻿using FRSkinTester.Infrastructure;
-using FRSkinTester.Infrastructure.DataModels;
-using FRSkinTester.Models;
+﻿using FRTools.Infrastructure;
+using FRTools.Infrastructure.DataModels;
+using FRTools.Models;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
@@ -15,8 +15,9 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
-namespace FRSkinTester.Controllers
+namespace FRTools.Controllers
 {
+    [RoutePrefix("skintester")]
     public class SkinController : BaseController
     {
         [Route("preview", Name = "PreviewHome")]
@@ -394,6 +395,7 @@ namespace FRSkinTester.Controllers
             return File(bytes, "image/png");
         }
 
+        [Route("")]
         [Route("browse", Name = "Browse")]
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public async Task<ActionResult> Browse(BrowseFilterModel filter)

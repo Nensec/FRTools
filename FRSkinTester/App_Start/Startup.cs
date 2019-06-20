@@ -1,5 +1,5 @@
-﻿using FRSkinTester.Infrastructure;
-using FRSkinTester.Infrastructure.DataModels;
+﻿using FRTools.Infrastructure;
+using FRTools.Infrastructure.DataModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
@@ -16,8 +16,8 @@ using System.Configuration;
 using System.Security.Claims;
 using System.Web.Helpers;
 
-[assembly: OwinStartup(typeof(FRSkinTester.App_Start.Startup))]
-namespace FRSkinTester.App_Start
+[assembly: OwinStartup(typeof(FRTools.App_Start.Startup))]
+namespace FRTools.App_Start
 {
     public partial class Startup
     {

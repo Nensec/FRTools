@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FRSkinTester.Infrastructure.DataModels
+namespace FRTools.Infrastructure.DataModels
 {
     public class Skin
     {

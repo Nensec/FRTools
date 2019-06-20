@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace FRSkinTester.Infrastructure
+namespace FRTools.Infrastructure
 {
     public class PreviewResult
     {

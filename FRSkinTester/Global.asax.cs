@@ -1,5 +1,5 @@
-﻿using FRSkinTester.Infrastructure;
-using FRSkinTester.Migrations;
+﻿using FRTools.Infrastructure;
+using FRTools.Migrations;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -9,7 +9,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 
-namespace FRSkinTester
+namespace FRTools
 {
     public class MvcApplication : System.Web.HttpApplication
     {

@@ -1,4 +1,4 @@
-﻿@model FRSkinTester.Models.PreviewModelPostViewModel
+﻿@model FRTools.Models.PreviewModelPostViewModel
 
 @{
     ViewBag.Title = "Preview";
@@ -11,13 +11,13 @@
         </h2>
     </div>
     <div class="panel-body">
-        @if (Model.Dragon.EyeType == FRSkinTester.Models.EyeType.Primal || Model.Dragon.EyeType == FRSkinTester.Models.EyeType.Glowing || (Model.Dragon.EyeType == FRSkinTester.Models.EyeType.MultiGaze && Model.Dragon.DragonType == FRSkinTester.Models.DragonType.Gaoler))
+        @if (Model.Dragon.EyeType == FRTools.Models.EyeType.Primal || Model.Dragon.EyeType == FRTools.Models.EyeType.Glowing || (Model.Dragon.EyeType == FRTools.Models.EyeType.MultiGaze && Model.Dragon.DragonType == FRTools.Models.DragonType.Gaoler))
         {
             <div class="alert alert-warning">
                 This dragon has the <b>@(Model.Dragon.EyeType)</b> eyetype. Due to the nature of how these eyes are generated here they don't look perfect (yet). This is a work in progress!
             </div>
         }
-        else if (Model.Dragon.EyeType == FRSkinTester.Models.EyeType.MultiGaze && Model.Dragon.DragonType != FRSkinTester.Models.DragonType.Gaoler)
+        else if (Model.Dragon.EyeType == FRTools.Models.EyeType.MultiGaze && Model.Dragon.DragonType != FRTools.Models.DragonType.Gaoler)
         {
             <div class="alert alert-success">
                 The eye masks for multi-gaze of modern breeds are generously provided by <b>Grovey#79114</b> (<a href="https://www1.flightrising.com/forums/gde/2571730">forum thread</a>)
@@ -29,7 +29,7 @@
                 Eyes might not look right compared to the final, but they should still give a good indication of what will be. This is a work in progress!
             </div>
         }
-        @if (Model.Dragon.DragonType == FRSkinTester.Models.DragonType.Gaoler && Enum.TryParse(Model.Dragon.TertiaryGene.ToString(), out FRSkinTester.Models.GaolerTertGene tert))
+        @if (Model.Dragon.DragonType == FRTools.Models.DragonType.Gaoler && Enum.TryParse(Model.Dragon.TertiaryGene.ToString(), out FRTools.Models.GaolerTertGene tert))
         {
             <div class="alert alert-warning">
                 The Gaoler breed has overlapping tertiary genes with skins, at this point it is not known if these go under or over skins!
@@ -75,7 +75,7 @@
         }
         <p class="pull-left">
             <i style="font-size:10px;">
-                Notice anything wrong with the result? Let me know so I can fix it <a href="https://github.com/nensec/frskintester/issues">&gt;here&lt;</a>!
+                Notice anything wrong with the result? Let me know so I can fix it <a href="https://github.com/nensec/FRTools/issues">&gt;here&lt;</a>!
             </i>
         </p>
         @if (!Request.IsAuthenticated)

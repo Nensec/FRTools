@@ -1,4 +1,4 @@
-﻿@model FRSkinTester.Models.AccountViewModel
+﻿@model FRTools.Models.AccountViewModel
 
 @{
     ViewBag.Title = "Account management";
@@ -92,7 +92,7 @@
                                     <li><b>Title:</b> @Html.Raw(skin.Item1.Title ?? "<i>No title</i>")</li>
                                     <li><b>Description:</b> @(skin.Item1.Description ?? "<i>No description</i>")</li>
                                     <li><b>Coverage:</b> @(skin.Item1.Coverage)% (@(skin.Item1.Coverage < 31 ? "Accent" : "Skin"))</li>
-                                    <li><b>Skin info:</b> @((FRSkinTester.Models.Gender)skin.Item1.GenderType) @((FRSkinTester.Models.DragonType)skin.Item1.DragonType)</li>
+                                    <li><b>Skin info:</b> @((FRTools.Models.Gender)skin.Item1.GenderType) @((FRTools.Models.DragonType)skin.Item1.DragonType)</li>
                                     <li><b>Preview stats:</b> @($"{scries.Count + reals.Count} Total ({reals.Count} real, {scries.Count} scries)")</li>
                                 </ul>
                                 <canvas id="Chart_Skin@(skin.Item2)" style="width:100px; height:50px; @(skin.Item1.Previews.Count == 0 ? "display:none;" : "")"></canvas>

@@ -1,6 +1,6 @@
-﻿using FRSkinTester.Infrastructure;
-using FRSkinTester.Infrastructure.DataModels;
-using FRSkinTester.Models;
+﻿using FRTools.Infrastructure;
+using FRTools.Infrastructure.DataModels;
+using FRTools.Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
-namespace FRSkinTester.Controllers
+namespace FRTools.Controllers
 {
     public class BaseController : Controller
     {

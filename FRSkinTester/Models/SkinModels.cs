@@ -1,5 +1,5 @@
-﻿using FRSkinTester.Infrastructure;
-using FRSkinTester.Infrastructure.DataModels;
+﻿using FRTools.Infrastructure;
+using FRTools.Infrastructure.DataModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,7 +7,7 @@ using System.Configuration;
 using System.Linq;
 using System.Web;
 
-namespace FRSkinTester.Models
+namespace FRTools.Models
 {
     public class BaseSkinModel
     {

@@ -1,10 +1,10 @@
-﻿using FRSkinTester.Infrastructure.DataModels;
+﻿using FRTools.Infrastructure.DataModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 
-namespace FRSkinTester.Models
+namespace FRTools.Models
 {
     public class BaseManageModel
     {

@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 
-namespace FRSkinTester.Controllers
+namespace FRTools.Controllers
 {
     public class HomeController : BaseController
     {

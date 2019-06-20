@@ -2,11 +2,11 @@
 using System.Web;
 using System.Web.Mvc;
 
-namespace FRSkinTester.Infrastructure
+namespace FRTools.Infrastructure
 {
     public class ChallengeResult : HttpUnauthorizedResult
     {
-        public const string _xsrfKey = "FrSkinTester%!3@18%!*8";
+        public const string _xsrfKey = "FRTools%!3@18%!*8";
 
         public ChallengeResult(string provider, string redirectUri)
             : this(provider, redirectUri, null)

@@ -1,6 +1,6 @@
-﻿using FRSkinTester.Infrastructure;
-using FRSkinTester.Infrastructure.DataModels;
-using FRSkinTester.Models;
+﻿using FRTools.Infrastructure;
+using FRTools.Infrastructure.DataModels;
+using FRTools.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
-namespace FRSkinTester.Controllers
+namespace FRTools.Controllers
 {
     public class AccountController : BaseController
     {
@@ -49,7 +49,7 @@ namespace FRSkinTester.Controllers
                 loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
                 if (loginInfo == null)
                 {
-                    TempData["Error"] = "Could not retrieve external login information from request, please try again.<br/>If the issue persists then please let me know <a href=\"https://github.com/Nensec/FRSkinTester/issues/5\">here</a>.";
+                    TempData["Error"] = "Could not retrieve external login information from request, please try again.<br/>If the issue persists then please let me know <a href=\"https://github.com/Nensec/FRTools/issues/5\">here</a>.";
                     return RedirectToRoute("Login");
                 }
             }
