@@ -49,7 +49,9 @@ namespace FRSkinTester.Controllers
                         Coverage = skin.Coverage,
                         Creator = skin.Creator,
                         DragonType = (DragonType)skin.DragonType,
-                        Gender = (Gender)skin.GenderType
+                        Gender = (Gender)skin.GenderType,
+                        Visibility = skin.Visibility,
+                        IsOwn = Request.IsAuthenticated && skin.Creator.Id == HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>()
                     });
                 }
                 catch (FileNotFoundException)
@@ -250,6 +252,7 @@ namespace FRSkinTester.Controllers
                     {
                         var userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
                         skin.Creator = ctx.Users.FirstOrDefault(x => x.Id == userId);
+                        skin.Visibility = skin.Creator.DefaultVisibility;
                     }
 
                     ctx.Skins.Add(skin);
@@ -345,6 +348,7 @@ namespace FRSkinTester.Controllers
                     skin.Description = model.Description;
                     skin.GenderType = (int)model.Gender;
                     skin.DragonType = (int)model.DragonType;
+                    skin.Visibility = model.Visibility;
 
                     await ctx.SaveChangesAsync();
 
@@ -401,7 +405,8 @@ namespace FRSkinTester.Controllers
             var model = new BrowseViewModel { Filter = filter };
             using (var ctx = new DataContext())
             {
-                var query = ctx.Skins                    
+                var query = ctx.Skins
+                    .Where(x => x.Visibility == SkinVisiblity.Visible)
                     .Where(x => filter.DragonTypes.Contains((DragonType)x.DragonType))
                     .Where(x => filter.Genders.Contains((Gender)x.GenderType))
                     .Where(x => filter.SkinTypes.Contains((BrowseFilterModel.SkinType)(x.Coverage >= 31 ? 1 : 0)));

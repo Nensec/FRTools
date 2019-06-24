@@ -73,6 +73,8 @@ namespace FRSkinTester.Models
         public User Creator { get; set; }
         public DragonType DragonType { get; set; }
         public Gender Gender { get; set; }
+        public SkinVisiblity Visibility { get; set; }
+        public bool IsOwn { get; set; }
     }
 
     [SmartRequired]
@@ -139,6 +141,8 @@ namespace FRSkinTester.Models
         public DragonType DragonType { get; set; }
         [Display(Name = "Gender")]
         public Gender Gender { get; set; }
+        [Display(Name = "Visibility")]
+        public SkinVisiblity Visibility { get; set; }
         public string SkinId { get; set; }
         public string SecretKey { get; set; }
     }

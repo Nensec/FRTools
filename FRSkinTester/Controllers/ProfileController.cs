@@ -52,7 +52,7 @@ namespace FRSkinTester.Controllers
                 if (!user.Privacy.HasFlag(Privacy.HidePreviews))
                     vm.Previews = user.Previews.ToList();
                 if (!user.Privacy.HasFlag(Privacy.HideSkins))
-                    vm.Skins = user.Skins.ToList();
+                    vm.Skins = user.Skins.Where(x => x.Visibility == SkinVisiblity.Visible || x.Visibility == SkinVisiblity.HideFromBrowse).ToList();
                 return View(vm);
             }
         }

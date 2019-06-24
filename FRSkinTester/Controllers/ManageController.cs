@@ -52,7 +52,8 @@ namespace FRSkinTester.Controllers
                 {
                     Username = user.UserName,
                     Email = user.Email,
-                    Privacy = user.Privacy
+                    Privacy = user.Privacy,
+                    DefaultVisibility = user.DefaultVisibility
                 };
                 return View(model);
             }
@@ -71,6 +72,7 @@ namespace FRSkinTester.Controllers
                     user.UserName = string.IsNullOrWhiteSpace(model.Username) ? user.UserName : model.Username;
                     user.Email = model.Email;
                     user.Privacy = model.Privacy;
+                    user.DefaultVisibility = model.DefaultVisibility;
                     await ctx.SaveChangesAsync();
                     await HttpContext.GetOwinContext().Get<SignInManager<User, int>>().SignInAsync(user, true, true);
                 }

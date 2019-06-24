@@ -12,6 +12,7 @@ namespace FRSkinTester.Infrastructure.DataModels
         public string GeneratedId { get; set; }
         public string SecretKey { get; set; }
         public double? Coverage { get; set; }
+        public SkinVisiblity Visibility { get; set; }
 
         public virtual User Creator { get; set; }
 
