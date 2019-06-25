@@ -51,7 +51,8 @@ namespace FRSkinTester.Controllers
                         DragonType = (DragonType)skin.DragonType,
                         Gender = (Gender)skin.GenderType,
                         Visibility = skin.Visibility,
-                        IsOwn = Request.IsAuthenticated && skin.Creator.Id == HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>()
+                        IsOwn = Request.IsAuthenticated && skin.Creator.Id == HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>(),
+                        Version = skin.Version
                     });
                 }
                 catch (FileNotFoundException)
