@@ -29,12 +29,6 @@
                 Eyes might not look right compared to the final, but they should still give a good indication of what will be. This is a work in progress!
             </div>
         }
-        @if (Model.Dragon.DragonType == FRSkinTester.Models.DragonType.Gaoler && Enum.TryParse(Model.Dragon.TertiaryGene.ToString(), out FRSkinTester.Models.GaolerTertGene tert))
-        {
-            <div class="alert alert-warning">
-                The Gaoler breed has overlapping tertiary genes with skins, at this point it is not known if these go under or over skins!
-            </div>
-        }
         <div class="row">
             @if (Model.Result.Urls.Length == 1)
             {

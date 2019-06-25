@@ -51,7 +51,7 @@ namespace FRSkinTester.Controllers
                         DragonType = (DragonType)skin.DragonType,
                         Gender = (Gender)skin.GenderType,
                         Visibility = skin.Visibility,
-                        Version = skin.Version
+                        Version = skin.Version,
                         IsOwn = Request.IsAuthenticated && skin.Creator?.Id == HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>()
                     });
                 }
