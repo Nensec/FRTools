@@ -173,7 +173,8 @@ namespace FRSkinTester.Controllers
                         PreviewImage = url,
                         DragonData = dragon.ToString(),
                         PreviewTime = DateTime.UtcNow,
-                        Requestor = ctx.Users.Find(loggedInUserId)
+                        Requestor = ctx.Users.Find(loggedInUserId),
+                        Version = skin.Version
                     });
                 }
 
@@ -438,6 +439,7 @@ namespace FRSkinTester.Controllers
                     }
 
                     await ctx.SaveChangesAsync();
+                    TempData["Success"] = $"Skin succesfully updated to version <b>v{skin.Version}</b>!";
                     return RedirectToRoute("Manage", new { model.SkinId, model.SecretKey });
                 }
                 catch
