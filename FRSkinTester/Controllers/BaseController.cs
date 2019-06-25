@@ -78,7 +78,7 @@ namespace FRSkinTester.Controllers
             return dragon;
         }
 
-        protected async Task<PreviewResult> GenerateOrFetchPreview(string skinId, string dragonId, string dragonUrl, DragonCache dragon, string dressingRoomUrl = null, bool force = false)
+        protected async Task<PreviewResult> GenerateOrFetchPreview(string skinId, int version, string dragonId, string dragonUrl, DragonCache dragon, string dressingRoomUrl = null, bool force = false)
         {
             var result = new PreviewResult { Forced = force, RealDragon = dragonId != "preview" ? dragonId : null, DressingRoomUrl = dressingRoomUrl };
 
@@ -89,7 +89,8 @@ namespace FRSkinTester.Controllers
 
             Bitmap dragonImage = null;
 
-            if (force || !azureImageService.Exists($@"previews\{skinId}\{dragonId ?? dragon.ToString()}.png", out var previewUrl))
+            var azureImagePreviewPath = $@"previews\{skinId}\{(version == 1 ? "" : $@"{version}\")}{dragonId ?? dragon.ToString()}.png";
+            if (force || !azureImageService.Exists(azureImagePreviewPath, out var previewUrl))
             {
                 dragonImage = await GetDragonBaseImage(dragonUrl, dragon, azureImageService);
 
@@ -133,7 +134,7 @@ namespace FRSkinTester.Controllers
                     dragonImage.Save(memStream, ImageFormat.Png);
                     memStream.Position = 0;
 
-                    previewUrl = await azureImageService.WriteImage($@"previews\{skinId}\{dragonId ?? dragon.ToString()}.png", memStream);
+                    previewUrl = await azureImageService.WriteImage(azureImagePreviewPath, memStream);
                 }
             }
             else
@@ -144,7 +145,7 @@ namespace FRSkinTester.Controllers
             async Task<string> GenerateApparelPreview(Bitmap invisibleDragon, string cacheUrl)
             {
                 if (dragonImage == null)
-                    dragonImage = (Bitmap)Image.FromStream(await azureImageService.GetImage($@"previews\{skinId}\{dragonId ?? dragon.ToString()}.png"));
+                    dragonImage = (Bitmap)Image.FromStream(await azureImageService.GetImage(azureImagePreviewPath));
 
                 using (var graphics = Graphics.FromImage(dragonImage))
                 {

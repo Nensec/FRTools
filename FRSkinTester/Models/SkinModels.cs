@@ -75,6 +75,7 @@ namespace FRSkinTester.Models
         public Gender Gender { get; set; }
         public SkinVisiblity Visibility { get; set; }
         public bool IsOwn { get; set; }
+        public int Version { get; internal set; }
     }
 
     [SmartRequired]
@@ -185,5 +186,15 @@ namespace FRSkinTester.Models
             get => _pageAmount;
             set => _pageAmount = _validPageAmounts.Aggregate((x, y) => Math.Abs(x - value) < Math.Abs(y - value) ? x : y);
         }
+    }
+
+    public class UpdateSkinPost
+    {
+        [Display(Name = "Skin file")]
+        [Required]
+        public HttpPostedFileBase Skin { get; set; }
+
+        public string SkinId { get; set; }
+        public string SecretKey { get; set; }
     }
 }

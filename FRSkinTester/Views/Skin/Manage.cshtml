@@ -18,6 +18,9 @@
             <div class="panel-heading">
                 <h2>
                     Manage: @(Model.Skin.Title)
+                    <sup>
+                        @(Model.Skin.Version != 1 ? $"v{Model.Skin.Version}" : "")
+                    </sup>
                 </h2>
             </div>
             <div class="panel-body">
@@ -26,13 +29,13 @@
                 </p>
                 <div>
                     @Html.Partial("_ManageEditSkin", new ManageModelPost
-               {
-                   Title = Model.Skin.Title,
-                   Description = Model.Skin.Description,
-                   DragonType = (DragonType)Model.Skin.DragonType,
-                   Gender = (Gender)Model.Skin.GenderType,
-                   Visibility = Model.Skin.Visibility
-               })
+                    {
+                        Title = Model.Skin.Title,
+                        Description = Model.Skin.Description,
+                        DragonType = (DragonType)Model.Skin.DragonType,
+                        Gender = (Gender)Model.Skin.GenderType,
+                        Visibility = Model.Skin.Visibility
+                    })
                 </div>
             </div>
         </div>
@@ -111,6 +114,12 @@
                                             </div>
                                         </div>
                                         <div class="text-center">
+                                            @if (preview.Item1.Version != Model.Skin.Version)
+                                            {
+                                                <p>
+                                                    <i>Older version skin: <b>v@(preview.Item1.Version)</b></i>
+                                                </p>
+                                            }
                                             <b>@(preview.Item1.DragonId != null ? "Real dragon" : "Scry dragon")</b>
                                             @if (preview.Item1.ScryerUrl != null)
                                             {
