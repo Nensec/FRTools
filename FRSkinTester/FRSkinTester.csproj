@@ -283,6 +283,10 @@
     <Compile Include="Migrations\201906240430249_Skin visibility.Designer.cs">
       <DependentUpon>201906240430249_Skin visibility.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201906250040262_Skin versioning.cs" />
+    <Compile Include="Migrations\201906250040262_Skin versioning.Designer.cs">
+      <DependentUpon>201906250040262_Skin versioning.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\Enums.cs" />
@@ -744,6 +748,7 @@
     <Content Include="Views\Skin\_PreviewForm.cshtml" />
     <Content Include="Views\Skin\PreviewHome.cshtml" />
     <Content Include="Views\Skin\Browse.cshtml" />
+    <Content Include="Views\Skin\_UpdateSkin.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -803,6 +808,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201906240430249_Skin visibility.resx">
       <DependentUpon>201906240430249_Skin visibility.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906250040262_Skin versioning.resx">
+      <DependentUpon>201906250040262_Skin versioning.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -1,0 +1,33 @@
+﻿@model UpdateSkinPost
+
+@using (Html.BeginRouteForm("UpdateSkinPost", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(model => model.SkinId)
+    @Html.HiddenFor(model => model.SecretKey)
+
+    <div class="form-horizontal">
+        <div class="form-group">
+            @Html.LabelFor(model => model.Skin, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                <span class="control-fileupload">
+                    <label for="file" class="text-left">Please choose a file on your computer.</label>
+                    <input type="file" accept=".png" name="@(Html.NameFor(model => model.Skin))" id="@(Html.IdFor(model => model.Skin))" />
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-4 col-md-8">
+                <input type="submit" value="Update Skin" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $('#@(Html.IdFor(model => model.Skin))').change(function () {
+        var t = $(this).val();
+        var labelText = 'File : ' + t.substr(12, t.length);
+        $(this).prev('label').text(labelText);
+    })
+</script>

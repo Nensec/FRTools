@@ -19,6 +19,9 @@
                 <h2>
                     Manage: @(Model.Skin.Title)
                 </h2>
+                <sup>
+                    @(Model.Skin.Version != 1 ? $"v{Model.Skin.Version}" : "")
+                </sup>
             </div>
             <div class="panel-body">
                 <p>
@@ -26,13 +29,13 @@
                 </p>
                 <div>
                     @Html.Partial("_ManageEditSkin", new ManageModelPost
-               {
-                   Title = Model.Skin.Title,
-                   Description = Model.Skin.Description,
-                   DragonType = (DragonType)Model.Skin.DragonType,
-                   Gender = (Gender)Model.Skin.GenderType,
-                   Visibility = Model.Skin.Visibility
-               })
+                    {
+                        Title = Model.Skin.Title,
+                        Description = Model.Skin.Description,
+                        DragonType = (DragonType)Model.Skin.DragonType,
+                        Gender = (Gender)Model.Skin.GenderType,
+                        Visibility = Model.Skin.Visibility
+                    })
                 </div>
             </div>
         </div>
