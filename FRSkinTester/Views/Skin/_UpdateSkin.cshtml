@@ -1,6 +1,6 @@
 ﻿@model UpdateSkinPost
 
-@using (Html.BeginRouteForm("UpdateSkinPost", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginRouteForm("UpdateSkinPost", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return confirmSubmit(this);" }))
 {
     @Html.HiddenFor(model => model.SkinId)
     @Html.HiddenFor(model => model.SecretKey)
@@ -25,6 +25,13 @@
 }
 
 <script>
+    confirmSubmit = function (e) {
+        if (confirm('Updating a skin overwrites the skin file on the server, rendering it impossible for users to preview an older version.\n\rAre you sure you want to update?')) {
+            e.submit();
+        }
+        return false;
+    }
+
     $('#@(Html.IdFor(model => model.Skin))').change(function () {
         var t = $(this).val();
         var labelText = 'File : ' + t.substr(12, t.length);
