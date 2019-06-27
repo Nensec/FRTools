@@ -11,6 +11,7 @@ namespace FRTools.Infrastructure.DataModels
         public string PreviewImage { get; set; }
         public string DragonData { get; set; }
         public DateTime? PreviewTime { get; set; }
+        public int Version { get; set; }
 
         public User Requestor { get; set; }
     }

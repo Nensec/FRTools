@@ -11,11 +11,23 @@
     <meta property="og:description" content="@(Model.Description ?? "No description provided")" />
 }
 
+@if (Model.IsOwn && Model.Visibility == SkinVisiblity.HideEverywhere)
+{
+    <div class="alert alert-info alert-dismissible" role="alert">
+        Notice: You have set this skin to be hidden everywhere, only people who you share the link to this skin with can see this skin
+    </div>
+}
+
 <div class="row">
     <div class="col-md-7">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h2>Preview skin: @(Model.Title)</h2>
+                <h2>
+                    Preview skin: @(Model.Title)
+                    <sup>
+                        @(Model.Version != 1 ? $"v{Model.Version}" : "")
+                    </sup>
+                </h2>
             </div>
             <div class="panel-body">
                 <div class="form-horizontal">

@@ -89,8 +89,12 @@
                             <div id="Skin@(skin.Item2)_popover" class="hide">
                                 <ul style="list-style:none; padding:0">
                                     <li><b>Id:</b> @(skin.Item1.GeneratedId)</li>
-                                    <li><b>Title:</b> @Html.Raw(skin.Item1.Title ?? "<i>No title</i>")</li>
-                                    <li><b>Description:</b> @(skin.Item1.Description ?? "<i>No description</i>")</li>
+                                    @if (skin.Item1.Version != 1)
+                                    {
+                                        <li><b>Version:</b> v@(skin.Item1.Version)</li>
+                                    }
+                                    <li><b>Title:</b> @(skin.Item1.Title ?? "No title")</li>
+                                    <li><b>Description:</b> @(skin.Item1.Description ?? "No description")</li>
                                     <li><b>Coverage:</b> @(skin.Item1.Coverage)% (@(skin.Item1.Coverage < 31 ? "Accent" : "Skin"))</li>
                                     <li><b>Skin info:</b> @((FRTools.Models.Gender)skin.Item1.GenderType) @((FRTools.Models.DragonType)skin.Item1.DragonType)</li>
                                     <li><b>Preview stats:</b> @($"{scries.Count + reals.Count} Total ({reals.Count} real, {scries.Count} scries)")</li>

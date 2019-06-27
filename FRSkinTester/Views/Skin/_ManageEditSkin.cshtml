@@ -47,9 +47,24 @@
         </div>
 
         <div class="form-group">
+            @Html.LabelFor(model => model.Visibility, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                <select class="form-control" id="@Html.IdFor(model => model.Visibility)" name="@Html.NameFor(model => model.Visibility)" data-toggle="popover" data-content="Hiding from browse still makes the skin visible on your profile<br/>Hiding everywhere requires the share link to be used to preview your skin">
+                    @foreach (var visibility in Enum.GetValues(typeof(SkinVisiblity)).Cast<SkinVisiblity>())
+                    {
+                        <option value="@((int)visibility)" @(Model.Visibility == visibility ? "selected" : "")>@(visibility.GetDescription())</option>
+                    }
+                </select>
+                @Html.ValidationMessageFor(model => model.Visibility, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
             <div class="col-md-offset-4 col-md-8">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </div>
     </div>
 }
+<hr/>
+@Html.Partial("_UpdateSkin", new UpdateSkinPost { SkinId = Model.SkinId, SecretKey = Model.SecretKey })

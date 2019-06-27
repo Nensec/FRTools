@@ -12,6 +12,8 @@ namespace FRTools.Infrastructure.DataModels
         public string GeneratedId { get; set; }
         public string SecretKey { get; set; }
         public double? Coverage { get; set; }
+        public SkinVisiblity Visibility { get; set; }
+        public int Version { get; set; } = 1;
 
         public virtual User Creator { get; set; }
 

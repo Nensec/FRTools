@@ -37,6 +37,8 @@ namespace FRTools.Models
         public string Email { get; set; }
         [Display(Name = "Profile visibility")]
         public Privacy Privacy { get; set; }
+        [Display(Name = "Default skin visibility")]
+        public SkinVisiblity DefaultVisibility { get; set; }
     }
 
     public class ClaimSkinPostViewModel : BaseManageModel
