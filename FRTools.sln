@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools", "FRSkinTester\FRTools.csproj", "{5687D887-1F84-41C7-8921-EF5BEC7D4FC8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools.Web", "FRSkinTester\FRTools.Web.csproj", "{5687D887-1F84-41C7-8921-EF5BEC7D4FC8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools.Data", "FRTools.Data\FRTools.Data.csproj", "{79570267-A759-4BE0-A466-17B3BAA67C03}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools.NewsReader", "FRTools.NewsReader\FRTools.NewsReader.csproj", "{4BBB2823-025F-4508-BFD6-5C3D5DEA5D2F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{5687D887-1F84-41C7-8921-EF5BEC7D4FC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5687D887-1F84-41C7-8921-EF5BEC7D4FC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5687D887-1F84-41C7-8921-EF5BEC7D4FC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79570267-A759-4BE0-A466-17B3BAA67C03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79570267-A759-4BE0-A466-17B3BAA67C03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79570267-A759-4BE0-A466-17B3BAA67C03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79570267-A759-4BE0-A466-17B3BAA67C03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BBB2823-025F-4508-BFD6-5C3D5DEA5D2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BBB2823-025F-4508-BFD6-5C3D5DEA5D2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BBB2823-025F-4508-BFD6-5C3D5DEA5D2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BBB2823-025F-4508-BFD6-5C3D5DEA5D2F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

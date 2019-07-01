@@ -1,5 +1,5 @@
 ﻿using FRTools.Infrastructure;
-using FRTools.Infrastructure.DataModels;
+using FRTools.Data.DataModels;
 using FRTools.Models;
 using Microsoft.AspNet.Identity;
 using System;
@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using FRTools.Data;
 
 namespace FRTools.Controllers
 {
@@ -21,12 +22,14 @@ namespace FRTools.Controllers
     public class SkinController : BaseController
     {
         [Route("preview", Name = "PreviewHome")]
+        [Route("~/preview")] /* TODO: Delete this */
         public ActionResult PreviewHome()
         {
             return View();
         }
 
         [Route("preview/{skinId}", Name = "Preview")]
+        [Route("~/preview/{skinId}")] /* TODO: Delete this */
         public async Task<ActionResult> Preview(PreviewModelGet model)
         {
             using (var ctx = new DataContext())
@@ -276,6 +279,7 @@ namespace FRTools.Controllers
         }
 
         [Route("manage/skin/{skinId}/{secretKey}", Name = "Manage")]
+        [Route("~/manage/skin/{skinId}/{secretKey}")] /* TODO: Delete this */
         public async Task<ActionResult> Manage(ManageModelGet model)
         {
             using (var ctx = new DataContext())
@@ -531,6 +535,36 @@ namespace FRTools.Controllers
             }
 
             return View(model);
+        }
+
+        [Route("link", Name = "LinkExisting")]
+        public ActionResult LinkExistingSkin() => View();
+
+        [HttpPost]
+        [Route("link", Name = "LinkExistingPost")]
+        public ActionResult LinkExistingSkin(ClaimSkinPostViewModel model)
+        {
+            using (var ctx = new DataContext())
+            {
+                var skin = ctx.Skins.FirstOrDefault(x => x.GeneratedId == model.SkinId && x.SecretKey == model.SecretKey);
+                if (skin == null)
+                {
+                    TempData["Error"] = "Skin not found or secret invalid";
+                    return View();
+                }
+                int userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
+
+                if (skin.Creator != null)
+                {
+                    TempData["Error"] = "This skin is already linked to an acocunt, skins can only be claimed by a single account.";
+                    return View();
+                }
+
+                skin.Creator = ctx.Users.Find(userId);
+                ctx.SaveChanges();
+            }
+            TempData["Success"] = $"Succesfully linked skin '{model.SkinId}' to your account!";
+            return RedirectToRoute("ManageAccount");
         }
     }
 }

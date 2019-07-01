@@ -1,0 +1,178 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{79570267-A759-4BE0-A466-17B3BAA67C03}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FRTools.Data</RootNamespace>
+    <AssemblyName>FRTools.Data</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.2\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.2\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DataContext.cs" />
+    <Compile Include="DataModels\AccountModels\Role.cs" />
+    <Compile Include="DataModels\AccountModels\User.cs" />
+    <Compile Include="DataModels\AccountModels\UserClaim.cs" />
+    <Compile Include="DataModels\AccountModels\UserLogin.cs" />
+    <Compile Include="DataModels\AccountModels\UserRole.cs" />
+    <Compile Include="DataModels\DataModelEnums.cs" />
+    <Compile Include="DataModels\DragonCache.cs" />
+    <Compile Include="DataModels\Post.cs" />
+    <Compile Include="DataModels\Preview.cs" />
+    <Compile Include="DataModels\Skin.cs" />
+    <Compile Include="DataModels\Topic.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="Migrations\201812041640175_Skins table.cs" />
+    <Compile Include="Migrations\201812041640175_Skins table.Designer.cs">
+      <DependentUpon>201812041640175_Skins table.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201812102238126_Added preview table.cs" />
+    <Compile Include="Migrations\201812102238126_Added preview table.Designer.cs">
+      <DependentUpon>201812102238126_Added preview table.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902082130362_Skin coverage field.cs" />
+    <Compile Include="Migrations\201902082130362_Skin coverage field.Designer.cs">
+      <DependentUpon>201902082130362_Skin coverage field.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902171740244_Added caching for dragons.cs" />
+    <Compile Include="Migrations\201902171740244_Added caching for dragons.Designer.cs">
+      <DependentUpon>201902171740244_Added caching for dragons.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201902270326131_User login tables.cs" />
+    <Compile Include="Migrations\201902270326131_User login tables.Designer.cs">
+      <DependentUpon>201902270326131_User login tables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903030022031_Add FR info to User.cs" />
+    <Compile Include="Migrations\201903030022031_Add FR info to User.Designer.cs">
+      <DependentUpon>201903030022031_Add FR info to User.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903040425574_Add User to Skin and Preview.cs" />
+    <Compile Include="Migrations\201903040425574_Add User to Skin and Preview.Designer.cs">
+      <DependentUpon>201903040425574_Add User to Skin and Preview.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903070341474_Added Age to DragonCache.cs" />
+    <Compile Include="Migrations\201903070341474_Added Age to DragonCache.Designer.cs">
+      <DependentUpon>201903070341474_Added Age to DragonCache.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903081155126_Added PreviewTime to Preview.cs" />
+    <Compile Include="Migrations\201903081155126_Added PreviewTime to Preview.Designer.cs">
+      <DependentUpon>201903081155126_Added PreviewTime to Preview.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903161731409_Added privacy to User.cs" />
+    <Compile Include="Migrations\201903161731409_Added privacy to User.Designer.cs">
+      <DependentUpon>201903161731409_Added privacy to User.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905250143495_Apparel caching.cs" />
+    <Compile Include="Migrations\201905250143495_Apparel caching.Designer.cs">
+      <DependentUpon>201905250143495_Apparel caching.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906240430249_Skin visibility.cs" />
+    <Compile Include="Migrations\201906240430249_Skin visibility.Designer.cs">
+      <DependentUpon>201906240430249_Skin visibility.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906250040262_Skin versioning.cs" />
+    <Compile Include="Migrations\201906250040262_Skin versioning.Designer.cs">
+      <DependentUpon>201906250040262_Skin versioning.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906292219019_Newsreader models.cs" />
+    <Compile Include="Migrations\201906292219019_Newsreader models.Designer.cs">
+      <DependentUpon>201906292219019_Newsreader models.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201812041640175_Skins table.resx">
+      <DependentUpon>201812041640175_Skins table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812102238126_Added preview table.resx">
+      <DependentUpon>201812102238126_Added preview table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902082130362_Skin coverage field.resx">
+      <DependentUpon>201902082130362_Skin coverage field.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902171740244_Added caching for dragons.resx">
+      <DependentUpon>201902171740244_Added caching for dragons.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201902270326131_User login tables.resx">
+      <DependentUpon>201902270326131_User login tables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903030022031_Add FR info to User.resx">
+      <DependentUpon>201903030022031_Add FR info to User.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903040425574_Add User to Skin and Preview.resx">
+      <DependentUpon>201903040425574_Add User to Skin and Preview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903070341474_Added Age to DragonCache.resx">
+      <DependentUpon>201903070341474_Added Age to DragonCache.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903081155126_Added PreviewTime to Preview.resx">
+      <DependentUpon>201903081155126_Added PreviewTime to Preview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903161731409_Added privacy to User.resx">
+      <DependentUpon>201903161731409_Added privacy to User.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905250143495_Apparel caching.resx">
+      <DependentUpon>201905250143495_Apparel caching.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906240430249_Skin visibility.resx">
+      <DependentUpon>201906240430249_Skin visibility.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906250040262_Skin versioning.resx">
+      <DependentUpon>201906250040262_Skin versioning.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906292219019_Newsreader models.resx">
+      <DependentUpon>201906292219019_Newsreader models.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

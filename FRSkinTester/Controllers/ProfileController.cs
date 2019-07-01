@@ -1,11 +1,11 @@
-﻿using FRTools.Infrastructure;
-using FRTools.Infrastructure.DataModels;
+﻿using FRTools.Data.DataModels;
 using FRTools.Models;
 using Microsoft.AspNet.Identity;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using FRTools.Data;
 
 namespace FRTools.Controllers
 {
@@ -14,6 +14,7 @@ namespace FRTools.Controllers
     {
         [Authorize]
         [Route(Name = "SelfProfile")]
+        [Route("~/skintester/profile")] /* TODO: Delete this */
         public ActionResult Index()
         {
             using (var ctx = new DataContext())
@@ -33,6 +34,7 @@ namespace FRTools.Controllers
         }
 
         [Route("{*username}", Name = "Profile")]
+        [Route("~/skintester/profile/{*username}")] /* TODO: Delete this */
         public ActionResult Index(string username)
         {
             using (var ctx = new DataContext())

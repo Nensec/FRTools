@@ -1,10 +1,8 @@
-﻿using FRTools.Infrastructure;
-using FRTools.Infrastructure.DataModels;
+﻿using FRTools.Data.DataModels;
 using FRTools.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
-using System.Configuration;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
@@ -14,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using FRTools.Data;
 
 namespace FRTools.Controllers
 {
@@ -91,36 +90,6 @@ namespace FRTools.Controllers
                     TempData["Error"] = "Something went wrong with your request";
                 return View();
             }
-        }
-
-        [Route("link", Name = "LinkExisting")]
-        public ActionResult LinkExistingSkin() => View();
-
-        [HttpPost]
-        [Route("link", Name = "LinkExistingPost")]
-        public ActionResult LinkExistingSkin(ClaimSkinPostViewModel model)
-        {
-            using (var ctx = new DataContext())
-            {
-                var skin = ctx.Skins.FirstOrDefault(x => x.GeneratedId == model.SkinId && x.SecretKey == model.SecretKey);
-                if (skin == null)
-                {
-                    TempData["Error"] = "Skin not found or secret invalid";
-                    return View();
-                }
-                int userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
-
-                if (skin.Creator != null)
-                {
-                    TempData["Error"] = "This skin is already linked to an acocunt, skins can only be claimed by a single account.";
-                    return View();
-                }
-
-                skin.Creator = ctx.Users.Find(userId);
-                ctx.SaveChanges();
-            }
-            TempData["Success"] = $"Succesfully linked skin '{model.SkinId}' to your account!";
-            return RedirectToRoute("ManageAccount");
         }
 
         [Route("verify", Name = "VerifyFR")]

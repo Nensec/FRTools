@@ -1,5 +1,5 @@
-﻿using FRTools.Infrastructure;
-using FRTools.Infrastructure.DataModels;
+﻿using FRTools.Data;
+using FRTools.Data.DataModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;

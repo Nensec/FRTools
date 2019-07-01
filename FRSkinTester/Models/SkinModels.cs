@@ -1,11 +1,12 @@
 ﻿using FRTools.Infrastructure;
-using FRTools.Infrastructure.DataModels;
+using FRTools.Data.DataModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 using System.Linq;
 using System.Web;
+using FRTools.Data;
 
 namespace FRTools.Models
 {
@@ -195,6 +196,14 @@ namespace FRTools.Models
         public HttpPostedFileBase Skin { get; set; }
 
         public string SkinId { get; set; }
+        public string SecretKey { get; set; }
+    }
+
+    public class ClaimSkinPostViewModel : BaseManageModel
+    {
+        [Display(Name = "Skin Id")]
+        public string SkinId { get; set; }
+        [Display(Name = "Secret Key")]
         public string SecretKey { get; set; }
     }
 }

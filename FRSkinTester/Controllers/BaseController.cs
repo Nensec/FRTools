@@ -1,6 +1,5 @@
 ﻿using FRTools.Infrastructure;
-using FRTools.Infrastructure.DataModels;
-using FRTools.Models;
+using FRTools.Data.DataModels;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -11,6 +10,8 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using FRTools.Data;
+using Color = FRTools.Data.Color;
 
 namespace FRTools.Controllers
 {
@@ -61,11 +62,11 @@ namespace FRTools.Controllers
                 if ((regexParse = Regex.Match(dragonUrl, @"tertgene=([\d]*)")).Success)
                     dragon.TertiaryGene = int.Parse(regexParse.Groups[1].Value);
                 if ((regexParse = Regex.Match(dragonUrl, @"body=([\d]*)")).Success)
-                    dragon.BodyColor = (Models.Color)int.Parse(regexParse.Groups[1].Value);
+                    dragon.BodyColor = (Color)int.Parse(regexParse.Groups[1].Value);
                 if ((regexParse = Regex.Match(dragonUrl, @"wings=([\d]*)")).Success)
-                    dragon.WingColor = (Models.Color)int.Parse(regexParse.Groups[1].Value);
+                    dragon.WingColor = (Color)int.Parse(regexParse.Groups[1].Value);
                 if ((regexParse = Regex.Match(dragonUrl, @"tert=([\d]*)")).Success)
-                    dragon.TertiaryColor = (Models.Color)int.Parse(regexParse.Groups[1].Value);
+                    dragon.TertiaryColor = (Color)int.Parse(regexParse.Groups[1].Value);
                 if ((regexParse = Regex.Match(dragonUrl, @"age=([\d]*)")).Success)
                     dragon.Age = (Age)int.Parse(regexParse.Groups[1].Value);
                 if ((regexParse = Regex.Match(dragonUrl, @"apparel=([\d,]*)")).Success)

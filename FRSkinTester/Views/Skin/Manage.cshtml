@@ -5,7 +5,7 @@
     var previews = Model.Skin.Previews.Select((x, i) => (x, i)).ToList();
     var scries = previews.Where(x => x.Item1.DragonId == null).ToList();
     var reals = previews.Where(x => x.Item1.DragonId != null).GroupBy(x => x.Item1.DragonId).Select(x => x.First()).ToList();
-    var previewDragons = reals.Concat(scries).Select(x => FRTools.Infrastructure.DataModels.DragonCache.FromString(x.Item1.DragonData));
+    var previewDragons = reals.Concat(scries).Select(x => FRTools.Data.DataModels.DragonCache.FromString(x.Item1.DragonData));
 }
 
 @section head {

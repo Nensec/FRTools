@@ -1,4 +1,4 @@
-﻿using FRTools.Infrastructure.DataModels;
+﻿using FRTools.Data.DataModels;
 using Microsoft.AspNet.Identity;
 
 namespace FRTools.Infrastructure.Managers

@@ -33,9 +33,9 @@
     </div>
 </div>
 <div class="row">
-    @if (!Model.Privacy.HasFlag(FRTools.Infrastructure.DataModels.Privacy.HideSkins) || Model.IsOwn)
+    @if (!Model.Privacy.HasFlag(FRTools.Data.DataModels.Privacy.HideSkins) || Model.IsOwn)
     {
-        <div class="col-md-@(Model.Privacy.HasFlag(FRTools.Infrastructure.DataModels.Privacy.HidePreviews) && !Model.IsOwn ? "12" : "6")">
+        <div class="col-md-@(Model.Privacy.HasFlag(FRTools.Data.DataModels.Privacy.HidePreviews) && !Model.IsOwn ? "12" : "6")">
             <div class="panel panel-success">
                 <div class="panel-heading">
                     <h2>
@@ -51,7 +51,7 @@
                         <div class="well clearfix">
                             @foreach (var skin in skins)
                             {
-                                <div class="col-sm-@(Model.Privacy.HasFlag(FRTools.Infrastructure.DataModels.Privacy.HidePreviews) && !Model.IsOwn ? "2" : "4")">
+                                <div class="col-sm-@(Model.Privacy.HasFlag(FRTools.Data.DataModels.Privacy.HidePreviews) && !Model.IsOwn ? "2" : "4")">
                                     <a href="@Url.RouteUrl("Preview", new { SkinId = skin.Item1.GeneratedId })">
                                         <img id="Skin@(skin.Item2)" data-toggle="popover" style="max-width:100%; max-height:100%" src="@($"{Model.CDNBasePath}/previews/{skin.Item1.GeneratedId}/preview.png")" />
                                         <div id="Skin@(skin.Item2)_popover" class="hide">
@@ -60,7 +60,7 @@
                                                 <li><b>Title:</b> @(skin.Item1.Title ?? "No title")</li>
                                                 <li><b>Description:</b> @(skin.Item1.Description ?? "No description")</li>
                                                 <li><b>Coverage:</b> @(skin.Item1.Coverage)% (@(skin.Item1.Coverage < 31 ? "Accent" : "Skin"))</li>
-                                                <li><b>Skin info:</b> @((FRTools.Models.Gender)skin.Item1.GenderType) @((FRTools.Models.DragonType)skin.Item1.DragonType)</li>
+                                                <li><b>Skin info:</b> @((Gender)skin.Item1.GenderType) @((DragonType)skin.Item1.DragonType)</li>
                                                 <li><img src="@($"{Model.CDNBasePath}/previews/{skin.Item1.GeneratedId}/preview.png")" /></li>
                                             </ul>
                                         </div>
@@ -79,7 +79,7 @@
         </div>
     }
 
-    @if (!Model.Privacy.HasFlag(FRTools.Infrastructure.DataModels.Privacy.HidePreviews) || Model.IsOwn)
+    @if (!Model.Privacy.HasFlag(FRTools.Data.DataModels.Privacy.HidePreviews) || Model.IsOwn)
     {
         if (Model.IsOwn)
         {
@@ -101,7 +101,7 @@
                 }
             </script>
         }
-        <div class="col-md-@(Model.Privacy.HasFlag(FRTools.Infrastructure.DataModels.Privacy.HideSkins) && !Model.IsOwn ? "12" : "6")">
+        <div class="col-md-@(Model.Privacy.HasFlag(FRTools.Data.DataModels.Privacy.HideSkins) && !Model.IsOwn ? "12" : "6")">
             <div class="panel panel-warning" id="PreviewsPanel">
                 <div class="panel-heading">
                     <h2>
@@ -133,7 +133,7 @@
                                             <div class="row">
                                                 <img id="Preview@(preview.Item2)" class="center-block" src="@(Model.CDNBasePath + preview.Item1.PreviewImage)" data-toggle="popover">
                                                 <div id="Preview@(preview.Item2)_popover" class="hide">
-                                                    @{ var dragon = FRTools.Infrastructure.DataModels.DragonCache.FromString(preview.Item1.DragonData); }
+                                                    @{ var dragon = FRTools.Data.DataModels.DragonCache.FromString(preview.Item1.DragonData); }
                                                     <ul style="list-style:none; padding:0">
                                                         <li><b>Colors:</b> @(dragon.BodyColor) / @(dragon.WingColor) / @(dragon.TertiaryColor)</li>
                                                         <li><b>Genes:</b> @(dragon.BodyGene) / @(dragon.WingGene) / @(dragon.TertiaryGene)</li>
@@ -241,7 +241,7 @@
                 border: unset;
                 text-indent: 0;
                 margin: 0;
-                @if (Model.Privacy.HasFlag(FRTools.Infrastructure.DataModels.Privacy.HideSkins) && !Model.IsOwn)
+                @if (Model.Privacy.HasFlag(FRTools.Data.DataModels.Privacy.HideSkins) && !Model.IsOwn)
                 {
                     @:width: 50%;
                     @:float: left;

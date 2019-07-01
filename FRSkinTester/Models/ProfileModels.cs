@@ -1,4 +1,4 @@
-﻿using FRTools.Infrastructure.DataModels;
+﻿using FRTools.Data.DataModels;
 using System.Collections.Generic;
 using System.Configuration;
 

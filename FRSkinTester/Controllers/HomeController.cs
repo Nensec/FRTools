@@ -6,5 +6,8 @@ namespace FRTools.Controllers
     {
         [Route(Name = "Home")]
         public ActionResult Index() => View();
+
+        [Route("404", Name = "NotFound")]
+        public ActionResult NotFound() => View();
     }
 }

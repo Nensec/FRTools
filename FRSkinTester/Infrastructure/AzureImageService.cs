@@ -1,6 +1,5 @@
 ﻿using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
-using System.Collections.Concurrent;
 using System.Configuration;
 using System.IO;
 using System.Linq;

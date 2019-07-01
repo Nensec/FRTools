@@ -1,4 +1,4 @@
-﻿using FRTools.Infrastructure.DataModels;
+﻿using FRTools.Data.DataModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -39,13 +39,5 @@ namespace FRTools.Models
         public Privacy Privacy { get; set; }
         [Display(Name = "Default skin visibility")]
         public SkinVisiblity DefaultVisibility { get; set; }
-    }
-
-    public class ClaimSkinPostViewModel : BaseManageModel
-    {
-        [Display(Name = "Skin Id")]
-        public string SkinId { get; set; }
-        [Display(Name = "Secret Key")]
-        public string SecretKey { get; set; }
     }
 }
