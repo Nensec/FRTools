@@ -21,6 +21,7 @@ namespace FRTools.Web.Models
         public DateTime CreatedAt { get; set; }
         public int CurrentPage { get; set; } = 1;
         public List<NewsPostViewModel> Posts { get; set; } = new List<NewsPostViewModel>();
+        public bool DeletedOnly { get; set; } = false;
     }
 
     public class NewsPostViewModel
@@ -31,6 +32,7 @@ namespace FRTools.Web.Models
         public string RawHtmlContent { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime CreatedAt { get; set; }
-        public int Reports { get; internal set; }
+        public int Reports { get; set; }
+        public int ExpectedFRPage { get; set; }
     }
 }

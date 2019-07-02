@@ -51,7 +51,44 @@ namespace FRTools.Web.Controllers
                 model.CreatedAt = firstPost.TimeStamp;
                 model.TotalPosts = posts.Count();
                 model.DeletedPosts = posts.Count(x => x.Deleted);
-                model.Posts = posts.Skip(((page ?? 1) - 1) * 10).Take(10).Select(x => new NewsPostViewModel
+                model.TopicName = topic.FRTopicName;
+                model.Posts = posts.Skip(model.TotalPosts > 10 ? ((page ?? 1) - 1) * 10 : 0).Take(10).Select(x => new NewsPostViewModel
+                {
+                    FRPostId = x.FRPostId,
+                    PostAuthor = x.PostAuthor,
+                    PostAuthorClanId = x.PostAuthorClanId,
+                    CreatedAt = x.TimeStamp,
+                    IsDeleted = x.Deleted,
+                    RawHtmlContent = x.Content,
+                    Reports = x.Reports,
+                    ExpectedFRPage = (int)Math.Ceiling(posts.Count(p => !p.Deleted && p.FRPostId <= x.FRPostId) / 10d)
+                }).ToList();
+            }
+
+            return View(model);
+        }
+
+        [Route("viewdeleted/{topicId}/{page?}", Name = "ReadDeletedNews")]
+        public ActionResult ReadDeletedOnly(int topicId, int? page)
+        {
+            var model = new NewsTopicViewModel { FRTopicId = topicId, DeletedOnly = true };
+            using (var ctx = new DataContext())
+            {
+                var topic = ctx.Topics.FirstOrDefault(x => x.FRTopicId == topicId);
+                if (topic == null)
+                {
+                    TempData["Error"] = $"Could not find topic id {topicId}.";
+                    return RedirectToRoute("NewsReader");
+                }
+                var posts = topic.Posts.OrderBy(x => x.TimeStamp);
+                var firstPost = posts.First();
+                model.TopicStarterClanId = topic.TopicStarterClanId;
+                model.TopicStarer = topic.TopicStarter;
+                model.CreatedAt = firstPost.TimeStamp;
+                model.TotalPosts = posts.Count();
+                model.DeletedPosts = posts.Count(x => x.Deleted);
+                model.TopicName = topic.FRTopicName;
+                model.Posts = posts.Where(x => x.Deleted).Skip(model.DeletedPosts > 10 ? ((page ?? 1) - 1) * 10 : 0).Take(10).Select(x => new NewsPostViewModel
                 {
                     FRPostId = x.FRPostId,
                     PostAuthor = x.PostAuthor,
@@ -63,7 +100,7 @@ namespace FRTools.Web.Controllers
                 }).ToList();
             }
 
-            return View(model);
+            return View("Read", model);
         }
 
         [Route("report/{postId}", Name = "ReportPost")]
