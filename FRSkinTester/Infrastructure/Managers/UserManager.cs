@@ -1,7 +1,7 @@
 ﻿using FRTools.Data.DataModels;
 using Microsoft.AspNet.Identity;
 
-namespace FRTools.Infrastructure.Managers
+namespace FRTools.Web.Infrastructure.Managers
 {
     public class UserManager : UserManager<User, int>
     {

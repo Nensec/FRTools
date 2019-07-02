@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 
-namespace FRTools.Controllers
+namespace FRTools.Web.Controllers
 {
     public class HomeController : BaseController
     {

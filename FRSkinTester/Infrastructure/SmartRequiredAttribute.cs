@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace FRTools.Infrastructure
+namespace FRTools.Web.Infrastructure
 {
     [AttributeUsage(AttributeTargets.Class)]
     public class SmartRequiredAttribute : ValidationAttribute

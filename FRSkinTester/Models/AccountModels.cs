@@ -1,4 +1,4 @@
-﻿namespace FRTools.Models
+﻿namespace FRTools.Web.Models
 {
     public class ExternalLoginListViewModel
     {

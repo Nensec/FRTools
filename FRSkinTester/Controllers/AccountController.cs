@@ -1,6 +1,6 @@
-﻿using FRTools.Infrastructure;
+﻿using FRTools.Web.Infrastructure;
 using FRTools.Data.DataModels;
-using FRTools.Models;
+using FRTools.Web.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
-namespace FRTools.Controllers
+namespace FRTools.Web.Controllers
 {
     public class AccountController : BaseController
     {

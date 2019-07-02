@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using System.Web.Mvc;
 
-namespace FRTools.Infrastructure.Helpers
+namespace FRTools.Web.Infrastructure.Helpers
 {
     public static class TextBoxExtentions
     {

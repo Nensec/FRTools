@@ -12,8 +12,8 @@
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FRTools</RootNamespace>
-    <AssemblyName>FRTools</AssemblyName>
+    <RootNamespace>FRTools.Web</RootNamespace>
+    <AssemblyName>FRTools.Web</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <MvcBuildViews>true</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
@@ -212,6 +212,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\NewsController.cs" />
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Infrastructure\ChallengeResult.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -227,6 +228,7 @@
     <Compile Include="Infrastructure\SmartRequiredAttribute.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\ManageModels.cs" />
+    <Compile Include="Models\NewsModels.cs" />
     <Compile Include="Models\ProfileModels.cs" />
     <Compile Include="Models\SkinModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -686,6 +688,8 @@
     <Content Include="Views\Skin\Browse.cshtml" />
     <Content Include="Views\Skin\_UpdateSkin.cshtml" />
     <Content Include="Views\Home\NotFound.cshtml" />
+    <Content Include="Views\News\Index.cshtml" />
+    <Content Include="Views\News\Read.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

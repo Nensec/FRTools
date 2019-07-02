@@ -15,6 +15,8 @@ namespace FRTools.Data.DataModels
         public int PostAuthorClanId { get; set; }
         public bool Deleted { get; set; }
         public DateTime TimeStamp { get; set; }
+
+        public int Reports { get; set; }
     }
 
 }

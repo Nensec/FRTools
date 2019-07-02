@@ -1,5 +1,5 @@
 ﻿using FRTools.Data.DataModels;
-using FRTools.Models;
+using FRTools.Web.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
@@ -14,7 +14,7 @@ using System.Web;
 using System.Web.Mvc;
 using FRTools.Data;
 
-namespace FRTools.Controllers
+namespace FRTools.Web.Controllers
 {
     [Authorize]
     [RoutePrefix("manage")]

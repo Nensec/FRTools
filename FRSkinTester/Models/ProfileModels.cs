@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 
-namespace FRTools.Models
+namespace FRTools.Web.Models
 {
     public class ViewProfileViewModel
     {

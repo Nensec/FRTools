@@ -2,7 +2,7 @@
 using System.Web;
 using System.Web.Mvc;
 
-namespace FRTools.Infrastructure
+namespace FRTools.Web.Infrastructure
 {
     public class ChallengeResult : HttpUnauthorizedResult
     {

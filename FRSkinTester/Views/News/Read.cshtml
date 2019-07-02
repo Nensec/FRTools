@@ -1,0 +1,102 @@
+﻿@model NewsTopicViewModel
+
+@{
+    ViewBag.Title = "Read";
+}
+
+@section head{
+    <meta name="referrer" content="no-referrer" />
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2>
+            @(Model.TopicName)
+        </h2>
+    </div>
+    <div class="panel-body">
+        <p class="text-danger">
+            <b>Read the contents of the pages here at your own risk, here might be things in here that really should not be!<br />If you do catch something, hit the report button on the post.</b>
+        </p>
+        <div class="panel panel-info">
+            <div class="panel-body text-center">
+                    @foreach (var page in Enumerable.Range(1, (int)Math.Ceiling((double)Model.TotalPosts / 10)))
+                    {
+                        <a href="@Url.RouteUrl("ReadNews", new { topicId = Model.FRTopicId, page = page })">@(page)</a>
+                    }
+            </div>
+        </div>
+
+        <div id="FRContent">
+            @foreach (var post in Model.Posts)
+            {
+                <div class="panel @(post.IsDeleted ? "panel-danger":"panel-default")">
+                    <div class="panel-heading" data-toggle=collapse data-target=#post_@(post.FRPostId) title="Click to toggle show/hide">
+                            Created: @(post.CreatedAt) <span class="pull-right">@Html.Raw(post.IsDeleted ? $"<b>This post was deleted!</b> | <a class=\"text-danger ignore-collapse\" href=\"#\" onclick=\"reportPost({post.FRPostId})\"><b>Report genuine moderation</b></span>" : $"<a href=\"http://www1.flightrising.com/forums/ann/{Model.FRTopicId}#post_{post.FRPostId}\">Jump to post</a>")</span>
+                    </div>
+                    <div id="post_@(post.FRPostId)" class="panel-collapse collapse @(post.Reports > 5 ? "" : "in")">
+                        <div class="panel-body @(post.IsDeleted ? "bg-danger":"")">
+                            <div class="col-xs-3">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <a href="@($"http://www1.flightrising.com/clan-profile/{post.PostAuthorClanId}")">@(post.PostAuthor)</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-9">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        @Html.Raw(post.RawHtmlContent)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            <script>
+                $('#FRContent script').html('');
+
+                $('#FRContent img').each(function (i, e) {
+                    try {
+                        var src = $(e).attr('src');
+                        if (src.startsWith('/')) {
+                            $(e).attr('src', 'http://www1.flightrising.com' + src);
+                        }
+                    } catch (e) {
+                    }
+                });
+            </script>
+        </div>
+        <div class="panel panel-info">
+            <div class="panel-body text-center">
+                    @foreach (var page in Enumerable.Range(1, (int)Math.Ceiling((double)Model.TotalPosts / 10)))
+                    {
+                        <a href="@Url.RouteUrl("ReadNews", new { topicId = Model.FRTopicId, page = page })">@(page)</a>
+                    }
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        reportPost = function (postId) {
+            $.post({
+                url: '@(Url.RouteUrl("ReportPost", new { postId = -1 }))'.replace('-1', postId)
+            });
+            alert('Post reported!');
+        };
+
+        $('.ignore-collapse').on('click', function (e) {
+            e.stopPropagation();
+        });
+    </script>
+}
+
+<style>
+    div[data-toggle="collapse"] {
+        cursor: pointer;
+    }
+</style>

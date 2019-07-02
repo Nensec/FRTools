@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace FRTools.Infrastructure
+namespace FRTools.Web.Infrastructure
 {
     public class AzureImageService
     {

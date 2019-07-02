@@ -8,6 +8,7 @@ namespace FRTools.Data.DataModels
         public int Id { get; set; }
         [Index]
         public int FRTopicId { get; set; }
+        public string FRTopicName { get; set; }
         public string TopicStarter { get; set; }
         public int TopicStarterClanId { get; set; }
         public int FRClaimedReplyCount { get; set; }

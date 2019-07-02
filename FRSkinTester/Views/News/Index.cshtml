@@ -1,0 +1,63 @@
+﻿@model NewsViewModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2>
+            Flight Rising news posts, unredacted
+        </h2>
+    </div>
+    <div class="panel-body">
+        <p class="text-info">
+            Flight Rising staff is known to delete any post that is not to their liking, making their forums looks brighter than it usually is.<br/>
+            However those posts are still live and readable for a short period, so I made this tool to read the new posts frequently to try and catch posts before they get deleted.<br/>
+            This does not mean I catch <b>all</b> deletes, but I should catch <b>most</b> of them.<br/>
+            Due to the nature of not knowing why a post is deleted, this tool also catches posts deleted by users and genuine bad posts that <b>should</b> be moderated.
+        </p>
+        <p class="text-danger">
+            <b>Read the contents of the pages here at your own risk, here might be things in here that really should not be!<br/>If you do catch something, hit the report button on the post.</b>
+        </p>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="col-xs-7">
+                    <b>Topic Name</b>
+                </div>
+                <div class="col-sm-1 hidden-xs">
+                    <b>Posts</b>
+                </div>
+                <div class="col-xs-1">
+                    <b>Deletes</b>
+                </div>
+                <div class="col-sm-3 hidden-xs">
+                    <b>Topic Starter</b>
+                </div>
+            </div>
+        </div>
+        @foreach (var topic in Model.Topics)
+        {
+            <a href="@Url.RouteUrl("ReadNews", new { topicId = topic.FRTopicId })">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="col-xs-7">
+                            @(topic.TopicName)
+                        </div>
+                        <div class="col-sm-1 hidden-xs">
+                            @(topic.TotalPosts)
+                        </div>
+                        <div class="col-xs-1">
+                            <span class="text-danger">
+                                @(topic.DeletedPosts)
+                            </span>
+                        </div>
+                        <div class="col-sm-3 hidden-xs">
+                            @(topic.TopicStarer)
+                        </div>
+                    </div>
+                </div>
+            </a>
+        }
+    </div>
+</div>

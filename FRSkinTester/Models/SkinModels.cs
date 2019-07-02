@@ -1,4 +1,4 @@
-﻿using FRTools.Infrastructure;
+﻿using FRTools.Web.Infrastructure;
 using FRTools.Data.DataModels;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Web;
 using FRTools.Data;
 
-namespace FRTools.Models
+namespace FRTools.Web.Models
 {
     public class BaseSkinModel
     {

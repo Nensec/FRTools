@@ -95,7 +95,8 @@ namespace FRTools.NewsReader
                                 FRTopicId = topicId,
                                 TopicStarter = authorName,
                                 TopicStarterClanId = authorClanId,
-                                FRClaimedReplyCount = claimedReplies
+                                FRClaimedReplyCount = claimedReplies,
+                                FRTopicName = topicName
                             });
                             ctx.SaveChanges();
                             parseTopic = true;
@@ -114,6 +115,12 @@ namespace FRTools.NewsReader
                             {
                                 Console.WriteLine("Reply count does not match up with known data, possibly deleted post!");
                                 parseTopic = true;
+                            }
+                            else if(topic.FRTopicName != topicName)
+                            {
+                                Console.WriteLine("Topic name changed, saving changes and moving on to next post");
+                                topic.FRTopicName = topicName;
+                                ctx.SaveChanges();
                             }
                             else
                                 Console.WriteLine("Nothing changed, skipping news post");

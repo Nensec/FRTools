@@ -1,4 +1,4 @@
-﻿namespace FRTools.Infrastructure
+﻿namespace FRTools.Web.Infrastructure
 {
     public class PreviewResult
     {

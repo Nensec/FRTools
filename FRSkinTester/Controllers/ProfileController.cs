@@ -1,5 +1,5 @@
 ﻿using FRTools.Data.DataModels;
-using FRTools.Models;
+using FRTools.Web.Models;
 using Microsoft.AspNet.Identity;
 using System.Data.Entity;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using FRTools.Data;
 
-namespace FRTools.Controllers
+namespace FRTools.Web.Controllers
 {
     [RoutePrefix("profile")]
     public class ProfileController : BaseController
