@@ -22,6 +22,18 @@ namespace FRTools.Web.Controllers
     [RoutePrefix("skintester")]
     public class SkinController : BaseController
     {
+        public SkinController()
+        {
+            ViewBag.Logo = "/Content/frskintester.svg";
+            ViewBag.PngLogo = "/Content/frskintester.png";
+        }
+
+        [Route(Name = "SkinTesterHome")]
+        public ActionResult Index()
+        {
+            return View();
+        }
+
         [Route("preview", Name = "PreviewHome")]
         [Route("~/preview")] /* TODO: Delete this */
         public ActionResult PreviewHome()
@@ -498,7 +510,6 @@ namespace FRTools.Web.Controllers
             return File(bytes, "image/png");
         }
 
-        [Route("")]
         [Route("browse", Name = "Browse")]
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
         public async Task<ActionResult> Browse(BrowseFilterModel filter)

@@ -10,41 +10,10 @@
 }
 
 <div class="row">
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3>Flight Rising skin tester</h3>
-
-            </div>
-            <div class="panel-body">
-                <p>
-                    This tool is made for artists to help shill their designs by making it easier to give people previews on their dragons.<br />
-                    Originally made for my GF so she didn't have to constantly juggle with applications to toss her creations over other people's dragons.<br />
-                    <br />
-                    I hope other artists can benefit from this too : )
-                </p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3>So how does this work, what does it even do?</h3>
-            </div>
-            <div class="panel-body">
-                <p>
-                    When you upload your skin to this tool it's put into a private storage space. Nothing and no one but the website itself can access them from there.<br />
-                    When someone uses your preview link to show your skin on their dragon, the website generates the image by fetching the dragon image from Flight Rising and overlays your skin on top of it.<br />
-                    <br />
-                    Your skin cannot be stolen unless someone goes through the trouble of editing out their dragon from the preview image, much like if you would make a preview yourself for them.
-                </p>
-            </div>
-        </div>
-    </div>
     <div class="col-md-12">
         <div class="panel panel-info">
             <div class="panel-heading">
-                <h3>Latest blog post</h3>
+                <h4>Latest blog post</h4>
             </div>
             <div id="blogPost" class="panel-body">
             </div>
@@ -53,14 +22,14 @@
     <div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3>Contact info</h3>
+                <h4>Contact info</h4>
             </div>
             <div class="panel-body">
                 <p>
-                    You can find the source code for this tool over at <a href="https://github.com/nensec/FRTools">github</a><br />
+                    You can find the source code for this compilation of tools over at <a href="https://github.com/nensec/FRTools">github</a><br />
                     If you run into any issues the best thing you can do is make an issue <a href="https://github.com/nensec/FRTools/issues">&gt;here&lt;</a>. Perhaps someone else already made an issue about it?<br />
                     <br />
-                    If you want to contact me directly I prefer Discord at <b>Nensec#1337</b> or Flight Rising <a href="http://www1.flightrising.com/msgs/new?to=nensec&subject=Skin%20Tester" target="_blank"><b>Nensec#435995</b></a> or <a href="http://www1.flightrising.com/msgs/new?to=kveikur&subject=Skin%20Tester" target="_blank"><b>kveikur#338449</b></a>
+                    You can always poke me on Discord directly at <b>Nensec#1337</b> for any suggestions, help or just talk!
                 </p>
             </div>
         </div>
@@ -73,7 +42,7 @@
         $(document).ready(function () {
             $.ajax({
                 type: "GET",
-                url: "https://api.tumblr.com/v2/blog/FRSkinTester.tumblr.com/posts?api_key=@(System.Configuration.ConfigurationManager.AppSettings["TumblrClientId"])&limit=1&filter=raw&tag=fr+skin+tester+news",
+                url: "https://api.tumblr.com/v2/blog/FRSkinTester.tumblr.com/posts?api_key=@(System.Configuration.ConfigurationManager.AppSettings["TumblrClientId"])&limit=1&filter=raw&tag=fr+tools+news",
                 dataType: "JSON",
                 success: function (blog) {
                     post = blog.response.posts[0];

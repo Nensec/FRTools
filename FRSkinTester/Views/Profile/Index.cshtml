@@ -15,9 +15,7 @@
 
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h2>
-            @(ViewBag.Title)
-        </h2>
+        <h4>@(ViewBag.Title)</h4>
     </div>
     <div class="panel-body">
         <p>
@@ -38,9 +36,7 @@
         <div class="col-md-@(Model.Privacy.HasFlag(FRTools.Data.DataModels.Privacy.HidePreviews) && !Model.IsOwn ? "12" : "6")">
             <div class="panel panel-success">
                 <div class="panel-heading">
-                    <h2>
-                        Skins owned
-                    </h2>
+                    <h4>Skins owned</h4>
                 </div>
                 <div class="panel-body">
                     <p>
@@ -104,9 +100,7 @@
         <div class="col-md-@(Model.Privacy.HasFlag(FRTools.Data.DataModels.Privacy.HideSkins) && !Model.IsOwn ? "12" : "6")">
             <div class="panel panel-warning" id="PreviewsPanel">
                 <div class="panel-heading">
-                    <h2>
-                        Previews generated
-                    </h2>
+                    <h4>Previews generated</h4>
                 </div>
                 <div class="panel-body">
                     <p>

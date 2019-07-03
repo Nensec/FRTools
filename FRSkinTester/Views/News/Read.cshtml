@@ -13,9 +13,7 @@
         <span class="pull-right">
             <a class="btn btn-warning" href="@(Url.RouteUrl(Model.DeletedOnly ? "ReadNews" : "ReadDeletedNews", new { topicId = Model.FRTopicId }))">View @(Model.DeletedOnly ? "all" : "only deleted") posts</a>
         </span>
-        <h2>
-            @(Model.TopicName)
-        </h2>
+        <h4>@(Model.TopicName)</h4>
     </div>
     <div class="panel-body">
         <p class="text-danger">
