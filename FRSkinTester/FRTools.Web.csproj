@@ -238,11 +238,12 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\embed_logo.png" />
     <Content Include="Content\frskintester.png" />
     <Content Include="Content\frskintester.svg" />
+    <Content Include="Content\frskintester_embed.png" />
     <Content Include="Content\frtools.png" />
     <Content Include="Content\frtools.svg" />
+    <Content Include="Content\frtools_embed.png" />
     <Content Include="favicon-16x16.png" />
     <Content Include="favicon-32x32.png" />
     <Content Include="Content\social_icons.css" />
