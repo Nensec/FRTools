@@ -64,10 +64,12 @@ namespace FRTools.NewsReader
                 Console.WriteLine($"Found {newsTopics.Count} that are not locked, parsing those..");
                 foreach (var newsTopic in newsTopics)
                 {
-                    var newsTopicInfo = Regex.Match(newsTopic, @"<a href=""(http://www1.flightrising.com/forums/ann/(\d+))"" class=""forumlink"">([\s\S]+?)</a>");
+                    var newsTopicInfo = Regex.Match(newsTopic, @"<td class=""topic"">[.\s\S]+<a href=""(http://www1.flightrising.com/forums/ann/(\d+))"" class=""forumlink"">([\s\S]+?)</a>[\s\S]+?<a href=""http://www1.flightrising.com/clan-profile/(\d+)"">([\[\]a-zA-Z ]+?)</a>");
                     var topicUrl = newsTopicInfo.Groups[1].Value;
                     var topicId = Convert.ToInt32(newsTopicInfo.Groups[2].Value);
                     var topicName = newsTopicInfo.Groups[3].Value;
+                    var authorClanId = Convert.ToInt32(newsTopicInfo.Groups[4].Value);
+                    var authorName = newsTopicInfo.Groups[5].Value;
 
                     var claimedReplies = Convert.ToInt32(Regex.Match(newsTopic, @"<div class=""activity-replies"">\s+(\d+)\s+</div>").Groups[1].Value);
                     var totalPages = Convert.ToInt32(Regex.Matches(newsTopic, $@"<a href=""http://www1.flightrising.com/forums/ann/{topicId}/(\d+)"">").Cast<Match>().Last().Groups[1].Value);
@@ -77,9 +79,6 @@ namespace FRTools.NewsReader
                     var lastPostAuthor = lastPostInfo.Groups[2].Value;
                     var lastPostTimestamp = DateTime.ParseExact(lastPostInfo.Groups[3].Value, "MMM dd, yyyy HH:mm:ss", CultureInfo.InvariantCulture);
 
-                    var latestNewsAuthorInfo = Regex.Match(newsTopic, @"<a href=""http://www1.flightrising.com/clan-profile/(\d+)"">([a-zA-Z0-9]+)</a>");
-                    var authorClanId = Convert.ToInt32(latestNewsAuthorInfo.Groups[1].Value);
-                    var authorName = latestNewsAuthorInfo.Groups[2].Value;
                     Console.WriteLine($"Found post: \"{topicName}\" ({totalPages} pages) id: {topicId}, claimed replies: {claimedReplies}, last post: {lastPostAuthor} id: {lastPostAuthorClanId}");
 
                     using (var ctx = new DataContext())
@@ -143,7 +142,7 @@ namespace FRTools.NewsReader
                 {
                     Console.WriteLine($"Navigating to page {i}..");
                     var forumPage = client.DownloadString($"http://www1.flightrising.com/forums/ann/{topicId}/{i}");
-                    var postsPattern = @"<div id=""post_(\d+)"".+>[.\s\S]+?(?=(?=<div id=""post_|(?=<div class=""common-pagination"">|<div id=""topic-footer"">)))";
+                    var postsPattern = @"<div id=""post_(\d+)"".+>[.\s\S]+?<div class=""post-author-username-frame"">[.\s\S]+?<a href=""http://www1.flightrising.com/clan-profile/(\d+)"" class=""post-author-username"">([a-zA-Z0-9]+)</a>[.\s\S]+?<div class=""post-timestamp""><strong>([a-zA-Z]+ \d+, \d{4}</strong> \d\d:\d\d:\d\d)[\s\S]+?<div class=""post-text-content"">([.\s\S]+?)(?=<div class=""post-text-signature"">|(?=<div class=""post-text-footer"">|(?=<div class=""common-pagination"">|(?=<div id=""post_\d+"".+>|<div id=""topic-footer"">))))";
                     var posts = Regex.Matches(forumPage, postsPattern).Cast<Match>().ToList();
                     Console.WriteLine($"Found {posts.Count} posts on this page");
 
@@ -195,19 +194,10 @@ namespace FRTools.NewsReader
                 if (post == null)
                 {
                     Console.WriteLine($" New Post! Adding post to database");
-                    var postAuthorInfoFrame = Regex.Match(forumPost.Groups[0].Value, @"<div class=""post-author"".+>[.\s\S]+?(?=<div class=""post-text)").Groups[0].Value;
-                    var postAuthorInfo = Regex.Match(postAuthorInfoFrame, @"<a href=""http://www1.flightrising.com/clan-profile/(\d+)"".+>([a-zA-Z0-9]+)</a>");
-                    var postAuthorClanId = Convert.ToInt32(postAuthorInfo.Groups[1].Value);
-                    var postAuthorName = postAuthorInfo.Groups[2].Value;
-                    var postInfoFrame = Regex.Match(forumPost.Groups[0].Value, @"<div class=""post-text"">[\s\S]+<div class=""post-timestamp""><strong>([a-zA-Z]+ \d+, \d{4}</strong> \d\d:\d\d:\d\d)[\s\S]+?(?=</div>[\s\n\r]+?</div>[\s\n\r]+?</div>[\s\n\r]+?</div>)</div>");
-                    var postTimeStamp = DateTime.ParseExact(postInfoFrame.Groups[1].Value.Replace("</strong>", ""), "MMMM dd, yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-                    var postInfoContent = Regex.Match(postInfoFrame.Groups[0].Value, @"<div class=""post-text-content"">[.\s\S]+").Groups[0].Value;
-
-                    if (postInfoContent.Contains(@"<div class=""post-text-signature"">"))
-                        postInfoContent = postInfoContent.Substring(0, postInfoContent.IndexOf(@"<div class=""post-text-signature"">"));
-
-                    if (postInfoContent.Contains(@"<div class=""post-text-footer"">"))
-                        postInfoContent = postInfoContent.Substring(0, postInfoContent.IndexOf(@"<div class=""post-text-footer"">"));
+                    var postAuthorClanId = Convert.ToInt32(forumPost.Groups[2].Value);
+                    var postAuthorName = forumPost.Groups[3].Value;
+                    var postTimeStamp = DateTime.ParseExact(forumPost.Groups[4].Value.Replace("</strong>", ""), "MMMM dd, yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                    var postInfoContent = forumPost.Groups[5].Value;
 
                     topic.Posts.Add(new Post
                     {

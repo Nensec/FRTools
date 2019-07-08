@@ -15,7 +15,7 @@ namespace FRTools.Web.Controllers
             var model = new NewsViewModel();
             using (var ctx = new DataContext())
             {
-                model.Topics = ctx.Topics.Select(x => new NewsTopicViewModel
+                model.Topics = ctx.Topics.OrderByDescending(x => x.FRTopicId).Select(x => new NewsTopicViewModel
                 {
                     FRTopicId = x.FRTopicId,
                     TopicName = x.FRTopicName,
