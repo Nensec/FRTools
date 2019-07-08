@@ -197,7 +197,12 @@ namespace FRTools.NewsReader
                     var postAuthorClanId = Convert.ToInt32(forumPost.Groups[2].Value);
                     var postAuthorName = forumPost.Groups[3].Value;
                     var postTimeStamp = DateTime.ParseExact(forumPost.Groups[4].Value.Replace("</strong>", ""), "MMMM dd, yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-                    var postInfoContent = forumPost.Groups[5].Value;
+                    var postInfoContent = forumPost.Groups[5].Value.Trim();
+                    var openingDivs = Regex.Matches(postInfoContent, "<div");
+                    var closingDivs = Regex.Matches(postInfoContent, "</div>");
+
+                    if(closingDivs.Count > openingDivs.Count)
+                        postInfoContent = postInfoContent.Remove(closingDivs[openingDivs.Count].Index).Trim();
 
                     topic.Posts.Add(new Post
                     {
