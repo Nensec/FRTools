@@ -1,0 +1,35 @@
+﻿@model DressModelResultViewModel
+
+@{
+    ViewBag.Title = "Dress up a scry result";
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>
+            Here is your preview, hope you like it!
+        </h4>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div>
+                <img class="dragonImage center-block" src="@(Model.CDNBasePath + Model.PreviewUrl)" />
+            </div>
+        </div>
+
+        <p class="pull-left">
+            <i style="font-size:10px;">
+                Notice anything wrong with the result? Let me know so I can fix it <a href="https://github.com/nensec/FRTools/issues">&gt;here&lt;</a>!
+            </i>
+        </p>
+        @if (!Request.IsAuthenticated)
+        {
+            <p class="pull-right">
+                <i style="font-size:10px;">
+                    Did you know that if you <a href="@Url.RouteUrl("Login")">login</a> all previews you create will be linked to your account and you can view them in your profile?
+                </i>
+            </p>
+        }
+    </div>
+</div>
+<p><a class="btn btn-primary" href="@Url.Action("DressScryer")">Try again with different images? &raquo;</a></p>

@@ -62,7 +62,7 @@ namespace FRTools.Web.Controllers
                         Title = skin.Title,
                         Description = skin.Description,
                         SkinId = model.SkinId,
-                        PreviewUrl = (await GenerateOrFetchPreview(model.SkinId, skin.Version, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
+                        PreviewUrl = (await GenerateOrFetchPreview(model.SkinId, skin.Version, "preview", string.Format(DragonHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
                         Coverage = skin.Coverage,
                         Creator = skin.Creator,
                         DragonType = (DragonType)skin.DragonType,
@@ -89,12 +89,7 @@ namespace FRTools.Web.Controllers
 
             if (model.DragonId != null)
             {
-                string dwagonUrl = null;
-                using (var client = new WebClient())
-                {
-                    var htmlPage = await client.DownloadStringTaskAsync(new Uri(string.Format(ScryerUrl, model.DragonId)));
-                    dwagonUrl = ScrapeImageUrl(htmlPage);
-                }
+                string dwagonUrl = DragonHelpers.GetDragonImageUrlFromDragonId(model.DragonId.Value);
 
                 if (dwagonUrl.StartsWith(".."))
                 {
@@ -124,17 +119,15 @@ namespace FRTools.Web.Controllers
             string dressingRoomUrl = isDressingRoomUrl ? dragonUrl : null;
             if (isDressingRoomUrl)
             {
-                var apparelDragon = ParseUrlForDragon(dragonUrl);
+                var apparelDragon = DragonHelpers.ParseUrlForDragon(dragonUrl);
                 if (!dragonUrl.Contains("/dgen/dressing-room/dummy"))
                 {
                     dragonId = int.Parse(Regex.Match(dragonUrl, @"did=([\d]*)").Groups[1].Value);
-                    using (var client = new WebClient())
-                    {
-                        var htmlPage = await client.DownloadStringTaskAsync(new Uri(string.Format(ScryerUrl, dragonId)));
-                        dragonUrl = ScrapeImageUrl(htmlPage);
-                    }
+                    dragon = DragonHelpers.GetDragonFromDragonId(dragonId.Value);
                 }
-                dragon = ParseUrlForDragon(dragonUrl);
+                else
+                    dragon = DragonHelpers.ParseUrlForDragon(dragonUrl);
+
                 if (IsAncientBreed(dragon.DragonType))
                 {
                     TempData["Error"] = $"Ancient breeds cannot wear apparal, how did you even get a dressing room link in here?";
@@ -148,7 +141,7 @@ namespace FRTools.Web.Controllers
                 }
             }
             else
-                dragon = ParseUrlForDragon(dragonUrl);
+                dragon = DragonHelpers.ParseUrlForDragon(dragonUrl);
 
             if (dragon.Age == Age.Hatchling)
             {
@@ -244,7 +237,7 @@ namespace FRTools.Web.Controllers
                     Bitmap dragonImage = null;
                     using (var client = new WebClient())
                     {
-                        var dwagonImageBytes = client.DownloadDataTaskAsync(string.Format(DressingRoomDummyUrl, (int)model.DragonType, (int)model.Gender));
+                        var dwagonImageBytes = client.DownloadDataTaskAsync(string.Format(DragonHelpers.DressingRoomDummyUrl, (int)model.DragonType, (int)model.Gender));
                         try
                         {
                             using (var memStream = new MemoryStream(await dwagonImageBytes, false))
@@ -280,7 +273,7 @@ namespace FRTools.Web.Controllers
                     {
                         SkinId = randomizedId,
                         SecretKey = secretKey,
-                        PreviewUrl = (await GenerateOrFetchPreview(randomizedId, skin.Version, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
+                        PreviewUrl = (await GenerateOrFetchPreview(randomizedId, skin.Version, "preview", string.Format(DragonHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
                     });
                 }
                 catch
@@ -324,7 +317,7 @@ namespace FRTools.Web.Controllers
                     return View(new ManageModelViewModel
                     {
                         Skin = skin,
-                        PreviewUrl = (await GenerateOrFetchPreview(model.SkinId, skin.Version, "preview", string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0]
+                        PreviewUrl = (await GenerateOrFetchPreview(model.SkinId, skin.Version, "preview", string.Format(DragonHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0]
                     });
                 }
             }
@@ -434,7 +427,7 @@ namespace FRTools.Web.Controllers
                     Bitmap dragonImage = null;
                     using (var client = new WebClient())
                     {
-                        var dwagonImageBytes = client.DownloadDataTaskAsync(string.Format(DressingRoomDummyUrl, skin.DragonType, (int)skin.GenderType));
+                        var dwagonImageBytes = client.DownloadDataTaskAsync(string.Format(DragonHelpers.DressingRoomDummyUrl, skin.DragonType, (int)skin.GenderType));
                         try
                         {
                             using (var memStream = new MemoryStream(await dwagonImageBytes, false))
@@ -499,7 +492,7 @@ namespace FRTools.Web.Controllers
         {
             if (!_dummyCache.TryGetValue((dragonType, gender), out var bytes))
             {
-                var dummyDragon = await GetDragonBaseImage(string.Format(DressingRoomDummyUrl, dragonType, gender), null, new AzureImageService());
+                var dummyDragon = await DragonHelpers.GetDragonBaseImage(string.Format(DragonHelpers.DressingRoomDummyUrl, dragonType, gender));
                 using (var memStream = new MemoryStream())
                 {
                     dummyDragon.Save(memStream, ImageFormat.Png);
@@ -543,7 +536,7 @@ namespace FRTools.Web.Controllers
                 }).ToList();
 
                 foreach (var result in model.Results)
-                    result.PreviewUrl = (await GenerateOrFetchPreview(result.SkinId, result.Version, "preview", string.Format(DressingRoomDummyUrl, (int)result.DragonType, (int)result.Gender), null)).Urls[0];
+                    result.PreviewUrl = (await GenerateOrFetchPreview(result.SkinId, result.Version, "preview", string.Format(DragonHelpers.DressingRoomDummyUrl, (int)result.DragonType, (int)result.Gender), null)).Urls[0];
             }
 
             return View(model);
@@ -581,61 +574,6 @@ namespace FRTools.Web.Controllers
 
         private bool IsAncientBreed(DragonType type) => type == DragonType.Gaoler;
 
-        private string ScrapeImageUrl(string scryerHtmlPage)
-        {
-            var imgTag = Regex.Match(scryerHtmlPage, @"<img[^>]*?src\s*=\s*[""']?([^'"" >]+?)[ '""][^>]*?>");
-            return imgTag.Groups[1].Value;
-        }
-
-        private DragonCache ParseUrlForDragon(string dragonUrl)
-        {
-            var dragon = new DragonCache();
-            using (var ctx = new DataContext())
-            {
-
-                Match regexParse;
-                if ((regexParse = Regex.Match(dragonUrl, @"gender=([\d]*)")).Success)
-                    dragon.Gender = (Gender)int.Parse(regexParse.Groups[1].Value);
-                if ((regexParse = Regex.Match(dragonUrl, @"breed=([\d]*)")).Success)
-                    dragon.DragonType = (DragonType)int.Parse(regexParse.Groups[1].Value);
-                if ((regexParse = Regex.Match(dragonUrl, @"auth=([a-z0-9]*)")).Success)
-                    dragon.SHA1Hash = regexParse.Groups[1].Value;
-                else
-                    dragon.SHA1Hash = $"DUMMY_{(int)dragon.DragonType}_{(int)dragon.Gender}";
-
-                var dbDragon = new DragonCache();
-
-                if ((dbDragon = ctx.DragonCache.FirstOrDefault(x => x.SHA1Hash == dragon.SHA1Hash)) != null)
-                    dragon = dbDragon;
-
-                if ((regexParse = Regex.Match(dragonUrl, @"element=([\d]*)")).Success)
-                    dragon.Element = (Element)int.Parse(regexParse.Groups[1].Value);
-                if ((regexParse = Regex.Match(dragonUrl, @"eyetype=([\d]*)")).Success)
-                    dragon.EyeType = (EyeType)int.Parse(regexParse.Groups[1].Value);
-                if ((regexParse = Regex.Match(dragonUrl, @"bodygene=([\d]*)")).Success)
-                    dragon.BodyGene = int.Parse(regexParse.Groups[1].Value);
-                if ((regexParse = Regex.Match(dragonUrl, @"winggene=([\d]*)")).Success)
-                    dragon.WingGene = int.Parse(regexParse.Groups[1].Value);
-                if ((regexParse = Regex.Match(dragonUrl, @"tertgene=([\d]*)")).Success)
-                    dragon.TertiaryGene = int.Parse(regexParse.Groups[1].Value);
-                if ((regexParse = Regex.Match(dragonUrl, @"body=([\d]*)")).Success)
-                    dragon.BodyColor = (Color)int.Parse(regexParse.Groups[1].Value);
-                if ((regexParse = Regex.Match(dragonUrl, @"wings=([\d]*)")).Success)
-                    dragon.WingColor = (Color)int.Parse(regexParse.Groups[1].Value);
-                if ((regexParse = Regex.Match(dragonUrl, @"tert=([\d]*)")).Success)
-                    dragon.TertiaryColor = (Color)int.Parse(regexParse.Groups[1].Value);
-                if ((regexParse = Regex.Match(dragonUrl, @"age=([\d]*)")).Success)
-                    dragon.Age = (Age)int.Parse(regexParse.Groups[1].Value);
-                if ((regexParse = Regex.Match(dragonUrl, @"apparel=([\d,]*)")).Success)
-                    dragon.Apparel = regexParse.Groups[1].Value;
-
-                ctx.DragonCache.Add(dragon);
-                ctx.SaveChanges();
-            }
-
-            return dragon;
-        }
-
         private async Task<PreviewResult> GenerateOrFetchPreview(string skinId, int version, string dragonId, string dragonUrl, DragonCache dragon, string dressingRoomUrl = null, bool force = false)
         {
             var result = new PreviewResult { Forced = force, RealDragon = dragonId != "preview" ? dragonId : null, DressingRoomUrl = dressingRoomUrl };
@@ -643,14 +581,23 @@ namespace FRTools.Web.Controllers
             var azureImageService = new AzureImageService();
 
             if (dragon == null)
-                dragon = ParseUrlForDragon(dragonUrl);
+                dragon = DragonHelpers.ParseUrlForDragon(dragonUrl);
 
             Bitmap dragonImage = null;
 
             var azureImagePreviewPath = $@"previews\{skinId}\{(version == 1 ? "" : $@"{version}\")}{dragonId ?? dragon.ToString()}.png";
             if (force || !azureImageService.Exists(azureImagePreviewPath, out var previewUrl))
             {
-                dragonImage = await GetDragonBaseImage(dragonUrl, dragon, azureImageService);
+                try
+                {
+                    dragonImage = await DragonHelpers.GetDragonBaseImage(dragon);
+                }
+                catch (Exception ex)
+                {
+                    TempData["Error"] = "Could not get dragon from Flight Rising:<br/>" + ex.Message;
+                    result.Exception = ex.ToString();
+                    return result;
+                }
 
                 Image skinImage;
                 using (var skinImageStream = await azureImageService.GetImage($@"skins\{skinId}.png"))
@@ -727,26 +674,13 @@ namespace FRTools.Web.Controllers
                 var cacheUrl = $@"previews\{skinId}\{dragonId ?? dragon.ToString()}_apparel.png";
                 if (force || !azureImageService.Exists(cacheUrl, out apparelPreviewUrl))
                 {
-                    var azureUrl = $@"dragoncache\{dragonId ?? dragon.ToString()}_invisible.png";
                     if (dragonId != null)
-                        dressingRoomUrl = string.Format(DressingRoomApparalUrl, dragonId, string.Join(",", apparelIds.Concat(new[] { 22046 })));
+                        dressingRoomUrl = string.Format(DragonHelpers.DressingRoomDragonApparalUrl, dragonId, string.Join(",", apparelIds.Concat(new[] { 22046 })));
                     else
-                        dressingRoomUrl = string.Format(DressingRoomDummyUrl, (int)dragon.DragonType, (int)dragon.Gender) + $"&apparel={string.Join(",", apparelIds.Concat(new[] { 22046 }))}";
+                        dressingRoomUrl = string.Format(DragonHelpers.DressingRoomDummyUrl, (int)dragon.DragonType, (int)dragon.Gender) + $"&apparel={string.Join(",", apparelIds.Concat(new[] { 22046 }))}";
 
-                    using (var client = new WebClient())
-                    {
-                        var invisibleDragonBytesTask = client.DownloadDataTaskAsync(dressingRoomUrl);
-
-                        var invisibleDwagonImageBytes = await invisibleDragonBytesTask;
-                        using (var memStream = new MemoryStream(invisibleDwagonImageBytes, false))
-                            await azureImageService.WriteImage(azureUrl, memStream);
-
-                        using (var memStream = new MemoryStream(invisibleDwagonImageBytes, false))
-                        {
-                            var invisibleDwagon = (Bitmap)Image.FromStream(memStream);
-                            apparelPreviewUrl = await GenerateApparelPreview(invisibleDwagon, cacheUrl);
-                        }
-                    }
+                    var invisibleDragon = await DragonHelpers.GetInvisibleDressingRoomDragon(dressingRoomUrl);
+                    apparelPreviewUrl = await GenerateApparelPreview(invisibleDragon, cacheUrl);
                 }
             }
             else if (dragonId != null && dragonId != "preview" && !IsAncientBreed(dragon.DragonType))
@@ -767,45 +701,6 @@ namespace FRTools.Web.Controllers
             return result;
         }
 
-        private async Task<Bitmap> GetDragonBaseImage(string dragonUrl, DragonCache dragon, AzureImageService azureImageService)
-        {
-            if (dragon == null)
-                dragon = ParseUrlForDragon(dragonUrl);
-
-            Bitmap dwagonImage;
-            string azureUrl = $@"dragoncache\{dragon.SHA1Hash}.png";
-
-            if (azureImageService.Exists(azureUrl, out var cacheUrl))
-            {
-                using (var stream = await azureImageService.GetImage(azureUrl))
-                    dwagonImage = (Bitmap)Image.FromStream(stream);
-                return dwagonImage;
-            }
-
-            using (var client = new WebClient())
-            {
-                var dwagonImageBytesTask = client.DownloadDataTaskAsync(dragonUrl);
-                try
-                {
-                    var dwagonImageBytes = await dwagonImageBytesTask;
-                    using (var memStream = new MemoryStream(dwagonImageBytes, false))
-                        await azureImageService.WriteImage(azureUrl, memStream);
-
-                    using (var memStream = new MemoryStream(dwagonImageBytes, false))
-                    {
-                        dwagonImage = (Bitmap)Image.FromStream(memStream);
-                        return dwagonImage;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    // Something wrong fetching the image from FR
-                    TempData["Error"] = "Could not get dragon from Flight Rising:<br/>" + ex.Message;
-                    return null;
-                }
-            }
-        }
-
         private async Task<Bitmap> GetInvisibleDragonWithApparel(string dragonId, AzureImageService azureImageService, bool force = false)
         {
             Bitmap invisibleDwagon;
@@ -819,7 +714,7 @@ namespace FRTools.Web.Controllers
 
             using (var client = new WebClient())
             {
-                var dragonProfilePageTask = client.DownloadStringTaskAsync(string.Format(DragonProfileUrl, dragonId));
+                var dragonProfilePageTask = client.DownloadStringTaskAsync(string.Format(DragonHelpers.DragonProfileUrl, dragonId));
                 try
                 {
                     var dragonProfileHtml = await dragonProfilePageTask;
@@ -829,7 +724,7 @@ namespace FRTools.Web.Controllers
                     if (apparel.Count == 0)
                         return null;
 
-                    var invisibleDragonBytesTask = client.DownloadDataTaskAsync(string.Format(DressingRoomApparalUrl, dragonId, string.Join(",", apparel.Cast<Match>().Where(x => x.Success).Select(x => x.Groups[1].Value).Concat(new[] { "22046" }))));
+                    var invisibleDragonBytesTask = client.DownloadDataTaskAsync(string.Format(DragonHelpers.DressingRoomDragonApparalUrl, dragonId, string.Join(",", apparel.Cast<Match>().Where(x => x.Success).Select(x => x.Groups[1].Value).Concat(new[] { "22046" }))));
 
                     var invisibleDwagonImageBytes = await invisibleDragonBytesTask;
 
@@ -883,12 +778,19 @@ namespace FRTools.Web.Controllers
             using (var stream = await azureImageService.GetImage($@"skins\{skin.GeneratedId}.png"))
                 skinImage = (Bitmap)Image.FromStream(stream);
 
-            dummyImage = await GetDragonBaseImage(string.Format(DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null, azureImageService);
+            try
+            {
+                dummyImage = await DragonHelpers.GetDragonBaseImage(string.Format(DragonHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType));
 
-            skin.Coverage = GetCoveragePercentage(skinImage, dummyImage);
-            skinImage.Dispose();
-            dummyImage.Dispose();
-            await ctx.SaveChangesAsync();
+                skin.Coverage = GetCoveragePercentage(skinImage, dummyImage);
+                skinImage.Dispose();
+                dummyImage.Dispose();
+                await ctx.SaveChangesAsync();
+            }
+            catch
+            {
+                // TODO: Something went wrong
+            }
         }
     }
 }

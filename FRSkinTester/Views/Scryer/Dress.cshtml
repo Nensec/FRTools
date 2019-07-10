@@ -1,0 +1,132 @@
+﻿@model DressModelViewModel
+
+@{
+    ViewBag.Title = "Dress up a scry";
+}
+
+@section meta{
+    <meta name="referrer" content="no-referrer" />
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>@ViewBag.Title</h4>
+            </div>
+            <div class="panel-body">
+                @using (Html.BeginRouteForm("PreviewPost"))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-horizontal">
+                        <p>
+                            Enter the following fields, make sure the dragon breed and gender match!
+                        </p>
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ScryerUrl, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-8">
+                                <div class="input-group">
+                                    @Html.EditorFor(model => model.ScryerUrl, new { htmlAttributes = new { @class = "form-control", onchange = "setScryerImg()", oninput = "setScryerImg()" } })
+                                    <span class="input-group-addon">
+                                        <span id="ScryHelp" data-toggle="popover" class="glyphicon glyphicon-info-sign"></span>
+                                    </span>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.ScryerUrl, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.DressingRoomUrl, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-8">
+                                <div class="input-group">
+                                    @Html.EditorFor(model => model.DressingRoomUrl, new { htmlAttributes = new { @class = "form-control", onchange = "setDressingImg()", oninput = "setDressingImg()" } })
+                                    <span class="input-group-addon">
+                                        <span id="DressingHelp" data-toggle="popover" class="glyphicon glyphicon-info-sign"></span>
+                                    </span>
+                                </div>
+                                @Html.ValidationMessageFor(model => model.DressingRoomUrl, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-8">
+                                <input type="submit" value="Show me the preview!" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="ScryHelp_popover" style="display:none;">
+                        <p class="text-center">
+                            On Flight Rising go to the "Scrying Workshop" and select "Predict Morphology".<br />
+                            After creating the dragon of your choosing, right click the image and copy it's URL.
+                        </p>
+                        <img width="600" src="https://i.imgur.com/dXaRmNP.gif" />
+                    </div>
+
+                    <div id="DressingHelp_popover" style="display:none;">
+                        <p class="text-center">
+                            On Flight Rising go to the "Dressing Room" and select either option to dress a dragon.<br />
+                            After dressing the dragon to your liking, right click the image and copy it's URL.
+                        </p>
+                        <img width="600" src="https://i.imgur.com/kZ1UnCk.gif" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h4>Scryer image</h4>
+            </div>
+            <div class="panel-body text-center">
+                <img id="ScryerImage" src="/Content/nodata.png" onerror="this.src='/Content/nodata.png'" />
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h4>Dressing room image</h4>
+            </div>
+            <div class="panel-body text-center">
+                <img id="DressingImage" src="/Content/nodata.png" onerror="this.src='/Content/nodata.png'"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    setScryerImg = function () {
+        $('#ScryerImage').attr('src', $('#@(Html.IdFor(model => model.ScryerUrl))').val());
+    }
+
+    setDressingImg = function () {
+        $('#DressingImage').attr('src', $('#@(Html.IdFor(model => model.DressingRoomUrl))').val());
+
+    }
+
+    $("[data-toggle=popover]").each(function (i, obj) {
+        $(this).popover({
+        html: true,
+            content: function () {
+                var id = $(this).attr('id');
+                return $(`#${id}_popover`).html();
+            },
+            trigger: 'hover focus',
+            container: 'body'
+        });
+
+    });
+</script>
+
+<style>
+    .popover {
+        max-width: 100%;
+        z-index: 100;
+    }
+</style>

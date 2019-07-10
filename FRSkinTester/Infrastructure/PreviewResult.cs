@@ -7,5 +7,6 @@
         public bool Cached { get; set; }
         public string RealDragon { get; set; }
         public string DressingRoomUrl { get; set; }
+        public string Exception { get; set; }
     }
 }

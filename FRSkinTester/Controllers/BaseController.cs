@@ -7,12 +7,6 @@ namespace FRTools.Web.Controllers
 {
     public class BaseController : Controller
     {
-        protected const string DressingRoomDummyUrl = "http://www1.flightrising.com/dgen/dressing-room/dummy?breed={0}&gender={1}";
-        protected const string ScryerUrl = "http://flightrising.com/includes/scryer_getdragon.php?zord={0}";
-        protected const string DragonProfileUrl = "http://flightrising.com/main.php?dragon={0}";
-        protected const string DressingRoomApparalUrl = "http://www1.flightrising.com/dgen/dressing-room/dragon?did={0}&apparel={1}";
-
-
         private Random _random = new Random(Guid.NewGuid().GetHashCode());
 
         protected string GenerateId(int length = 7, IEnumerable<string> mustNotMatch = null)
