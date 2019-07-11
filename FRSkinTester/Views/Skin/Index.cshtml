@@ -57,7 +57,7 @@
         $(document).ready(function () {
             $.ajax({
                 type: "GET",
-                url: "https://api.tumblr.com/v2/blog/FRSkinTester.tumblr.com/posts?api_key=@(System.Configuration.ConfigurationManager.AppSettings["TumblrClientId"])&limit=1&filter=raw&tag=fr+skin+tester+news",
+                url: "https://api.tumblr.com/v2/blog/frtools.tumblr.com/posts?api_key=@(System.Configuration.ConfigurationManager.AppSettings["TumblrClientId"])&limit=1&filter=raw&tag=fr+skin+tester+news",
                 dataType: "JSON",
                 success: function (blog) {
                     post = blog.response.posts[0];
