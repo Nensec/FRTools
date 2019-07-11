@@ -737,8 +737,13 @@
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
   <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
-    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
-  </Target>
+    <ItemGroup>
+      <ExtraWebConfigs Include="$(BaseIntermediateOutputPath)\**\web.config" />
+      <ExtraPackageTmp Include="$([System.IO.Directory]::GetDirectories(&quot;$(BaseIntermediateOutputPath)&quot;, &quot;PackageTmp&quot;, System.IO.SearchOption.AllDirectories))" />
+    </ItemGroup>
+    <Delete Files="@(ExtraWebConfigs)" />
+    <RemoveDir Directories="@(ExtraPackageTmp)" />
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />  </Target>
   <ProjectExtensions>
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
