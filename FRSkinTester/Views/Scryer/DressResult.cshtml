@@ -22,14 +22,6 @@
                 Notice anything wrong with the result? Let me know so I can fix it <a href="https://github.com/nensec/FRTools/issues">&gt;here&lt;</a>!
             </i>
         </p>
-        @if (!Request.IsAuthenticated)
-        {
-            <p class="pull-right">
-                <i style="font-size:10px;">
-                    Did you know that if you <a href="@Url.RouteUrl("Login")">login</a> all previews you create will be linked to your account and you can view them in your profile?
-                </i>
-            </p>
-        }
     </div>
 </div>
 <p><a class="btn btn-primary" href="@Url.Action("DressScryer")">Try again with different images? &raquo;</a></p>
