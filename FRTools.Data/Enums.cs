@@ -139,7 +139,8 @@ namespace FRTools.Data
         Python,
         Starmap,
         Lionfish,
-        Laced
+        Laced,
+        Leopard = 40
     }
 
     public enum TertiaryGene
@@ -197,7 +198,8 @@ namespace FRTools.Data
         Morph,
         Noxtide,
         Constellation,
-        Edged
+        Edged,
+        Clouded = 40
     }
 
     public enum Color
