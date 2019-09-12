@@ -140,7 +140,8 @@ namespace FRTools.Data
         Starmap,
         Lionfish,
         Laced,
-        Leopard = 40
+        Leopard = 40,
+        Slime
     }
 
     public enum TertiaryGene
@@ -199,7 +200,8 @@ namespace FRTools.Data
         Noxtide,
         Constellation,
         Edged,
-        Clouded = 40
+        Clouded = 40,
+        Sludge
     }
 
     public enum Color
