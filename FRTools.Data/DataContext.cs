@@ -27,6 +27,7 @@ namespace FRTools.Data
         public DbSet<DragonCache> DragonCache { get; set; }
         public DbSet<Topic> Topics { get; set; }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<Pinglist> Pinglists { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
