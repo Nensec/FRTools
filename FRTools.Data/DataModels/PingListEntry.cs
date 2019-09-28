@@ -1,9 +1,15 @@
-﻿namespace FRTools.Data.DataModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FRTools.Data.DataModels
 {
     public class PingListEntry
     {
         public int Id { get; set; }
-        public int FRId { get; set; }
-        public string FRName { get; set; }
+        [Required]
+        public FRUser FRUser { get; set; }
+
+        public string GeneratedId { get; set; }
+        public string SecretKey { get; set; }
+        public string Remarks { get; set; }
     }
 }

@@ -11,9 +11,8 @@ namespace FRTools.Data.DataModels
         public int Id { get; set; }
         public string GeneratedId { get; set; }
         public string SecretKey { get; set; }
-        public bool Name { get; set; }
+        public string Name { get; set; }
         public bool IsPublic { get; set; }
-        public bool RequireValidation { get; set; }
         public string Format { get; set; }
         public virtual User Creator { get; set; }
 

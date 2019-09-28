@@ -18,8 +18,8 @@ namespace FRTools.Web.Controllers
         [HttpPost]
         public async Task<ActionResult> DressResult(DressModelViewModel model)
         {
-            var scryerDragon = DragonHelpers.ParseUrlForDragon(model.ScryerUrl);
-            var dressingRoomDragon = DragonHelpers.ParseUrlForDragon(model.DressingRoomUrl);
+            var scryerDragon = FRHelpers.ParseUrlForDragon(model.ScryerUrl);
+            var dressingRoomDragon = FRHelpers.ParseUrlForDragon(model.DressingRoomUrl);
 
             if (scryerDragon.Age == Data.Age.Hatchling)
             {
@@ -44,8 +44,8 @@ namespace FRTools.Web.Controllers
             var azureImagePreviewPath = $@"previews\dresser\{scryerDragon.ToString().Trim('_')}\{dressingRoomDragon.Apparel.Replace(',', '-').ToString()}.png";
             if (!azureImageService.Exists(azureImagePreviewPath, out var previewUrl))
             {
-                var invisibleDragon = await DragonHelpers.GetInvisibleDressingRoomDragon(dressingRoomDragon);
-                var baseDragon = await DragonHelpers.GetDragonBaseImage(scryerDragon);
+                var invisibleDragon = await FRHelpers.GetInvisibleDressingRoomDragon(dressingRoomDragon);
+                var baseDragon = await FRHelpers.GetDragonBaseImage(scryerDragon);
 
                 using (var graphics = Graphics.FromImage(baseDragon))
                 {

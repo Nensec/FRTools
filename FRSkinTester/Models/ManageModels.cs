@@ -26,7 +26,7 @@ namespace FRTools.Web.Models
     {
         [Display(Name = "User/Lair Id")]
         [Required]
-        public int LairId { get; set; }
+        public int LairId { get; set; }        
     }
 
     public class UserPostViewModel : BaseManageModel

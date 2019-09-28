@@ -224,7 +224,7 @@
     </Compile>
     <Compile Include="Infrastructure\AzureImageService.cs" />
     <Compile Include="Infrastructure\CodeHelpers.cs" />
-    <Compile Include="Infrastructure\DragonHelpers.cs" />
+    <Compile Include="Infrastructure\FRHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\CopyTextBoxHelper.cs" />
     <Compile Include="Infrastructure\Managers\UserManager.cs" />
     <Compile Include="Infrastructure\PreviewResult.cs" />
@@ -232,6 +232,7 @@
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\ManageModels.cs" />
     <Compile Include="Models\NewsModels.cs" />
+    <Compile Include="Models\PinglistModels.cs" />
     <Compile Include="Models\ProfileModels.cs" />
     <Compile Include="Models\ScryerModels.cs" />
     <Compile Include="Models\SkinModels.cs" />
@@ -702,6 +703,8 @@
     <Content Include="Views\Scryer\Dress.cshtml" />
     <Content Include="Views\Scryer\DressResult.cshtml" />
     <Content Include="Views\Pinglist\Index.cshtml" />
+    <Content Include="Views\Pinglist\Create.cshtml" />
+    <Content Include="Views\Pinglist\List.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

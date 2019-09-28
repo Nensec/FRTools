@@ -6,8 +6,7 @@ namespace FRTools.Data.DataModels
 
     public class User : IdentityUser<int, UserLogin, UserRole, UserClaim>
     {
-        public int? FRId { get; set; }
-        public string FRName { get; set; }
+        public FRUser FRUser { get; set; }
 
         public Privacy Privacy { get; set; }
         public SkinVisiblity DefaultVisibility { get; set; }

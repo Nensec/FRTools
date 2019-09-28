@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using FRTools.Data;
+using FRTools.Web.Infrastructure;
 
 namespace FRTools.Web.Controllers
 {
@@ -106,13 +107,12 @@ namespace FRTools.Web.Controllers
         [HttpPost]
         public async Task<ActionResult> Verify(VerifyFRPostViewModel model)
         {
-            using (var ctx = new DataContext())
+            var frUser = FRHelpers.GetOrUpdateFRUser(model.LairId);
+
+            if(frUser.User != null)
             {
-                if (ctx.Users.FirstOrDefault(x => x.FRId == model.LairId) != null)
-                {
-                    TempData["Error"] = "This lair id is already tied to an account, if you believe this is an error please contact Nensec#435995 on FR";
-                    RedirectToRoute("VerifyFR");
-                }
+                TempData["Error"] = "This lair id is already tied to an account, if you believe this is an error please contact nensec#1337 on Discord";
+                RedirectToRoute("VerifyFR");
             }
 
             var userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
@@ -128,18 +128,15 @@ namespace FRTools.Web.Controllers
                     if (profilePage.Substring(bioTagIndex).Contains(verifyGuid.ToString()))
                     {
                         _verifyCache.Remove(key);
-                        var userDataIndex = profilePage.IndexOf("<div id=\"userdata\"");
-                        var userName = Regex.Match(profilePage.Substring(userDataIndex), @"<span+\s+[a-zA-Z]+\s*=\s*(""[^""]*""|'[^']*'*)\s*>[\r\n\t]*([a-zA-Z]*)[\t]*</span>").Groups[2].Value;
                         using (var ctx = new DataContext())
                         {
                             var dbUser = ctx.Users.Find(userId);
-                            dbUser.FRId = model.LairId;
-                            dbUser.FRName = userName;
+                            dbUser.FRUser = ctx.FRUsers.Find(frUser);
 
                             await ctx.SaveChangesAsync();
                         }
 
-                        TempData["Success"] = $"Succesfully linked your Flight Rising account ({userName})!";
+                        TempData["Success"] = $"Succesfully linked your Flight Rising account ({frUser.Username})!";
                         return RedirectToRoute("ManageAccount");
                     }
                     else
