@@ -20,9 +20,12 @@
                         <div class="col-md-8">
                             <p>@(entry.Remarks)</p>
                         </div>
-                        <div class="col-md-2">
-                            <a href="#">Edit entry</a>
-                        </div>
+                        @if (Model.CurrentFRUser == null)
+                        {
+                            <div class="col-md-2">
+                                <a href="#">Edit entry</a>
+                            </div>
+                        }
                     </row>
                 }
             </div>
@@ -32,6 +35,6 @@
 
 @section script{
     <script>
-        //Turn row into editable
+            //Turn row into editable
     </script>
 }

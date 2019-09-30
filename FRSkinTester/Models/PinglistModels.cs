@@ -14,6 +14,8 @@ namespace FRTools.Web.Models
         public string ListId { get; set; }
         public string SecretKey { get; set; }
         public List<PinglistEntryViewModel> Entries { get; set; }
+        public FRUser CurrentFRUser { get; set; }
+        public User Owner { get; set; }
     }
 
     public class CreatePinglistViewModel : PinglistViewModel

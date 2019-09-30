@@ -165,12 +165,12 @@ namespace FRTools.Web.Infrastructure
             }
         }
 
-        public static FRUser GetOrUpdateFRUser(string username, DataContext ctx = null) => GetOrUpdateFRUser(username, null, ctx);
-        public static FRUser GetOrUpdateFRUser(int userId, DataContext ctx = null) => GetOrUpdateFRUser(null, userId, ctx);
+        public static Task<FRUser> GetOrUpdateFRUser(string username, DataContext ctx = null) => GetOrUpdateFRUser(username, null, ctx);
+        public static Task<FRUser> GetOrUpdateFRUser(int userId, DataContext ctx = null) => GetOrUpdateFRUser(null, userId, ctx);
 
-        private static FRUser GetOrUpdateFRUser(string username, int? userId, DataContext ctx = null)
+        private static Task<FRUser> GetOrUpdateFRUser(string username, int? userId, DataContext ctx = null)
         {
-            FRUser getFRUser()
+            async Task<FRUser> getFRUser()
             {
                 var frUser = ctx.FRUsers.FirstOrDefault(x => x.Username == username || x.FRId == userId);
                 if (frUser == null)
@@ -184,6 +184,8 @@ namespace FRTools.Web.Infrastructure
 
                     ctx.SaveChanges();
                 }
+                else
+                    await frUser.UpdateFRUser();
                 return frUser;
             }
 
@@ -193,7 +195,7 @@ namespace FRTools.Web.Infrastructure
             return getFRUser();
         }
 
-        public static FRUser UpdateFRUser(this FRUser frUser)
+        public static async Task<FRUser> UpdateFRUser(this FRUser frUser)
         {
             // Only update if it hasn't been a day to avoid spamming FR server
             if (DateTime.UtcNow < frUser.LastUpdated.AddDays(1))
@@ -204,7 +206,7 @@ namespace FRTools.Web.Infrastructure
             frUser.Username = frName;
             frUser.FRId = frId;
             frUser.LastUpdated = DateTime.UtcNow;
-
+            await Task.Delay(50);
             return frUser;
         }
 

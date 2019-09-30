@@ -5,6 +5,7 @@ using FRTools.Web.Models;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -71,14 +72,20 @@ namespace FRTools.Web.Controllers
             var model = new PinglistViewModel
             {
                 Name = list.Name,
-                Entries = list.Entries.Select(x => new PinglistEntryViewModel { FRUser = x.FRUser, Remarks = x.Remarks }).ToList()
+                Entries = list.Entries.Select(x => new PinglistEntryViewModel { FRUser = x.FRUser, Remarks = x.Remarks }).ToList(),
+                Owner = list.Creator
             };
+
+            if (Request.IsAuthenticated)
+                using (var ctx = new DataContext())
+                    model.CurrentFRUser = ctx.Users.Find(HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>()).FRUser;
+
             return View(model);
         }
 
         [Route("list/{listId}/addEntry", Name = "PinglistAddEntryPost")]
         [HttpPost]
-        public ActionResult AddEntry(AddEntryViewModel model)
+        public async Task<ActionResult> AddEntry(AddEntryViewModel model)
         {
             using (var ctx = new DataContext())
             {
@@ -93,7 +100,7 @@ namespace FRTools.Web.Controllers
                     return RedirectToRoute("PinglistManage");
                 }
 
-                AddEntryToList(list, model.Username, model.UserId, model.Remarks, ctx);
+                await AddEntryToList(list, model.Username, model.UserId, model.Remarks, ctx);
 
                 ctx.SaveChanges();
 
@@ -104,7 +111,7 @@ namespace FRTools.Web.Controllers
         [Route("list/{listId}/addSelf")]
         [Authorize]
         [HttpPost]
-        public ActionResult AddSelf(AddSelfEntryViewModel model)
+        public async Task<ActionResult> AddSelf(AddSelfEntryViewModel model)
         {
             using (var ctx = new DataContext())
             {
@@ -127,7 +134,7 @@ namespace FRTools.Web.Controllers
                     return RedirectToRoute("PinglistDirect");
                 }
 
-                AddEntryToList(list, null, currentUser.FRUser.FRId, null, ctx);
+                await AddEntryToList(list, null, currentUser.FRUser.FRId, null, ctx);
             }
             return RedirectToRoute("PinglistDirect", new { listId = model.ListId });
         }
@@ -262,7 +269,7 @@ namespace FRTools.Web.Controllers
         }
 
         [Route("manage/{listId}/{secretKey}/import/{csv}")]
-        public ActionResult ImportPinglist(ImportPingsViewModel model)
+        public async Task<ActionResult> ImportPinglist(ImportPingsViewModel model)
         {
             using (var ctx = new DataContext())
             {
@@ -281,9 +288,9 @@ namespace FRTools.Web.Controllers
                 foreach (var username in usernames)
                 {
                     if (username.All(char.IsDigit))
-                        AddEntryToList(list, null, int.Parse(username), null, ctx);
+                        await AddEntryToList(list, null, int.Parse(username), null, ctx);
                     else
-                        AddEntryToList(list, username, null, null, ctx);
+                        await AddEntryToList(list, username, null, null, ctx);
                 }
                 ctx.SaveChanges();
 
@@ -311,7 +318,7 @@ namespace FRTools.Web.Controllers
         }
 
         [Route("manage/{listId}/updateusers")]
-        public ActionResult UpdatePinglistUsers(PinglistViewModel model)
+        public async Task<ActionResult> UpdatePinglistUsers(PinglistViewModel model)
         {
             using (var ctx = new DataContext())
             {
@@ -328,7 +335,7 @@ namespace FRTools.Web.Controllers
 
                 foreach (var entry in list.Entries.Select(x => x.FRUser.FRId).ToList())
                 {
-                    FRHelpers.GetOrUpdateFRUser(entry);
+                    await FRHelpers.GetOrUpdateFRUser(entry);
                 }
             }
 
@@ -343,10 +350,10 @@ namespace FRTools.Web.Controllers
             return false;
         }
 
-        private void AddEntryToList(Pinglist list, string username, int? userId, string remarks, DataContext ctx)
+        private async Task AddEntryToList(Pinglist list, string username, int? userId, string remarks, DataContext ctx)
         {
             username = username?.Trim();
-            var frUser = username != null ? FRHelpers.GetOrUpdateFRUser(username, ctx) : FRHelpers.GetOrUpdateFRUser(userId.Value, ctx);
+            var frUser = await (username != null ? FRHelpers.GetOrUpdateFRUser(username, ctx) : FRHelpers.GetOrUpdateFRUser(userId.Value, ctx));
             if (frUser == null)
             {
                 if (!string.IsNullOrEmpty(TempData["Error"] as string))
