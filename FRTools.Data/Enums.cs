@@ -108,7 +108,8 @@ namespace FRTools.Data
         [Description("Dark Sclera")]
         DarkSclera,
         Goat,
-        Swirl
+        Swirl,
+        Innocent
     }
 
     public enum BodyGene
