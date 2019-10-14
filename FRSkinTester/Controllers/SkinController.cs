@@ -447,7 +447,6 @@ namespace FRTools.Web.Controllers
                     {
                         var userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
                         skin.Creator = ctx.Users.FirstOrDefault(x => x.Id == userId);
-                        skin.Visibility = skin.Creator.DefaultVisibility;
                     }
 
                     await ctx.SaveChangesAsync();
