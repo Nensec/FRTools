@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Data.Entity;
 
 namespace FRTools.Web.Controllers
 {
@@ -58,29 +59,53 @@ namespace FRTools.Web.Controllers
         [Route("list/{listId}", Name = "PinglistDirect")]
         public ActionResult List(string listId, string secretKey = null)
         {
-            var list = GetPinglist(listId);
-
-            if (list == null)
-                return RedirectToRoute("PinglistInfo");
-
-            if (!HasAccess(list, secretKey))
+            using (var ctx = new DataContext())
             {
-                TempData["Error"] = "You do not have access to this pinglist. Make sure you are logged in or provide the correct secret key.";
-                return RedirectToRoute("PinglistManage");
-            }
+                var list = GetPinglist(listId, true, ctx);
 
-            var model = new PinglistViewModel
-            {
-                Name = list.Name,
-                Entries = list.Entries.Select(x => new PinglistEntryViewModel { FRUser = x.FRUser, Remarks = x.Remarks }).ToList(),
-                Owner = list.Creator
-            };
+                if (list == null)
+                    return RedirectToRoute("PinglistInfo");
 
-            if (Request.IsAuthenticated)
-                using (var ctx = new DataContext())
+                var model = new PinglistViewModel
+                {
+                    Name = list.Name,
+                    Owner = list.Creator
+                };
+
+                if (Request.IsAuthenticated)
                     model.CurrentFRUser = ctx.Users.Find(HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>()).FRUser;
 
-            return View(model);
+                if (!HasAccess(list, secretKey))
+                {
+                    if (model.CurrentFRUser != null && list.Entries.Any(x => x.FRUser.Id == model.CurrentFRUser.Id))
+                    {
+                        TempData["Info"] = "This pinglist is private, however since you are on it you can manage your entry";
+                        var entry = list.Entries.FirstOrDefault(x => x.FRUser.Id == model.CurrentFRUser.Id);
+                        model.EntriesViewModel = new PinglistEntriesViewModel
+                        {
+                            ListId = list.GeneratedId,
+                            IsOwner = true,
+                            PinglistEntries = new[] { new PinglistEntryViewModel { EntryId = entry.GeneratedId, SecretKey = entry.SecretKey, FRUser = model.CurrentFRUser } }.ToList()
+                        };
+                        return View("PrivateViewList", model);
+                    }
+                    else
+                    {
+                        TempData["Error"] = "You do not have access to this pinglist. Make sure you are logged in or provide the correct secret key.";
+                        return RedirectToRoute("PinglistManage");
+                    }
+                }
+                else
+                    model.EntriesViewModel = new PinglistEntriesViewModel { ListId = list.GeneratedId, PinglistEntries = list.Entries.Select(x => new PinglistEntryViewModel { EntryId = x.GeneratedId, SecretKey = x.SecretKey, FRUser = x.FRUser, Remarks = x.Remarks }).ToList() };
+
+                if ((list.Creator != null && list.Creator.Id == model.CurrentFRUser?.User.Id) || list.SecretKey == secretKey)
+                {
+                    model.EntriesViewModel.IsOwner = true;
+                    return View("OwnerViewList", model);
+                }
+
+                return View("PublicViewList", model);
+            }
         }
 
         [Route("list/{listId}/addEntry", Name = "PinglistAddEntryPost")]
@@ -89,7 +114,7 @@ namespace FRTools.Web.Controllers
         {
             using (var ctx = new DataContext())
             {
-                var list = GetPinglist(model.ListId, ctx);
+                var list = GetPinglist(model.ListId, false, ctx);
 
                 if (list == null)
                     return RedirectToRoute("PinglistInfo");
@@ -115,7 +140,7 @@ namespace FRTools.Web.Controllers
         {
             using (var ctx = new DataContext())
             {
-                var list = GetPinglist(model.ListId, ctx);
+                var list = GetPinglist(model.ListId, false, ctx);
 
                 if (list == null)
                     return RedirectToRoute("PinglistLink");
@@ -144,13 +169,13 @@ namespace FRTools.Web.Controllers
         {
             using (var ctx = new DataContext())
             {
-                var list = GetPinglist(listId, ctx);
+                var list = GetPinglist(listId, false, ctx);
 
                 if (list == null)
                     return RedirectToRoute("PinglistLink");
 
                 var entry = list.Entries.FirstOrDefault(x => x.GeneratedId == entryId);
-                
+
                 if (entry == null || entry.SecretKey != entrySecret)
                 {
                     TempData["Error"] = $"Could not find entry id '{entryId}' in list '{list.Name}'";
@@ -179,7 +204,7 @@ namespace FRTools.Web.Controllers
         {
             using (var ctx = new DataContext())
             {
-                var list = GetPinglist(model.ListId, ctx);
+                var list = GetPinglist(model.ListId, false, ctx);
 
                 if (list == null)
                     return RedirectToRoute("PinglistLink");
@@ -204,20 +229,13 @@ namespace FRTools.Web.Controllers
             return RedirectToRoute("PinglistManageList", new { listId = model.ListId, secretKey = model.SecretKey });
         }
 
-        [Route("entry/manage")]
-        [HttpPost]
-        public ActionResult ManageEntry()
-        {
-            return View(new ManagePinglistEntryViewModel());
-        }
-
-        [Route("entry/manage")]
+        [Route("entry/manage", Name = "PinglistEntryManage")]
         [HttpPost]
         public ActionResult ManageEntry(ManagePinglistEntryViewModel model)
         {
             using (var ctx = new DataContext())
             {
-                var list = GetPinglist(model.ListId, ctx);
+                var list = GetPinglist(model.ListId, false, ctx);
 
                 if (list == null)
                     return RedirectToRoute("PinglistLink");
@@ -237,18 +255,12 @@ namespace FRTools.Web.Controllers
             }
         }
 
-        [Route("manage", Name = "PinglistManage")]
-        public ActionResult ManageHome()
-        {
-            return View(new ManagePinglistsViewModel());
-        }
-
         [Route("manage/{listId}/{secretKey}", Name = "PinglistManageList")]
         public ActionResult ManageList(EditPinglistViewModel model)
         {
             using (var ctx = new DataContext())
             {
-                var list = GetPinglist(model.ListId, ctx);
+                var list = GetPinglist(model.ListId, false, ctx);
 
                 if (list == null)
                     return RedirectToRoute("PinglistManage");
@@ -273,7 +285,7 @@ namespace FRTools.Web.Controllers
         {
             using (var ctx = new DataContext())
             {
-                var list = GetPinglist(model.ListId, ctx);
+                var list = GetPinglist(model.ListId, false, ctx);
 
                 if (list == null)
                     return RedirectToRoute("PinglistManage");
@@ -322,7 +334,7 @@ namespace FRTools.Web.Controllers
         {
             using (var ctx = new DataContext())
             {
-                var list = GetPinglist(model.ListId, ctx);
+                var list = GetPinglist(model.ListId, true, ctx);
 
                 if (list == null)
                     return RedirectToRoute("PinglistDirect");
@@ -379,11 +391,14 @@ namespace FRTools.Web.Controllers
             });
         }
 
-        private Pinglist GetPinglist(string listId, DataContext ctx = null)
+        private Pinglist GetPinglist(string listId, bool includeUsers, DataContext ctx = null)
         {
             Pinglist getList()
             {
-                var list = ctx.Pinglists.FirstOrDefault(x => x.GeneratedId == listId);
+                IQueryable<Pinglist> query = ctx.Pinglists;
+                if (includeUsers)
+                    query = query.Include(x => x.Entries.Select(e => e.FRUser));
+                var list = query.FirstOrDefault(x => x.GeneratedId == listId);
                 if (list == null)
                     TempData["Error"] = $"There is no pinglist with the ID '{listId}'";
 

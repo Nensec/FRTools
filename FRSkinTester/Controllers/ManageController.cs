@@ -30,6 +30,7 @@ namespace FRTools.Web.Controllers
             {
                 var user = ctx.Users
                     .Include(x => x.Skins.Select(s => s.Previews))
+                    .Include(x => x.FRUser)
                     .FirstOrDefault(x => x.Id == userid);
                 model.User = user;
                 model.Skins = user.Skins.ToList();
@@ -107,7 +108,7 @@ namespace FRTools.Web.Controllers
         [HttpPost]
         public async Task<ActionResult> Verify(VerifyFRPostViewModel model)
         {
-            var frUser = FRHelpers.GetOrUpdateFRUser(model.LairId);
+            var frUser = await FRHelpers.GetOrUpdateFRUser(model.LairId);
 
             if(frUser.User != null)
             {

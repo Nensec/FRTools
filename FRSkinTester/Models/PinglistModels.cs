@@ -13,7 +13,7 @@ namespace FRTools.Web.Models
         public bool IsPublic { get; set; }
         public string ListId { get; set; }
         public string SecretKey { get; set; }
-        public List<PinglistEntryViewModel> Entries { get; set; }
+        public PinglistEntriesViewModel EntriesViewModel { get; set; }
         public FRUser CurrentFRUser { get; set; }
         public User Owner { get; set; }
     }
@@ -37,6 +37,15 @@ namespace FRTools.Web.Models
         public string Remarks { get; set; }
         public string EntryId { get; set; }
         public string SecretKey { get; set; }
+    }
+
+    public class PinglistEntriesViewModel
+    {
+        public List<PinglistEntryViewModel> PinglistEntries { get; set; }
+        public bool IsPrivate { get; set; }
+        public bool IsOwner { get; set; }
+        public int? CurrentUserId { get; set; }
+        public string ListId { get; set; }
     }
 
     [SmartRequired]

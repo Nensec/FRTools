@@ -1,0 +1,223 @@
+﻿@model FRTools.Web.Models.PinglistEntriesViewModel
+
+@{
+    ViewBag.Title = "List";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Entries</h4>
+            </div>
+            <div class="panel-body">
+                <div class="col-md-8">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <ul id="entryContainer" tabindex="0" role="listbox">
+                                @foreach (var entry in Model.PinglistEntries)
+                                {
+                                    <li @(Model.IsOwner || (entry.FRUser.User != null && entry.FRUser.User.Id == Model.CurrentUserId) ? $"secretkey=\"{entry.SecretKey}\"" : "") entryid="@(entry.EntryId)" userid="@(entry.FRUser.FRId)" username="@(entry.FRUser.Username)" role="option" onclick="selectEntry(this)" title="@(entry.Remarks)">@(entry.FRUser.Username) (@(entry.FRUser.FRId))</li>
+                                }
+                                <li entryid="Fake" userid="123456" username="NenFake" role="option" onclick="selectEntry(this)" title="This is a remark on an entry">Fake Entry (123456)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div id="entryManagement" class="panel-body">
+                            <div id="SearchContainer">
+                                <label for="SearchEntry">Search</label> <span data-toggle="tooltip" class="glyphicon glyphicon-info-sign" title="Enter the name, FR user ID or entry ID"></span>
+                                <input type="text" id="SearchEntry" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div id="entryManagement" class="panel-body">
+                            <button id="AddEntryButton" onclick="addEntry()" class="btn btn-primary col-md-12">Add</button>
+                            <button id="EditEntryButton" onclick="editEntry()" disabled class="btn btn-warning col-md-12">Edit</button>
+                            <button id="RemoveEntryButton" onclick="deleteEntry()" disabled class="btn btn-danger col-md-12">Remove</button>
+                            <button id="SetSecretKey" onclick="setSecretKey()" style="display: none;" data-toggle="tooltip" title="If you have the secret key for this entry, you can set it by clicking here" class="btn btn-info col-md-12">Set secret key</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="EditModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Edit entry <span class="modalEntry"></span></h4>
+            </div>
+            <div class="modal-body">
+                <form action="@Url.RouteUrl("")">
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Edit entry</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="AddModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Modal title</h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Add entry</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #entryContainer {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        max-height: 450px;
+        min-height: 219px;
+        overflow-y: scroll;
+    }
+
+        #entryContainer:focus {
+            outline: none;
+        }
+
+        #entryContainer li {
+            display: block;
+            height: 2.5em;
+            line-height: 2.5em;
+            padding: 0 5px;
+            transition: all 0.5s ease-in-out;
+            -moz-transition: all 0.5s ease-in-out;
+            -webkit-transition: all 0.5s;
+        }
+
+            #entryContainer li[aria-selected="true"] {
+                background: #d9edf7;
+            }
+
+    #entryManagement button {
+        width: 100%;
+        margin: 1px 0;
+    }
+</style>
+
+<script>
+    var selectedEntry = undefined;
+    var entriesLookup = [
+        @foreach(var entry in Model.PinglistEntries)
+        {
+        @:{ fid: '@(entry.FRUser.FRId)', name: '@(entry.FRUser.Username.ToLower())', eid: '@(entry.EntryId)' },
+        }
+        { fid: '123456', name: 'nenfake', eid: 'fake'}
+    ];
+
+    $(function () {
+        $('#SearchEntry').on('input', function (a, b) {
+            var val = $(a.target).val().toLowerCase();
+            var filter = entriesLookup.filter(x => x.fid == val || x.name == val || x.eid.toLowerCase() == val)
+            if (filter.length == 1) {
+                var entry = $(`li[entryId="${filter[0].eid}"]`);
+                $('#entryContainer').scrollTo(entry);
+                selectEntry(entry[0]);
+                $('#SearchContainer').removeClass('has-error');
+                $('#SearchContainer').addClass('has-success');
+            }
+            else {
+                deselectEntry();
+                if (val == '') {
+                    $('#SearchContainer').removeClass(['has-error', 'has-success']);
+                } else {
+                    $('#SearchContainer').removeClass('has-success');
+                    $('#SearchContainer').addClass('has-error');
+                }
+            }
+        });
+
+        var storageVal = localStorage.getItem('@(Model.ListId)');
+        if (storageVal) {
+            var storage = JSON.parse(storageVal);
+            for (entryId in storage.secretKeys) 
+                $(`li[entryId="${entryId}"]`).attr('secretKey', storage.secretKeys[entryId]);            
+        }
+    });
+
+    selectEntry = function (entry) {
+        entry = $(entry);
+        selectedEntry =
+            {
+                entryId: entry.attr('entryid'),
+                secretKey: entry.attr('secretkey'),
+                isSelected: entry.attr('aria-selected')
+            };
+        if (selectedEntry.isSelected === 'true') {
+            deselectEntry();
+        }
+        else {
+            $('#entryContainer li').attr('aria-selected', 'false');
+            entry.attr('aria-selected', 'true');
+            if (selectedEntry.secretKey != undefined) {
+                $('#EditEntryButton, #RemoveEntryButton').removeAttr('disabled');
+                $('#SetSecretKey').hide();
+            }
+            else {
+                $('#EditEntryButton, #RemoveEntryButton').attr('disabled', true);
+                $('#SetSecretKey').show();
+            }
+        }
+    }
+
+    deselectEntry = function () {
+        if (selectedEntry != undefined) {
+            $(`li[entryId="${selectedEntry.entryId}"]`).attr('aria-selected', 'false');
+            $('#EditEntryButton, #RemoveEntryButton').attr('disabled', true);
+            $('#SetSecretKey').hide();
+            selectedEntry = undefined;
+        }
+    }
+
+    editEntry = function () {
+        $('#EditModal').modal('show');
+    }
+
+    addEntry = function () {
+        $('#AddModal').modal('show');
+    }
+
+    deleteEntry = function () {
+        if (selectedEntry != undefined && selectedEntry.secretKey != undefined)
+            if (confirm("This will remove the selected entry from this ping list, are you sure?"))
+                window.location.assign(`${window.location.href}/removeEntry/${selectedEntry.entryId}/${selectedEntry.secretKey}`);
+    }
+
+    setSecretKey = function () {
+        if (selectedEntry != undefined && selectedEntry.secretKey == undefined) {
+            var secretKey = prompt(`Enter secret key for entry ${selectedEntry.entryId}`);
+            if (secretKey) {
+                $(`li[entryId="${selectedEntry.entryId}"]`).attr('secretKey', secretKey);
+                var storageVal = localStorage.getItem('@(Model.ListId)');
+                var storage = storageVal ? JSON.parse(storageVal) : { secretKeys: { } };
+                storage[selectedEntry.entryId] = secretKey;
+                window.localStorage.setItem('@(Model.ListId)', JSON.stringify(storage);
+            }
+        }
+    }
+
+</script>

@@ -6,7 +6,7 @@ namespace FRTools.Data.DataModels
     {
         public int Id { get; set; }
         [Required]
-        public FRUser FRUser { get; set; }
+        public virtual FRUser FRUser { get; set; }
 
         public string GeneratedId { get; set; }
         public string SecretKey { get; set; }

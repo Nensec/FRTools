@@ -658,6 +658,7 @@
     <Content Include="fonts\social_icons.ttf" />
     <Content Include="fonts\social_icons.woff" />
     <Content Include="fonts\social_icons.woff2" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\frskintester - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\Chart.bundle.min.js" />
@@ -667,6 +668,7 @@
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.scrollTo.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -704,7 +706,10 @@
     <Content Include="Views\Scryer\DressResult.cshtml" />
     <Content Include="Views\Pinglist\Index.cshtml" />
     <Content Include="Views\Pinglist\Create.cshtml" />
-    <Content Include="Views\Pinglist\List.cshtml" />
+    <Content Include="Views\Pinglist\OwnerViewList.cshtml" />
+    <Content Include="Views\Pinglist\Userlist.cshtml" />
+    <Content Include="Views\Pinglist\PublicViewList.cshtml" />
+    <Content Include="Views\Pinglist\PrivateViewList.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
