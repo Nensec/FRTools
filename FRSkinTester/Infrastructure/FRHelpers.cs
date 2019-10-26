@@ -177,6 +177,9 @@ namespace FRTools.Web.Infrastructure
                 {
                     var (frName, frId) = GetFRUserInfo(username, userId);
 
+                    if (frName == null)
+                        return null;
+
                     frUser = ctx.FRUsers.FirstOrDefault(x => x.Username == frName || x.FRId == frId) ?? ctx.FRUsers.Add(new FRUser());
                     frUser.Username = frName;
                     frUser.FRId = frId;
@@ -185,7 +188,7 @@ namespace FRTools.Web.Infrastructure
                     ctx.SaveChanges();
                 }
                 else
-                    await frUser.UpdateFRUser();
+                    return await frUser.UpdateFRUser();
                 return frUser;
             }
 
@@ -203,6 +206,9 @@ namespace FRTools.Web.Infrastructure
 
             var (frName, frId) = GetFRUserInfo(null, frUser.FRId);
 
+            if (frName == null)
+                return null;
+
             frUser.Username = frName;
             frUser.FRId = frId;
             frUser.LastUpdated = DateTime.UtcNow;
@@ -212,11 +218,11 @@ namespace FRTools.Web.Infrastructure
 
         private static (string Username, int UserId) GetFRUserInfo(string username, int? userId)
         {
-            string url = $"http://www1.flightrising.com/clan-profile/{(userId.ToString() ?? $"n/{username}")}";
+            string url = $"http://www1.flightrising.com/clan-profile/{(userId?.ToString() ?? $"n/{username}")}";
             using (var client = new WebClient())
             {
                 var userProfilePage = client.DownloadString(url);
-                if (userProfilePage.Contains("404 - Page Not Found"))
+                if (userProfilePage.Contains("404 - Page Not Found") || userProfilePage.Contains("404: User not found"))
                     return default;
 
                 var userBio = Regex.Match(userProfilePage, @"<div class=""userdata-section"" style=""height:136px;"">[\s\S]+?<span style=""position:absolute; top:8px; left:8px; color:#731d08; font-weight:bold; font-size:16px;"">\s+([\s\S]+?)\s+</span>[\s\S]+?<span>([\d]+?)</span>[\s\S]+?</div>");

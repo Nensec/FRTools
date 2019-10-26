@@ -19,9 +19,9 @@
     </div>
     <div class="panel-body">
         <p>
-            @if (Model.User.FRId != null)
+            @if (Model.User.FRUser != null)
             {
-                @:This user has verified their account on Flight Rising; you can view their Flight Rising account <a href="@($"http://www1.flightrising.com/clan-profile/{Model.User.FRId}")" target="_blank">here</a>.
+                @:This user has verified their account on Flight Rising; you can view their Flight Rising account <a href="@($"http://www1.flightrising.com/clan-profile/{Model.User.FRUser.FRId}")" target="_blank">here</a>.
             }
             else
             {

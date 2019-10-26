@@ -216,6 +216,7 @@
     <Compile Include="Controllers\PinglistController.cs" />
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\ScryerController.cs" />
+    <Compile Include="Infrastructure\BitlyHelper.cs" />
     <Compile Include="Infrastructure\ChallengeResult.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SkinController.cs" />
@@ -225,7 +226,7 @@
     <Compile Include="Infrastructure\AzureImageService.cs" />
     <Compile Include="Infrastructure\CodeHelpers.cs" />
     <Compile Include="Infrastructure\FRHelpers.cs" />
-    <Compile Include="Infrastructure\Helpers\CopyTextBoxHelper.cs" />
+    <Compile Include="Infrastructure\Helpers\CopyBoxHelpers.cs" />
     <Compile Include="Infrastructure\Managers\UserManager.cs" />
     <Compile Include="Infrastructure\PreviewResult.cs" />
     <Compile Include="Infrastructure\SmartRequiredAttribute.cs" />
@@ -710,6 +711,8 @@
     <Content Include="Views\Pinglist\Userlist.cshtml" />
     <Content Include="Views\Pinglist\PublicViewList.cshtml" />
     <Content Include="Views\Pinglist\PrivateViewList.cshtml" />
+    <Content Include="Views\Pinglist\List.cshtml" />
+    <Content Include="Views\Pinglist\LinkExisting.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

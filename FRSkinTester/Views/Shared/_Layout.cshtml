@@ -61,16 +61,15 @@
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Pinglist Manager <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Pinglist manager <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li>@Html.RouteLink("Pinglist info", "PinglistInfo", null, new { title = "Info about how the pinglist manager works" })</li>
                             <li role="separator" class="divider"></li>
                             <li>@Html.RouteLink("Create pinglist", "PinglistCreate", null, new { title = "Create a new pinglist" })</li>
-                            <li>@Html.RouteLink("View pinglist", "Pinglist", null, new { title = "View the pinglist with a given ID" })</li>
+                            <li>@Html.RouteLink("View pinglists", "Pinglist", null, new { title = "View the pinglist with a given ID" })</li>
                             @if (Request.IsAuthenticated)
                             {
                                 <li role="separator" class="divider"></li>
-                                <li>@Html.RouteLink("View your lists", "PinglistManage", null, new { title = "View and manage your created pinglists" })</li>
                                 <li>@Html.RouteLink("Link list", "PinglistLink", null, new { title = "Link an existing ping list to your account" })</li>
                             }
                         </ul>
@@ -120,18 +119,18 @@
                     @Html.Raw(TempData["Error"])
                 </div>
             }
-            @if (TempData["Info"] != null)
-            {
-                <div class="alert alert-info alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    @Html.Raw(TempData["Info"])
-                </div>
-            }
             @if (TempData["Success"] != null)
             {
                 <div class="alert alert-success alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     @Html.Raw(TempData["Success"])
+                </div>
+            }
+            @if (TempData["Info"] != null)
+            {
+                <div class="alert alert-info alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    @Html.Raw(TempData["Info"])
                 </div>
             }
             @RenderBody()

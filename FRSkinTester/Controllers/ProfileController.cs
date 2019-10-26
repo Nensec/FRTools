@@ -20,7 +20,7 @@ namespace FRTools.Web.Controllers
             using (var ctx = new DataContext())
             {
                 var userid = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
-                var user = ctx.Users.Include(x => x.Previews.Select(p => p.Skin)).FirstOrDefault(x => x.Id == userid);
+                var user = ctx.Users.Include(x => x.Previews.Select(p => p.Skin)).Include(x => x.FRUser).FirstOrDefault(x => x.Id == userid);
                 var vm = new ViewProfileViewModel
                 {
                     User = user,

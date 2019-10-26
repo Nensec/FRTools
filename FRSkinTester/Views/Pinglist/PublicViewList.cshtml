@@ -4,15 +4,28 @@
     ViewBag.Title = "List";
 }
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4>Pinglist: <b>@(Model.Name)</b></h4>
-            </div>
-            <div class="panel-body">
-                @Html.Partial("Userlist", Model.EntriesViewModel)
-            </div>
+@if (TempData["NewEntry"] != null)
+{
+    var (entryId, secretKey, userName) = (ValueTuple<string, string, string>)TempData["NewEntry"];
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <p>Your entry has been added and can be managed by providing the following entry data:</p>
+            <p>
+                <b>
+                    Entry Id: @(entryId)<br />
+                    Secret Key: @(secretKey)
+                </b>
+            </p>
+            <p>Keep this data safe if you ever want to remove yourself or edit your remark, or log in with an account that has '@(userName)' linked.</p>
         </div>
+    </div>
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>Pinglist: <b>@(Model.Name)</b></h4>
+    </div>
+    <div class="panel-body">
+        @Html.Partial("Userlist", Model.EntriesViewModel)
     </div>
 </div>

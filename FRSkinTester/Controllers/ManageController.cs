@@ -80,7 +80,7 @@ namespace FRTools.Web.Controllers
                 TempData["Success"] = "Changes have been saved!";
                 return RedirectToRoute("ManageAccount");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 var actualException = ex;
                 while (actualException.InnerException != null)
@@ -108,49 +108,51 @@ namespace FRTools.Web.Controllers
         [HttpPost]
         public async Task<ActionResult> Verify(VerifyFRPostViewModel model)
         {
-            var frUser = await FRHelpers.GetOrUpdateFRUser(model.LairId);
-
-            if(frUser.User != null)
+            using (var ctx = new DataContext())
             {
-                TempData["Error"] = "This lair id is already tied to an account, if you believe this is an error please contact nensec#1337 on Discord";
-                RedirectToRoute("VerifyFR");
-            }
+                var frUser = await FRHelpers.GetOrUpdateFRUser(model.LairId, ctx);
 
-            var userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
-
-            var key = $"USER_{userId}";
-            if (_verifyCache.Contains(key))
-            {
-                var verifyGuid = (Guid)_verifyCache.Get(key);
-                using (var client = new WebClient())
+                if (frUser.User != null)
                 {
-                    var profilePage = await client.DownloadStringTaskAsync($@"http://www1.flightrising.com/clan-profile/{model.LairId}");
-                    var bioTagIndex = profilePage.IndexOf("<div id=\"userbio\">");
-                    if (profilePage.Substring(bioTagIndex).Contains(verifyGuid.ToString()))
+                    TempData["Error"] = "This lair id is already tied to an account, if you believe this is an error please contact nensec#1337 on Discord";
+                    RedirectToRoute("VerifyFR");
+                }
+
+                var userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
+
+                var key = $"USER_{userId}";
+                if (_verifyCache.Contains(key))
+                {
+                    var verifyGuid = (Guid)_verifyCache.Get(key);
+                    using (var client = new WebClient())
                     {
-                        _verifyCache.Remove(key);
-                        using (var ctx = new DataContext())
+                        var profilePage = await client.DownloadStringTaskAsync($@"http://www1.flightrising.com/clan-profile/{model.LairId}");
+                        var bioTagIndex = profilePage.IndexOf("<div id=\"userbio\">");
+                        if (profilePage.Substring(bioTagIndex).Contains(verifyGuid.ToString()))
                         {
-                            var dbUser = ctx.Users.Find(userId);
-                            dbUser.FRUser = ctx.FRUsers.Find(frUser);
+                            _verifyCache.Remove(key);
+                            {
+                                var dbUser = ctx.Users.Find(userId);
+                                dbUser.FRUser = frUser;
 
-                            await ctx.SaveChangesAsync();
+                                await ctx.SaveChangesAsync();
+                            }
+
+                            TempData["Success"] = $"Succesfully linked your Flight Rising account ({frUser.Username})!";
+                            return RedirectToRoute("ManageAccount");
                         }
-
-                        TempData["Success"] = $"Succesfully linked your Flight Rising account ({frUser.Username})!";
-                        return RedirectToRoute("ManageAccount");
-                    }
-                    else
-                    {
-                        TempData["Error"] = "Verify token was not found in your bio, please double check you saved!";
-                        return RedirectToRoute("VerifyFR");
+                        else
+                        {
+                            TempData["Error"] = "Verify token was not found in your bio, please double check you saved!";
+                            return RedirectToRoute("VerifyFR");
+                        }
                     }
                 }
-            }
-            else
-            {
-                TempData["Error"] = "Verify token expired, please try again!";
-                return RedirectToRoute("VerifyFR");
+                else
+                {
+                    TempData["Error"] = "Verify token expired, please try again!";
+                    return RedirectToRoute("VerifyFR");
+                }
             }
         }
     }
