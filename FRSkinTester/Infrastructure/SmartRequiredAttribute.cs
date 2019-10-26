@@ -11,7 +11,7 @@ namespace FRTools.Web.Infrastructure
         {
             var properties = value.GetType().GetProperties();
 
-            foreach(var property in properties.Where(x => !x.GetCustomAttributes(typeof(IgnoreRequiredAttribute), true).Any()))
+            foreach (var property in properties.Where(x => !x.GetCustomAttributes(typeof(IgnoreRequiredAttribute), true).Any() || !x.GetCustomAttributes(typeof(RequiredAttribute), true).Any()))
                 if (property.GetValue(value, null) != null)
                     return true;
 

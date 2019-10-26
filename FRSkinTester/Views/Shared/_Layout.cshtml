@@ -46,13 +46,6 @@
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Scryer tools <span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li>@Html.RouteLink("Dress up a scry", "ScryerDresser", null, new { title = "Use the dressing room to dress up a scry" })</li>
-                        </ul>
-                    </li>
-
-                    <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Skin tester <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li>@Html.RouteLink("Skin tester info", "SkinTesterHome")</li>
@@ -63,10 +56,28 @@
                             @if (Request.IsAuthenticated)
                             {
                                 <li role="separator" class="divider"></li>
-                                <li>
-                                    @Html.RouteLink("Link skin", "LinkExisting", null, new { title = "Link existing skin to your account" })
-                                </li>
+                                <li>@Html.RouteLink("Link skin", "LinkExisting", null, new { title = "Link existing skin to your account" })</li>
                             }
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Pinglist manager <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.RouteLink("Pinglist info", "PinglistInfo", null, new { title = "Info about how the pinglist manager works" })</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.RouteLink("Create pinglist", "PinglistCreate", null, new { title = "Create a new pinglist" })</li>
+                            <li>@Html.RouteLink("View pinglists", "Pinglist", null, new { title = "View the pinglist with a given ID" })</li>
+                            @if (Request.IsAuthenticated)
+                            {
+                                <li role="separator" class="divider"></li>
+                                <li>@Html.RouteLink("Link list", "PinglistLink", null, new { title = "Link an existing ping list to your account" })</li>
+                            }
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Other tools <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.RouteLink("Dress up a scry", "ScryerDresser", null, new { title = "Use the dressing room to dress up a scry" })</li>
                         </ul>
                     </li>
                 </ul>
@@ -108,18 +119,18 @@
                     @Html.Raw(TempData["Error"])
                 </div>
             }
-            @if (TempData["Info"] != null)
-            {
-                <div class="alert alert-info alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    @Html.Raw(TempData["Info"])
-                </div>
-            }
             @if (TempData["Success"] != null)
             {
                 <div class="alert alert-success alert-dismissible" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     @Html.Raw(TempData["Success"])
+                </div>
+            }
+            @if (TempData["Info"] != null)
+            {
+                <div class="alert alert-info alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    @Html.Raw(TempData["Info"])
                 </div>
             }
             @RenderBody()
@@ -138,5 +149,10 @@
     </div>
 
     @RenderSection("scripts", required: false)
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        })
+    </script>
 </body>
 </html>

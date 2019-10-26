@@ -1,22 +1,22 @@
-﻿@model ClaimSkinPostViewModel
+﻿@model PinglistViewModel
 
 @{
-    ViewBag.Title = "Claim existing skin";
+    ViewBag.Title = "Claim existing pinglist";
 }
 
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4>
-            Claim existing skin
+            Claim existing pinglist
         </h4>
     </div>
     <div class="panel-body">
         <p>
-            If you have uploaded a skin before user accounts were added or while not logged in you can use this page to link that skin to your account<br />
-            Simply fill in the skin id and the corresponding secret key<br />
+            If you have created a pinglist while not logged in you can use this page to link that pinglist to your account<br />
+            Simply fill in the pinglist id and the corresponding secret key<br />
             If you do not recall your secret key, you can always contact Nensec#1337 on Discord.
         </p>
-        @using (Html.BeginRouteForm("LinkExistingPost"))
+        @using (Html.BeginRouteForm("PinglistLinkPost"))
         {
             @Html.AntiForgeryToken()
 
@@ -25,10 +25,10 @@
 
                 <div class="col-md-6">
                     <div class="form-group">
-                        @Html.LabelFor(model => model.SkinId, htmlAttributes: new { @class = "control-label col-md-4" })
+                        @Html.LabelFor(model => model.ListId, htmlAttributes: new { @class = "control-label col-md-4" })
                         <div class="col-md-8">
-                            @Html.EditorFor(model => model.SkinId, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.SkinId, "", new { @class = "text-danger" })
+                            @Html.EditorFor(model => model.ListId, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.ListId, "", new { @class = "text-danger" })
                         </div>
                     </div>
                     <div class="form-group">

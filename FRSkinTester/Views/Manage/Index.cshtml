@@ -35,7 +35,7 @@
                     This can help to ensure to users that skins uploaded using your account are actually made by you.
                     The verification process is one-way, meaning it will allow this site to <b>read</b> from Flight Rising only.
                 </p>
-                @if (Model.User.FRId == null)
+                @if (Model.User.FRUser == null)
                 {
                     <p>
                         Your account is currently not linked to any Flight Rising account.
@@ -47,7 +47,7 @@
                 else
                 {
                     <p>
-                        Your account is currently linked to Flight Rising account <b>@(Model.User.FRName) (@(Model.User.FRId)).</b>
+                        Your account is currently linked to Flight Rising account <b>@(Model.User.FRUser.Username) (@(Model.User.FRUser.FRId)).</b>
                     </p>
                 }
 

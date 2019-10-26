@@ -31,8 +31,8 @@
 
 <script>
     $(document).ready(function () {
-        $('#submit').click(function () {
-            location.href = `@Url.RouteUrl("PreviewHome")/${$('#id').val()}`;
+        $('input[type="submit"]').click(function () {
+            location.href = `${location.protocol}//${location.host}${location.pathname}/${$('#id').val()}`;
         });
     });
 </script>

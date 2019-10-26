@@ -213,8 +213,10 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\NewsController.cs" />
+    <Compile Include="Controllers\PinglistController.cs" />
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Controllers\ScryerController.cs" />
+    <Compile Include="Infrastructure\BitlyHelper.cs" />
     <Compile Include="Infrastructure\ChallengeResult.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SkinController.cs" />
@@ -223,14 +225,15 @@
     </Compile>
     <Compile Include="Infrastructure\AzureImageService.cs" />
     <Compile Include="Infrastructure\CodeHelpers.cs" />
-    <Compile Include="Infrastructure\DragonHelpers.cs" />
-    <Compile Include="Infrastructure\Helpers\CopyTextBoxHelper.cs" />
+    <Compile Include="Infrastructure\FRHelpers.cs" />
+    <Compile Include="Infrastructure\Helpers\CopyBoxHelpers.cs" />
     <Compile Include="Infrastructure\Managers\UserManager.cs" />
     <Compile Include="Infrastructure\PreviewResult.cs" />
     <Compile Include="Infrastructure\SmartRequiredAttribute.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\ManageModels.cs" />
     <Compile Include="Models\NewsModels.cs" />
+    <Compile Include="Models\PinglistModels.cs" />
     <Compile Include="Models\ProfileModels.cs" />
     <Compile Include="Models\ScryerModels.cs" />
     <Compile Include="Models\SkinModels.cs" />
@@ -686,6 +689,7 @@
     <Content Include="fonts\social_icons.ttf" />
     <Content Include="fonts\social_icons.woff" />
     <Content Include="fonts\social_icons.woff2" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\frskintester - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\Chart.bundle.min.js" />
@@ -695,6 +699,7 @@
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.scrollTo.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -730,6 +735,14 @@
     <Content Include="Views\Skin\Index.cshtml" />
     <Content Include="Views\Scryer\Dress.cshtml" />
     <Content Include="Views\Scryer\DressResult.cshtml" />
+    <Content Include="Views\Pinglist\Index.cshtml" />
+    <Content Include="Views\Pinglist\Create.cshtml" />
+    <Content Include="Views\Pinglist\OwnerViewList.cshtml" />
+    <Content Include="Views\Pinglist\Userlist.cshtml" />
+    <Content Include="Views\Pinglist\PublicViewList.cshtml" />
+    <Content Include="Views\Pinglist\PrivateViewList.cshtml" />
+    <Content Include="Views\Pinglist\List.cshtml" />
+    <Content Include="Views\Pinglist\LinkExisting.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

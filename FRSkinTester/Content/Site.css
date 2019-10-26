@@ -125,6 +125,91 @@ input[type=file] {
     }
 
 .dragonImage {
-    max-width:350px;
-    width:100%;
+    max-width: 350px;
+    width: 100%;
+}
+
+.input-group-addon.btn-success {
+    color: #fff;
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+}
+
+    .input-group-addon.btn-success:hover {
+        color: #fff;
+        background-color: #449d44;
+        border-color: #398439;
+    }
+
+.input-group-addon.btn-primary {
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2e6da4;
+}
+
+    .input-group-addon.btn-primary:hover {
+        color: #fff;
+        background-color: #286090;
+        border-color: #204d74;
+    }
+
+.input-group-addon.btn-warning {
+    color: #fff;
+    background-color: #f0ad4e;
+    border-color: #eea236;
+}
+
+    .input-group-addon.btn-warning:hover {
+        color: #fff;
+        background-color: #ec971f;
+        border-color: #d58512;
+    }
+
+.input-group-addon.btn-danger {
+    color: #fff;
+    background-color: #d9534f;
+    border-color: #d43f3a;
+}
+
+    .input-group-addon.btn-danger:hover {
+        color: #fff;
+        background-color: #c9302c;
+        border-color: #ac2925;
+    }
+
+.input-group-addon.btn-info {
+    color: #fff;
+    background-color: #5bc0de;
+    border-color: #46b8da;
+}
+
+    .input-group-addon.btn-info:hover {
+        color: #fff;
+        background-color: #31b0d5;
+        border-color: #269abc;
+    }
+
+.tooltip-inner {
+    text-align: center;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+    background-color: #505050;
+    width:200px;
+}
+
+.tooltip.right .tooltip-arrow {
+    border-right-color: #505050 !important;
+}
+
+.tooltip.left .tooltip-arrow {
+    border-left-color: #505050 !important;
+}
+
+.tooltip.top .tooltip-arrow {
+    border-top-color: #505050 !important;
+}
+
+.tooltip.bottom .tooltip-arrow {
+    border-bottom-color: #505050 !important;
 }

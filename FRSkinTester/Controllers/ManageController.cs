@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using FRTools.Data;
+using FRTools.Web.Infrastructure;
 
 namespace FRTools.Web.Controllers
 {
@@ -29,6 +30,7 @@ namespace FRTools.Web.Controllers
             {
                 var user = ctx.Users
                     .Include(x => x.Skins.Select(s => s.Previews))
+                    .Include(x => x.FRUser)
                     .FirstOrDefault(x => x.Id == userid);
                 model.User = user;
                 model.Skins = user.Skins.ToList();
@@ -78,7 +80,7 @@ namespace FRTools.Web.Controllers
                 TempData["Success"] = "Changes have been saved!";
                 return RedirectToRoute("ManageAccount");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 var actualException = ex;
                 while (actualException.InnerException != null)
@@ -108,51 +110,49 @@ namespace FRTools.Web.Controllers
         {
             using (var ctx = new DataContext())
             {
-                if (ctx.Users.FirstOrDefault(x => x.FRId == model.LairId) != null)
+                var frUser = await FRHelpers.GetOrUpdateFRUser(model.LairId, ctx);
+
+                if (frUser.User != null)
                 {
-                    TempData["Error"] = "This lair id is already tied to an account, if you believe this is an error please contact Nensec#435995 on FR";
+                    TempData["Error"] = "This lair id is already tied to an account, if you believe this is an error please contact nensec#1337 on Discord";
                     RedirectToRoute("VerifyFR");
                 }
-            }
 
-            var userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
+                var userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
 
-            var key = $"USER_{userId}";
-            if (_verifyCache.Contains(key))
-            {
-                var verifyGuid = (Guid)_verifyCache.Get(key);
-                using (var client = new WebClient())
+                var key = $"USER_{userId}";
+                if (_verifyCache.Contains(key))
                 {
-                    var profilePage = await client.DownloadStringTaskAsync($@"http://www1.flightrising.com/clan-profile/{model.LairId}");
-                    var bioTagIndex = profilePage.IndexOf("<div id=\"userbio\">");
-                    if (profilePage.Substring(bioTagIndex).Contains(verifyGuid.ToString()))
+                    var verifyGuid = (Guid)_verifyCache.Get(key);
+                    using (var client = new WebClient())
                     {
-                        _verifyCache.Remove(key);
-                        var userDataIndex = profilePage.IndexOf("<div id=\"userdata\"");
-                        var userName = Regex.Match(profilePage.Substring(userDataIndex), @"<span+\s+[a-zA-Z]+\s*=\s*(""[^""]*""|'[^']*'*)\s*>[\r\n\t]*([a-zA-Z]*)[\t]*</span>").Groups[2].Value;
-                        using (var ctx = new DataContext())
+                        var profilePage = await client.DownloadStringTaskAsync($@"http://www1.flightrising.com/clan-profile/{model.LairId}");
+                        var bioTagIndex = profilePage.IndexOf("<div id=\"userbio\">");
+                        if (profilePage.Substring(bioTagIndex).Contains(verifyGuid.ToString()))
                         {
-                            var dbUser = ctx.Users.Find(userId);
-                            dbUser.FRId = model.LairId;
-                            dbUser.FRName = userName;
+                            _verifyCache.Remove(key);
+                            {
+                                var dbUser = ctx.Users.Find(userId);
+                                dbUser.FRUser = frUser;
 
-                            await ctx.SaveChangesAsync();
+                                await ctx.SaveChangesAsync();
+                            }
+
+                            TempData["Success"] = $"Succesfully linked your Flight Rising account ({frUser.Username})!";
+                            return RedirectToRoute("ManageAccount");
                         }
-
-                        TempData["Success"] = $"Succesfully linked your Flight Rising account ({userName})!";
-                        return RedirectToRoute("ManageAccount");
-                    }
-                    else
-                    {
-                        TempData["Error"] = "Verify token was not found in your bio, please double check you saved!";
-                        return RedirectToRoute("VerifyFR");
+                        else
+                        {
+                            TempData["Error"] = "Verify token was not found in your bio, please double check you saved!";
+                            return RedirectToRoute("VerifyFR");
+                        }
                     }
                 }
-            }
-            else
-            {
-                TempData["Error"] = "Verify token expired, please try again!";
-                return RedirectToRoute("VerifyFR");
+                else
+                {
+                    TempData["Error"] = "Verify token expired, please try again!";
+                    return RedirectToRoute("VerifyFR");
+                }
             }
         }
     }

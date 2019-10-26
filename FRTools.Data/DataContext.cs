@@ -27,6 +27,8 @@ namespace FRTools.Data
         public DbSet<DragonCache> DragonCache { get; set; }
         public DbSet<Topic> Topics { get; set; }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<Pinglist> Pinglists { get; set; }
+        public DbSet<FRUser> FRUsers { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -37,6 +39,8 @@ namespace FRTools.Data
             modelBuilder.Entity<UserRole>().ToTable("UserRoles");
             modelBuilder.Entity<UserClaim>().ToTable("UserClaims");
             modelBuilder.Entity<UserLogin>().ToTable("UserLogins");
+
+            modelBuilder.Entity<User>().HasOptional(x => x.FRUser).WithOptionalDependent(x => x.User);
         }
     }
 }
