@@ -47,7 +47,7 @@ namespace FRTools.Web.Controllers
         {
             using (var ctx = new DataContext())
             {
-                var skin = ctx.Skins.FirstOrDefault(x => x.GeneratedId == model.SkinId);
+                var skin = ctx.Skins.Include(x => x.Creator.FRUser).FirstOrDefault(x => x.GeneratedId == model.SkinId);
                 if (skin == null)
                 {
                     TempData["Error"] = "Skin not found";
