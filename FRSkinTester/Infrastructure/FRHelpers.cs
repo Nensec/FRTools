@@ -15,11 +15,11 @@ namespace FRTools.Web.Infrastructure
 {
     public static class FRHelpers
     {
-        public const string DressingRoomDummyUrl = "http://www1.flightrising.com/dgen/dressing-room/dummy?breed={0}&gender={1}";
-        public const string ScryerUrl = "http://flightrising.com/includes/scryer_getdragon.php?zord={0}";
-        public const string DragonProfileUrl = "http://flightrising.com/main.php?dragon={0}";
-        public const string DressingRoomDragonApparalUrl = "http://www1.flightrising.com/dgen/dressing-room/dragon?did={0}&apparel={1}";
-        public const string DressingRoomDummyApparalUrl = "http://www1.flightrising.com/dgen/dressing-room/dummy?breed={0}&gender={1}&apparel={1}";
+        public const string DressingRoomDummyUrl = "https://www1.flightrising.com/dgen/dressing-room/dummy?breed={0}&gender={1}";
+        public const string ScryerUrl = "https://flightrising.com/includes/scryer_getdragon.php?zord={0}";
+        public const string DragonProfileUrl = "https://flightrising.com/main.php?dragon={0}";
+        public const string DressingRoomDragonApparalUrl = "https://www1.flightrising.com/dgen/dressing-room/dragon?did={0}&apparel={1}";
+        public const string DressingRoomDummyApparalUrl = "https://www1.flightrising.com/dgen/dressing-room/dummy?breed={0}&gender={1}&apparel={1}";
 
         public static async Task<Bitmap> GetInvisibleDressingRoomDragon(DragonCache dragon)
         {
@@ -218,7 +218,7 @@ namespace FRTools.Web.Infrastructure
 
         private static (string Username, int UserId) GetFRUserInfo(string username, int? userId)
         {
-            string url = $"http://www1.flightrising.com/clan-profile/{(userId?.ToString() ?? $"n/{username}")}";
+            string url = $"https://www1.flightrising.com/clan-profile/{(userId?.ToString() ?? $"n/{username}")}";
             using (var client = new WebClient())
             {
                 var userProfilePage = client.DownloadString(url);

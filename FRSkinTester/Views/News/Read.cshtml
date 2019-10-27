@@ -46,7 +46,7 @@
                             }
                             else
                             {
-                                <a class="ignore-collapse" target="_blank" href="http://www1.flightrising.com/forums/ann/@(Model.FRTopicId)/@(post.ExpectedFRPage)#post_@(post.FRPostId)">Jump to post</a>
+                                <a class="ignore-collapse" target="_blank" href="https://www1.flightrising.com/forums/ann/@(Model.FRTopicId)/@(post.ExpectedFRPage)#post_@(post.FRPostId)">Jump to post</a>
                             }
                         </span>
                     </div>
@@ -55,7 +55,7 @@
                             <div class="col-xs-3">
                                 <div class="panel panel-default">
                                     <div class="panel-body">
-                                        <a target="_blank" href="@($"http://www1.flightrising.com/clan-profile/{post.PostAuthorClanId}")">@(post.PostAuthor)</a>
+                                        <a target="_blank" href="@($"https://www1.flightrising.com/clan-profile/{post.PostAuthorClanId}")">@(post.PostAuthor)</a>
                                     </div>
                                 </div>
                             </div>
@@ -77,7 +77,7 @@
                     try {
                         var src = $(e).attr('src');
                         if (src.startsWith('/')) {
-                            $(e).attr('src', 'http://www1.flightrising.com' + src);
+                            $(e).attr('src', 'https://www1.flightrising.com' + src);
                         }
                     } catch (e) {
                     }

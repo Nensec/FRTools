@@ -126,7 +126,7 @@ namespace FRTools.Web.Controllers
                     var verifyGuid = (Guid)_verifyCache.Get(key);
                     using (var client = new WebClient())
                     {
-                        var profilePage = await client.DownloadStringTaskAsync($@"http://www1.flightrising.com/clan-profile/{model.LairId}");
+                        var profilePage = await client.DownloadStringTaskAsync($@"https://www1.flightrising.com/clan-profile/{model.LairId}");
                         var bioTagIndex = profilePage.IndexOf("<div id=\"userbio\">");
                         if (profilePage.Substring(bioTagIndex).Contains(verifyGuid.ToString()))
                         {

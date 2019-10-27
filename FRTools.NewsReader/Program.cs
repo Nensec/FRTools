@@ -55,7 +55,7 @@ namespace FRTools.NewsReader
             using (var client = new WebClient())
             {
                 Console.WriteLine("Downloading news forum..");
-                var mainNewsForum = client.DownloadString("http://www1.flightrising.com/forums/ann");
+                var mainNewsForum = client.DownloadString("https://www1.flightrising.com/forums/ann");
 
                 Console.WriteLine("Parsing topic rows..");
                 var topicRows = Regex.Matches(mainNewsForum, @"<tr+\s+[a-zA-Z]+=+[""a-z]+>[\s\S]+?</tr>").Cast<Match>();
@@ -64,7 +64,7 @@ namespace FRTools.NewsReader
                 Console.WriteLine($"Found {newsTopics.Count} that are not locked, parsing those..");
                 foreach (var newsTopic in newsTopics)
                 {
-                    var newsTopicInfo = Regex.Match(newsTopic, @"<td class=""topic"">[.\s\S]+<a href=""(http://www1.flightrising.com/forums/ann/(\d+))"" class=""forumlink"">([\s\S]+?)</a>[\s\S]+?<a href=""http://www1.flightrising.com/clan-profile/(\d+)"">([\[\]a-zA-Z ]+?)</a>");
+                    var newsTopicInfo = Regex.Match(newsTopic, @"<td class=""topic"">[.\s\S]+<a href=""(https://www1.flightrising.com/forums/ann/(\d+))"" class=""forumlink"">([\s\S]+?)</a>[\s\S]+?<a href=""https://www1.flightrising.com/clan-profile/(\d+)"">([\[\]a-zA-Z ]+?)</a>");
                     var topicUrl = newsTopicInfo.Groups[1].Value;
                     var topicId = Convert.ToInt32(newsTopicInfo.Groups[2].Value);
                     var topicName = newsTopicInfo.Groups[3].Value;
@@ -72,9 +72,9 @@ namespace FRTools.NewsReader
                     var authorName = newsTopicInfo.Groups[5].Value;
 
                     var claimedReplies = Convert.ToInt32(Regex.Match(newsTopic, @"<div class=""activity-replies"">\s+(\d+)\s+</div>").Groups[1].Value);
-                    var totalPages = Convert.ToInt32(Regex.Matches(newsTopic, $@"<a href=""http://www1.flightrising.com/forums/ann/{topicId}/(\d+)"">").Cast<Match>().Last().Groups[1].Value);
+                    var totalPages = Convert.ToInt32(Regex.Matches(newsTopic, $@"<a href=""https://www1.flightrising.com/forums/ann/{topicId}/(\d+)"">").Cast<Match>().Last().Groups[1].Value);
 
-                    var lastPostInfo = Regex.Match(newsTopic, @"<td class='lastpost'>[.\s\S]+<a href=""http://www1.flightrising.com/clan-profile/(\d+)"">([a-zA-Z0-9]+)</a>[\s\S]+<br>\s+?([a-zA-Z]+ \d+, \d{4} \d\d:\d\d:\d\d)");
+                    var lastPostInfo = Regex.Match(newsTopic, @"<td class='lastpost'>[.\s\S]+<a href=""https://www1.flightrising.com/clan-profile/(\d+)"">([a-zA-Z0-9]+)</a>[\s\S]+<br>\s+?([a-zA-Z]+ \d+, \d{4} \d\d:\d\d:\d\d)");
                     var lastPostAuthorClanId = Convert.ToInt32(lastPostInfo.Groups[1].Value);
                     var lastPostAuthor = lastPostInfo.Groups[2].Value;
                     var lastPostTimestamp = DateTime.ParseExact(lastPostInfo.Groups[3].Value, "MMM dd, yyyy HH:mm:ss", CultureInfo.InvariantCulture);
@@ -141,8 +141,8 @@ namespace FRTools.NewsReader
                 for (int i = expectedPages; i > 0; i--)
                 {
                     Console.WriteLine($"Navigating to page {i}..");
-                    var forumPage = client.DownloadString($"http://www1.flightrising.com/forums/ann/{topicId}/{i}");
-                    var postsPattern = @"<div id=""post_(\d+)"".+>[.\s\S]+?<div class=""post-author-username-frame"">[.\s\S]+?<a href=""http://www1.flightrising.com/clan-profile/(\d+)"" class=""post-author-username"">([a-zA-Z0-9]+)</a>[.\s\S]+?<div class=""post-timestamp""><strong>([a-zA-Z]+ \d+, \d{4}</strong> \d\d:\d\d:\d\d)[\s\S]+?<div class=""post-text-content"">([.\s\S]+?)(?=<div class=""post-text-signature"">|(?=<div class=""post-text-footer"">|(?=<div class=""common-pagination"">|(?=<div id=""post_\d+"".+>|<div id=""topic-footer"">))))";
+                    var forumPage = client.DownloadString($"https://www1.flightrising.com/forums/ann/{topicId}/{i}");
+                    var postsPattern = @"<div id=""post_(\d+)"".+>[.\s\S]+?<div class=""post-author-username-frame"">[.\s\S]+?<a href=""https://www1.flightrising.com/clan-profile/(\d+)"" class=""post-author-username"">([a-zA-Z0-9]+)</a>[.\s\S]+?<div class=""post-timestamp""><strong>([a-zA-Z]+ \d+, \d{4}</strong> \d\d:\d\d:\d\d)[\s\S]+?<div class=""post-text-content"">([.\s\S]+?)(?=<div class=""post-text-signature"">|(?=<div class=""post-text-footer"">|(?=<div class=""common-pagination"">|(?=<div id=""post_\d+"".+>|<div id=""topic-footer"">))))";
                     var posts = Regex.Matches(forumPage, postsPattern).Cast<Match>().ToList();
                     Console.WriteLine($"Found {posts.Count} posts on this page");
 
@@ -152,7 +152,7 @@ namespace FRTools.NewsReader
                         var pagination = Regex.Match(forumPage, @"<div class=""common-pagination-numbers"">[\s\S]+?</div>");
                         if (pagination.Success)
                         {
-                            var actualPages = Regex.Matches(pagination.Value, @"<a href=""http://www1.flightrising.com/forums/ann/\d+/(\d+)"">\d+</a>|<strong>(\d+)</strong>");
+                            var actualPages = Regex.Matches(pagination.Value, @"<a href=""https://www1.flightrising.com/forums/ann/\d+/(\d+)"">\d+</a>|<strong>(\d+)</strong>");
                             var realexpectedPages = actualPages.Cast<Match>().Max(x => Convert.ToInt32(x.Groups[1].Success ? x.Groups[1].Value : x.Groups[2].Value));
                             if (realexpectedPages > expectedPages)
                             {
@@ -160,7 +160,7 @@ namespace FRTools.NewsReader
                                 for (int iex = realexpectedPages; iex > expectedPages; iex--)
                                 {
                                     Console.WriteLine($"Navigating to page {iex}..");
-                                    var postsEx = Regex.Matches(client.DownloadString($"http://www1.flightrising.com/forums/ann/{topicId}/{iex}"), postsPattern).Cast<Match>().ToList();
+                                    var postsEx = Regex.Matches(client.DownloadString($"https://www1.flightrising.com/forums/ann/{topicId}/{iex}"), postsPattern).Cast<Match>().ToList();
                                     Console.WriteLine($"Found {postsEx.Count} posts on this page");
                                     if (await ParseNewsTopicEx(postsEx, ctx, topic))
                                         changeFound = true;
