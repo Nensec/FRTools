@@ -39,7 +39,7 @@ namespace FRTools.Web.Controllers
         {
             using (var ctx = new DataContext())
             {
-                var user = ctx.Users.Include(x => x.Previews.Select(p => p.Skin)).FirstOrDefault(x => x.UserName.ToLower() == username.ToLower());
+                var user = ctx.Users.Include(x => x.FRUser).Include(x => x.Previews.Select(p => p.Skin)).FirstOrDefault(x => x.UserName.ToLower() == username.ToLower());
                 if (user == null)
                 {
                     TempData["Error"] = $"No user with username '{username}' could be found";
