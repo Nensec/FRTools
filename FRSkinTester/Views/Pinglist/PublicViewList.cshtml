@@ -1,7 +1,7 @@
 ﻿@model FRTools.Web.Models.PinglistViewModel
 
 @{
-    ViewBag.Title = "List";
+    ViewBag.Title = $"Public pinglist '{Model.Name}'";
 }
 
 @if (TempData["NewEntry"] != null)
