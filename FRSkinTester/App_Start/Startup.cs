@@ -13,6 +13,7 @@ using Owin.Security.Providers.Google;
 using Owin.Security.Providers.Tumblr;
 using System;
 using System.Configuration;
+using System.Linq;
 using System.Security.Claims;
 using System.Web.Helpers;
 
@@ -73,6 +74,13 @@ namespace FRTools.App_Start
                 ClientId = ConfigurationManager.AppSettings["DeviantArtClientId"],
                 ClientSecret = ConfigurationManager.AppSettings["DeviantArtSecret"]
             });
+
+            using (var ctx = new DataContext())
+            {
+                var activeJobs = ctx.Jobs.Where(x => x.Status == JobStatus.Running).ToList();
+                activeJobs.ForEach(x => x.Status = JobStatus.Cancelled);
+                ctx.SaveChanges();
+            }
         }
     }
 }

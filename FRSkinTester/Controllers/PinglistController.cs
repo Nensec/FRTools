@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Data.Entity;
 using Newtonsoft.Json;
+using FRTools.Web.Infrastructure.Managers;
 
 namespace FRTools.Web.Controllers
 {
@@ -162,6 +163,13 @@ namespace FRTools.Web.Controllers
                     ownerModel.EntriesViewModel.SecretKey = ownerModel.SecretKey = list.SecretKey;
                     ownerModel.Format = list.Format == null ? new EditPinglistViewModel.FormatModel() : JsonConvert.DeserializeObject<EditPinglistViewModel.FormatModel>(list.Format);
                     ownerModel.CopyPinglist = $"{ownerModel.Format.Prefix}{string.Join(ownerModel.Format.Separator, ownerModel.EntriesViewModel.PinglistEntries.Select(x => $"@{x.FRUser.Username}"))}{ownerModel.Format.Postfix}";
+                    var activeJobs = JobManager.GetActiveJobs(list.Id.ToString());
+                    foreach (var job in activeJobs)
+                    {
+                        if (!string.IsNullOrEmpty(TempData["Info"] as string))
+                            TempData["Info"] += "<br/>";
+                        TempData["Info"] += job.Description;
+                    }
                     return View("OwnerViewList", ownerModel);
                 }
 
@@ -363,8 +371,9 @@ namespace FRTools.Web.Controllers
 
         [Route("manage/{listId}/{secretKey}/import", Name = "PinglistImportCSV")]
         [HttpPost]
-        public async Task<ActionResult> ImportPinglist(ImportPingsViewModel model)
+        public ActionResult ImportPinglist(ImportPingsViewModel model)
         {
+            int listId;
             using (var ctx = new DataContext())
             {
                 var list = GetPinglist(model.ListId, false, ctx);
@@ -378,20 +387,33 @@ namespace FRTools.Web.Controllers
                     return RedirectToRoute("Pinglist");
                 }
 
-                if (!string.IsNullOrWhiteSpace(model.CSV))
-                {
-                    var usernames = model.CSV.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                    foreach (var username in usernames)
-                    {
-                        if (username.All(char.IsDigit))
-                            await AddEntryToList(list, null, int.Parse(username), null, ctx);
-                        else
-                            await AddEntryToList(list, username, null, null, ctx);
-                    }
-                    ctx.SaveChanges();
-                }
-                return RedirectToRoute("PinglistDirect", new { model.ListId, model.SecretKey });
+                listId = list.Id;
             }
+
+            if (!string.IsNullOrWhiteSpace(model.CSV))
+            {
+                var job = Task.Run(async () =>
+                {
+                    using (var ctx = new DataContext())
+                    {
+                        var list = GetPinglist(model.ListId, false, ctx);
+
+                        var usernames = model.CSV.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                        foreach (var username in usernames)
+                        {
+                            if (username.All(char.IsDigit))
+                                await AddEntryToList(list, null, int.Parse(username), null, ctx);
+                            else
+                                await AddEntryToList(list, username, null, null, ctx);
+                        }
+                        ctx.SaveChanges();
+                    }
+                });
+                var jobResult = JobManager.StartNewJob(job, listId.ToString(), $"Importing pinglist for pinglist '{model.ListId}'");
+                TempData["Info"] = $"Your pinglist is being imported in the background, depending on the size this can take a while. You started this job at '{jobResult.StartTime}'.";
+            }
+
+            return RedirectToRoute("PinglistDirect", new { model.ListId, model.SecretKey });
         }
 
         [Route("manage/{listId}/{secretKey}/updateusers", Name = "PinglistBatchUpdateUsers")]
@@ -416,10 +438,13 @@ namespace FRTools.Web.Controllers
                     return RedirectToRoute("PinglistDirect", new { model.ListId });
                 }
 
-                foreach (var entry in list.Entries.Select(x => x.FRUser.FRId).ToList())
+                var job = Task.Run(async () =>
                 {
-                    await FRHelpers.GetOrUpdateFRUser(entry);
-                }
+                    foreach (var entry in list.Entries.Select(x => x.FRUser.FRId).ToList())                    
+                        await FRHelpers.GetOrUpdateFRUser(entry);
+                });
+                var jobResult = JobManager.StartNewJob(job, list.Id.ToString(), $"Updating entries for pinglist '{model.ListId}'");
+                TempData["Info"] = $"The entries on your pinglist are being updated in the background, depending on the size this can take a while. You started this job at '{jobResult.StartTime}'.";
             }
 
             return RedirectToRoute("PinglistDirect", new { model.ListId, model.SecretKey });

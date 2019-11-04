@@ -172,7 +172,12 @@ namespace FRTools.Web.Infrastructure
         {
             async Task<FRUser> getFRUser()
             {
+                var dispose = false;
+                if (dispose = ctx == null)
+                    ctx = new DataContext();
+
                 var frUser = ctx.FRUsers.FirstOrDefault(x => x.Username == username || x.FRId == userId);
+
                 if (frUser == null)
                 {
                     var (frName, frId) = GetFRUserInfo(username, userId);
@@ -186,15 +191,20 @@ namespace FRTools.Web.Infrastructure
                     frUser.LastUpdated = DateTime.UtcNow;
 
                     ctx.SaveChanges();
+                    if (dispose)
+                        ctx.Dispose();
                 }
                 else
-                    return await frUser.UpdateFRUser();
+                {
+                    frUser = await frUser.UpdateFRUser();
+                    await ctx.SaveChangesAsync();
+                }
+
+                if (dispose)
+                    ctx.Dispose();
+
                 return frUser;
             }
-
-            if (ctx == null)
-                using (ctx = new DataContext())
-                    return getFRUser();
             return getFRUser();
         }
 

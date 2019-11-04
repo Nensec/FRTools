@@ -23,4 +23,12 @@ namespace FRTools.Data.DataModels
         [Description("Hide skin everywhere")]
         HideEverywhere
     }
+
+    public enum JobStatus
+    {
+        Running,
+        Finished,
+        Error,
+        Cancelled
+    }
 }

@@ -29,6 +29,7 @@ namespace FRTools.Data
         public DbSet<Post> Posts { get; set; }
         public DbSet<Pinglist> Pinglists { get; set; }
         public DbSet<FRUser> FRUsers { get; set; }
+        public DbSet<Job> Jobs { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

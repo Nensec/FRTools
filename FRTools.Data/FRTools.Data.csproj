@@ -63,6 +63,7 @@
     <Compile Include="DataModels\DataModelEnums.cs" />
     <Compile Include="DataModels\DragonCache.cs" />
     <Compile Include="DataModels\FRUser.cs" />
+    <Compile Include="DataModels\Job.cs" />
     <Compile Include="DataModels\Pinglist.cs" />
     <Compile Include="DataModels\PingListEntry.cs" />
     <Compile Include="DataModels\Post.cs" />
@@ -138,6 +139,10 @@
     <Compile Include="Migrations\201909240209082_Pinglist models.Designer.cs">
       <DependentUpon>201909240209082_Pinglist models.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201911041734504_Jobs table.cs" />
+    <Compile Include="Migrations\201911041734504_Jobs table.Designer.cs">
+      <DependentUpon>201911041734504_Jobs table.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -192,6 +197,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201909240209082_Pinglist models.resx">
       <DependentUpon>201909240209082_Pinglist models.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911041734504_Jobs table.resx">
+      <DependentUpon>201911041734504_Jobs table.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
