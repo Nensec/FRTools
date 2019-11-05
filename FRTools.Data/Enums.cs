@@ -60,6 +60,7 @@ namespace FRTools.Data
     public enum GaolerTertGene
     {
         Basic = 0,
+        Veined = 2,
         Ghost = 25,
         Shardflank,
         Gnarlhorns,
@@ -169,7 +170,8 @@ namespace FRTools.Data
         Filigree,
         Firefly,
         Ringlets,
-        Peacock
+        Peacock,
+        Veined = 38
     }
 
     public enum WingGene
