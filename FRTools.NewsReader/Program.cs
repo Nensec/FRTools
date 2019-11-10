@@ -115,7 +115,7 @@ namespace FRTools.NewsReader
                                 Console.WriteLine("Reply count does not match up with known data, possibly deleted post!");
                                 parseTopic = true;
                             }
-                            else if(topic.FRTopicName != topicName)
+                            else if (topic.FRTopicName != topicName)
                             {
                                 Console.WriteLine("Topic name changed, saving changes and moving on to next post");
                                 topic.FRTopicName = topicName;
@@ -125,17 +125,32 @@ namespace FRTools.NewsReader
                                 Console.WriteLine("Nothing changed, skipping news post");
                         }
                         if (parseTopic)
-                            changed = await ParseNewsTopic(topicId, totalPages, claimedReplies, ctx, topic) || changed;
+                            changed = await ParseNewsTopic(topicId, totalPages, claimedReplies, ctx, topic, lastPostAuthorClanId, lastPostTimestamp) || changed;
                     }
                 }
             }
             return changed;
         }
 
-        private static async Task<bool> ParseNewsTopic(int topicId, int expectedPages, int claimedReplies, DataContext ctx, Topic topic)
+        private static async Task<bool> ParseNewsTopic(int topicId, int expectedPages, int claimedReplies, DataContext ctx, Topic topic, int lastPostAuthorClanId, DateTime lastPostTimestamp)
         {
             bool changeFound = false;
             bool skipPaginationCheck = false;
+            var onLastPage = true;
+
+            bool CheckLastPostDeletion(List<Match> posts)
+            {
+                onLastPage = false;
+                if (!posts.Any(x =>
+                    lastPostTimestamp == DateTime.ParseExact(x.Groups[4].Value.Replace("</strong>", ""), "MMMM dd, yyyy HH:mm:ss", CultureInfo.InvariantCulture) &&
+                    lastPostAuthorClanId == Convert.ToInt32(x.Groups[2].Value)))
+                {
+                    Console.WriteLine("Latest post seems to have been deleted before saving it, skipping checking remaining topic..");
+                    return true;
+                }
+                return false;
+            }
+
             using (var client = new WebClient())
             {
                 for (int i = expectedPages; i > 0; i--)
@@ -162,6 +177,9 @@ namespace FRTools.NewsReader
                                     Console.WriteLine($"Navigating to page {iex}..");
                                     var postsEx = Regex.Matches(client.DownloadString($"https://www1.flightrising.com/forums/ann/{topicId}/{iex}"), postsPattern).Cast<Match>().ToList();
                                     Console.WriteLine($"Found {postsEx.Count} posts on this page");
+                                    if(onLastPage && CheckLastPostDeletion(postsEx))                                    
+                                        break;
+                                    
                                     if (await ParseNewsTopicEx(postsEx, ctx, topic))
                                         changeFound = true;
                                 }
@@ -169,6 +187,9 @@ namespace FRTools.NewsReader
                             }
                         }
                     }
+                    if (onLastPage && CheckLastPostDeletion(posts))
+                        break;
+
                     if (await ParseNewsTopicEx(posts, ctx, topic))
                         changeFound = true;
                     else if (changeFound && claimedReplies > 10 && posts.Count == 10)
@@ -201,7 +222,7 @@ namespace FRTools.NewsReader
                     var openingDivs = Regex.Matches(postInfoContent, "<div");
                     var closingDivs = Regex.Matches(postInfoContent, "</div>");
 
-                    if(closingDivs.Count > openingDivs.Count)
+                    if (closingDivs.Count > openingDivs.Count)
                         postInfoContent = postInfoContent.Remove(closingDivs[openingDivs.Count].Index).Trim();
 
                     topic.Posts.Add(new Post
