@@ -17,5 +17,6 @@ namespace FRTools.Data.DataModels
         public virtual User Creator { get; set; }
 
         public virtual ICollection<PingListEntry> Entries { get; set; } = new HashSet<PingListEntry>();
+        public virtual PinglistCategory PinglistCategory { get; set; }
     }
 }

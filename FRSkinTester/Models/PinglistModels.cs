@@ -18,6 +18,7 @@ namespace FRTools.Web.Models
         public PinglistEntriesViewModel EntriesViewModel { get; set; }
         public FRUser CurrentFRUser { get; set; }
         public User Owner { get; set; }
+        public PinglistCategory PinglistCategory { get; set; }
         public string CopyPinglist { get; set; }
     }
 
@@ -33,11 +34,16 @@ namespace FRTools.Web.Models
         public bool HasVerified { get; set; }
         public List<PinglistViewModel> OwnedLists { get; set; }
         public List<PinglistViewModel> OnLists { get; set; }
+        public List<PinglistCategory> AvailableCategories { get; } = new List<PinglistCategory>();
     }
 
     public class EditPinglistViewModel : PinglistViewModel
     {
         public FormatModel Format { get; set; }
+        [Display(Name = "Category")]
+        public int? NewPinglistCategory { get; set; }
+
+        public List<PinglistCategory> AvailableCategories { get; } = new List<PinglistCategory>();
 
         public class FormatModel
         {

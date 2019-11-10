@@ -42,7 +42,10 @@
 {
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h4>Your pinglists</h4>
+            <h4>
+                Your pinglists
+                <span style="margin-top:-5px;" class="pull-right"><a class="btn btn-primary btn-sm" href="@Url.RouteUrl("PinglistCreate")">Create pinglist</a></span>
+            </h4>
         </div>
 
         <div class="panel-body">
@@ -80,15 +83,43 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         Owned pinglists
+                        <span class="pull-right">
+                            <a class="btn btn-success btn-xs" href="#" onclick="AddCategory()">Add category</a>
+                        </span>
                     </div>
 
                     <div class="panel-body">
                         @if (Model.OwnedLists.Any())
                         {
                             <ul class="listContainer" id="ownedListContainer" tabindex="0" role="listbox">
-                                @foreach (var list in Model.OwnedLists)
+                                @foreach (var list in Model.OwnedLists.Where(x => x.PinglistCategory == null))
                                 {
                                     <li>@(list.Name)<span class="pull-right"><a class="btn btn-primary btn-xs" href="@Url.RouteUrl("PinglistDirect", new { listId = list.ListId })">Manage</a></span></li>
+                                }
+                                <li><hr style="margin:10px 0" /></li>
+                                @foreach (var category in Model.AvailableCategories)
+                                {
+                                    <li>
+                                        @if (Model.OwnedLists.Any(x => x.PinglistCategory?.Id == category.Id))
+                                        {
+                                            <span class="category-caret category-caret-down">@(category.Name)</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="category-caret">@(category.Name) <i>(Empty Category)</i></span>
+                                        }
+                                        <span class="pull-right">
+                                            <a class="btn btn-warning btn-xs" href="#" onclick="EditCategory(@(category.Id))">Edit</a>
+                                            <a class="btn btn-danger btn-xs" href="#" onclick="DeleteCategory(@(category.Id))">Delete</a>
+                                        </span>
+                                        <ul class="nested active">
+                                            @foreach (var list in Model.OwnedLists.Where(x => x.PinglistCategory?.Id == category.Id))
+                                            {
+                                                <li>@(list.Name)<span class="pull-right"><a class="btn btn-primary btn-xs" href="@Url.RouteUrl("PinglistDirect", new { listId = list.ListId })">Manage</a></span></li>
+                                            }
+                                        </ul>
+                                    </li>
+
                                 }
                             </ul>
                         }
@@ -113,6 +144,41 @@
                 location.href = `${location.protocol}//${location.host}${location.pathname}/${listId}${(secretKey ? '?secretKey=' + secretKey : '')}`;
             }
         });
+
+        AddCategory = function () {
+            var name = prompt('Enter name for new category');
+            if (name) {
+                $.post('@(Url.RouteUrl("PinglistCategoryAdd"))', { name: name }).done(function (data) {
+                    window.location.reload(true);
+                });
+            }
+        }
+
+        EditCategory = function (id) {
+            var name = prompt('Enter new name');
+            if (name) {
+                $.post('@(Url.RouteUrl("PinglistCategoryEdit"))', { id: id, name: name }).done(function (data) {
+                    window.location.reload(true);
+                });
+            }
+        }
+
+        DeleteCategory = function (id) {
+            if (confirm("This will delete the category, but not the pinglists in it. They will be moved out and be without a category. This action cannot be undone, are you sure?")) {
+                $.post('@(Url.RouteUrl("PinglistCategoryDelete"))', { id: id }).done(function (data) {
+                    window.location.reload(true);
+                });
+            }
+        }
+
+        var carets = document.getElementsByClassName("category-caret");
+
+        for (var i = 0; i < carets.length; i++) {
+            carets[i].addEventListener("click", function () {
+                this.parentElement.querySelector(".nested").classList.toggle("active");
+                this.classList.toggle("category-caret-down");
+            });
+        }
     });
 </script>
 
@@ -124,7 +190,7 @@
         height: 100%;
         max-height: 450px;
         min-height: 219px;
-        overflow-y: scroll;
+        overflow-y: auto;
     }
 
         .listContainer:focus {
@@ -133,15 +199,39 @@
 
         .listContainer li {
             display: block;
-            height: 2.5em;
             line-height: 2.5em;
             padding: 0 5px;
-            transition: all 0.5s ease-in-out;
-            -moz-transition: all 0.5s ease-in-out;
-            -webkit-transition: all 0.5s;
         }
 
             .listContainer li[aria-selected="true"] {
                 background: #d9edf7;
             }
+
+        .listContainer ul.nested {
+            display: none;
+            padding-left: 25px;
+            margin-right: -5px;
+        }
+
+        .listContainer ul.active {
+            display: block;
+        }
+
+    /* Style the caret/arrow */
+    .category-caret {
+        cursor: pointer;
+        user-select: none; /* Prevent text selection */
+    }
+
+        /* Create the caret/arrow with a unicode, and style it */
+        .category-caret::before {
+            content: "\25B6";
+            color: black;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+    .category-caret-down::before {
+        transform: rotate(90deg);
+    }
 </style>

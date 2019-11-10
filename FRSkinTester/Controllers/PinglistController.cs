@@ -88,13 +88,14 @@ namespace FRTools.Web.Controllers
                 {
                     var currentUser = ctx.Users.Find(HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>());
                     var ownedLists = ctx.Pinglists.Where(x => x.Creator.Id == currentUser.Id);
-                    model.OwnedLists = ownedLists.Select(x => new PinglistViewModel { Name = x.Name, ListId = x.GeneratedId, IsPublic = x.IsPublic }).ToList();
+                    model.OwnedLists = ownedLists.Select(x => new PinglistViewModel { Name = x.Name, ListId = x.GeneratedId, IsPublic = x.IsPublic, PinglistCategory = x.PinglistCategory }).ToList();
+                    model.AvailableCategories.AddRange(ctx.PinglistCategories.Where(x => x.Owner.Id == currentUser.Id));
 
                     if (currentUser.FRUser != null)
                     {
                         var onLists = ctx.Pinglists.Where(x => x.Entries.Any(e => e.FRUser.Id == currentUser.FRUser.Id));
 
-                        model.OnLists = onLists.Select(x => new PinglistViewModel { Name = x.Name, ListId = x.GeneratedId, IsPublic = x.IsPublic, Owner = x.Creator }).ToList();
+                        model.OnLists = onLists.Select(x => new PinglistViewModel { Name = x.Name, ListId = x.GeneratedId, IsPublic = x.IsPublic, Owner = x.Creator, PinglistCategory = x.PinglistCategory }).ToList();
                         model.HasVerified = true;
                     }
                     else
@@ -163,6 +164,9 @@ namespace FRTools.Web.Controllers
                     ownerModel.EntriesViewModel.SecretKey = ownerModel.SecretKey = list.SecretKey;
                     ownerModel.Format = list.Format == null ? new EditPinglistViewModel.FormatModel() : JsonConvert.DeserializeObject<EditPinglistViewModel.FormatModel>(list.Format);
                     ownerModel.CopyPinglist = $"{ownerModel.Format.Prefix}{string.Join(ownerModel.Format.Separator, ownerModel.EntriesViewModel.PinglistEntries.Select(x => $"@{x.FRUser.Username}"))}{ownerModel.Format.Postfix}";
+                    ownerModel.AvailableCategories.Add(new PinglistCategory { Id = -1 });
+                    ownerModel.AvailableCategories.AddRange(ctx.PinglistCategories.Where(x => x.Owner.Id == ownerModel.Owner.Id).ToList());
+                    ownerModel.PinglistCategory = list.PinglistCategory;
                     var activeJobs = JobManager.GetActiveJobs(list.Id.ToString());
                     foreach (var job in activeJobs)
                     {
@@ -361,6 +365,7 @@ namespace FRTools.Web.Controllers
 
                 list.Name = model.Name;
                 list.IsPublic = model.IsPublic;
+                list.PinglistCategory = Request.IsAuthenticated && model.NewPinglistCategory.HasValue && list.Creator != null ? ctx.PinglistCategories.FirstOrDefault(x => x.Owner.Id == list.Creator.Id && x.Id == model.NewPinglistCategory.Value) : null;
                 list.Format = JsonConvert.SerializeObject(model.Format);
 
                 ctx.SaveChanges();
@@ -417,7 +422,7 @@ namespace FRTools.Web.Controllers
         }
 
         [Route("manage/{listId}/{secretKey}/updateusers", Name = "PinglistBatchUpdateUsers")]
-        public async Task<ActionResult> UpdatePinglistUsers(PinglistViewModel model)
+        public ActionResult UpdatePinglistUsers(PinglistViewModel model)
         {
             using (var ctx = new DataContext())
             {
@@ -440,7 +445,7 @@ namespace FRTools.Web.Controllers
 
                 var job = Task.Run(async () =>
                 {
-                    foreach (var entry in list.Entries.Select(x => x.FRUser.FRId).ToList())                    
+                    foreach (var entry in list.Entries.Select(x => x.FRUser.FRId).ToList())
                         await FRHelpers.GetOrUpdateFRUser(entry);
                 });
                 var jobResult = JobManager.StartNewJob(job, list.Id.ToString(), $"Updating entries for pinglist '{model.ListId}'");
@@ -448,6 +453,58 @@ namespace FRTools.Web.Controllers
             }
 
             return RedirectToRoute("PinglistDirect", new { model.ListId, model.SecretKey });
+        }
+
+        [Route("manage/category/create", Name = "PinglistCategoryAdd")]
+        [HttpPost]
+        [Authorize]
+        public ActionResult AddCategory(string name)
+        {
+            using (var ctx = new DataContext())
+            {
+                var user = ctx.Users.Find(HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>());
+                var cat = ctx.PinglistCategories.Add(new PinglistCategory { Name = name, Owner = user });
+                ctx.SaveChanges();
+                return Json(new { Result = 1, cat.Id, cat.Name });
+            }
+        }
+
+        [Route("manage/category/edit", Name = "PinglistCategoryEdit")]
+        [HttpPost]
+        [Authorize]
+        public ActionResult EditCategory(int id, string name)
+        {
+            using (var ctx = new DataContext())
+            {
+                var cat = ctx.PinglistCategories.Include(x => x.Owner).FirstOrDefault(x => x.Id == id);
+                if (cat.Owner.Id == HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>())
+                {
+                    cat.Name = name;
+                    ctx.SaveChanges();
+                    return Json(new { cat.Id, cat.Name });
+                }
+                else
+                    return Json(new { Result = -1 });
+            }
+        }
+
+        [Route("manage/category/delete", Name = "PinglistCategoryDelete")]
+        [HttpPost]
+        [Authorize]
+        public ActionResult DeleteCategory(int id)
+        {
+            using (var ctx = new DataContext())
+            {
+                var cat = ctx.PinglistCategories.Include(x => x.Owner).Include(x =>x.Pinglists).FirstOrDefault(x => x.Id == id);
+                if (cat.Owner.Id == HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>())
+                {
+                    foreach(var pinglist in cat.Pinglists)                    
+                        pinglist.PinglistCategory = null;
+                    ctx.PinglistCategories.Remove(cat);
+                    ctx.SaveChanges();
+                }
+                return Json(new { Result = -1 });
+            }
         }
 
         private bool HasAccess(Pinglist list, string secretKey)
