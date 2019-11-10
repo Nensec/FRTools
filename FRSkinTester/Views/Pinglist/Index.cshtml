@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Pinglist info";
 }
 
 @section meta{
@@ -34,5 +34,6 @@
                 <small><span style="display:inline-block; min-width:20px;">**</span>Users can only edit their own entry using a code they get when they add themselves, or are logged in with a linked FR account that is on the list</small><br />
                 <small><span style="display:inline-block; min-width:20px;">***</span>Requires a user account on this tool site and the lists to be linked to that account, otherwise it is up to the user to keep track of the list ids and secret keys</small><br />
             </p>
+            <p><a class="btn btn-primary" href="@Url.RouteUrl("PinglistCreate")">Create pinglist &raquo;</a></p>
         </div>
 </div>

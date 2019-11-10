@@ -28,6 +28,7 @@ namespace FRTools.Data
         public DbSet<Topic> Topics { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Pinglist> Pinglists { get; set; }
+        public DbSet<PinglistCategory> PinglistCategories { get; set; }
         public DbSet<FRUser> FRUsers { get; set; }
         public DbSet<Job> Jobs { get; set; }
 
