@@ -159,7 +159,8 @@ namespace FRTools.Data
         Lionfish,
         Laced,
         Leopard = 40,
-        Slime
+        Slime,
+        Fade
     }
 
     public enum TertiaryGene
@@ -220,7 +221,8 @@ namespace FRTools.Data
         Constellation,
         Edged,
         Clouded = 40,
-        Sludge
+        Sludge,
+        Blend
     }
 
     public enum Color
