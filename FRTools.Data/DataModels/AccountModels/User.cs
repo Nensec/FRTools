@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
+﻿using FRTools.Data.DataModels.FlightRisingModels;
+using Microsoft.AspNet.Identity.EntityFramework;
 using System.Collections.Generic;
 
 namespace FRTools.Data.DataModels

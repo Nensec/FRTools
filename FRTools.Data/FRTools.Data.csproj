@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.4.0-preview3-19553-01\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.0-preview3-19553-01\build\EntityFramework.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -12,6 +13,8 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,10 +35,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.4.0-preview3-19553-01\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.4.0-preview3-19553-01\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.2\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
@@ -61,17 +64,25 @@
     <Compile Include="DataModels\AccountModels\UserLogin.cs" />
     <Compile Include="DataModels\AccountModels\UserRole.cs" />
     <Compile Include="DataModels\DataModelEnums.cs" />
-    <Compile Include="DataModels\DragonCache.cs" />
-    <Compile Include="DataModels\FRUser.cs" />
+    <Compile Include="DataModels\DiscordModels\DiscordChannel.cs" />
+    <Compile Include="DataModels\DiscordModels\DiscordLog.cs" />
+    <Compile Include="DataModels\DiscordModels\DiscordRole.cs" />
+    <Compile Include="DataModels\DiscordModels\DiscordServer.cs" />
+    <Compile Include="DataModels\DiscordModels\DiscordSetting.cs" />
+    <Compile Include="DataModels\FlightRisingModels\DragonCache.cs" />
+    <Compile Include="DataModels\FlightRisingModels\FRDominance.cs" />
+    <Compile Include="DataModels\FlightRisingModels\FRUser.cs" />
     <Compile Include="DataModels\Job.cs" />
-    <Compile Include="DataModels\Pinglist.cs" />
-    <Compile Include="DataModels\PinglistCategory.cs" />
-    <Compile Include="DataModels\PingListEntry.cs" />
-    <Compile Include="DataModels\Post.cs" />
-    <Compile Include="DataModels\Preview.cs" />
-    <Compile Include="DataModels\Skin.cs" />
-    <Compile Include="DataModels\Topic.cs" />
+    <Compile Include="DataModels\PinglistModels\Pinglist.cs" />
+    <Compile Include="DataModels\PinglistModels\PinglistCategory.cs" />
+    <Compile Include="DataModels\PinglistModels\PingListEntry.cs" />
+    <Compile Include="DataModels\NewsReaderModels\Post.cs" />
+    <Compile Include="DataModels\SkintesterModels\Preview.cs" />
+    <Compile Include="DataModels\SkintesterModels\Skin.cs" />
+    <Compile Include="DataModels\NewsReaderModels\Topic.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="Messages\GenericMessage.cs" />
+    <Compile Include="Messages\MessageCategory.cs" />
     <Compile Include="Migrations\201812041640175_Skins table.cs" />
     <Compile Include="Migrations\201812041640175_Skins table.Designer.cs">
       <DependentUpon>201812041640175_Skins table.cs</DependentUpon>
@@ -148,6 +159,10 @@
     <Compile Include="Migrations\201911080632431_Pinglistcategory tables.Designer.cs">
       <DependentUpon>201911080632431_Pinglistcategory tables.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201911290220152_Discord and Dominance Tables.cs" />
+    <Compile Include="Migrations\201911290220152_Discord and Dominance Tables.designer.cs">
+      <DependentUpon>201911290220152_Discord and Dominance Tables.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -209,10 +224,22 @@
     <EmbeddedResource Include="Migrations\201911080632431_Pinglistcategory tables.resx">
       <DependentUpon>201911080632431_Pinglistcategory tables.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201911290220152_Discord and Dominance Tables.resx">
+      <DependentUpon>201911290220152_Discord and Dominance Tables.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.0-preview3-19553-01\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.0-preview3-19553-01\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.0-preview3-19553-01\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.0-preview3-19553-01\build\EntityFramework.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.4.0-preview3-19553-01\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.0-preview3-19553-01\build\EntityFramework.targets')" />
 </Project>

@@ -1,5 +1,6 @@
 ﻿using FRTools.Data;
 using FRTools.Data.DataModels;
+using FRTools.Data.DataModels.NewsReaderModels;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

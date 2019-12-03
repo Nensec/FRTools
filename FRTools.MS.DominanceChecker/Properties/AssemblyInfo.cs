@@ -1,14 +1,15 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("FRTools.Discord")]
+[assembly: AssemblyTitle("FRTools.MS.DominanceChecker")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("FRTools.Discord")]
+[assembly: AssemblyProduct("FRTools.MS.DominanceChecker")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("fef250c7-d806-4bc8-890f-740997b87714")]
+[assembly: Guid("3b044f6d-41ce-4b14-8031-193d03b16e83")]
 
 // Version information for an assembly consists of the following four values:
 //

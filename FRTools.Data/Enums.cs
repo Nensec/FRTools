@@ -95,6 +95,22 @@ namespace FRTools.Data
         Fire
     }
 
+    public enum Flight
+    {
+        Earth,
+        Plague,
+        Wind,
+        Water,
+        Lightning,
+        Ice,
+        Shadow,
+        Light,
+        Arcane,
+        Nature,
+        Fire,
+        Beastclans
+    }
+
     public enum EyeType
     {
         Common,
