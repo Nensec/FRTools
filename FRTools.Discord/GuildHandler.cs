@@ -146,11 +146,8 @@ namespace FRTools.Discord
                     {
                         if (result.Error == CommandError.UnknownCommand)
                         {
-#if DEBUG
-                            await msg.Channel.SendMessageAsync($"{result.Error}: { result.ErrorReason}");
-#else
-                            await msg.Channel.SendMessageAsync($"`{Funstuff.No}`").ContinueWith(x => x.Result.DelayedDelete(TimeSpan.FromSeconds(10)));
-#endif
+                            await msg.Channel.SendMessageAsync($"Unknown command")
+                                .ContinueWith(x => x.Result.DelayedDelete(TimeSpan.FromSeconds(10)));
                         }
                         else
                         {
