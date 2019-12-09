@@ -18,7 +18,8 @@ namespace FRTools.Data
         Coatl,
         Skydancer,
         Bogsneak,
-        Gaoler = 17
+        Gaoler = 17,
+        Banescale
     }
 
     public enum GaolerBodyGene
@@ -72,6 +73,57 @@ namespace FRTools.Data
         Scorpion,
         Wintercoat,
         Weathered,
+    }
+
+    public enum BanescaleBodyGene
+    {
+        Cherub = 43,
+        Jaguar,
+        Pinstripe,
+        Tiger,
+        Marble,
+        Laced,
+        Metallic,
+        Savannah,
+        Petals,
+        Skink,
+        Poison,
+        Chevron,
+        Candycane,
+        Ragged
+    }
+
+    public enum BanescaleWingGene
+    {
+        Rosette = 44,
+        Trail,
+        Stripes,
+        Edged,
+        Alloy,
+        Safari,
+        Butterfly,
+        Spinner,
+        Toxin,
+        Arrow,
+        Sugarplum,
+    }
+
+    public enum BanescaleTertGene
+    {
+        Blossom = 36,
+        Trimmings = 39,
+        Ringlets,
+        Fans,
+        Squiggle,
+        Filigree,
+        Lace,
+        Skeletal,
+        Contour,
+        Ghost,
+        Wraith,
+        Porcupine,
+        Crackle,
+        Plumage,
     }
 
     public enum Gender

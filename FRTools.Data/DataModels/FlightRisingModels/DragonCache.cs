@@ -40,11 +40,46 @@ namespace FRTools.Data.DataModels.FlightRisingModels
             if (split.Length > 3)
                 dragon.EyeType = (EyeType)int.Parse(split[3]);
             if (split.Length > 4)
-                dragon.BodyGene = (int)Enum.Parse(dragon.DragonType == DragonType.Gaoler ? typeof(GaolerBodyGene) : typeof(BodyGene), split[4]);
+            {
+                switch(dragon.DragonType)
+                {
+                    case DragonType.Gaoler:
+                        dragon.BodyGene = (int)Enum.Parse(typeof(GaolerBodyGene), split[4]);
+                        break;
+                    case DragonType.Banescale:
+                        dragon.BodyGene = (int)Enum.Parse(typeof(BanescaleBodyGene), split[4]);
+                        break;
+                    default:
+                        dragon.BodyGene = (int)Enum.Parse(typeof(BodyGene), split[4]);
+                        break;
+                }
+            }
             if (split.Length > 5)
-                dragon.WingGene = (int)Enum.Parse(dragon.DragonType == DragonType.Gaoler ? typeof(GaolerWingGene) : typeof(WingGene), split[5]);
+                switch (dragon.DragonType)
+                {
+                    case DragonType.Gaoler:
+                        dragon.WingGene = (int)Enum.Parse(typeof(GaolerWingGene), split[5]);
+                        break;
+                    case DragonType.Banescale:
+                        dragon.WingGene = (int)Enum.Parse(typeof(BanescaleWingGene), split[5]);
+                        break;
+                    default:
+                        dragon.WingGene = (int)Enum.Parse(typeof(WingGene), split[5]);
+                        break;
+                }
             if (split.Length > 6)
-                dragon.TertiaryGene = (int)Enum.Parse(dragon.DragonType == DragonType.Gaoler ? typeof(GaolerTertGene) : typeof(TertiaryGene), split[6]);
+                switch (dragon.DragonType)
+                {
+                    case DragonType.Gaoler:
+                        dragon.TertiaryGene = (int)Enum.Parse(typeof(GaolerTertGene), split[6]);
+                        break;
+                    case DragonType.Banescale:
+                        dragon.TertiaryGene = (int)Enum.Parse(typeof(BanescaleTertGene), split[6]);
+                        break;
+                    default:
+                        dragon.TertiaryGene = (int)Enum.Parse(typeof(TertiaryGene), split[6]);
+                        break;
+                }
             if (split.Length > 7)
                 dragon.BodyColor = (Color)int.Parse(split[7]);
             if (split.Length > 8)

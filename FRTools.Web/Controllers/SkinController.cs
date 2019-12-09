@@ -572,7 +572,7 @@ namespace FRTools.Web.Controllers
             return RedirectToRoute("ManageAccount");
         }
 
-        private bool IsAncientBreed(DragonType type) => type == DragonType.Gaoler;
+        private bool IsAncientBreed(DragonType type) => type == DragonType.Gaoler || type == DragonType.Banescale;
 
         private async Task<PreviewResult> GenerateOrFetchPreview(string skinId, int version, string dragonId, string dragonUrl, DragonCache dragon, string dressingRoomUrl = null, bool force = false)
         {
