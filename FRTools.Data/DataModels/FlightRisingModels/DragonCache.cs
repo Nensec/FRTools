@@ -95,12 +95,12 @@ namespace FRTools.Data.DataModels.FlightRisingModels
 
         public string ConstructImageString()
         {
-            if (SHA1Hash != null && SHA1Hash != "dummy")
+            if (SHA1Hash != null && !SHA1Hash.StartsWith("DUMMY"))
             {
                 return $"https://www1.flightrising.com/dgen/preview/dragon?age={(int)Age}&body={(int)BodyColor}&bodygene={BodyGene}&breed={(int)DragonType}&element={(int)Element}&eyetype={(int)EyeType}&gender={(int)Gender}&tert={(int)TertiaryColor}&tertgene={TertiaryGene}&winggene={WingGene}&wings={(int)WingColor}&auth={SHA1Hash}&dummyext=prev.png";
             }
             else
-                throw new Exception($"SHA1Hash '{SHA1Hash}' cannot be used to construct an image url");
+                return null;
         }
 
         public override string ToString() => $"{(int)Gender}_{(int)DragonType}_{(int)Element}_{(int)EyeType}_{Convert.ToInt32(BodyGene)}_{Convert.ToInt32(WingGene)}_{Convert.ToInt32(TertiaryGene)}_{(int)BodyColor}_{(int)WingColor}_{(int)TertiaryColor}_{(int)Age}_{Apparel?.Replace(',', '-') ?? ""}";

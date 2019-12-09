@@ -16,6 +16,7 @@ namespace FRTools.Web.Infrastructure
 {
     public static class FRHelpers
     {
+        //                                          https://www1.flightrising.com/dgen/dressing-room/dummy?breed=18&gender=0.png
         public const string DressingRoomDummyUrl = "https://www1.flightrising.com/dgen/dressing-room/dummy?breed={0}&gender={1}";
         public const string ScryerUrl = "https://flightrising.com/includes/scryer_getdragon.php?zord={0}";
         public const string DragonProfileUrl = "https://flightrising.com/main.php?dragon={0}";
@@ -153,7 +154,7 @@ namespace FRTools.Web.Infrastructure
 
             using (var client = new WebClient())
             {
-                var dwagonImageBytesTask = client.DownloadDataTaskAsync(dragon.ConstructImageString());
+                var dwagonImageBytesTask = client.DownloadDataTaskAsync(dragon.ConstructImageString() ?? string.Format(DressingRoomDummyUrl, (int)dragon.DragonType, (int)dragon.Gender));
                 var dwagonImageBytes = await dwagonImageBytesTask;
                 using (var memStream = new MemoryStream(dwagonImageBytes, false))
                     await azureImageService.WriteImage(azureUrl, memStream);
