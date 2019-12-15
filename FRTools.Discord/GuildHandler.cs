@@ -129,7 +129,7 @@ namespace FRTools.Discord
         internal async Task HandleMessage(SocketMessage msg)
         {
             int argPos = 0;
-            var prefix = _settingManager.GetSettingValue("GUILDCONFIG_PREFIX", _guild);
+            var prefix = _settingManager.GetSettingValue("GUILDCONFIG_PREFIX", _guild) ?? "$";
 
 #if DEBUG
             prefix = "!!!";
