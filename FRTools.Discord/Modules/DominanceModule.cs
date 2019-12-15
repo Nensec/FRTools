@@ -28,7 +28,7 @@ namespace FRTools.Discord.Modules
             var roleTypeReader = new RoleTypeReader<IRole>();
 
             IRole domRole = null;
-            IRole[] flightRoles = new IRole[10];
+            IRole[] flightRoles = new IRole[11];
 
             var embedBuilder = new EmbedBuilder()
                 .WithTitle("Auto-dominance setup")
@@ -74,11 +74,11 @@ namespace FRTools.Discord.Modules
             embedBuilder.Description = $"Great! I've found the role {domRole.Mention} and will set that as the role used for **Dominance** once this setup is finished.\r\n\nNext up are the flight roles. What is the role for **{Flight.Earth}**?";
             await interactiveMessage.ModifyAsync(x => x.Embed = embedBuilder.Build());
 
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i <= 10; i++)
             {
                 if (flightRoles.Any(x => x != null))
                 {
-                    embedBuilder.Description = $"Great! I've found the role {flightRoles[i - 1].Mention} and will set that as the role used for **{(Flight)i}** once this setup is finished.\r\n\nNext one! What is the role for **{(Flight)(i + 1)}**?";
+                    embedBuilder.Description = $"Great! I've found the role {flightRoles[i - 1].Mention} and will set that as the role used for **{(Flight)i}** once this setup is finished.\r\n\nNext one! What is the role for **{(Flight)i}**?";
                     await interactiveMessage.ModifyAsync(x => x.Embed = embedBuilder.Build());
                 }
                 while (true)
@@ -106,7 +106,7 @@ namespace FRTools.Discord.Modules
                     }
                     else
                     {
-                        embedBuilder.Description = $"I could not find a role with the following input: `{roleMessage.Content}`.\r\n\nPlease try again, you can provide a mention (`@role`) name (`role`) or the id of the role (`000000000000000000`).\r\nWhat is the role for **{(Flight)(i + 1)}**?";
+                        embedBuilder.Description = $"I could not find a role with the following input: `{roleMessage.Content}`.\r\n\nPlease try again, you can provide a mention (`@role`) name (`role`) or the id of the role (`000000000000000000`).\r\nWhat is the role for **{(Flight)i}**?";
                         if (Context.Guild.CurrentUser.GuildPermissions.ManageMessages)
                             await roleMessage.DeleteAsync();
 
@@ -117,7 +117,7 @@ namespace FRTools.Discord.Modules
 
             if (domRole != null && flightRoles.All(x => x != null))
             {
-                embedBuilder.Description = $"Great! I've found the role {flightRoles[9].Mention} and will set that as the role used for **{(Flight.Fire)}**.\r\nThat was the end of the setup, everything is now saved and when dominance rolls over on Flight Rising I will update your users' roles!";
+                embedBuilder.Description = $"Great! I've found the role {flightRoles[10].Mention} and will set that as the role used for **{(Flight.Fire)}**.\r\nThat was the end of the setup, everything is now saved and when dominance rolls over on Flight Rising I will update your users' roles!";
                 await interactiveMessage.ModifyAsync(x => x.Embed = embedBuilder.Build());
 
                 SettingManager.SetSettingValue("GUILDCONFIG_DOMINANCE", "true", Context.Guild);
