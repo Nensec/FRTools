@@ -12,6 +12,7 @@ using System.Web.Mvc;
 
 namespace FRTools.Web.Controllers
 {
+    [RoutePrefix("account")]
     public class AccountController : BaseController
     {
         private SignInManager<User, int> _signInManager;
@@ -22,7 +23,7 @@ namespace FRTools.Web.Controllers
         public UserManager<User, int> UserManager => _userManager ?? (_userManager = HttpContext.GetOwinContext().GetUserManager<UserManager<User, int>>());
 
         [Route("login", Name = "Login")]
-        public ActionResult Login(string returnUrl) => View(new ExternalLoginListViewModel { ReturnUrl = returnUrl });
+        public ActionResult Login(string returnUrl = null) => View(new ExternalLoginListViewModel { ReturnUrl = returnUrl });
 
         [Route("logout", Name = "LogOut")]
         public ActionResult LogOut()
@@ -35,13 +36,18 @@ namespace FRTools.Web.Controllers
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         [Route("externalLogin")]
-        public ActionResult ExternalLogin(string provider, string returnUrl) =>
-            new ChallengeResult(provider, Url.RouteUrl("ExternalLoginCallback", new { ReturnUrl = returnUrl }));
+        public ActionResult ExternalLogin(string provider, string returnUrl)
+        {
+            return new ChallengeResult(provider, Url.RouteUrl("ExternalLoginCallback", new { ReturnUrl = returnUrl }));
+        }
 
         [AllowAnonymous]
         [Route("externalLoginCallback", Name = "ExternalLoginCallback")]
-        public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
+        public async Task<ActionResult> ExternalLoginCallback(string returnUrl, string error)
         {
+            if (error != null)
+                return Content(error);
+
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
             if (loginInfo == null)
             {

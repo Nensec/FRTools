@@ -1,66 +1,50 @@
 @font-face {
-  font-family: 'social_icons';
-  src: url('../fonts/social_icons.eot?78056841');
-  src: url('../fonts/social_icons.eot?78056841#iefix') format('embedded-opentype'),
-       url('../fonts/social_icons.woff2?78056841') format('woff2'),
-       url('../fonts/social_icons.woff?78056841') format('woff'),
-       url('../fonts/social_icons.ttf?78056841') format('truetype'),
-       url('../fonts/social_icons.svg?78056841#social_icons') format('svg');
-  font-weight: normal;
-  font-style: normal;
+    font-family: 'icomoon';
+    src: url('../fonts/icomoon.eot?yacus7');
+    src: url('../fonts/icomoon.eot?yacus7#iefix') format('embedded-opentype'), url('../fonts/icomoon.ttf?yacus7') format('truetype'), url('../fonts/icomoon.woff?yacus7') format('woff'), url('../fonts/icomoon.svg?yacus7#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
 }
-/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
-/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
-/*
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-  @font-face {
-    font-family: 'social_icons';
-    src: url('../font/social_icons.svg?78056841#social_icons') format('svg');
-  }
+
+[class^="icon-"], [class*=" icon-"] {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'icomoon' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
-*/
- 
- [class^="icon-"]:before, [class*=" icon-"]:before {
-  font-family: "social_icons";
-  font-style: normal;
-  font-weight: normal;
-  speak: none;
- 
-  display: inline-block;
-  text-decoration: inherit;
-  width: 1em;
-  margin-right: .2em;
-  text-align: center;
-  /* opacity: .8; */
- 
-  /* For safety - reset parent styles, that can break glyph codes*/
-  font-variant: normal;
-  text-transform: none;
- 
-  /* fix buttons height, for twitter bootstrap */
-  line-height: 1em;
- 
-  /* Animation center compensation - margins should be symmetric */
-  /* remove if not needed */
-  margin-left: .2em;
- 
-  /* you can be more comfortable with increased icons size */
-  /* font-size: 120%; */
- 
-  /* Font smoothing. That was taken from TWBS */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
- 
-  /* Uncomment for 3D effect */
-  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+
+.icon-microsoft:before {
+    content: "\e900";
 }
- 
-.icon-twitter:before { content: '\f099'; } /* '' */
-.icon-facebook:before { content: '\f09a'; } /* '' */
-.icon-tumblr:before { content: '\f173'; } /* '' */
-.icon-microsoft:before { content: '\f17a'; } /* '' */
-.icon-google:before { content: '\f1a0'; } /* '' */
-.icon-deviantart:before { content: '\f1bd'; } /* '' */
+
+.icon-discord:before {
+    content: "\e901";
+}
+
+.icon-google:before {
+    content: "\ea88";
+}
+
+.icon-twitter:before {
+    content: "\ea96";
+}
+
+.icon-deviantart:before {
+    content: "\eaaa";
+}
+
+.icon-tumblr:before {
+    content: "\eab9";
+}
+
 
 .btn-social {
     position: relative;
@@ -374,5 +358,49 @@
 
     .btn-twitter .badge {
         color: #55acee;
+        background-color: #fff
+    }
+
+.btn-discord {
+    color: #fff;
+    background-color: #7289DA;
+    border-color: rgba(0,0,0,0.2)
+}
+
+    .btn-discord:focus, .btn-discord.focus {
+        color: #fff;
+        background-color: #637edc;
+        border-color: rgba(0,0,0,0.2)
+    }
+
+    .btn-discord:hover {
+        color: #fff;
+        background-color: #637edc;
+        border-color: rgba(0,0,0,0.2)
+    }
+
+    .btn-discord:active, .btn-discord.active, .open > .dropdown-toggle.btn-discord {
+        color: #fff;
+        background-color: #637edc;
+        border-color: rgba(0,0,0,0.2)
+    }
+
+        .btn-discord:active:hover, .btn-discord.active:hover, .open > .dropdown-toggle.btn-discord:hover, .btn-discord:active:focus, .btn-discord.active:focus, .open > .dropdown-toggle.btn-discord:focus, .btn-discord:active.focus, .btn-discord.active.focus, .open > .dropdown-toggle.btn-discord.focus {
+            color: #fff;
+            background-color: #5371d8;
+            border-color: rgba(0,0,0,0.2)
+        }
+
+    .btn-discord:active, .btn-discord.active, .open > .dropdown-toggle.btn-discord {
+        background-image: none
+    }
+
+    .btn-discord.disabled:hover, .btn-discord[disabled]:hover, fieldset[disabled] .btn-discord:hover, .btn-discord.disabled:focus, .btn-discord[disabled]:focus, fieldset[disabled] .btn-discord:focus, .btn-discord.disabled.focus, .btn-discord[disabled].focus, fieldset[disabled] .btn-discord.focus {
+        background-color: #7289DA;
+        border-color: rgba(0,0,0,0.2)
+    }
+
+    .btn-discord .badge {
+        color: #7289DA;
         background-color: #fff
     }

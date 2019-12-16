@@ -11,11 +11,14 @@ using Owin;
 using Owin.Security.Providers.DeviantArt;
 using Owin.Security.Providers.Google;
 using Owin.Security.Providers.Tumblr;
+using Owin.Security.Providers.Discord;
 using System;
 using System.Configuration;
 using System.Linq;
 using System.Security.Claims;
 using System.Web.Helpers;
+using Owin.Security.Providers.Discord.Provider;
+using System.Threading.Tasks;
 
 [assembly: OwinStartup(typeof(FRTools.App_Start.Startup))]
 namespace FRTools.App_Start
@@ -43,7 +46,7 @@ namespace FRTools.App_Start
 
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
-            AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.NameIdentifier;
+            //AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.NameIdentifier;
 
             app.UseGoogleAuthentication(new GoogleAuthenticationOptions
             {
@@ -74,6 +77,16 @@ namespace FRTools.App_Start
                 ClientId = ConfigurationManager.AppSettings["DeviantArtClientId"],
                 ClientSecret = ConfigurationManager.AppSettings["DeviantArtSecret"]
             });
+
+            var discordOptions = new DiscordAuthenticationOptions
+            {
+                ClientId = ConfigurationManager.AppSettings["DiscordClientId"],
+                ClientSecret = ConfigurationManager.AppSettings["DiscordSecret"],
+            };
+
+            discordOptions.Scope.Clear();
+            discordOptions.Scope.Add("identify");
+            app.UseDiscordAuthentication(discordOptions);
 
             using (var ctx = new DataContext())
             {
