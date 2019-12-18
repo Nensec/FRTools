@@ -263,3 +263,4 @@ __pycache__/
 debug.config
 Web.Release.config
 Web.Debug.config
+/DiscordMetadata.json

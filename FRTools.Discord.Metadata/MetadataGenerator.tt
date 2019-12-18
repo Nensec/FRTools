@@ -1,0 +1,74 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="$(packagesFolder)\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll" #>
+<#@ assembly name="$(discordBot)\FRTools.Discord.exe" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Threading.Tasks" #>
+<#@ import namespace="System.Reflection" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Newtonsoft.Json" #>
+<#@ import namespace="FRTools.Discord.Modules" #>
+<#@ output extension=".json" #>
+<#
+var botAssembly = Assembly.GetAssembly(typeof(BaseModule));
+var modules = botAssembly.GetTypes().Where(x => x.BaseType == typeof(BaseModule));
+var output = new List<ModuleTemplate>();
+
+foreach(var module in modules)
+{
+	var moduleAttributes = module.GetCustomAttributes();
+	
+	var moduleTemplate = new ModuleTemplate();
+
+	var nameAttribute = moduleAttributes.FirstOrDefault(x => x.GetType().Name == "NameAttribute");
+	moduleTemplate.Name = (string)nameAttribute.GetType().GetProperty("Text").GetValue(nameAttribute);
+
+	var summaryAttribute = moduleAttributes.FirstOrDefault(x => x.GetType().Name == "SummaryAttribute");
+	if(summaryAttribute != null)
+		moduleTemplate.Description = (string)summaryAttribute.GetType().GetProperty("Text").GetValue(summaryAttribute);
+	
+	var methods = module.GetMethods((BindingFlags)20).Where(x => x.ReturnType == typeof(Task));
+	foreach(var method in methods)
+	{
+		var commandTemplate = new CommandTemplate();
+		var methodAttributes = method.GetCustomAttributes();
+
+		var cmdNameAttribute = methodAttributes.FirstOrDefault(x => x.GetType().Name == "NameAttribute");
+		commandTemplate.Name = (string)cmdNameAttribute.GetType().GetProperty("Text").GetValue(cmdNameAttribute);
+
+		var cmdSummaryAttribute = methodAttributes.FirstOrDefault(x => x.GetType().Name == "SummaryAttribute");
+		if(cmdSummaryAttribute != null)
+			commandTemplate.Description = (string)cmdSummaryAttribute.GetType().GetProperty("Text").GetValue(cmdSummaryAttribute);
+
+		moduleTemplate.Commands.Add(commandTemplate);
+	}
+
+	output.Add(moduleTemplate);
+}
+var json = JsonConvert.SerializeObject(output);
+#>
+<#= json #>
+<#+
+	class ModuleTemplate
+	{
+		public string Name { get; set; }
+		public string Description { get; set; }
+		public List<CommandTemplate> Commands { get; set; } = new List<CommandTemplate>();
+	}
+
+	class CommandTemplate
+	{
+		public string Name { get; set; }
+		public string Description { get; set; }
+		public bool RequireAdmin { get; set; }
+		public bool RequireOwner { get; set; }
+		public List<SettingTemplate> Settings { get; set; } = new List<SettingTemplate>();		
+	}
+
+	class SettingTemplate
+	{
+		public string Key { get; set; }
+		public Type ValueType { get; set; }
+	}
+#>

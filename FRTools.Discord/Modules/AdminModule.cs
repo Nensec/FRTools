@@ -15,7 +15,7 @@ namespace FRTools.Discord.Modules
         {            
         }
 
-        [Command("setconfig")]
+        [Name("Set Config"), Command("setconfig")]
         public Task SetConfig(string key, [Remainder]string value)
         {
             if (Context.Channel is IDMChannel)
@@ -25,7 +25,7 @@ namespace FRTools.Discord.Modules
             return ReplyAsync($"Updated Key `{key}` with value `{value}` for guild `{Context.Guild.Name}`");
         }
 
-        [Command("setglobalconfig")]
+        [Name("Set Global Config"), Command("setglobalconfig")]
         public Task SetGlobalConfig(string key, [Remainder]string value)
         {
             SettingManager.SetSettingValue(key, value);

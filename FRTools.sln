@@ -19,6 +19,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Micro Services", "Micro Ser
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools.MS.DominanceChecker", "FRTools.MS.DominanceChecker\FRTools.MS.DominanceChecker.csproj", "{3B044F6D-41CE-4B14-8031-193D03B16E83}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools.Discord.Metadata", "FRTools.Discord.Metadata\FRTools.Discord.Metadata.csproj", "{C3D76C34-F2FB-4B34-8E1C-26D92EB24B2F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FEF250C7-D806-4BC8-890F-740997B87714} = {FEF250C7-D806-4BC8-890F-740997B87714}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +50,10 @@ Global
 		{3B044F6D-41CE-4B14-8031-193D03B16E83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B044F6D-41CE-4B14-8031-193D03B16E83}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B044F6D-41CE-4B14-8031-193D03B16E83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3D76C34-F2FB-4B34-8E1C-26D92EB24B2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3D76C34-F2FB-4B34-8E1C-26D92EB24B2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3D76C34-F2FB-4B34-8E1C-26D92EB24B2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3D76C34-F2FB-4B34-8E1C-26D92EB24B2F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
