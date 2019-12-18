@@ -1,0 +1,23 @@
+﻿@{
+    ViewBag.Title = "Discord bot info";
+}
+
+@section meta{
+    <meta property="og:title" content="FRTools Discord bot" />
+    <meta property="og:image" content="/Content/frtools_discord_bot.png" />
+    <meta property="og:url" content="@Url.RouteUrl("DiscordHome")" />
+    <meta property="og:description" content="A discord bot that provides various Flight Rising related features" />
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>Discord bot</h4>
+    </div>
+    <div class="panel-body">
+        <p>
+            FRTools discord bot is designed to make handling Flight Rising related things, outside Flight Rising, easier.
+        </p>
+        <p>Visit the <a href="@Url.RouteUrl("DiscordHelp")">help page</a> to get detailed information on the avaiable features and commands</p>
+        <p><a class="btn btn-primary" href="https://discordapp.com/api/oauth2/authorize?client_id=648225754093715528&permissions=268789824&scope=bot">Invite bot &raquo;</a></p>
+    </div>
+</div>

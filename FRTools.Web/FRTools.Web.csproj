@@ -247,6 +247,7 @@
     <Compile Include="Infrastructure\Helpers\CopyBoxHelpers.cs" />
     <Compile Include="Infrastructure\Managers\JobManager.cs" />
     <Compile Include="Infrastructure\Managers\UserManager.cs" />
+    <Compile Include="Infrastructure\MustHaveLoginProviderAttribute.cs" />
     <Compile Include="Infrastructure\PreviewResult.cs" />
     <Compile Include="Infrastructure\SmartRequiredAttribute.cs" />
     <Compile Include="Models\AccountModels.cs" />
@@ -268,6 +269,7 @@
     <Content Include="Content\frskintester_embed.png" />
     <Content Include="Content\frtools.png" />
     <Content Include="Content\frtools.svg" />
+    <Content Include="Content\frtools_discord_bot.png" />
     <Content Include="Content\frtools_embed.png" />
     <Content Include="Content\nodata.png" />
     <Content Include="favicon-16x16.png" />
@@ -788,6 +790,7 @@
     <Content Include="Views\Pinglist\PrivateViewList.cshtml" />
     <Content Include="Views\Pinglist\List.cshtml" />
     <Content Include="Views\Pinglist\LinkExisting.cshtml" />
+    <Content Include="Views\Discord\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

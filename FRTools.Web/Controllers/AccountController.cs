@@ -45,9 +45,6 @@ namespace FRTools.Web.Controllers
         [Route("externalLoginCallback", Name = "ExternalLoginCallback")]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl, string error)
         {
-            if (error != null)
-                return Content(error);
-
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
             if (loginInfo == null)
             {
