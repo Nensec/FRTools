@@ -251,6 +251,7 @@
     <Compile Include="Infrastructure\PreviewResult.cs" />
     <Compile Include="Infrastructure\SmartRequiredAttribute.cs" />
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\DiscordModels.cs" />
     <Compile Include="Models\ManageModels.cs" />
     <Compile Include="Models\NewsModels.cs" />
     <Compile Include="Models\PinglistModels.cs" />
@@ -863,6 +864,9 @@
     <Error Condition="!Exists('..\packages\EntityFramework.6.4.0-preview3-19553-01\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.0-preview3-19553-01\build\EntityFramework.targets'))" />
   </Target>
   <Import Project="..\packages\EntityFramework.6.4.0-preview3-19553-01\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.0-preview3-19553-01\build\EntityFramework.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(SolutionDir)\DiscordMetadata.json" "$(TargetDir)\DiscordMetadata.json"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

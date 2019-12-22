@@ -13,5 +13,6 @@ namespace FRTools.Data.DataModels.DiscordModels
         public string Name { get; set; }
         public ICollection<DiscordChannel> Channels { get; set; } = new HashSet<DiscordChannel>();
         public ICollection<DiscordRole> Roles { get; set; } = new HashSet<DiscordRole>();
+        public ICollection<DiscordServerUser> Users { get; set; } = new HashSet<DiscordServerUser>();
     }
 }

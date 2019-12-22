@@ -27,7 +27,31 @@ foreach(var module in modules)
 	var summaryAttribute = moduleAttributes.FirstOrDefault(x => x.GetType().Name == "SummaryAttribute");
 	if(summaryAttribute != null)
 		moduleTemplate.Description = (string)summaryAttribute.GetType().GetProperty("Text").GetValue(summaryAttribute);
+
+	var groupAttribute = moduleAttributes.FirstOrDefault(x => x.GetType().Name == "GroupAttribute");
+	if(groupAttribute != null)
+	{
+		var group = (string)groupAttribute.GetType().GetProperty("Prefix").GetValue(groupAttribute);
+		var aliasAttribute = moduleAttributes.FirstOrDefault(x => x.GetType().Name == "AliasAttribute");		
+		moduleTemplate.Aliases = aliasAttribute == null ? new[] { group } : ((string[])aliasAttribute.GetType().GetProperty("Aliases").GetValue(aliasAttribute)).Concat(new[] { group }).ToArray();
+	}
 	
+	var reqOwnerAttribute = moduleAttributes.FirstOrDefault(x => x.GetType().Name == "RequireOwnerAttribute");
+	var reqPermAttributes = moduleAttributes.Where(x => x.GetType().Name == "RequireUserPermissionAttribute");
+	long guildPermRequired = 0, channelPermRequired = 0;
+	if(reqPermAttributes.Any())
+	{
+		guildPermRequired = reqPermAttributes.Select(x => {
+			var guildPerm = x.GetType().GetProperty("GuildPermission").GetValue(x);
+			return guildPerm != null ? (long)(ulong)guildPerm : 0;
+		}).Sum();
+
+		channelPermRequired = reqPermAttributes.Select(x => {
+			var channelPerm = x.GetType().GetProperty("ChannelPermission").GetValue(x);
+			return channelPerm != null ? (long)(ulong)channelPerm : 0;
+		}).Sum();
+	}
+
 	var methods = module.GetMethods((BindingFlags)20).Where(x => x.ReturnType == typeof(Task));
 	foreach(var method in methods)
 	{
@@ -40,6 +64,32 @@ foreach(var module in modules)
 		var cmdSummaryAttribute = methodAttributes.FirstOrDefault(x => x.GetType().Name == "SummaryAttribute");
 		if(cmdSummaryAttribute != null)
 			commandTemplate.Description = (string)cmdSummaryAttribute.GetType().GetProperty("Text").GetValue(cmdSummaryAttribute);
+
+		var commandAttribute = methodAttributes.FirstOrDefault(x => x.GetType().Name == "CommandAttribute");
+		var commandName = (string)commandAttribute.GetType().GetProperty("Text").GetValue(commandAttribute);
+
+		var cmdAliasAttribute = methodAttributes.FirstOrDefault(x => x.GetType().Name == "AliasAttribute");
+		commandTemplate.Aliases = cmdAliasAttribute == null ? new[] { commandName } : ((string[])cmdAliasAttribute.GetType().GetProperty("Aliases").GetValue(cmdAliasAttribute)).Concat(new[] { commandName }).ToArray();
+
+		commandTemplate.RequireOwner = reqOwnerAttribute != null || methodAttributes.Any(x => x.GetType().Name == "RequireOwnerAttribute");
+
+		var cmdReqPermAttributes = methodAttributes.Where(x => x.GetType().Name == "RequireUserPermissionAttribute");
+		long cmdGuildPermRequired = guildPermRequired, cmdChannelPermRequired = channelPermRequired;
+		if(cmdReqPermAttributes.Any())
+		{
+			cmdGuildPermRequired += cmdReqPermAttributes.Select(x => {
+				var guildPerm = x.GetType().GetProperty("GuildPermission").GetValue(x);
+				return guildPerm != null ? (long)(ulong)guildPerm : 0;
+			}).Sum();
+
+			cmdChannelPermRequired += cmdReqPermAttributes.Select(x => {
+				var channelPerm = x.GetType().GetProperty("ChannelPermission").GetValue(x);
+				return channelPerm != null ? (long)(ulong)channelPerm : 0;
+			}).Sum();
+		}
+
+		commandTemplate.RequireGuildPermission = cmdGuildPermRequired;
+		commandTemplate.RequireChannelPermission = cmdChannelPermRequired;
 
 		moduleTemplate.Commands.Add(commandTemplate);
 	}
@@ -54,6 +104,7 @@ var json = JsonConvert.SerializeObject(output);
 	{
 		public string Name { get; set; }
 		public string Description { get; set; }
+		public string[] Aliases { get; set; }
 		public List<CommandTemplate> Commands { get; set; } = new List<CommandTemplate>();
 	}
 
@@ -61,14 +112,9 @@ var json = JsonConvert.SerializeObject(output);
 	{
 		public string Name { get; set; }
 		public string Description { get; set; }
-		public bool RequireAdmin { get; set; }
+		public string[] Aliases { get; set; }
+		public long RequireGuildPermission { get; set; }
+		public long RequireChannelPermission { get; set; }
 		public bool RequireOwner { get; set; }
-		public List<SettingTemplate> Settings { get; set; } = new List<SettingTemplate>();		
-	}
-
-	class SettingTemplate
-	{
-		public string Key { get; set; }
-		public Type ValueType { get; set; }
 	}
 #>

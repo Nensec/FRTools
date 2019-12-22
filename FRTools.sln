@@ -3,6 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools.Web", "FRTools.Web\FRTools.Web.csproj", "{5687D887-1F84-41C7-8921-EF5BEC7D4FC8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C3D76C34-F2FB-4B34-8E1C-26D92EB24B2F} = {C3D76C34-F2FB-4B34-8E1C-26D92EB24B2F}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools.Data", "FRTools.Data\FRTools.Data.csproj", "{79570267-A759-4BE0-A466-17B3BAA67C03}"
 EndProject
@@ -12,6 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools.Discord", "FRTools.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{717F4F05-C6A5-43BE-9C81-4B25A18B9955}"
 	ProjectSection(SolutionItems) = preProject
+		DiscordMetadata.json = DiscordMetadata.json
 		nuget.config = nuget.config
 	EndProjectSection
 EndProject

@@ -9,7 +9,6 @@ using FRTools.Data.DataModels.DiscordModels;
 using FRTools.Data.Messages;
 using FRTools.Discord.Infrastructure;
 using System.Data.Entity;
-using Unity;
 using FRTools.Discord.Handlers;
 
 namespace FRTools.Discord
@@ -75,7 +74,23 @@ namespace FRTools.Discord
 
         internal async Task HandleMemberUpdate(SocketGuildUser userOld, SocketGuildUser userNew)
         {
-            await Task.CompletedTask;
+            using (var ctx = new DataContext())
+            {
+                var dbServer = ctx.DiscordServers.SingleOrDefault(x => x.ServerId == (long)userNew.Guild.Id);
+                var dbServerUser = dbServer.Users.FirstOrDefault(x => x.User.UserId == (long)userNew.Id);
+                if (dbServerUser == null)
+                {
+                    var dbUser = ctx.DiscordUsers.FirstOrDefault(x => x.UserId == (long)userNew.Id);
+                    if (dbUser == null)
+                        ctx.DiscordUsers.Add(dbUser = new DiscordUser { UserId = (long)userNew.Id });
+                    dbServer.Users.Add(dbServerUser = new DiscordServerUser { User = dbUser });
+                }
+                dbServerUser.Nickname = userNew.Nickname;
+                dbServerUser.Roles = dbServer.Roles.Where(x => userNew.Roles.Any(r => (long)r.Id == x.RoleId)).ToList();
+                dbServerUser.User.Username = userNew.Username;
+                dbServerUser.User.Discriminator = userNew.DiscriminatorValue;
+                await ctx.SaveChangesAsync();
+            }
         }
 
         internal async Task HandleUpdateGuild(SocketGuild guildOld, SocketGuild guildNew)
@@ -125,7 +140,7 @@ namespace FRTools.Discord
                     await HandleChannelCreated(guildChannelNew);
             }
         }
-        internal Task HandleUserUpdated(SocketGuildUser userOld, SocketGuildUser userNew) => Task.CompletedTask;
+
         internal async Task HandleMessage(SocketMessage msg)
         {
             int argPos = 0;
@@ -158,11 +173,44 @@ namespace FRTools.Discord
             }
         }
 
-        internal Task HandleReactionsCleared(Cacheable<IUserMessage, ulong> message, SocketGuildChannel guildChannel) => throw new NotImplementedException();
+        internal async Task HandleUserJoin(SocketGuildUser user)
+        {
+            using (var ctx = new DataContext())
+            {
+                var dbServer = ctx.DiscordServers.SingleOrDefault(x => x.ServerId == (long)user.Guild.Id);
+                var dbServerUser = dbServer.Users.FirstOrDefault(x => x.User.UserId == (long)user.Id);
+                if (dbServerUser == null)
+                {
+                    var dbUser = ctx.DiscordUsers.FirstOrDefault(x => x.UserId == (long)user.Id);
+                    if (dbUser == null)
+                        ctx.DiscordUsers.Add(dbUser = new DiscordUser { UserId = (long)user.Id });
+                    dbServer.Users.Add(dbServerUser = new DiscordServerUser { User = dbUser });
+                }
+                dbServerUser.Nickname = user.Nickname;
+                dbServerUser.Roles = dbServer.Roles.Where(x => user.Roles.Any(r => (long)r.Id == x.RoleId)).ToList();
+                dbServerUser.User.Username = user.Username;
+                dbServerUser.User.Discriminator = user.DiscriminatorValue;
+                await ctx.SaveChangesAsync();
+            }
+        }
+
+        internal async Task HandleUserLeave(SocketGuildUser user)
+        {
+            using (var ctx = new DataContext())
+            {
+                var dbServer = ctx.DiscordServers.SingleOrDefault(x => x.ServerId == (long)user.Guild.Id);
+                var dbServerUser = dbServer.Users.FirstOrDefault(x => x.User.UserId == (long)user.Id);
+                if (dbServerUser == null)                
+                    return;
+
+                dbServer.Users.Remove(dbServerUser);
+                await ctx.SaveChangesAsync();
+            }
+        }
 
         internal async Task HandleDominanceUpdate(GenericMessage dominanceUpdate)
         {
-            if(dominanceUpdate.Message == "Updated")
+            if (dominanceUpdate.Message == "Updated")
             {
                 await DominanceHandler.UpdateGuild(_settingManager, _guild);
             }
@@ -210,11 +258,27 @@ namespace FRTools.Discord
                         var dbChannel = dbServer.Channels.FirstOrDefault(x => x.ChannelId == (long)channel.Id);
                         if (dbChannel == null)
                         {
-                            dbServer.Channels.Add((dbChannel = new DiscordChannel()));
+                            dbServer.Channels.Add(dbChannel = new DiscordChannel());
                             dbChannel.ChannelId = (long)channel.Id;
                         }
 
                         dbChannel.Name = channel.Name;
+                    }
+
+                    foreach (var user in _guild.Users)
+                    {
+                        var dbServerUser = dbServer.Users.FirstOrDefault(x => x.User.UserId == (long)user.Id);
+                        if (dbServerUser == null)
+                        {
+                            var dbUser = ctx.DiscordUsers.FirstOrDefault(x => x.UserId == (long)user.Id);
+                            if (dbUser == null)
+                                ctx.DiscordUsers.Add(dbUser = new DiscordUser { UserId = (long)user.Id });
+                            dbServer.Users.Add(dbServerUser = new DiscordServerUser { User = dbUser });
+                        }
+                        dbServerUser.Nickname = user.Nickname;
+                        dbServerUser.Roles = dbServer.Roles.Where(x => user.Roles.Any(r => (long)r.Id == x.RoleId)).ToList();
+                        dbServerUser.User.Username = user.Username;
+                        dbServerUser.User.Discriminator = user.DiscriminatorValue;
                     }
 
                     ctx.SaveChanges();
@@ -224,8 +288,8 @@ namespace FRTools.Discord
 
         #region Unused
         internal Task Unavailable() => Task.CompletedTask;
-        internal Task HandleUserJoin(SocketGuildUser user) => Task.CompletedTask;
-        internal Task HandleUserLeave(SocketGuildUser user) => Task.CompletedTask;
+        internal Task HandleReactionsCleared(Cacheable<IUserMessage, ulong> message, SocketGuildChannel guildChannel) => throw new NotImplementedException();
+
         internal Task HandleUserBanned(SocketUser user) => Task.CompletedTask;
         internal Task HandleUserUnbanned(SocketUser user) => Task.CompletedTask;
         internal Task HandleReactionAdded(Cacheable<IUserMessage, ulong> message, SocketGuildChannel guildChannel, SocketReaction reaction) => Task.CompletedTask;

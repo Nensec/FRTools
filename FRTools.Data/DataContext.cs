@@ -54,6 +54,7 @@ namespace FRTools.Data
         public DbSet<DiscordChannel> DiscordChannels { get; set; }
         public DbSet<DiscordRole> DiscordRoles { get; set; }
         public DbSet<DiscordSetting> DiscordSettings { get; set; }
+        public DbSet<DiscordUser> DiscordUsers { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

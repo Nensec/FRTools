@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -75,10 +76,9 @@ namespace FRTools.Discord
             client.ReactionAdded += async (message, channel, reaction) => await (channel is SocketGuildChannel guildChannel && _handlers.TryGetValue(guildChannel.Guild.Id, out var handler) ? handler.HandleReactionAdded(message, guildChannel, reaction) : Task.CompletedTask);
             client.ReactionRemoved += async (message, channel, reaction) => await (channel is SocketGuildChannel guildChannel && _handlers.TryGetValue(guildChannel.Guild.Id, out var handler) ? handler.HandleReactionRemoved(message, guildChannel, reaction) : Task.CompletedTask);
             client.ReactionsCleared += async (message, channel) => await (channel is SocketGuildChannel guildChannel && _handlers.TryGetValue(guildChannel.Guild.Id, out var handler) ? handler.HandleReactionsCleared(message, guildChannel) : Task.CompletedTask);
-            //client.UserUpdated += Client_UserUpdated;
+            client.UserUpdated += Client_UserUpdated;
             //client.Disconnected += async ex => await Client_Disconnected(ex);
             //client.Connected += async () => await Client_Connected();
-            client.GuildMemberUpdated += async (userOld, userNew) => await (_handlers.TryGetValue(userOld.Guild.Id, out var handler) ? handler.HandleUserUpdated(userOld, userNew) : Task.CompletedTask);
             client.UserVoiceStateUpdated += async (user, stateOld, stateNew) => await ((user is SocketGuildUser guildUser) ? _handlers.TryGetValue(guildUser.Guild.Id, out var handler) ? handler.HandlerUserVoiceUpdated(guildUser, stateOld, stateNew) : Task.CompletedTask : Task.CompletedTask);
 
             await client.LoginAsync(TokenType.Bot, ConfigurationManager.AppSettings["DiscordToken"]);
@@ -88,6 +88,20 @@ namespace FRTools.Discord
             _serviceBus.RegisterMessageHandler(ServiceBusMessageHandler, new MessageHandlerOptions(ServiceBusExceptionHandler) { AutoComplete = false, MaxConcurrentCalls = 1 });
 
             await Task.Delay(-1);
+        }
+
+        private static async Task Client_UserUpdated(SocketUser userOld, SocketUser userNew)
+        {
+            using (var ctx = new DataContext())
+            {
+                var dbUser = ctx.DiscordUsers.FirstOrDefault(x => x.UserId == (long)userNew.Id);
+                if (dbUser == null)
+                    ctx.DiscordUsers.Add(dbUser = new Data.DataModels.DiscordModels.DiscordUser { UserId = (long)userNew.Id });
+                dbUser.Username = userNew.Username;
+                dbUser.Discriminator = userNew.DiscriminatorValue;
+
+                await ctx.SaveChangesAsync();
+            }
         }
 
         private async static Task ServiceBusExceptionHandler(ExceptionReceivedEventArgs ex)
