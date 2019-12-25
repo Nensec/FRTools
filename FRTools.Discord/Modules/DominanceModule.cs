@@ -10,6 +10,20 @@ using FRTools.Discord.Infrastructure;
 namespace FRTools.Discord.Modules
 {
     [Name("Dominance"), Group("dominance"), Alias("dom"), Summary("Dominance related commands")]
+    [DiscordSetting("GUILDCONFIG_DOMINANCE", typeof(bool), "Automatic dominance", "Enables or disables automatically assigning the dominance role to the current week's dominance winner")]
+    [DiscordSetting("GUILDCONFIG_DOMINANCE_ANNOUNCE", typeof(bool), "Announce update", "Enables or disables the announcement of the current week's standings when the bot fetches the update. Requires $<GUILD:GUILDCONFIG_ANN_CHANNEL> to be set.")]
+    [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE", typeof(IRole), "Dominance role", "The dominance role")]
+    [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_0", typeof(IRole), "Earth role", "The Earth role")]
+    [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_1", typeof(IRole), "Plague role", "The Plague role")]
+    [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_2", typeof(IRole), "Wind role", "The Wind role")]
+    [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_3", typeof(IRole), "Water role", "The Water role")]
+    [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_4", typeof(IRole), "Lightning role", "The Lightning role")]
+    [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_5", typeof(IRole), "Ice role", "The Ice role")]
+    [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_6", typeof(IRole), "Shadow role", "The Shadow role")]
+    [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_7", typeof(IRole), "Light role", "The Light role")]
+    [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_8", typeof(IRole), "Arcane role", "The Arcane role")]
+    [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_0", typeof(IRole), "Nature role", "The Nature role")]
+    [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_10", typeof(IRole), "Fire role", "The Fire role")]
     public class DominanceModule : BaseModule
     {
         private readonly IServiceProvider _serviceProvider;
@@ -189,7 +203,7 @@ namespace FRTools.Discord.Modules
                 if (lastDominance != null)
                 {
                     var firstPlaceRole = Context.Guild.GetRole(ulong.Parse(SettingManager.GetSettingValue($"GUILDCONFIG_DOMINANCE_ROLE_{lastDominance.First}", Context.Guild)));
-                    if((Context.User as IGuildUser).RoleIds.Contains(firstPlaceRole.Id))
+                    if ((Context.User as IGuildUser).RoleIds.Contains(firstPlaceRole.Id))
                         await (Context.User as IGuildUser).AddRoleAsync(Context.Guild.GetRole(ulong.Parse(SettingManager.GetSettingValue("GUILDCONFIG_DOMINANCE_ROLE", Context.Guild))));
                 }
             }
@@ -200,7 +214,7 @@ namespace FRTools.Discord.Modules
         {
             var dominanceRole = SettingManager.GetSettingValue("GUILDCONFIG_DOMINANCE_ROLE", Context.Guild);
 
-            if(dominanceRole == null)
+            if (dominanceRole == null)
             {
                 await ReplyAsync("This server does not have a dominance role set that I know off. Have an administrator run `dom setup` first");
                 return;

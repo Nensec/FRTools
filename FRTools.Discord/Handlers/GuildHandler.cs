@@ -9,10 +9,11 @@ using FRTools.Data.DataModels.DiscordModels;
 using FRTools.Data.Messages;
 using FRTools.Discord.Infrastructure;
 using System.Data.Entity;
-using FRTools.Discord.Handlers;
 
-namespace FRTools.Discord
+namespace FRTools.Discord.Handlers
 {
+    [DiscordSetting("GUILDCONFIG_PREFIX", typeof(string), "Command prefix", "The prefix used by the bot to listen to commands")]
+    [DiscordSetting("GUILDCONFIG_ANN_CHANNEL", typeof(IChannel), "Announcement channel", "The channel the bot will post announcement messages")]
     public class GuildHandler
     {
         private readonly SocketGuild _guild;
@@ -215,7 +216,8 @@ namespace FRTools.Discord
                 await DominanceHandler.UpdateGuild(_settingManager, _guild);
             }
         }
-        internal async Task Available()
+
+        internal Task Available()
         {
             var _ = Task.Run(() =>
             {
@@ -284,18 +286,18 @@ namespace FRTools.Discord
                     ctx.SaveChanges();
                 }
             });
+
+            return Task.CompletedTask;
         }
 
         #region Unused
         internal Task Unavailable() => Task.CompletedTask;
         internal Task HandleReactionsCleared(Cacheable<IUserMessage, ulong> message, SocketGuildChannel guildChannel) => throw new NotImplementedException();
-
         internal Task HandleUserBanned(SocketUser user) => Task.CompletedTask;
         internal Task HandleUserUnbanned(SocketUser user) => Task.CompletedTask;
         internal Task HandleReactionAdded(Cacheable<IUserMessage, ulong> message, SocketGuildChannel guildChannel, SocketReaction reaction) => Task.CompletedTask;
         internal Task HandleReactionRemoved(Cacheable<IUserMessage, ulong> message, SocketGuildChannel guildChannel, SocketReaction reaction) => Task.CompletedTask;
         internal Task HandlerUserVoiceUpdated(SocketGuildUser guildUser, SocketVoiceState stateOld, SocketVoiceState stateNew) => Task.CompletedTask;
-
         #endregion
     }
 }

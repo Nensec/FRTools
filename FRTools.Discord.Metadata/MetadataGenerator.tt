@@ -13,7 +13,19 @@
 <#
 var botAssembly = Assembly.GetAssembly(typeof(BaseModule));
 var modules = botAssembly.GetTypes().Where(x => x.BaseType == typeof(BaseModule));
-var output = new List<ModuleTemplate>();
+var guildHandler = botAssembly.GetTypes().First(x => x.Name == "GuildHandler");
+var output = new DiscordMetadata();
+
+var botSettingsAttributes = guildHandler.GetCustomAttributes().Where(x => x.GetType().Name == "DiscordSettingAttribute");
+foreach(var botSettingAttribute in botSettingsAttributes)
+{
+	var settingTemplate = new SettingTemplate();
+	settingTemplate.Name = (string)botSettingAttribute.GetType().GetProperty("Name").GetValue(botSettingAttribute);
+	settingTemplate.Description = (string)botSettingAttribute.GetType().GetProperty("Description").GetValue(botSettingAttribute);
+	settingTemplate.Key = (string)botSettingAttribute.GetType().GetProperty("Key").GetValue(botSettingAttribute);
+	settingTemplate.Type = ((Type)botSettingAttribute.GetType().GetProperty("Type").GetValue(botSettingAttribute)).Name;
+	output.BotSettings.Add(settingTemplate);
+}
 
 foreach(var module in modules)
 {
@@ -23,6 +35,17 @@ foreach(var module in modules)
 
 	var nameAttribute = moduleAttributes.FirstOrDefault(x => x.GetType().Name == "NameAttribute");
 	moduleTemplate.Name = (string)nameAttribute.GetType().GetProperty("Text").GetValue(nameAttribute);
+
+	var settingAttributes = moduleAttributes.Where(x => x.GetType().Name == "DiscordSettingAttribute");
+	foreach(var settingAttribute in settingAttributes)
+	{
+		var settingTemplate = new SettingTemplate();
+		settingTemplate.Name = (string)settingAttribute.GetType().GetProperty("Name").GetValue(settingAttribute);
+		settingTemplate.Description = (string)settingAttribute.GetType().GetProperty("Description").GetValue(settingAttribute);
+		settingTemplate.Key = (string)settingAttribute.GetType().GetProperty("Key").GetValue(settingAttribute);
+		settingTemplate.Type = ((Type)settingAttribute.GetType().GetProperty("Type").GetValue(settingAttribute)).Name;
+		moduleTemplate.Settings.Add(settingTemplate);
+	}
 
 	var summaryAttribute = moduleAttributes.FirstOrDefault(x => x.GetType().Name == "SummaryAttribute");
 	if(summaryAttribute != null)
@@ -37,6 +60,7 @@ foreach(var module in modules)
 	}
 	
 	var reqOwnerAttribute = moduleAttributes.FirstOrDefault(x => x.GetType().Name == "RequireOwnerAttribute");
+	moduleTemplate.RequireOwner = reqOwnerAttribute != null;
 	var reqPermAttributes = moduleAttributes.Where(x => x.GetType().Name == "RequireUserPermissionAttribute");
 	long guildPermRequired = 0, channelPermRequired = 0;
 	if(reqPermAttributes.Any())
@@ -94,18 +118,26 @@ foreach(var module in modules)
 		moduleTemplate.Commands.Add(commandTemplate);
 	}
 
-	output.Add(moduleTemplate);
+	output.Modules.Add(moduleTemplate);
 }
 var json = JsonConvert.SerializeObject(output);
 #>
 <#= json #>
 <#+
+	class DiscordMetadata
+	{
+		public List<SettingTemplate> BotSettings { get; set; } = new List<SettingTemplate>();
+		public List<ModuleTemplate> Modules { get; set; } = new List<ModuleTemplate>();
+	}
+
 	class ModuleTemplate
 	{
 		public string Name { get; set; }
 		public string Description { get; set; }
 		public string[] Aliases { get; set; }
+		public bool RequireOwner { get; set; }
 		public List<CommandTemplate> Commands { get; set; } = new List<CommandTemplate>();
+		public List<SettingTemplate> Settings { get; set; } = new List<SettingTemplate>();
 	}
 
 	class CommandTemplate
@@ -116,5 +148,13 @@ var json = JsonConvert.SerializeObject(output);
 		public long RequireGuildPermission { get; set; }
 		public long RequireChannelPermission { get; set; }
 		public bool RequireOwner { get; set; }
+	}
+
+	class SettingTemplate
+	{
+		public string Name { get; set; }
+		public string Description { get; set; }
+		public string Type { get; set; }
+		public string Key { get; set; }
 	}
 #>

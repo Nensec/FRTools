@@ -284,9 +284,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GuildHandler.cs" />
+    <Compile Include="Handlers\GuildHandler.cs" />
     <Compile Include="Handlers\DominanceHandler.cs" />
     <Compile Include="Infrastructure\DiscordExtentions.cs" />
+    <Compile Include="Infrastructure\DiscordSettingAttribute.cs" />
     <Compile Include="Infrastructure\NoLogAttribute.cs" />
     <Compile Include="Infrastructure\SettingManager.cs" />
     <Compile Include="Infrastructure\UnityServiceProvider.cs" />
