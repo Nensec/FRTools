@@ -28,7 +28,12 @@ namespace FRTools.App_Start
         public void Configuration(IAppBuilder app)
         {
             app.CreatePerOwinContext(() => new DataContext());
-            app.CreatePerOwinContext<UserManager<User, int>>((o, c) => new UserManager<User, int>(new UserStore<User, Role, int, UserLogin, UserRole, UserClaim>(c.Get<DataContext>())));
+            app.CreatePerOwinContext<UserManager<User, int>>((o, c) =>
+            {
+                var userManager = new UserManager<User, int>(new UserStore<User, Role, int, UserLogin, UserRole, UserClaim>(c.Get<DataContext>()));
+                userManager.UserValidator = new UserValidator<User, int>(userManager) { AllowOnlyAlphanumericUserNames = false };
+                return userManager;
+            });
             app.CreatePerOwinContext<SignInManager<User, int>>((o, c) => new SignInManager<User, int>(c.GetUserManager<UserManager<User, int>>(), c.Authentication));
 
             app.UseCookieAuthentication(new CookieAuthenticationOptions

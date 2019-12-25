@@ -1,7 +1,13 @@
-﻿using FRTools.Web.Infrastructure;
+﻿using FRTools.Data.DataModels;
+using FRTools.Data.DataModels.DiscordModels;
+using FRTools.Web.Infrastructure;
 using FRTools.Web.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 
 namespace FRTools.Web.Controllers
@@ -9,14 +15,29 @@ namespace FRTools.Web.Controllers
     [RoutePrefix("discord")]
     public class DiscordController : BaseController
     {
-        private static readonly Dictionary<string, DiscordModule> _modules = new Dictionary<string, DiscordModule>();
+        static DiscordMetadata DiscordMetadata { get; }
 
         static DiscordController()
         {
             var json = System.IO.File.ReadAllText("DiscordMetadata.json");
-            var modules = JsonConvert.DeserializeObject<DiscordModule[]>(json);
-            foreach (var module in modules)
-                _modules.Add(module.Aliases[0], module);
+            DiscordMetadata = JsonConvert.DeserializeObject<DiscordMetadata>(json);
+        }
+
+        DiscordUser CurrentUser { get; }
+
+        public DiscordController()
+        {
+            if (Request.IsAuthenticated)
+            {
+                var owin = HttpContext.GetOwinContext();
+                var userManager = owin.GetUserManager<UserManager<User, int>>();
+                var logins = userManager.GetLogins(HttpContext.User.Identity.GetUserId<int>());
+                var discordLogin = logins.FirstOrDefault(x => x.LoginProvider.ToLower() == "discord");
+                if(discordLogin != null)
+                {
+                    var id = discordLogin.ProviderKey;
+                }
+            }
         }
 
         [Route(Name = "DiscordHome")]

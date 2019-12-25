@@ -9,6 +9,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Net;
+using Newtonsoft.Json;
 
 namespace FRTools.Web.Controllers
 {
@@ -39,6 +41,15 @@ namespace FRTools.Web.Controllers
         public ActionResult ExternalLogin(string provider, string returnUrl)
         {
             return new ChallengeResult(provider, Url.RouteUrl("ExternalLoginCallback", new { ReturnUrl = returnUrl }));
+        }
+
+        private static long GetDiscordUserId(ExternalLoginInfo loginInfo)
+        {
+            using (var client = new WebClient())
+            {
+                client.Headers.Add(HttpRequestHeader.Authorization, $"Bearer {loginInfo.ExternalIdentity.FindFirstValue("urn:discord:accesstoken")}");
+                return JsonConvert.DeserializeObject<dynamic>(client.DownloadString("https://discordapp.com/api/users/@me")).id;
+            }
         }
 
         [AllowAnonymous]
@@ -82,6 +93,13 @@ namespace FRTools.Web.Controllers
 
                         async Task<ActionResult> LoginUser(User user)
                         {
+                            switch (loginInfo.Login.LoginProvider.ToLower())
+                            {
+                                case "discord":
+                                    loginInfo.Login.ProviderKey = GetDiscordUserId(loginInfo).ToString();
+                                    break;
+                            }
+
                             var loginResult = await UserManager.AddLoginAsync(user.Id, loginInfo.Login);
                             if (loginResult.Succeeded)
                             {
@@ -95,16 +113,24 @@ namespace FRTools.Web.Controllers
                             }
                         };
 
-                        var (newUser, identity) = await CreateNewUser(loginInfo.DefaultUserName ?? loginInfo.ExternalIdentity.FindFirst(ClaimTypes.NameIdentifier).Value, loginInfo.Email);
+                        string externalUsername = loginInfo.DefaultUserName ?? loginInfo.ExternalIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+                        switch (loginInfo.Login.LoginProvider.ToLower())
+                        {
+                            case "discord":
+                                externalUsername = $"{loginInfo.ExternalIdentity.FindFirstValue("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")}#{loginInfo.ExternalIdentity.FindFirstValue("urn:discord:discriminator")}";
+                                break;
+                        }
+
+                        var (newUser, identity) = await CreateNewUser(externalUsername, loginInfo.Email);
 
                         if (newUser.Succeeded)
                             return await LoginUser(identity);
-                        else
+                        else if (!identity.UserName.All(x => char.IsDigit(x)))
                         {
                             (newUser, identity) = await CreateNewUser(identity.UserName + GenerateId(5), identity.Email);
                             if (newUser.Succeeded)
                                 return await LoginUser(identity);
-                            TempData["Error"] = $"Could not create user:<br/><br/><ul>{newUser.Errors.Select(x => $" < li >{ x}</ li > ")}</ul>";
+                            TempData["Error"] = $"Could not create user:<br/><br/><ul>{newUser.Errors.Select(x => $"<li>{x}</li>")}</ul>";
                             return RedirectToRoute("Login");
                         }
                     }

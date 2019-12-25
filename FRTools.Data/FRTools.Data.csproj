@@ -165,6 +165,10 @@
     <Compile Include="Migrations\201911290220152_Discord and Dominance Tables.designer.cs">
       <DependentUpon>201911290220152_Discord and Dominance Tables.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201912251904025_Discord user tables.cs" />
+    <Compile Include="Migrations\201912251904025_Discord user tables.designer.cs">
+      <DependentUpon>201912251904025_Discord user tables.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -228,6 +232,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201911290220152_Discord and Dominance Tables.resx">
       <DependentUpon>201911290220152_Discord and Dominance Tables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201912251904025_Discord user tables.resx">
+      <DependentUpon>201912251904025_Discord user tables.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
