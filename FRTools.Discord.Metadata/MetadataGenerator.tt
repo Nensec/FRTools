@@ -65,15 +65,14 @@ foreach(var module in modules)
 	long guildPermRequired = 0, channelPermRequired = 0;
 	if(reqPermAttributes.Any())
 	{
-		guildPermRequired = reqPermAttributes.Select(x => {
-			var guildPerm = x.GetType().GetProperty("GuildPermission").GetValue(x);
-			return guildPerm != null ? (long)(ulong)guildPerm : 0;
-		}).Sum();
+		foreach(var reqPermAttribute in reqPermAttributes)
+		{
+			var guildPerm = reqPermAttribute.GetType().GetProperty("GuildPermission").GetValue(reqPermAttribute);
+			guildPermRequired |= guildPerm != null ? (long)(ulong)guildPerm : 0;
 
-		channelPermRequired = reqPermAttributes.Select(x => {
-			var channelPerm = x.GetType().GetProperty("ChannelPermission").GetValue(x);
-			return channelPerm != null ? (long)(ulong)channelPerm : 0;
-		}).Sum();
+			var channelPerm = reqPermAttribute.GetType().GetProperty("ChannelPermission").GetValue(reqPermAttribute);
+			channelPermRequired |= channelPerm != null ? (long)(ulong)channelPerm : 0;
+		}
 	}
 
 	var methods = module.GetMethods((BindingFlags)20).Where(x => x.ReturnType == typeof(Task));
@@ -101,15 +100,14 @@ foreach(var module in modules)
 		long cmdGuildPermRequired = guildPermRequired, cmdChannelPermRequired = channelPermRequired;
 		if(cmdReqPermAttributes.Any())
 		{
-			cmdGuildPermRequired += cmdReqPermAttributes.Select(x => {
-				var guildPerm = x.GetType().GetProperty("GuildPermission").GetValue(x);
-				return guildPerm != null ? (long)(ulong)guildPerm : 0;
-			}).Sum();
+			foreach(var cmdReqPermAttribute in cmdReqPermAttributes)
+			{
+				var guildPerm = cmdReqPermAttribute.GetType().GetProperty("GuildPermission").GetValue(cmdReqPermAttribute);
+				cmdGuildPermRequired |= guildPerm != null ? (long)(ulong)guildPerm : 0;
 
-			cmdChannelPermRequired += cmdReqPermAttributes.Select(x => {
-				var channelPerm = x.GetType().GetProperty("ChannelPermission").GetValue(x);
-				return channelPerm != null ? (long)(ulong)channelPerm : 0;
-			}).Sum();
+				var channelPerm = cmdReqPermAttribute.GetType().GetProperty("ChannelPermission").GetValue(cmdReqPermAttribute);
+				cmdChannelPermRequired |= channelPerm != null ? (long)(ulong)channelPerm : 0;
+			}
 		}
 
 		commandTemplate.RequireGuildPermission = cmdGuildPermRequired;

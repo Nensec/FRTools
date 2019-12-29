@@ -13,7 +13,7 @@ namespace FRTools.Data.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201912251904025_Discord user tables"; }
+            get { return "201912262124031_Discord user tables"; }
         }
         
         string IMigrationMetadata.Source

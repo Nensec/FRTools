@@ -15,10 +15,6 @@ using Owin.Security.Providers.Discord;
 using System;
 using System.Configuration;
 using System.Linq;
-using System.Security.Claims;
-using System.Web.Helpers;
-using Owin.Security.Providers.Discord.Provider;
-using System.Threading.Tasks;
 
 [assembly: OwinStartup(typeof(FRTools.App_Start.Startup))]
 namespace FRTools.App_Start

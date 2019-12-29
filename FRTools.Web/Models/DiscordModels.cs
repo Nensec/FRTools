@@ -1,11 +1,12 @@
-﻿using System;
+﻿using FRTools.Data.DataModels.DiscordModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
 namespace FRTools.Web.Models
 {
-    class DiscordMetadata
+    public class DiscordMetadata
     {
         public List<DiscordSetting> BotSettings { get; set; } = new List<DiscordSetting>();
         public List<DiscordModule> Modules { get; set; } = new List<DiscordModule>();
@@ -19,7 +20,7 @@ namespace FRTools.Web.Models
         public string Key { get; set; }
     }
 
-    class DiscordModule
+    public class DiscordModule
     {
         public string Name { get; set; }
         public string Description { get; set; }
@@ -29,7 +30,7 @@ namespace FRTools.Web.Models
         public bool RequireOwner { get; set; }
     }
 
-    class DiscordCommand
+    public class DiscordCommand
     {
         public string Name { get; set; }
         public string Description { get; set; }
@@ -37,5 +38,35 @@ namespace FRTools.Web.Models
         public long RequireGuildPermission { get; set; }
         public long RequireChannelPermission { get; set; }
         public bool RequireOwner { get; set; }
+    }
+
+    public class DiscordBaseViewModel
+    {
+        public DiscordUser CurrentUser { get; set; }
+    }
+
+    public class ServersViewModel : DiscordBaseViewModel
+    {
+        public List<DiscordServer> Servers { get; set; }
+    }
+
+    public class ServerViewModel : DiscordBaseViewModel
+    {
+        public long SelectedServer { get; set; }
+    }
+
+    public class ModulesViewModel : ServerViewModel
+    {
+        public List<DiscordModule> Modules { get; set; }
+    }
+
+    public class ModuleViewModel : ServerViewModel
+    {
+        public DiscordModule SelectedModule { get; set; }        
+    }
+
+    public class CommandViewModel : ModuleViewModel
+    {
+        public DiscordCommand SelectedCommand { get; set; }
     }
 }

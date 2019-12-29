@@ -9,6 +9,7 @@ using FRTools.Data.DataModels.DiscordModels;
 using FRTools.Data.Messages;
 using FRTools.Discord.Infrastructure;
 using System.Data.Entity;
+using System.Net;
 
 namespace FRTools.Discord.Handlers
 {
@@ -201,7 +202,7 @@ namespace FRTools.Discord.Handlers
             {
                 var dbServer = ctx.DiscordServers.SingleOrDefault(x => x.ServerId == (long)user.Guild.Id);
                 var dbServerUser = dbServer.Users.FirstOrDefault(x => x.User.UserId == (long)user.Id);
-                if (dbServerUser == null)                
+                if (dbServerUser == null)
                     return;
 
                 dbServer.Users.Remove(dbServerUser);
@@ -228,6 +229,11 @@ namespace FRTools.Discord.Handlers
                     {
                         ctx.DiscordServers.Add(dbServer = new DiscordServer());
                         dbServer.ServerId = (long)_guild.Id;
+                    }
+                    using (var client = new WebClient())
+                    {
+                        var iconData = client.DownloadData(_guild.IconUrl);
+                        dbServer.IconBase64 = Convert.ToBase64String(iconData);
                     }
 
                     foreach (var existingRole in dbServer.Roles.ToList())

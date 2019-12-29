@@ -33,6 +33,7 @@
                     })
                 .PrimaryKey(t => t.Id);
             
+            AddColumn("dbo.DiscordServers", "IconBase64", c => c.String());
             AddColumn("dbo.DiscordRoles", "DiscordServerUser_Id", c => c.Int());
             CreateIndex("dbo.DiscordRoles", "DiscordServerUser_Id");
             AddForeignKey("dbo.DiscordRoles", "DiscordServerUser_Id", "dbo.DiscordServerUsers", "Id");
@@ -47,6 +48,7 @@
             DropIndex("dbo.DiscordServerUsers", new[] { "Server_Id" });
             DropIndex("dbo.DiscordRoles", new[] { "DiscordServerUser_Id" });
             DropColumn("dbo.DiscordRoles", "DiscordServerUser_Id");
+            DropColumn("dbo.DiscordServers", "IconBase64");
             DropTable("dbo.DiscordUsers");
             DropTable("dbo.DiscordServerUsers");
         }
