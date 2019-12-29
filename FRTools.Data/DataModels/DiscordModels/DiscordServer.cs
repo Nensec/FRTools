@@ -12,8 +12,8 @@ namespace FRTools.Data.DataModels.DiscordModels
         public long ServerId { get; set; }
         public string Name { get; set; }
         public string IconBase64 { get; set; }
-        public ICollection<DiscordChannel> Channels { get; set; } = new HashSet<DiscordChannel>();
-        public ICollection<DiscordRole> Roles { get; set; } = new HashSet<DiscordRole>();
-        public ICollection<DiscordServerUser> Users { get; set; } = new HashSet<DiscordServerUser>();
+        public virtual ICollection<DiscordChannel> Channels { get; set; } = new HashSet<DiscordChannel>();
+        public virtual ICollection<DiscordRole> Roles { get; set; } = new HashSet<DiscordRole>();
+        public virtual ICollection<DiscordServerUser> Users { get; set; } = new HashSet<DiscordServerUser>();
     }
 }

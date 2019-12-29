@@ -224,16 +224,19 @@ namespace FRTools.Discord.Handlers
             {
                 using (var ctx = new DataContext())
                 {
-                    var dbServer = ctx.DiscordServers.Include(x => x.Roles).Include(x => x.Channels).FirstOrDefault(x => x.ServerId == (long)_guild.Id);
+                    var dbServer = ctx.DiscordServers.Include(x => x.Users.Select(u => u.User)).Include(x => x.Roles).Include(x => x.Channels).FirstOrDefault(x => x.ServerId == (long)_guild.Id);
                     if (dbServer == null)
                     {
                         ctx.DiscordServers.Add(dbServer = new DiscordServer());
                         dbServer.ServerId = (long)_guild.Id;
                     }
-                    using (var client = new WebClient())
+                    if (_guild.IconUrl != null)
                     {
-                        var iconData = client.DownloadData(_guild.IconUrl);
-                        dbServer.IconBase64 = Convert.ToBase64String(iconData);
+                        using (var client = new WebClient())
+                        {
+                            var iconData = client.DownloadData(_guild.IconUrl);
+                            dbServer.IconBase64 = Convert.ToBase64String(iconData);
+                        }
                     }
 
                     foreach (var existingRole in dbServer.Roles.ToList())
