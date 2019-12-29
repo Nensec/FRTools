@@ -52,7 +52,7 @@ namespace FRTools.MS.DominanceChecker
                     using (var ctx = new DataContext())
                     {
                         var previousDom = ctx.FRDominances.OrderByDescending(x => x.Timestamp).FirstOrDefault();
-                        if (previousDom == null || previousDom.First != (int)positions[0] && previousDom.Second != (int)positions[1] && previousDom.Third != (int)positions[2])
+                        if (previousDom == null || previousDom.First != (int)positions[0] || previousDom.Second != (int)positions[1] || previousDom.Third != (int)positions[2])
                         {
                             ctx.FRDominances.Add(new FRDominance { Timestamp = DateTime.UtcNow, First = (int)positions[0], Second = (int)positions[1], Third = (int)positions[2] });
                             await ctx.SaveChangesAsync();
