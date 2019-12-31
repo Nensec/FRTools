@@ -792,6 +792,7 @@
     <Content Include="Views\Pinglist\List.cshtml" />
     <Content Include="Views\Pinglist\LinkExisting.cshtml" />
     <Content Include="Views\Discord\Index.cshtml" />
+    <Content Include="Views\Manage\ManageLogins.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

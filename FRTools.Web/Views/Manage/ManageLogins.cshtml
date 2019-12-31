@@ -1,0 +1,81 @@
+﻿@model FRTools.Web.Models.ManageLoginsViewModel
+@using Microsoft.Owin.Security
+
+@section head{
+    <link href="~/Content/social_icons.css" rel="stylesheet">
+}
+
+@{
+    ViewBag.Title = "Manage logins";
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>Current linked logins</h4>
+    </div>
+    <div class="panel-body">
+        <p>
+            There must always be a least one login attached to your account (how else would you log in?), but you can add as many accounts as you wish to access the same account.
+        </p>
+        @foreach (var account in Model.CurrentLogins)
+        {
+            if (Model.ShowRemoveButton)
+            {
+                using (Html.BeginForm("RemoveLogin", "Manage"))
+                {
+                    @Html.AntiForgeryToken()
+                    <div>
+                        @Html.Hidden("loginProvider", account.LoginProvider)
+                        @Html.Hidden("providerKey", account.ProviderKey)
+                        <div class="col-md-4">
+                            <div class="btn-group btn-group-lg btn-group-justified" role="group" style="margin-bottom:10px">
+                                <div class="btn-group" style="width:80%" role="group" title="@(account.ProviderKey)">
+                                    <span disabled class="btn btn-lg btn-social btn-@(account.LoginProvider.ToLower())"><span class="icon-@(account.LoginProvider.ToLower())"></span>@account.ProviderKey</span>
+                                </div>
+                                <div class="btn-group" style="width:20%" role="group">
+                                    <button type="submit" class="btn btn-lg btn-danger btn-block"><span class="glyphicon glyphicon-remove"></span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-md-4" style="margin-bottom:10px">
+                    <span disabled class="btn btn-lg btn-social btn-block btn-@(account.LoginProvider.ToLower())"><span class="icon-@(account.LoginProvider.ToLower())"></span>@account.ProviderKey</span>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>Add another login</h4>
+    </div>
+    <div class="panel-body">
+        @{
+            var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+
+            using (Html.BeginForm("LinkLogin", "Manage"))
+            {
+                @Html.AntiForgeryToken()
+                <div id="providerList">
+                    @foreach (AuthenticationDescription p in loginProviders)
+                    {
+                        <div class="col-md-4" style="margin-bottom:10px">
+                            <button type="submit" class="btn btn-block btn-lg btn-social btn-@(p.AuthenticationType.ToLower())" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><span class="icon-@(p.AuthenticationType.ToLower())"></span>@p.AuthenticationType</button>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<style>
+    .btn[disabled] {
+        opacity: 1;
+    }
+</style>

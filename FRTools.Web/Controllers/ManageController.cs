@@ -14,13 +14,24 @@ using System.Web;
 using System.Web.Mvc;
 using FRTools.Data;
 using FRTools.Web.Infrastructure;
+using Microsoft.Owin.Security;
 
 namespace FRTools.Web.Controllers
 {
+
     [Authorize]
     [RoutePrefix("manage")]
     public class ManageController : BaseController
     {
+        private IAuthenticationManager AuthenticationManager => HttpContext.GetOwinContext().Authentication;
+        private SignInManager<User, int> _signInManager;
+        private UserManager<User, int> _userManager;
+
+        public SignInManager<User, int> SignInManager => _signInManager ?? (_signInManager = HttpContext.GetOwinContext().Get<SignInManager<User, int>>());
+
+        public UserManager<User, int> UserManager => _userManager ?? (_userManager = HttpContext.GetOwinContext().GetUserManager<UserManager<User, int>>());
+
+
         [Route(Name = "ManageAccount")]
         public ActionResult Index()
         {
@@ -154,6 +165,66 @@ namespace FRTools.Web.Controllers
                     return RedirectToRoute("VerifyFR");
                 }
             }
+        }
+
+        [Route("logins", Name = "ManageLogins")]
+        [Authorize]
+        public async Task<ActionResult> ManageLogins()
+        {
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId<int>());
+            var userLogins = await UserManager.GetLoginsAsync(User.Identity.GetUserId<int>());
+            return View(new ManageLoginsViewModel
+            {
+                CurrentLogins = userLogins,
+                ShowRemoveButton = userLogins.Count > 1
+            });
+        }
+
+        [Route("removeLogin", Name = "ManageRemoveLogin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> RemoveLogin(string loginProvider, string providerKey)
+        {
+            var result = await UserManager.RemoveLoginAsync(User.Identity.GetUserId<int>(), new UserLoginInfo(loginProvider, providerKey));
+            if (result.Succeeded)
+            {
+                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId<int>());
+                if (user != null)
+                {
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                }
+
+                TempData["Success"] = $"Succesfully removed the specified {loginProvider} login from your account!";
+            }
+            else
+                TempData["Error"] = "Something went wrong removing the login, try again. If the problem persists, let me know <a href=\"https://github.com/Nensec/FRTools/issues\">here</a>!";
+            return RedirectToAction("ManageLogins");
+        }
+
+        [Route("externalLogin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult LinkLogin(string provider)
+        {
+            return new ChallengeResult(provider, Url.RouteUrl("ExternalLoginLinkCallback"), User.Identity.GetUserId());
+        }
+
+        [Route("externalLoginCallback", Name = "ExternalLoginLinkCallback")]
+        public async Task<ActionResult> LinkLoginCallback(string error)
+        {
+            var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync(ChallengeResult._xsrfKey, User.Identity.GetUserId());
+            if (loginInfo == null)
+            {
+                TempData["Error"] = "Could not retrieve external login information from request, please try again.<br/>If the issue persists then please let me know <a href=\"https://github.com/Nensec/FRTools/issues/5\">here</a>.";
+                return RedirectToAction("ManageLogins");
+            }
+            var result = await UserManager.AddLoginAsync(User.Identity.GetUserId<int>(), loginInfo.Login);
+            if (!result.Succeeded)
+                TempData["Error"] = "Something went wrong adding the login. If the problem persists, let me know <a href=\"https://github.com/Nensec/FRTools/issues\">here</a>!";
+            else
+                TempData["Success"] = $"Succesfully added your {loginInfo.Login.LoginProvider} login to your account!";
+
+            return RedirectToAction("ManageLogins");
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using FRTools.Data.DataModels;
+using Microsoft.AspNet.Identity;
+using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -39,5 +41,11 @@ namespace FRTools.Web.Models
         public Privacy Privacy { get; set; }
         [Display(Name = "Default skin visibility")]
         public SkinVisiblity DefaultVisibility { get; set; }
+    }
+
+    public class ManageLoginsViewModel
+    {
+        public IList<UserLoginInfo> CurrentLogins { get; set; }
+        public bool ShowRemoveButton { get; set; }
     }
 }

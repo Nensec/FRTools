@@ -17,6 +17,7 @@ namespace FRTools.Web.Controllers
     [RoutePrefix("account")]
     public class AccountController : BaseController
     {
+        private IAuthenticationManager AuthenticationManager => HttpContext.GetOwinContext().Authentication;
         private SignInManager<User, int> _signInManager;
         private UserManager<User, int> _userManager;
 
@@ -141,7 +142,5 @@ namespace FRTools.Web.Controllers
                     return RedirectToRoute("Login");
             }
         }
-
-        private IAuthenticationManager AuthenticationManager => HttpContext.GetOwinContext().Authentication;
     }
 }
