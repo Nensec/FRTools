@@ -38,7 +38,7 @@ namespace FRTools.Discord.Handlers
                                         await user.AddRoleAsync(dominanceRole);
                                 }
                                 if (annChannel != null)
-                                    await annChannel.SendMessageAsync($"Congratulations to the {(Flight)latestDominance.First} flight for gaining dominance this week! Members who opted for the {dominanceRole.Mention} role have been given the role, go activate that dom-shop!\r\n\nSecond place is {(Flight)latestDominance.Second}\r\nThird place is {(Flight)latestDominance.Third}");
+                                    await annChannel.SendMessageAsync($"Congratulations to the **{(Flight)latestDominance.First}** flight for gaining dominance this week! Members who opted for the {dominanceRole.Mention} role have been given the role, go activate that dom-shop!\r\n\n:second_place: Second place is **{(Flight)latestDominance.Second}**\r\n:third_place: Third place is **{(Flight)latestDominance.Third}**");
                             }
                         }
                         else
