@@ -169,6 +169,10 @@
     <Compile Include="Migrations\201912262124031_Discord user tables.designer.cs">
       <DependentUpon>201912262124031_Discord user tables.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201912312214353_Added providerusername column.cs" />
+    <Compile Include="Migrations\201912312214353_Added providerusername column.designer.cs">
+      <DependentUpon>201912312214353_Added providerusername column.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -235,6 +239,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201912262124031_Discord user tables.resx">
       <DependentUpon>201912262124031_Discord user tables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201912312214353_Added providerusername column.resx">
+      <DependentUpon>201912312214353_Added providerusername column.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -45,7 +45,7 @@ namespace FRTools.Web.Models
 
     public class ManageLoginsViewModel
     {
-        public IList<UserLoginInfo> CurrentLogins { get; set; }
+        public IList<UserLogin> CurrentLogins { get; set; }
         public bool ShowRemoveButton { get; set; }
     }
 }

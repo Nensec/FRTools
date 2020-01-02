@@ -15,6 +15,7 @@ using Owin.Security.Providers.Discord;
 using System;
 using System.Configuration;
 using System.Linq;
+using FRTools.Web.Infrastructure.Managers;
 
 [assembly: OwinStartup(typeof(FRTools.App_Start.Startup))]
 namespace FRTools.App_Start
@@ -26,7 +27,7 @@ namespace FRTools.App_Start
             app.CreatePerOwinContext(() => new DataContext());
             app.CreatePerOwinContext<UserManager<User, int>>((o, c) =>
             {
-                var userManager = new UserManager<User, int>(new UserStore<User, Role, int, UserLogin, UserRole, UserClaim>(c.Get<DataContext>()));
+                var userManager = new UserManager<User, int>(new UserStore(c.Get<DataContext>()));
                 userManager.UserValidator = new UserValidator<User, int>(userManager) { AllowOnlyAlphanumericUserNames = false };
                 return userManager;
             });

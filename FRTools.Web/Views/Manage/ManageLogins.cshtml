@@ -21,7 +21,7 @@
         {
             if (Model.ShowRemoveButton)
             {
-                using (Html.BeginForm("RemoveLogin", "Manage"))
+                using (Html.BeginForm("RemoveLogin", "Account"))
                 {
                     @Html.AntiForgeryToken()
                     <div>
@@ -30,7 +30,7 @@
                         <div class="col-md-4">
                             <div class="btn-group btn-group-lg btn-group-justified" role="group" style="margin-bottom:10px">
                                 <div class="btn-group" style="width:80%" role="group" title="@(account.ProviderKey)">
-                                    <span disabled class="btn btn-lg btn-social btn-@(account.LoginProvider.ToLower())"><span class="icon-@(account.LoginProvider.ToLower())"></span>@account.ProviderKey</span>
+                                    <span disabled class="btn btn-lg btn-social btn-@(account.LoginProvider.ToLower())"><span class="icon-@(account.LoginProvider.ToLower())"></span>@(account.ProviderUsername ?? account.ProviderKey)</span>
                                 </div>
                                 <div class="btn-group" style="width:20%" role="group">
                                     <button type="submit" class="btn btn-lg btn-danger btn-block"><span class="glyphicon glyphicon-remove"></span></button>
@@ -43,7 +43,7 @@
             else
             {
                 <div class="col-md-4" style="margin-bottom:10px">
-                    <span disabled class="btn btn-lg btn-social btn-block btn-@(account.LoginProvider.ToLower())"><span class="icon-@(account.LoginProvider.ToLower())"></span>@account.ProviderKey</span>
+                    <span disabled class="btn btn-lg btn-social btn-block btn-@(account.LoginProvider.ToLower())"><span class="icon-@(account.LoginProvider.ToLower())"></span>@(account.ProviderUsername ?? account.ProviderKey)</span>
                 </div>
             }
         }
@@ -58,7 +58,7 @@
         @{
             var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
 
-            using (Html.BeginForm("LinkLogin", "Manage"))
+            using (Html.BeginForm("LinkLogin", "Account"))
             {
                 @Html.AntiForgeryToken()
                 <div id="providerList">

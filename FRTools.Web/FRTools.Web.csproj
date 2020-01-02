@@ -246,7 +246,7 @@
     <Compile Include="Infrastructure\FRHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\CopyBoxHelpers.cs" />
     <Compile Include="Infrastructure\Managers\JobManager.cs" />
-    <Compile Include="Infrastructure\Managers\UserManager.cs" />
+    <Compile Include="Infrastructure\Managers\UserStore.cs" />
     <Compile Include="Infrastructure\MustHaveLoginProviderAttribute.cs" />
     <Compile Include="Infrastructure\PreviewResult.cs" />
     <Compile Include="Infrastructure\SmartRequiredAttribute.cs" />

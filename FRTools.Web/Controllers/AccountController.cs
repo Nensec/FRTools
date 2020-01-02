@@ -11,6 +11,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Net;
 using Newtonsoft.Json;
+using FRTools.Web.Infrastructure.Managers;
 
 namespace FRTools.Web.Controllers
 {
@@ -68,25 +69,39 @@ namespace FRTools.Web.Controllers
                     return RedirectToRoute("Login");
                 }
             }
+            loginInfo.Login.ProviderKey = GetProviderData(loginInfo);
 
             // Sign in the user with this external login provider if the user already has a login
             var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
             switch (result)
             {
                 case SignInStatus.Success:
-                    if (returnUrl != null)
-                        return RedirectToLocal(returnUrl);
-                    return RedirectToRoute("Home");
+                    {
+                        var user = await UserManager.FindAsync(loginInfo.Login);
+                        var providerData = JsonConvert.DeserializeObject<UserStore.ProviderData>(loginInfo.Login.ProviderKey);
+                        var providerLogin = user.Logins.First(x => x.ProviderKey == providerData.ProviderKey && x.LoginProvider == loginInfo.Login.LoginProvider);
+                        if (providerLogin.ProviderUsername == null)
+                        {
+                            providerLogin.ProviderUsername = providerData.ProviderUsername;
+                            await UserManager.UpdateAsync(user);
+                        }
+                        if (returnUrl != null)
+                            return RedirectToLocal(returnUrl);
+                        return RedirectToRoute("Home");
+                    }
                 case SignInStatus.Failure:
                 default:
                     if (ModelState.IsValid)
                     {
-                        async Task<(IdentityResult, User)> CreateNewUser(string username, string email)
+                        loginInfo.Login.ProviderKey = GetProviderData(loginInfo);
+
+                        async Task<(IdentityResult, User)> CreateNewUser(ExternalLoginInfo externalLoginInfo, string usernameAffix = null)
                         {
+                            var providerData = JsonConvert.DeserializeObject<UserStore.ProviderData>(externalLoginInfo.Login.ProviderKey);
                             var user = new User
                             {
-                                UserName = username,
-                                Email = email
+                                UserName = providerData.ProviderUsername + usernameAffix,
+                                Email = externalLoginInfo.Email
                             };
 
                             return (await UserManager.CreateAsync(user), user);
@@ -94,12 +109,6 @@ namespace FRTools.Web.Controllers
 
                         async Task<ActionResult> LoginUser(User user)
                         {
-                            switch (loginInfo.Login.LoginProvider.ToLower())
-                            {
-                                case "discord":
-                                    loginInfo.Login.ProviderKey = GetDiscordUserId(loginInfo).ToString();
-                                    break;
-                            }
 
                             var loginResult = await UserManager.AddLoginAsync(user.Id, loginInfo.Login);
                             if (loginResult.Succeeded)
@@ -115,20 +124,14 @@ namespace FRTools.Web.Controllers
                         };
 
                         string externalUsername = loginInfo.DefaultUserName ?? loginInfo.ExternalIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-                        switch (loginInfo.Login.LoginProvider.ToLower())
-                        {
-                            case "discord":
-                                externalUsername = $"{loginInfo.ExternalIdentity.FindFirstValue("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")}#{loginInfo.ExternalIdentity.FindFirstValue("urn:discord:discriminator")}";
-                                break;
-                        }
 
-                        var (newUser, identity) = await CreateNewUser(externalUsername, loginInfo.Email);
+                        var (newUser, identity) = await CreateNewUser(loginInfo);
 
                         if (newUser.Succeeded)
                             return await LoginUser(identity);
                         else if (!identity.UserName.All(x => char.IsDigit(x)))
                         {
-                            (newUser, identity) = await CreateNewUser(identity.UserName + GenerateId(5), identity.Email);
+                            (newUser, identity) = await CreateNewUser(loginInfo, GenerateId(5));
                             if (newUser.Succeeded)
                                 return await LoginUser(identity);
                             TempData["Error"] = $"Could not create user:<br/><br/><ul>{newUser.Errors.Select(x => $"<li>{x}</li>")}</ul>";
@@ -141,6 +144,73 @@ namespace FRTools.Web.Controllers
                     ViewBag.ReturnUrl = returnUrl;
                     return RedirectToRoute("Login");
             }
+        }
+
+        [Route("removeLogin", Name = "ManageRemoveLogin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> RemoveLogin(string loginProvider, string providerKey)
+        {
+            var result = await UserManager.RemoveLoginAsync(User.Identity.GetUserId<int>(), new UserLoginInfo(loginProvider, providerKey));
+            if (result.Succeeded)
+            {
+                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId<int>());
+                if (user != null)
+                {
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                }
+
+                TempData["Success"] = $"Succesfully removed the specified {loginProvider} login from your account!";
+            }
+            else
+                TempData["Error"] = result.Errors.First();
+            return RedirectToRoute("ManageLogins");
+        }
+
+        [Route("externalLinkLogin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult LinkLogin(string provider)
+        {
+            return new ChallengeResult(provider, Url.RouteUrl("ExternalLoginLinkCallback"), User.Identity.GetUserId());
+        }
+
+        [Route("externalLoginLinkCallback", Name = "ExternalLoginLinkCallback")]
+        public async Task<ActionResult> LinkLoginCallback(string error)
+        {
+            var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync(ChallengeResult._xsrfKey, User.Identity.GetUserId());
+            if (loginInfo == null)
+            {
+                TempData["Error"] = "Could not retrieve external login information from request, please try again.<br/>If the issue persists then please let me know <a href=\"https://github.com/Nensec/FRTools/issues/5\">here</a>.";
+                return RedirectToRoute("ManageLogins");
+            }
+
+            loginInfo.Login.ProviderKey = GetProviderData(loginInfo);
+
+            var result = await UserManager.AddLoginAsync(User.Identity.GetUserId<int>(), loginInfo.Login);
+            if (!result.Succeeded)
+                TempData["Error"] = result.Errors.First();
+            else
+                TempData["Success"] = $"Succesfully added your {loginInfo.Login.LoginProvider} login to your account!";
+
+            return RedirectToRoute("ManageLogins");
+        }
+
+        private string GetProviderData(ExternalLoginInfo loginInfo)
+        {
+            var providerData = new UserStore.ProviderData();
+            switch (loginInfo.Login.LoginProvider.ToLower())
+            {
+                case "discord":
+                    providerData.ProviderKey = GetDiscordUserId(loginInfo).ToString();
+                    providerData.ProviderUsername = $"{loginInfo.ExternalIdentity.FindFirstValue("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")}#{loginInfo.ExternalIdentity.FindFirstValue("urn:discord:discriminator")}";
+                    break;
+                default:
+                    providerData.ProviderKey = loginInfo.Login.ProviderKey;
+                    providerData.ProviderUsername = loginInfo.DefaultUserName ?? loginInfo.ExternalIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+                    break;
+            }
+            return JsonConvert.SerializeObject(providerData);
         }
     }
 }
