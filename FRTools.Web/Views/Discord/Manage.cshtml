@@ -1,0 +1,87 @@
+﻿@model FRTools.Web.Models.ServersViewModel
+
+@{
+    ViewBag.Title = "Manage";
+}
+
+@section head {
+    <link href="https://fonts.googleapis.com/css?family=Arimo" rel="stylesheet">
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>Available servers</h4>
+    </div>
+    <div class="panel-body">
+        @foreach (var server in Model.Servers)
+        {
+            <div class="col-sm-6 server">
+                <div class="panel panel-default panel-transparent">
+                    <div class="panel-body">
+                        <a href="@Url.RouteUrl("DiscordManageServer", new { discordServer = server.ServerId })">
+                            <div class="col-sm-4">
+                                <div class="serverIcon">
+                                    @if (string.IsNullOrEmpty(server.IconBase64))
+                                    {
+                                        <span>@server.ServerName[0]</span>
+                                    }
+                                    else
+                                    {
+                                        <img src="@($"data:image/png;base64, {server.IconBase64}")" />
+                                    }
+                                </div>
+                            </div>
+                        </a>
+                        <div class="col-sm-8">
+                            <a href="@Url.RouteUrl("DiscordManageServer", new { discordServer = server.ServerId })">
+                                <h4 style="margin-bottom:15px">@server.ServerName</h4>
+                            </a>
+                            <ul>
+                                <li><b>User count:</b> @(server.UserCount)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .serverIcon {
+        border-radius: 64px;
+        transition: all 0.25s cubic-bezier(0.29,-0.07, 0.56, 1.65);
+        overflow: hidden;
+        width: 128px;
+        height: 128px;
+        text-align: center;
+        background-color: #2f3136;
+        float: left;
+        display: inline block;
+        color: white;
+    }
+
+        .serverIcon img {
+            width: 128px;
+            height: 128px;
+        }
+
+        .serverIcon span {
+            display: block;
+            font-size: 46px;
+            margin-top: 30px;
+            font-family: 'Arimo', sans-serif;
+        }
+</style>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('.server').on('mouseover', function () {
+                $('.serverIcon', this).css('border-radius', 35);
+            }).on('mouseout', function () {
+                $('.serverIcon', this).css('border-radius', 64);
+            });
+        });
+    </script>
+}

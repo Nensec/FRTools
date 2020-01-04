@@ -1,0 +1,55 @@
+﻿@model FRTools.Web.Models.DiscordSettingViewModel
+
+@{var channels = Model.ParentServer.Channels.AsEnumerable(); }
+@switch (Model.SettingType)
+{
+    case "ITextChannel":
+        channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Text);
+        goto case "IChannel";
+    case "IVoiceChannel":
+        channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Voice);
+        goto case "IChannel";
+    case "ICategoryChannel":
+        channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Category);
+        goto case "IChannel";
+    case "IChannel":
+        <select id="@Html.Id(Model.Key)" name="@Html.Name(Model.Key)" configKey="@(Model.Key)" class="form-control" onchange="saveSetting('@(Model.Key)', this.value)">
+            <option></option>
+            @{ var channelGroups = channels.GroupBy(x => x.DiscordChannelType); }
+            @foreach (var channelGroup in channelGroups)
+            {
+                <option disabled readonly>- @(channelGroup.Key) -</option>
+                foreach (var channel in channelGroup)
+                {
+                    <option @(channel.ChannelId.ToString() == Model.Value ? "selected" : "") value="@(channel.ChannelId)">@(channel.ChannelName)</option>
+                }
+            }
+        </select>
+        break;
+    case "IRole":
+        @Html.DropDownList(Model.Key, Model.ParentServer.Roles.Select(x => new SelectListItem { Text = x.RoleName, Value = x.RoleId.ToString() }), new { @class = "form-control" })
+        break;
+    case nameof(Boolean):
+        break;
+    case nameof(Int32):
+        break;
+    case nameof(String):
+    default:
+        <input type="text" value="@(Model.Value)" class="form-control" />
+        break;
+}
+
+<script>
+    saveSetting = function (key, value) {
+        console.log(`${key} - ${value}`);
+        $.post({
+            url: '@Url.RouteUrl("DiscordSaveSetting")',
+            data: {
+                discordServer: @(Model.ParentServer.ServerId),
+                module: @(Model.Module == null ? "undefined" : $"'{Model.Module}'"),
+                key: key,
+                value: value
+            }
+        });
+    }
+</script>

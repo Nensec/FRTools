@@ -173,6 +173,14 @@
     <Compile Include="Migrations\201912312214353_Added providerusername column.designer.cs">
       <DependentUpon>201912312214353_Added providerusername column.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202001020356552_Discord Server and Role table.cs" />
+    <Compile Include="Migrations\202001020356552_Discord Server and Role table.designer.cs">
+      <DependentUpon>202001020356552_Discord Server and Role table.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001040702350_Discord channel type.cs" />
+    <Compile Include="Migrations\202001040702350_Discord channel type.designer.cs">
+      <DependentUpon>202001040702350_Discord channel type.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -242,6 +250,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201912312214353_Added providerusername column.resx">
       <DependentUpon>201912312214353_Added providerusername column.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001020356552_Discord Server and Role table.resx">
+      <DependentUpon>202001020356552_Discord Server and Role table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001040702350_Discord channel type.resx">
+      <DependentUpon>202001040702350_Discord channel type.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

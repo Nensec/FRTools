@@ -793,6 +793,10 @@
     <Content Include="Views\Pinglist\LinkExisting.cshtml" />
     <Content Include="Views\Discord\Index.cshtml" />
     <Content Include="Views\Manage\ManageLogins.cshtml" />
+    <Content Include="Views\Discord\Manage.cshtml" />
+    <Content Include="Views\Discord\ManageServer.cshtml" />
+    <Content Include="Views\Discord\ManageModule.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\DiscordSettingViewModel.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

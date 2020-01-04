@@ -1,0 +1,49 @@
+﻿@model FRTools.Web.Models.ServerViewModel
+
+@{
+    ViewBag.Title = "ManageServer";
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>Manage server: <b>@(Model.ServerName)</b></h4>
+    </div>
+    <div class="panel-body">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Bot settings
+            </div>
+            <div class="panel-body">
+                <div class="form-horizontal">
+                    @foreach (var setting in Model.BotSettings)
+                    {
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" style="text-align:left"><span class="glyphicon glyphicon-info-sign" title="@(setting.Description)"></span> @(setting.SettingName)</label>
+                            <div class="col-sm-9">
+                                @Html.EditorFor(model => setting)
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Available modules
+            </div>
+            <div class="panel-body">
+                @foreach (var module in Model.Modules)
+                {
+                    <div class="col-sm-6">
+                        <div class="panel panel-default panel-transparent">
+                            <div class="panel-body">
+                                <h4>@(module.Name)</h4>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

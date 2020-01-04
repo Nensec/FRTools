@@ -12,6 +12,6 @@ namespace FRTools.Data.DataModels.DiscordModels
         public string Username { get; set; }
         public int Discriminator { get; set; }
         public long UserId { get; set; }
-        public ICollection<DiscordServerUser> Servers { get; set; } = new HashSet<DiscordServerUser>();
+        public virtual ICollection<DiscordServerUser> Servers { get; set; } = new HashSet<DiscordServerUser>();
     }
 }

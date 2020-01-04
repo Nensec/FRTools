@@ -1,4 +1,6 @@
-﻿namespace FRTools.Data.DataModels.DiscordModels
+﻿using System.Collections.Generic;
+
+namespace FRTools.Data.DataModels.DiscordModels
 {
     public class DiscordRole
     {
@@ -8,5 +10,6 @@
         public string Name { get; set; }
         public string Color { get; set; }
         public long DiscordPermissions { get; set; }
+        public virtual ICollection<DiscordServerUser> Users { get; set; }
     }
 }

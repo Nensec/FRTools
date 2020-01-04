@@ -83,4 +83,9 @@
       <DependentUpon>MetadataGenerator.tt</DependentUpon>
     </None>
   </ItemGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties _1_1_4discordmetadata_1json__JsonSchema="http://json.schemastore.org/behat" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>
