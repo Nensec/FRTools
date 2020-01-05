@@ -96,7 +96,7 @@ namespace FRTools.Web.Controllers
                 ServerName = server.Name,
             };
             serverModel.Channels = server.Channels.Select(x => new DiscordChannelViewModel { ChannelId = x.ChannelId, ChannelName = x.Name, ParentServer = serverModel, DiscordChannelType = x.ChannelType }).ToList();
-            serverModel.Roles = server.Roles.Select(x => new DiscordRoleViewModel { RoleId = x.RoleId, RoleName = x.Name, ParentServer = serverModel }).ToList();
+            serverModel.Roles = server.Roles.Where(x => x.Name != "@everyone").Select(x => new DiscordRoleViewModel { RoleId = x.RoleId, RoleName = x.Name, ParentServer = serverModel }).ToList();
             var botSettings = DiscordMetadata.BotSettings.Select(x => new DiscordSettingViewModel
             {
                 Key = x.Key,
@@ -144,7 +144,7 @@ namespace FRTools.Web.Controllers
                         var model = new ModuleViewModel
                         {
                             ParentServer = serverModel,
-                            SelectedModule = DiscordMetadata.Modules.First(x => x.Name.ToLower() == module.ToLower())
+                            SelectedModule = DiscordMetadata.Modules.First(x => x.Name.ToLower() == module.ToLower())                            
                         };
                         var moduleSettings = model.SelectedModule.Settings.Select(x => new DiscordSettingViewModel
                         {
@@ -153,7 +153,8 @@ namespace FRTools.Web.Controllers
                             Description = x.Description,
                             ParentServer = serverModel,
                             SettingType = x.Type,
-                            Value = ctx.DiscordSettings.FirstOrDefault(s => s.Server.ServerId == discordServer && s.Key == x.Key)?.Value
+                            Value = ctx.DiscordSettings.FirstOrDefault(s => s.Server.ServerId == discordServer && s.Key == x.Key)?.Value,
+                            Module = module
                         }).ToList();
                         model.ModuleSettings = moduleSettings;
                         return View(model);
@@ -241,7 +242,7 @@ namespace FRTools.Web.Controllers
 
                     if (currentUser.Roles.Any(x => (x.DiscordPermissions & 8) != 0))
                     {
-                        setting = ctx.DiscordSettings.FirstOrDefault(x => x.Server == currentUser.Server && x.Key == moduleSetting.Key);
+                        setting = ctx.DiscordSettings.FirstOrDefault(x => x.Server.ServerId == currentUser.Server.ServerId && x.Key == moduleSetting.Key);
                         if (setting == null)
                             setting = ctx.DiscordSettings.Add(new Data.DataModels.DiscordModels.DiscordSetting { Server = currentUser.Server, Key = moduleSetting.Key });
                         setting.Value = value;

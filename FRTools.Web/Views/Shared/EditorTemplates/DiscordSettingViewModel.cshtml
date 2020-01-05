@@ -1,55 +1,86 @@
 ﻿@model FRTools.Web.Models.DiscordSettingViewModel
-
-@{var channels = Model.ParentServer.Channels.AsEnumerable(); }
-@switch (Model.SettingType)
-{
-    case "ITextChannel":
-        channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Text);
-        goto case "IChannel";
-    case "IVoiceChannel":
-        channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Voice);
-        goto case "IChannel";
-    case "ICategoryChannel":
-        channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Category);
-        goto case "IChannel";
-    case "IChannel":
-        <select id="@Html.Id(Model.Key)" name="@Html.Name(Model.Key)" configKey="@(Model.Key)" class="form-control" onchange="saveSetting('@(Model.Key)', this.value)">
-            <option></option>
-            @{ var channelGroups = channels.GroupBy(x => x.DiscordChannelType); }
-            @foreach (var channelGroup in channelGroups)
-            {
-                <option disabled readonly>- @(channelGroup.Key) -</option>
-                foreach (var channel in channelGroup)
-                {
-                    <option @(channel.ChannelId.ToString() == Model.Value ? "selected" : "") value="@(channel.ChannelId)">@(channel.ChannelName)</option>
-                }
-            }
-        </select>
-        break;
-    case "IRole":
-        @Html.DropDownList(Model.Key, Model.ParentServer.Roles.Select(x => new SelectListItem { Text = x.RoleName, Value = x.RoleId.ToString() }), new { @class = "form-control" })
-        break;
-    case nameof(Boolean):
-        break;
-    case nameof(Int32):
-        break;
-    case nameof(String):
-    default:
-        <input type="text" value="@(Model.Value)" class="form-control" />
-        break;
+@{
+    var id = Html.Id(Model.Key);
+    var name = Html.Name(Model.Key);
 }
+<div class="input-group">
+    <span id="@(Html.Id(Model.Key))_status" class="input-group-addon @(Model.SettingType == nameof(Boolean) ? "input-group-addon-close":"")"><span style="display:block; width:75px">Unchanged</span></span>
 
-<script>
-    saveSetting = function (key, value) {
-        console.log(`${key} - ${value}`);
-        $.post({
-            url: '@Url.RouteUrl("DiscordSaveSetting")',
-            data: {
-                discordServer: @(Model.ParentServer.ServerId),
-                module: @(Model.Module == null ? "undefined" : $"'{Model.Module}'"),
-                key: key,
-                value: value
-            }
-        });
+    @{var channels = Model.ParentServer.Channels.AsEnumerable(); }
+    @switch (Model.SettingType)
+    {
+        case "ITextChannel":
+            channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Text);
+            goto case "IChannel";
+        case "IVoiceChannel":
+            channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Voice);
+            goto case "IChannel";
+        case "ICategoryChannel":
+            channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Category);
+            goto case "IChannel";
+        case "IChannel":
+            <select id="@(id)" name="@(name)" configKey="@(Model.Key)" class="form-control" onchange="saveSetting('@(Model.Key)', this.value)">
+                <option></option>
+                @{ var channelGroups = channels.GroupBy(x => x.DiscordChannelType); }
+                @foreach (var channelGroup in channelGroups)
+                {
+                    <option disabled readonly>- @(channelGroup.Key) -</option>
+                    foreach (var channel in channelGroup)
+                    {
+                        <option @(channel.ChannelId.ToString() == Model.Value ? "selected" : "") value="@(channel.ChannelId)">@(channel.ChannelName)</option>
+                    }
+                }
+            </select>
+            break;
+        case "IRole":
+            <select id="@(id)" name="@(name)" configKey="@(Model.Key)" class="form-control" onchange="saveSetting('@(Model.Key)', this.value)">
+                <option></option>
+                @foreach (var role in Model.ParentServer.Roles)
+                {
+                    <option @(role.RoleId.ToString() == Model.Value ? "selected" : "") value="@(role.RoleId)">@(role.RoleName)</option>
+                }
+            </select>
+            break;
+        case nameof(Boolean):
+            <div style="padding-left:12px">
+                <input type="checkbox" id="@(id)" name="@(name)" @(bool.TryParse(Model.Value, out var r) && r ? "checked" : "") data-toggle="toggle" data-height="32" data-width="100" onchange="saveSetting('@(Model.Key)', this.checked)" />
+            </div>
+            break;
+        case nameof(Int32):
+            <input id="@(id)" name="@(name)" type="number" value="@(Model.Value)" class="form-control" />
+            <script>
+                $(document).ready(function () { $('#@(id)').on('input', $.debounce(500, save_@(Model.Key))); });
+                save_@(Model.Key) = function (event) { saveSetting('@(Model.Key)', this.value); }
+            </script>
+            break;
+        case nameof(String):
+        default:
+            <input id="@(id)" name="@(name)" type="text" value="@(Model.Value)" class="form-control" />
+            <script>
+                $(document).ready(function () { $('#@(id)').on('input', $.debounce(500, save_@(Model.Key))); });
+                save_@(Model.Key) = function (event) { saveSetting('@(Model.Key)', this.value); }
+            </script>
+            break;
     }
-</script>
+</div>
+
+@if (!Context.Items.Contains("SaveSettingScript"))
+{
+    Context.Items.Add("SaveSettingScript", true);
+    <script>
+        saveSetting = function (key, value) {
+            var statusElm = $(`#@Html.IdForModel()_${key}_status`);
+            statusElm.removeClass('success danger').toggleClass('warning').find($('span')).html('Saving..');
+            $.post({
+                url: '@Url.RouteUrl("DiscordSaveSetting")',
+                data: {
+                    discordServer: @(Model.ParentServer.ServerId),
+                    module: @(Model.Module == null ? "undefined" : $"`{Model.Module}`"),
+                    key: key,
+                    value: value
+                }
+            }).done(function (data) { statusElm.toggleClass('warning').toggleClass('success').find($('span')).html('Saved!'); })
+                .fail(function (data) { statusElm.toggleClass('warning').toggleClass('danger').find($('span')).html('Error!'); });
+        }
+    </script>
+}
