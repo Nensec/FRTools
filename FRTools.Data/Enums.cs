@@ -61,6 +61,7 @@ namespace FRTools.Data
     public enum GaolerTertGene
     {
         Basic = 0,
+        Fans = 3,
         Veined = 2,
         Ghost = 25,
         Shardflank,
@@ -110,6 +111,7 @@ namespace FRTools.Data
 
     public enum BanescaleTertGene
     {
+        Underbelly = 31,
         Blossom = 36,
         Trimmings = 39,
         Ringlets,
