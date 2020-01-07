@@ -24,6 +24,7 @@ foreach(var botSettingAttribute in botSettingsAttributes)
 	settingTemplate.Description = (string)botSettingAttribute.GetType().GetProperty("Description").GetValue(botSettingAttribute);
 	settingTemplate.Key = (string)botSettingAttribute.GetType().GetProperty("Key").GetValue(botSettingAttribute);
 	settingTemplate.Type = ((Type)botSettingAttribute.GetType().GetProperty("Type").GetValue(botSettingAttribute)).Name;
+	settingTemplate.ExtraArgs = (string[])botSettingAttribute.GetType().GetProperty("ExtraArgs").GetValue(botSettingAttribute);
 	output.BotSettings.Add(settingTemplate);
 }
 
@@ -44,6 +45,7 @@ foreach(var module in modules)
 		settingTemplate.Description = (string)settingAttribute.GetType().GetProperty("Description").GetValue(settingAttribute);
 		settingTemplate.Key = (string)settingAttribute.GetType().GetProperty("Key").GetValue(settingAttribute);
 		settingTemplate.Type = ((Type)settingAttribute.GetType().GetProperty("Type").GetValue(settingAttribute)).Name;
+		settingTemplate.ExtraArgs = (string[])settingAttribute.GetType().GetProperty("ExtraArgs").GetValue(settingAttribute);
 		moduleTemplate.Settings.Add(settingTemplate);
 	}
 
@@ -154,5 +156,6 @@ var json = JsonConvert.SerializeObject(output);
 		public string Description { get; set; }
 		public string Type { get; set; }
 		public string Key { get; set; }
+		public string[] ExtraArgs { get; set; }
 	}
 #>

@@ -18,6 +18,7 @@ namespace FRTools.Web.Models
         public string Description { get; set; }
         public string Type { get; set; }
         public string Key { get; set; }
+        public string[] ExtraArgs { get; set; }
     }
 
     public class DiscordModule
@@ -86,6 +87,7 @@ namespace FRTools.Web.Models
         public string SettingName { get; set; }
         public string Description { get; set; }
         public string Module { get; set; }
+        public string[] ExtraArgs { get; set; }
     }
 
     public class ModuleViewModel

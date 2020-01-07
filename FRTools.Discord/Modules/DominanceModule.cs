@@ -10,8 +10,8 @@ using FRTools.Discord.Infrastructure;
 namespace FRTools.Discord.Modules
 {
     [Name("Dominance"), Group("dominance"), Alias("dom"), Summary("Dominance related commands")]
-    [DiscordSetting("GUILDCONFIG_DOMINANCE", typeof(bool), "Automatic dominance", "Enables or disables automatically assigning the dominance role to the current week's dominance winner")]
-    [DiscordSetting("GUILDCONFIG_DOMINANCE_ANNOUNCE", typeof(bool), "Announce update", "Enables or disables the announcement of the current week's standings when the bot fetches the update. Requires $<GUILD:GUILDCONFIG_ANN_CHANNEL> to be set.")]
+    [DiscordSetting("GUILDCONFIG_DOMINANCE", typeof(bool), "Automatic dominance", "Enables or disables automatically assigning the dominance role to the current week's dominance winner", "Enabled", "Disabled")]
+    [DiscordSetting("GUILDCONFIG_DOMINANCE_ANNOUNCE", typeof(bool), "Announce update", "Enables or disables the announcement of the current week's standings when the bot fetches the update. Requires $<GUILD:GUILDCONFIG_ANN_CHANNEL> to be set.", "Enabled", "Disabled")]
     [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE", typeof(IRole), "Dominance role", "The dominance role")]
     [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_0", typeof(IRole), "Earth role", "The Earth role")]
     [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_1", typeof(IRole), "Plague role", "The Plague role")]
@@ -35,6 +35,7 @@ namespace FRTools.Discord.Modules
 
         [RequireUserPermission(GuildPermission.Administrator)]
         [Name("Setup"), Command("setup", RunMode = RunMode.Async), Summary("Setup auto dominance role")]
+        [DiscordHelp("","")]
         public async Task Setup()
         {
             var roleTypeReader = new RoleTypeReader<IRole>();

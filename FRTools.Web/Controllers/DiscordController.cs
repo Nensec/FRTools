@@ -11,6 +11,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Configuration;
 using System.Web.Hosting;
+using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace FRTools.Web.Controllers
 {
@@ -97,14 +99,15 @@ namespace FRTools.Web.Controllers
             };
             serverModel.Channels = server.Channels.Select(x => new DiscordChannelViewModel { ChannelId = x.ChannelId, ChannelName = x.Name, ParentServer = serverModel, DiscordChannelType = x.ChannelType }).ToList();
             serverModel.Roles = server.Roles.Where(x => x.Name != "@everyone").Select(x => new DiscordRoleViewModel { RoleId = x.RoleId, RoleName = x.Name, ParentServer = serverModel }).ToList();
-            var botSettings = DiscordMetadata.BotSettings.Select(x => new DiscordSettingViewModel
+            var botSettings = DiscordMetadata.BotSettings.OrderBy(x => x.Type).Select(x => new DiscordSettingViewModel
             {
                 Key = x.Key,
                 ParentServer = serverModel,
                 Value = ctx.DiscordSettings.FirstOrDefault(s => s.Server.ServerId == discordServer && s.Key == x.Key)?.Value,
                 SettingType = x.Type,
                 SettingName = x.Name,
-                Description = x.Description,
+                Description = ParseDescription(x),
+                ExtraArgs = x.ExtraArgs
             }).ToList();
             serverModel.BotSettings = botSettings;
             return serverModel;
@@ -144,16 +147,17 @@ namespace FRTools.Web.Controllers
                         var model = new ModuleViewModel
                         {
                             ParentServer = serverModel,
-                            SelectedModule = DiscordMetadata.Modules.First(x => x.Name.ToLower() == module.ToLower())                            
+                            SelectedModule = DiscordMetadata.Modules.First(x => x.Name.ToLower() == module.ToLower())
                         };
-                        var moduleSettings = model.SelectedModule.Settings.Select(x => new DiscordSettingViewModel
+                        var moduleSettings = model.SelectedModule.Settings.OrderBy(x => x.Type).Select(x => new DiscordSettingViewModel
                         {
                             Key = x.Key,
                             SettingName = x.Name,
-                            Description = x.Description,
+                            Description = ParseDescription(x),
                             ParentServer = serverModel,
                             SettingType = x.Type,
                             Value = ctx.DiscordSettings.FirstOrDefault(s => s.Server.ServerId == discordServer && s.Key == x.Key)?.Value,
+                            ExtraArgs = x.ExtraArgs,
                             Module = module
                         }).ToList();
                         model.ModuleSettings = moduleSettings;
@@ -168,6 +172,27 @@ namespace FRTools.Web.Controllers
                 else
                     return RedirectToRoute("DiscordManage");
             }
+        }
+
+        private string ParseDescription(Models.DiscordSetting setting)
+        {
+            var description = setting.Description;
+            var matches = Regex.Matches(setting.Description, "[$]<([A-Z]*):([A-Z_]*)>");
+            foreach(var match in matches.Cast<Match>().Where(x => x.Success))
+            {
+                var refSetting = GetRefSetting(match.Groups[1].Value, match.Groups[2].Value);
+                description = description.Replace(match.Groups[0].Value, $"'{refSetting.Name}'");
+            }
+
+            return description;
+        }
+
+        private static Models.DiscordSetting GetRefSetting(string module, string key)
+        {
+            var settings = module == "GUILD"
+                ? DiscordMetadata.BotSettings
+                : DiscordMetadata.Modules.First(x => x.Name.ToUpper() == module).Settings;
+            return settings.First(x => x.Key == key);
         }
 
         //[Route("manage/{discordServer}/{module}/{command}", Name = "DiscordManageCommand")]

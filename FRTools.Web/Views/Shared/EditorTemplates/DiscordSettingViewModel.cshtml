@@ -42,8 +42,14 @@
             </select>
             break;
         case nameof(Boolean):
+            string enabled = "True", disabled = "False";
+            if (Model.ExtraArgs?.Length == 2)
+            {
+                enabled = Model.ExtraArgs[0];
+                disabled = Model.ExtraArgs[1];
+            }
             <div style="padding-left:12px">
-                <input type="checkbox" id="@(id)" name="@(name)" @(bool.TryParse(Model.Value, out var r) && r ? "checked" : "") data-toggle="toggle" data-height="32" data-width="100" onchange="saveSetting('@(Model.Key)', this.checked)" />
+                <input type="checkbox" id="@(id)" name="@(name)" @(bool.TryParse(Model.Value, out var r) && r ? "checked" : "") data-on="@(enabled)" data-off="@(disabled)" data-toggle="toggle" data-height="32" data-width="100" onchange="saveSetting('@(Model.Key)', this.checked)" />
             </div>
             break;
         case nameof(Int32):

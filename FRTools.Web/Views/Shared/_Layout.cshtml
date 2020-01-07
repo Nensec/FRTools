@@ -40,9 +40,14 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">News reader <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Discord Bot <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li>@Html.RouteLink("View FR news", "NewsReader", null, new { title = "Go through the Flight Rising news posts and see what staff is deleting" })</li>
+                            <li>@Html.RouteLink("FRTools Discord bot", "DiscordHome")</li>
+                            @if (Request.IsAuthenticated)
+                            {
+                                <li role="separator" class="divider"></li>
+                                <li>@Html.RouteLink("Manage your bot", "DiscordManage")</li>
+                            }
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -78,6 +83,7 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Other tools <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li>@Html.RouteLink("Dress up a scry", "ScryerDresser", null, new { title = "Use the dressing room to dress up a scry" })</li>
+                            <li>@Html.RouteLink("Unredacted FR Newsreader", "NewsReader", null, new { title = "Go through the Flight Rising news posts and see what staff is deleting" })</li>
                         </ul>
                     </li>
                 </ul>
