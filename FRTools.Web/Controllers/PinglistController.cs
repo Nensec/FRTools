@@ -64,6 +64,7 @@ namespace FRTools.Web.Controllers
                 var list = GetPinglist(model.ListId, false, ctx);
                 if (IsOwner(list, model.SecretKey))
                 {
+                    ctx.PingListEntries.RemoveRange(list.Entries.ToList());
                     ctx.Pinglists.Remove(list);
                     ctx.SaveChanges();
 
