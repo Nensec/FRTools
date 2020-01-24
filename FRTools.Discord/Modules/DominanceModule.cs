@@ -24,6 +24,7 @@ namespace FRTools.Discord.Modules
     [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_8", typeof(IRole), "Arcane role", "The Arcane role")]
     [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_0", typeof(IRole), "Nature role", "The Nature role")]
     [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_10", typeof(IRole), "Fire role", "The Fire role")]
+    [DiscordHelp("DominanceModule")]
     public class DominanceModule : BaseModule
     {
         private readonly IServiceProvider _serviceProvider;
@@ -35,7 +36,7 @@ namespace FRTools.Discord.Modules
 
         [RequireUserPermission(GuildPermission.Administrator)]
         [Name("Setup"), Command("setup", RunMode = RunMode.Async), Summary("Setup auto dominance role")]
-        [DiscordHelp("","")]
+        [DiscordHelp("DominanceSetup", GuildPermission.Administrator)]
         public async Task Setup()
         {
             var roleTypeReader = new RoleTypeReader<IRole>();
@@ -148,6 +149,7 @@ namespace FRTools.Discord.Modules
 
         [RequireUserPermission(GuildPermission.Administrator)]
         [Name("Enable"), Command("enable"), Summary("Enables the automatic dominance role")]
+        [DiscordHelp("DominanceEnable", GuildPermission.Administrator)]
         public async Task Enable()
         {
             if (SettingManager.GetSettingValue("GUILDCONFIG_DOMINANCE_ROLE", Context.Guild) != null && Enumerable.Range(0, 10).All(x => SettingManager.GetSettingValue($"GUILDCONFIG_DOMINANCE_ROLE_{x}", Context.Guild) != null))
@@ -161,6 +163,7 @@ namespace FRTools.Discord.Modules
 
         [RequireUserPermission(GuildPermission.Administrator)]
         [Name("Disable"), Command("disable"), Summary("Disables the automatic dominance role")]
+        [DiscordHelp("DominanceDisable", GuildPermission.Administrator)]
         public async Task Disable()
         {
             SettingManager.SetSettingValue("GUILDCONFIG_DOMINANCE", "false", Context.Guild);
@@ -169,6 +172,7 @@ namespace FRTools.Discord.Modules
 
         [RequireUserPermission(GuildPermission.Administrator)]
         [Name("Update"), Command("update", RunMode = RunMode.Async), Summary("Manually trigger an update for this server")]
+        [DiscordHelp("DominanceUpdate", GuildPermission.Administrator)]
         public async Task Update()
         {
             if (SettingManager.GetSettingValue("GUILDCONFIG_DOMINANCE", Context.Guild) == "true")
@@ -182,6 +186,7 @@ namespace FRTools.Discord.Modules
         }
 
         [Name("Optin"), Command("join"), Alias("iam", "optin"), Summary("Opt in to receive the dominance role when the flight you are part of wins dominance")]
+        [DiscordHelp("DominanceOptIn")]
         public async Task OptIn()
         {
             if (SettingManager.GetSettingValue("GUILDCONFIG_DOMINANCE_ROLE", Context.Guild) == null || Enumerable.Range(0, 10).Any(x => SettingManager.GetSettingValue($"GUILDCONFIG_DOMINANCE_ROLE_{x}", Context.Guild) == null))
@@ -211,6 +216,7 @@ namespace FRTools.Discord.Modules
         }
 
         [Name("Optout"), Command("leave"), Alias("iamnot", "optout"), Summary("Opt out of receiving the dominance role")]
+        [DiscordHelp("DominanceOptOut")]
         public async Task OptOut()
         {
             var dominanceRole = SettingManager.GetSettingValue("GUILDCONFIG_DOMINANCE_ROLE", Context.Guild);

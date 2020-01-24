@@ -41,7 +41,14 @@
                                 <a href="@Url.RouteUrl("DiscordManageModule", new { discordServer = Model.ServerId, module = module.Name.ToLower() })">
                                     <div class="col-sm-4">
                                         <div class="moduleIcon">
-                                            <span>@module.Name[0]</span>
+                                            @if (string.IsNullOrEmpty(module.Help?.IconBase64))
+                                            {
+                                                <span>@module.Name[0]</span>
+                                            }
+                                            else
+                                            {
+                                                <img src="@($"data:image/png;base64, {module.Help.IconBase64}")" />
+                                            }
                                         </div>
                                     </div>
                                 </a>
@@ -68,7 +75,7 @@
         width: 128px;
         height: 128px;
         text-align: center;
-        background-color: #2f3136;
+        background-color: #ddd;
         float: left;
         display: inline block;
         color: white;

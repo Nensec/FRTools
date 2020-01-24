@@ -28,6 +28,7 @@ namespace FRTools.Web.Models
         public string[] Aliases { get; set; }
         public List<DiscordCommand> Commands { get; set; } = new List<DiscordCommand>();
         public List<DiscordSetting> Settings { get; set; } = new List<DiscordSetting>();
+        public DiscordHelp Help { get; set; }
         public bool RequireOwner { get; set; }
     }
 
@@ -39,6 +40,16 @@ namespace FRTools.Web.Models
         public long RequireGuildPermission { get; set; }
         public long RequireChannelPermission { get; set; }
         public bool RequireOwner { get; set; }
+        public DiscordHelp Help { get; set; }
+    }
+    
+    public class DiscordHelp
+    {
+        public string Synopsis { get; set; }
+        public string Detailed { get; set; }
+        public string IconBase64 { get; set; }
+        public string[] Images { get; set; }
+        public long RequiresGuildPermission { get; set; }
     }
 
     public class DiscordBaseViewModel
@@ -90,17 +101,35 @@ namespace FRTools.Web.Models
         public string[] ExtraArgs { get; set; }
     }
 
-    public class ModuleViewModel
+    public class DiscordModuleViewModel
     {
         public ServerViewModel ParentServer { get; set; }
         public DiscordModule SelectedModule { get; set; }    
         public List<DiscordSettingViewModel> ModuleSettings { get; set; }
     }
 
-    public class CommandViewModel
+    public class DiscordCommandViewModel
     {
         public ServerViewModel ParentServer { get; set; }
         public DiscordModule SelectedModule { get; set; }
         public DiscordCommand SelectedCommand { get; set; }
+    }
+
+    public class DiscordHelpViewModel
+    {
+        public List<DiscordModuleHelpViewModel> Modules { get; set; }
+    }
+
+    public class DiscordModuleHelpViewModel
+    {
+        public string Name { get; set; }
+        public DiscordHelp Help { get; set; }
+        public List<DiscordCommandHelpViewModel> Commands { get; set; }
+    }
+
+    public class DiscordCommandHelpViewModel
+    {
+        public string Name { get; set; }
+        public DiscordHelp Help { get; set; }
     }
 }

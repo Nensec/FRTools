@@ -1,0 +1,9 @@
+﻿@model FRTools.Web.Models.DiscordHelp
+
+@{
+    var detailed = string.Format(Model.Detailed ?? "", Model.Images.Select(x => $"<div><img class=\"img-responsive\" src=\"{x}\"/></div>").ToArray());
+}
+
+<div class="discordHelp">
+    @Html.Raw(detailed)
+</div>

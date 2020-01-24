@@ -53,6 +53,20 @@ foreach(var module in modules)
 	if(summaryAttribute != null)
 		moduleTemplate.Description = (string)summaryAttribute.GetType().GetProperty("Text").GetValue(summaryAttribute);
 
+	var moduleHelpAttribute = moduleAttributes.FirstOrDefault(x => x.GetType().Name == "DiscordHelpAttribute");
+	if(moduleHelpAttribute != null)
+	{
+		var help = new HelpTemplate();
+		help.Synopsis = (string)moduleHelpAttribute.GetType().GetProperty("Synopsis").GetValue(moduleHelpAttribute);
+		help.Detailed = (string)moduleHelpAttribute.GetType().GetProperty("Detailed").GetValue(moduleHelpAttribute);
+		help.Images = (string[])moduleHelpAttribute.GetType().GetProperty("Images").GetValue(moduleHelpAttribute);
+		help.IconBase64 = (string)moduleHelpAttribute.GetType().GetProperty("IconBase64").GetValue(moduleHelpAttribute);
+		var permissionValue = moduleHelpAttribute.GetType().GetProperty("RequiresPermission").GetValue(moduleHelpAttribute);
+		if(permissionValue != null)
+			help.RequiresGuildPermission = (long)(ulong)permissionValue;
+		moduleTemplate.Help = help;
+	}
+
 	var groupAttribute = moduleAttributes.FirstOrDefault(x => x.GetType().Name == "GroupAttribute");
 	if(groupAttribute != null)
 	{
@@ -63,6 +77,7 @@ foreach(var module in modules)
 	
 	var reqOwnerAttribute = moduleAttributes.FirstOrDefault(x => x.GetType().Name == "RequireOwnerAttribute");
 	moduleTemplate.RequireOwner = reqOwnerAttribute != null;
+
 	var reqPermAttributes = moduleAttributes.Where(x => x.GetType().Name == "RequireUserPermissionAttribute");
 	long guildPermRequired = 0, channelPermRequired = 0;
 	if(reqPermAttributes.Any())
@@ -89,6 +104,20 @@ foreach(var module in modules)
 		var cmdSummaryAttribute = methodAttributes.FirstOrDefault(x => x.GetType().Name == "SummaryAttribute");
 		if(cmdSummaryAttribute != null)
 			commandTemplate.Description = (string)cmdSummaryAttribute.GetType().GetProperty("Text").GetValue(cmdSummaryAttribute);
+
+		var commandHelpAttribute = methodAttributes.FirstOrDefault(x => x.GetType().Name == "DiscordHelpAttribute");
+		if(commandHelpAttribute != null)
+		{
+			var help = new HelpTemplate();
+			help.Synopsis = (string)commandHelpAttribute.GetType().GetProperty("Synopsis").GetValue(commandHelpAttribute);
+			help.Detailed = (string)commandHelpAttribute.GetType().GetProperty("Detailed").GetValue(commandHelpAttribute);
+			help.Images = (string[])commandHelpAttribute.GetType().GetProperty("Images").GetValue(commandHelpAttribute);
+			help.IconBase64 = (string)commandHelpAttribute.GetType().GetProperty("IconBase64").GetValue(commandHelpAttribute);
+			var permissionValue = commandHelpAttribute.GetType().GetProperty("RequiresPermission").GetValue(commandHelpAttribute);
+			if(permissionValue != null)
+				help.RequiresGuildPermission = (long)(ulong)permissionValue;
+			commandTemplate.Help = help;
+		}
 
 		var commandAttribute = methodAttributes.FirstOrDefault(x => x.GetType().Name == "CommandAttribute");
 		var commandName = (string)commandAttribute.GetType().GetProperty("Text").GetValue(commandAttribute);
@@ -138,6 +167,7 @@ var json = JsonConvert.SerializeObject(output);
 		public bool RequireOwner { get; set; }
 		public List<CommandTemplate> Commands { get; set; } = new List<CommandTemplate>();
 		public List<SettingTemplate> Settings { get; set; } = new List<SettingTemplate>();
+		public HelpTemplate Help { get; set; }
 	}
 
 	class CommandTemplate
@@ -148,6 +178,7 @@ var json = JsonConvert.SerializeObject(output);
 		public long RequireGuildPermission { get; set; }
 		public long RequireChannelPermission { get; set; }
 		public bool RequireOwner { get; set; }
+		public HelpTemplate Help { get; set; }
 	}
 
 	class SettingTemplate
@@ -157,5 +188,14 @@ var json = JsonConvert.SerializeObject(output);
 		public string Type { get; set; }
 		public string Key { get; set; }
 		public string[] ExtraArgs { get; set; }
+	}
+
+	class HelpTemplate
+	{
+		public string Synopsis { get; set; }
+		public string Detailed { get; set; }
+		public string[] Images { get; set; }
+		public string IconBase64 { get; set; }
+		public long RequiresGuildPermission { get; set; }
 	}
 #>

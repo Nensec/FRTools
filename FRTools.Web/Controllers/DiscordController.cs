@@ -61,7 +61,29 @@ namespace FRTools.Web.Controllers
         [Route("help", Name = "DiscordHelp")]
         public ActionResult Help()
         {
-            return View();
+            var model = new DiscordHelpViewModel();
+            model.Modules = DiscordMetadata.Modules.Where(x => !x.RequireOwner).Select(x => new DiscordModuleHelpViewModel
+            {
+                Name = x.Name,
+                Help = x.Help,
+                Commands = x.Commands.Select(c => new DiscordCommandHelpViewModel { Name = c.Name, Help = c.Help }).ToList()
+            }).ToList();
+            return View(model);
+        }
+
+        [Route("help/{module}/{command}")]
+        public ActionResult CommandHelp(string module, string command)
+        {
+            var discordModule = DiscordMetadata.Modules.FirstOrDefault(x => x.Name.ToLower() == module.ToLower());
+            if(discordModule != null)
+            {
+                var moduleCommand = discordModule.Commands.FirstOrDefault(x => x.Name.ToLower() == command.ToLower());
+                if(moduleCommand != null)
+                {
+                    return PartialView("_Help", moduleCommand.Help);
+                }
+            }
+            return HttpNotFound();
         }
 
         [Route("manage", Name = "DiscordManage")]
@@ -144,7 +166,7 @@ namespace FRTools.Web.Controllers
                     {
                         var serverModel = GetServerViewModel(ctx, currentUser, discordServer);
 
-                        var model = new ModuleViewModel
+                        var model = new DiscordModuleViewModel
                         {
                             ParentServer = serverModel,
                             SelectedModule = DiscordMetadata.Modules.First(x => x.Name.ToLower() == module.ToLower())

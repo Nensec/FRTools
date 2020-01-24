@@ -800,6 +800,8 @@
     <Content Include="Views\Discord\ManageServer.cshtml" />
     <Content Include="Views\Discord\ManageModule.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DiscordSettingViewModel.cshtml" />
+    <Content Include="Views\Discord\Help.cshtml" />
+    <Content Include="Views\Discord\_Help.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

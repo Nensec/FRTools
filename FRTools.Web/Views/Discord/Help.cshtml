@@ -1,0 +1,146 @@
+﻿@model FRTools.Web.Models.DiscordHelpViewModel
+
+@{
+    ViewBag.Title = "Discord Help";
+}
+
+@section head {
+    <link href="https://fonts.googleapis.com/css?family=Arimo" rel="stylesheet">
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Available modules
+            </div>
+            <div class="panel-body">
+                @foreach (var module in Model.Modules)
+                {
+                    <a href="#" onclick="selectModule('@(module.Name.ToLower())')" class="module">
+                        <div class="panel panel-default panel-transparent" style="margin-bottom:0">
+                            <div class="panel-body">
+                                <div class="moduleIcon">
+                                    @if (string.IsNullOrEmpty(module.Help?.IconBase64))
+                                    {
+                                        <span>@module.Name[0]</span>
+                                    }
+                                    else
+                                    {
+                                        <img src="@($"data:image/png;base64, {module.Help.IconBase64}")" />
+                                    }
+                                </div>
+                                <h4 class="pull-left" style="margin-bottom:15px; margin-left:15px;">@module.Name</h4>
+                                <p class="hidden-sm">@(module.Help.Synopsis)</p>
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Available commands
+            </div>
+            <div class="panel-body commands">
+                <div class="alert alert-info selectModuleHelp" style="margin-bottom:0">
+                    Select a module on the left to show its commands
+                </div>
+                @foreach (var module in Model.Modules)
+                {
+                    <div module="@(module.Name.ToLower())" class="moduleHelp" style="display:none;">
+                        <div class="well" style="margin-bottom:10px">
+                            @if (!string.IsNullOrEmpty(module.Help?.IconBase64))
+                            {
+                                <img style="width:128px;height:128px;" src="@($"data:image/png;base64, {module.Help.IconBase64}")" />
+                            }
+                            @Html.Partial("_Help", module.Help)
+                        </div>
+                        @foreach (var command in module.Commands)
+                        {
+                            <div class="panel panel-default" style="margin-bottom:0; margin-top:5px;">
+                                <div class="panel-heading" data-toggle="collapse" data-target=".panel-body[command=@(command.Name.ToLower())]">
+                                    @(command.Name)
+                                    @if ((command.Help.RequiresGuildPermission & 8) != 0)
+                                    {
+                                        <span class="glyphicon glyphicon-exclamation-sign text-warning pull-right" style="font-size:16px;" title="This command requires Administrator rights to execute"></span>
+                                    }
+                                </div>
+                                <div command="@(command.Name.ToLower())" class="panel-body collapse">
+                                    <p>Loading..</p>
+                                </div>
+                            </div>
+
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .moduleIcon {
+        border-radius: 32px;
+        transition: all 0.25s cubic-bezier(0.29,-0.07, 0.56, 1.65);
+        overflow: hidden;
+        width: 64px;
+        height: 64px;
+        text-align: center;
+        background-color: #ddd;
+        float: left;
+        display: inline block;
+        color: white;
+    }
+
+        .moduleIcon img {
+            width: 64px;
+            height: 64px;
+        }
+
+        .moduleIcon span {
+            display: block;
+            font-size: 24px;
+            margin-top: 15px;
+            font-family: 'Arimo', sans-serif;
+        }
+
+    .discordHelp img {
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin: 5px 0;
+    }
+</style>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('.module').on('mouseover', function () {
+                $('.moduleIcon', this).css('border-radius', 20);
+            }).on('mouseout', function () {
+                $('.moduleIcon', this).css('border-radius', 32);
+            });
+
+            $('.collapse').on('show.bs.collapse', function () {
+
+                if (!$(this).hasClass('loaded')) {
+                    var elm = $(this);
+                    var moduleName = elm.parents('.moduleHelp').attr('module');
+                    var commandName = elm.attr('command');
+
+                    $.get(`help/${moduleName}/${commandName}`).done(function (data) {
+                        elm.html(data).addClass('loaded');
+                    });
+                }
+            });
+        });
+
+        selectModule = function (module) {
+            $('.moduleHelp, .selectModuleHelp').hide();
+            $(`.moduleHelp[module="${module}"]`).show();
+        }
+    </script>
+}
