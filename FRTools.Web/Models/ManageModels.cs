@@ -15,6 +15,7 @@ namespace FRTools.Web.Models
     {
         public User User { get; set; }
         public List<Skin> Skins { get; set; }
+        public Func<string, int, int, int, string> GetDummyPreviewImage { get; set; }
     }
 
     public class VerifyFRViewModel : BaseManageModel
@@ -26,7 +27,7 @@ namespace FRTools.Web.Models
     {
         [Display(Name = "User/Lair Id")]
         [Required]
-        public int LairId { get; set; }        
+        public int LairId { get; set; }
     }
 
     public class UserPostViewModel : BaseManageModel

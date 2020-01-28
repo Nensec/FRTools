@@ -19,12 +19,15 @@ namespace FRTools.Web.Controllers
 {
     [Authorize]
     [RoutePrefix("manage")]
-    public class ManageController : BaseController
+    public class ManageController : BaseSkinController
     {
         [Route(Name = "ManageAccount")]
         public ActionResult Index()
         {
-            var model = new AccountViewModel();
+            var model = new AccountViewModel
+            {
+                GetDummyPreviewImage = (string skinId, int dragonType, int gender, int version) => GenerateOrFetchPreview(skinId, version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, dragonType, gender), null).GetAwaiter().GetResult().Urls[0]
+            };
             var userid = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
             using (var ctx = new DataContext())
             {
