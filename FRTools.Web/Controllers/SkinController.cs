@@ -450,7 +450,6 @@ namespace FRTools.Web.Controllers
                         skin.Creator = ctx.Users.FirstOrDefault(x => x.Id == userId);
                     }
 
-                    await GenerateOrFetchPreview(skin.GeneratedId, skin.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null, force: true);
                     await ctx.SaveChangesAsync();
                     TempData["Success"] = $"Skin succesfully updated to version <b>v{skin.Version}</b>!";
                     return RedirectToRoute("Manage", new { model.SkinId, model.SecretKey });
@@ -586,7 +585,7 @@ namespace FRTools.Web.Controllers
 
             Bitmap dragonImage = null;
 
-            var azureImagePreviewPath = $@"previews\{skinId}\{(dragonId == "preview" || version == 1 ? "" : $@"{version}\")}{dragonId ?? dragon.ToString()}.png";
+            var azureImagePreviewPath = $@"previews\{skinId}\{(version == 1 ? "" : $@"{version}\")}{dragonId ?? dragon.ToString()}.png";
             if (force || !azureImageService.Exists(azureImagePreviewPath, out var previewUrl))
             {
                 try
