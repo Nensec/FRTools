@@ -586,7 +586,7 @@ namespace FRTools.Web.Controllers
 
             Bitmap dragonImage = null;
 
-            var azureImagePreviewPath = $@"previews\{skinId}\{(version == 1 ? "" : $@"{version}\")}{dragonId ?? dragon.ToString()}.png";
+            var azureImagePreviewPath = $@"previews\{skinId}\{(dragonId == "preview" || version == 1 ? "" : $@"{version}\")}{dragonId ?? dragon.ToString()}.png";
             if (force || !azureImageService.Exists(azureImagePreviewPath, out var previewUrl))
             {
                 try
