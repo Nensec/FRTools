@@ -6,11 +6,12 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using FRTools.Data;
+using FRTools.Web.Infrastructure;
 
 namespace FRTools.Web.Controllers
 {
     [RoutePrefix("profile")]
-    public class ProfileController : BaseController
+    public class ProfileController : BaseSkinController
     {
         [Authorize]
         [Route(Name = "SelfProfile")]
@@ -54,7 +55,10 @@ namespace FRTools.Web.Controllers
                 if (!user.Privacy.HasFlag(Privacy.HidePreviews))
                     vm.Previews = user.Previews.ToList();
                 if (!user.Privacy.HasFlag(Privacy.HideSkins))
+                {
                     vm.Skins = user.Skins.Where(x => x.Visibility == SkinVisiblity.Visible || x.Visibility == SkinVisiblity.HideFromBrowse).ToList();
+                    vm.GetDummyPreviewImage = (string skinId, int dragonType, int gender, int version) => GenerateOrFetchPreview(skinId, version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, dragonType, gender), null).GetAwaiter().GetResult().Urls[0];
+                }
                 return View(vm);
             }
         }

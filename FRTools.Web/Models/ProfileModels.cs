@@ -1,4 +1,5 @@
 ﻿using FRTools.Data.DataModels;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 
@@ -18,5 +19,7 @@ namespace FRTools.Web.Models
         }
         public string CDNBasePath => ConfigurationManager.AppSettings["CDNBasePath"];
         public bool IsOwn { get; set; }
+        public Func<string, int, int, int, string> GetDummyPreviewImage { get; set; }
+
     }
 }
