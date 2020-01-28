@@ -27,8 +27,8 @@ namespace FRTools.Web.Controllers
                     User = user,
                     Previews = user.Previews.ToList(),
                     Skins = user.Skins.ToList(),
-                    IsOwn = true
-
+                    IsOwn = true,
+                    GetDummyPreviewImage = (string skinId, int dragonType, int gender, int version) => GenerateOrFetchPreview(skinId, version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, dragonType, gender), null).GetAwaiter().GetResult().Urls[0]
                 };
                 return View(vm);
             }
