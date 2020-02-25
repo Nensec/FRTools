@@ -275,6 +275,7 @@ namespace FRTools.Web.Controllers
                         SkinId = randomizedId,
                         SecretKey = secretKey,
                         PreviewUrl = (await GenerateOrFetchPreview(randomizedId, skin.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
+                        ShareUrl = await BitlyHelper.TryGenerateUrl(Url.RouteUrl("Preview", new { SkinId = randomizedId }, "https"))
                     });
                 }
                 catch
@@ -318,7 +319,8 @@ namespace FRTools.Web.Controllers
                     return View(new ManageModelViewModel
                     {
                         Skin = skin,
-                        PreviewUrl = (await GenerateOrFetchPreview(model.SkinId, skin.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0]
+                        PreviewUrl = (await GenerateOrFetchPreview(model.SkinId, skin.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
+                        ShareUrl = await BitlyHelper.TryGenerateUrl(Url.RouteUrl("Preview", new { SkinId = skin.GeneratedId }, "https"))
                     });
                 }
             }

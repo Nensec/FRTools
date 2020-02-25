@@ -109,7 +109,7 @@ namespace FRTools.Web.Controllers
         }
 
         [Route("list/{listId}", Name = "PinglistDirect")]
-        public ActionResult List(string listId, string secretKey = null)
+        public async Task<ActionResult> List(string listId, string secretKey = null)
         {
             using (var ctx = new DataContext())
             {
@@ -169,6 +169,7 @@ namespace FRTools.Web.Controllers
                     ownerModel.AvailableCategories.Add(new PinglistCategory { Id = -1 });
                     ownerModel.AvailableCategories.AddRange(ctx.PinglistCategories.Where(x => x.Owner.Id == ownerModel.Owner.Id).ToList());
                     ownerModel.PinglistCategory = list.PinglistCategory;
+                    ownerModel.ShareUrl = await BitlyHelper.TryGenerateUrl(Url.RouteUrl("PinglistDirect", new { listId = model.ListId }, "https"));
                     var activeJobs = JobManager.GetActiveJobs(list.Id.ToString());
                     foreach (var job in activeJobs)
                     {

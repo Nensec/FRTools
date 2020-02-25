@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BitlyAPI;
 using System.Configuration;
-using System.Linq;
-using System.Web;
+using System.Threading.Tasks;
 
 namespace FRTools.Web.Infrastructure
 {
     public static class BitlyHelper
     {
-        public static adnmaster.Bitly.BitlyClient BitlyClient { get; } = new adnmaster.Bitly.BitlyClient(ConfigurationManager.AppSettings["BitlyClientId"]);
+        public static Bitly BitlyClient { get; } = new Bitly(ConfigurationManager.AppSettings["BitlyAT"]);
 
-        static BitlyHelper() => BitlyClient.ApplyAccessToken(ConfigurationManager.AppSettings["BitlyAT"]);
-        public static string TryGenerateUrl(string url)
+        public static async Task<string> TryGenerateUrl(string url)
         {
             // bitly cannot create shortened links for localhost
             if (url.Contains("localhost"))
@@ -19,10 +16,8 @@ namespace FRTools.Web.Infrastructure
 
             try
             {
-                var result = BitlyClient.Links.Shorten(url);
-                if (result.StatusCode != System.Net.HttpStatusCode.OK)
-                    return url;
-                return result.Data.ShortUrl;
+                var result = await BitlyClient.PostShorten(url);
+                return result.Link;
             }
             catch
             {

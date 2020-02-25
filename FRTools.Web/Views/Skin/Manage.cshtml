@@ -67,7 +67,7 @@
                             Dragon preview
                         </label>
                         <div class="col-md-8">
-                            @Html.CopyTextBox(FRTools.Web.Infrastructure.BitlyHelper.TryGenerateUrl(Url.RouteUrl("Preview", new { SkinId = Model.Skin.GeneratedId }, "https")), "PreviewLink")
+                            @Html.CopyTextBox(Model.ShareUrl, "PreviewLink")
                         </div>
                     </div>
                 </div>

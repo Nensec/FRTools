@@ -21,7 +21,7 @@
                     This URL is what you share with others to preview your skin.
                 </p>
                 <div class="col-md-12">
-                    @Html.CopyTextBox(FRTools.Web.Infrastructure.BitlyHelper.TryGenerateUrl(Url.RouteUrl("Preview", new { SkinId = Model.SkinId }, "https")), "PreviewLink")
+                    @Html.CopyTextBox(Model.ShareUrl, "PreviewLink")
                 </div>
 
                 @if (Request.IsAuthenticated)

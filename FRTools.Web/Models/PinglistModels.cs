@@ -44,6 +44,8 @@ namespace FRTools.Web.Models
         public FormatModel Format { get; set; }
         [Display(Name = "Category")]
         public int? NewPinglistCategory { get; set; }
+        public string ShareUrl { get; set; }
+
 
         public List<PinglistCategory> AvailableCategories { get; } = new List<PinglistCategory>();
 
