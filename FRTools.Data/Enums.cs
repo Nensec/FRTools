@@ -214,7 +214,8 @@ namespace FRTools.Data
         Laced,
         Leopard = 40,
         Slime,
-        Fade
+        Fade,
+        Swirl = 57
     }
 
     public enum TertiaryGene
@@ -276,7 +277,8 @@ namespace FRTools.Data
         Edged,
         Clouded = 40,
         Sludge,
-        Blend
+        Blend,
+        Marbled = 57
     }
 
     public enum Color
