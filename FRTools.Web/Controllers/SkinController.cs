@@ -121,13 +121,19 @@ namespace FRTools.Web.Controllers
             if (isDressingRoomUrl)
             {
                 var apparelDragon = FRHelpers.ParseUrlForDragon(dragonUrl);
-                if (!dragonUrl.Contains("/dgen/dressing-room/dummy"))
+                if (dragonUrl.Contains("/dgen/dressing-room/dummy"))
+                    dragon = FRHelpers.ParseUrlForDragon(dragonUrl);
+                else if (dragonUrl.Contains("dgen/dressing-room/scry"))
+                {
+                    var scryId = int.Parse(Regex.Match(dragonUrl, @"sdid=([\d]*)").Groups[1].Value);
+                    var scryUrl = FRHelpers.GetDragonImageUrlFromScryId(scryId);
+                    dragon = FRHelpers.ParseUrlForDragon(scryUrl);
+                }
+                else
                 {
                     dragonId = int.Parse(Regex.Match(dragonUrl, @"did=([\d]*)").Groups[1].Value);
                     dragon = FRHelpers.GetDragonFromDragonId(dragonId.Value);
                 }
-                else
-                    dragon = FRHelpers.ParseUrlForDragon(dragonUrl);
 
                 if (IsAncientBreed(dragon.DragonType))
                 {

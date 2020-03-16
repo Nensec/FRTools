@@ -1,12 +1,14 @@
 ﻿using FRTools.Data;
 using FRTools.Data.DataModels;
 using FRTools.Data.DataModels.FlightRisingModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
@@ -132,6 +134,33 @@ namespace FRTools.Web.Infrastructure
             {
                 var htmlPage = client.DownloadString(string.Format(ScryerUrl, dragonId));
                 return ScrapeImageUrl(htmlPage);
+            }
+        }
+
+        public static string GetDragonImageUrlFromScryId(int scryId)
+        {
+            var scryUrl = $"https://www1.flightrising.com/scrying/predict?morph={scryId}";
+            using (var client = new WebClient())
+            {
+                var htmlPage = client.DownloadString(scryUrl);
+                var scryPageUrlParse = Regex.Match(htmlPage, @"breed=(\d+)&gender=(\d+)&age=(\d+)&bodygene=(\d+)&body=(\d+)&winggene=(\d+)&wings=(\d+)&tertgene=(\d+)&tert=(\d+)&element=(\d+)&eyetype=(\d+)");
+                var result = client.UploadValues("https://www1.flightrising.com/scrying/ajax-predict", new System.Collections.Specialized.NameValueCollection
+                {
+                    { "breed", scryPageUrlParse.Groups[1].Value },
+                    { "gender", scryPageUrlParse.Groups[2].Value },
+                    { "age", scryPageUrlParse.Groups[3].Value },
+                    { "bodygene", scryPageUrlParse.Groups[4].Value },
+                    { "body", scryPageUrlParse.Groups[5].Value },
+                    { "winggene", scryPageUrlParse.Groups[6].Value },
+                    { "wings", scryPageUrlParse.Groups[7].Value },
+                    { "tertgene", scryPageUrlParse.Groups[8].Value },
+                    { "tert", scryPageUrlParse.Groups[9].Value },
+                    { "element", scryPageUrlParse.Groups[10].Value },
+                    { "eyetype", scryPageUrlParse.Groups[11].Value },
+                });
+                var str = Encoding.UTF8.GetString(result);
+                var dragonUrl = JsonConvert.DeserializeObject<dynamic>(str).dragon_url;
+                return "https://www1.flightrising.com" + dragonUrl;
             }
         }
 
