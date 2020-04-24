@@ -6,13 +6,12 @@ using FRTools.Web.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Newtonsoft.Json;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
 using System.Configuration;
-using System.Web.Hosting;
+using System.Linq;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
+using System.Web;
+using System.Web.Hosting;
+using System.Web.Mvc;
 
 namespace FRTools.Web.Controllers
 {
@@ -199,13 +198,15 @@ namespace FRTools.Web.Controllers
         private string ParseDescription(Models.DiscordSetting setting)
         {
             var description = setting.Description;
-            var matches = Regex.Matches(setting.Description, "[$]<([A-Z]*):([A-Z_]*)>");
-            foreach(var match in matches.Cast<Match>().Where(x => x.Success))
+            if (description != null)
             {
-                var refSetting = GetRefSetting(match.Groups[1].Value, match.Groups[2].Value);
-                description = description.Replace(match.Groups[0].Value, $"'{refSetting.Name}'");
+                var matches = Regex.Matches(setting.Description, "[$]<([A-Z]*):([A-Z_]*)>");
+                foreach (var match in matches.Cast<Match>().Where(x => x.Success))
+                {
+                    var refSetting = GetRefSetting(match.Groups[1].Value, match.Groups[2].Value);
+                    description = description.Replace(match.Groups[0].Value, $"'{refSetting.Name}'");
+                }
             }
-
             return description;
         }
 

@@ -18,7 +18,13 @@
                     @foreach (var setting in Model.ModuleSettings)
                     {
                         <div class="form-group">
-                            <label class="col-sm-3 control-label" style="text-align:left"><span class="glyphicon glyphicon-info-sign" title="@(setting.Description)"></span> @(setting.SettingName)</label>
+                            <label class="col-sm-3 control-label" style="text-align:left">
+                                @if (setting.Description != null)
+                                {
+                                    <span class="glyphicon glyphicon-info-sign" title="@(setting.Description)"></span>
+                                }
+                                @(setting.SettingName)
+                            </label>
                             <div class="col-sm-9">
                                 @Html.EditorFor(model => setting)
                             </div>

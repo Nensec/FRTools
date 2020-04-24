@@ -20,18 +20,24 @@
                     <a href="#" onclick="selectModule('@(module.Name.ToLower())')" class="module">
                         <div class="panel panel-default panel-transparent" style="margin-bottom:0">
                             <div class="panel-body">
-                                <div class="moduleIcon">
-                                    @if (string.IsNullOrEmpty(module.Help?.IconBase64))
-                                    {
-                                        <span>@module.Name[0]</span>
-                                    }
-                                    else
-                                    {
-                                        <img src="@($"data:image/png;base64, {module.Help.IconBase64}")" />
-                                    }
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="moduleIcon">
+                                            @if (string.IsNullOrEmpty(module.Help?.IconBase64))
+                                            {
+                                                <span>@module.Name[0]</span>
+                                            }
+                                            else
+                                            {
+                                                <img src="@($"data:image/png;base64, {module.Help.IconBase64}")" />
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <h4 style="margin-bottom:15px;">@module.Name</h4>
+                                        <p class="hidden-sm">@(module.Help.Synopsis)</p>
+                                    </div>
                                 </div>
-                                <h4 class="pull-left" style="margin-bottom:15px; margin-left:15px;">@module.Name</h4>
-                                <p class="hidden-sm">@(module.Help.Synopsis)</p>
                             </div>
                         </div>
                     </a>
