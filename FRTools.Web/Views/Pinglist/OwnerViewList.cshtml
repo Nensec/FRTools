@@ -41,7 +41,7 @@
                                 Your link
                             </label>
                             <div class="col-md-9">
-                                @Html.CopyTextBox(FRTools.Web.Infrastructure.BitlyHelper.TryGenerateUrl(Url.RouteUrl("PinglistDirect", new { listId = Model.ListId }, "https")), "PinglistLink")
+                                @Html.CopyTextBox(Model.ShareUrl, "PinglistLink")
                             </div>
                         </div>
                         <hr />

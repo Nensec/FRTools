@@ -61,6 +61,7 @@ namespace FRTools.Data
     public enum GaolerTertGene
     {
         Basic = 0,
+        Fans = 3,
         Veined = 2,
         Ghost = 25,
         Shardflank,
@@ -110,6 +111,7 @@ namespace FRTools.Data
 
     public enum BanescaleTertGene
     {
+        Underbelly = 31,
         Blossom = 36,
         Trimmings = 39,
         Ringlets,
@@ -212,7 +214,8 @@ namespace FRTools.Data
         Laced,
         Leopard = 40,
         Slime,
-        Fade
+        Fade,
+        Swirl = 57
     }
 
     public enum TertiaryGene
@@ -240,7 +243,8 @@ namespace FRTools.Data
         Firefly,
         Ringlets,
         Peacock,
-        Veined = 38
+        Veined = 38,
+        Keel = 53
     }
 
     public enum WingGene
@@ -274,7 +278,8 @@ namespace FRTools.Data
         Edged,
         Clouded = 40,
         Sludge,
-        Blend
+        Blend,
+        Marbled = 57
     }
 
     public enum Color
