@@ -125,6 +125,8 @@ namespace FRTools.Discord
                 {
                     if (genericMessage.Category == MessageCategory.DominanceTracker)
                         await handler.HandleDominanceUpdate(genericMessage);
+                    if (genericMessage.Category == MessageCategory.SettingUpdated && (long)handler.Guild.Id == genericMessage.DiscordServer)
+                        await handler.HandleSettingUpdate(genericMessage);
                 }
             }
 

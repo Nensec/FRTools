@@ -1,6 +1,7 @@
 ﻿using Discord;
 using FRTools.Data;
 using FRTools.Data.DataModels.DiscordModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -61,6 +62,12 @@ namespace FRTools.Discord.Infrastructure
                 foreach (var setting in settings)
                     _settingCache[(guild, setting.Key)] = setting.Value;
             }
+        }
+
+        internal void ForceUpdate(IGuild guild, string key)
+        {
+            _settingCache.Remove((guild, key));
+            GetSettingValue(key, guild);
         }
     }
 }

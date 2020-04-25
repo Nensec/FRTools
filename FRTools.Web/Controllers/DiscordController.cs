@@ -1,14 +1,18 @@
 ﻿using FRTools.Data;
 using FRTools.Data.DataModels;
 using FRTools.Data.DataModels.DiscordModels;
+using FRTools.Data.Messages;
 using FRTools.Web.Infrastructure;
 using FRTools.Web.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
 using System.Configuration;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
@@ -254,12 +258,13 @@ namespace FRTools.Web.Controllers
         [Authorize]
         [MustHaveLoginProvider("discord", "DiscordHome")]
         [HttpPost]
-        public ActionResult SaveSetting(long discordServer, string module, string key, string value)
+        public async Task<ActionResult> SaveSetting(string discordServer, string module, string key, string value)
         {
+            var discordServerId = long.Parse(discordServer);
             ActionResult ErrorResult() => new HttpUnauthorizedResult("User does not have required permission");
             using (var ctx = new DataContext())
             {
-                var currentUser = ctx.DiscordUsers.FirstOrDefault(x => x.UserId == _currentUserId)?.Servers.FirstOrDefault(x => x.Server.ServerId == discordServer);
+                var currentUser = ctx.DiscordUsers.FirstOrDefault(x => x.UserId == _currentUserId)?.Servers.FirstOrDefault(x => x.Server.ServerId == discordServerId);
                 if (currentUser == null)
                     return ErrorResult();
 
@@ -298,6 +303,9 @@ namespace FRTools.Web.Controllers
                 }
 
                 ctx.SaveChanges();
+                var _serviceBus = new QueueClient(ConfigurationManager.AppSettings["AzureSBConnString"], ConfigurationManager.AppSettings["AzureSBQueueName"]);
+                await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new GenericMessage(MessageCategory.SettingUpdated, setting.Key) { DiscordServer = discordServerId }))));
+
                 return Json(JsonConvert.SerializeObject(new { result = 1, setting.Key, setting.Value }));
             }
         }
@@ -324,23 +332,5 @@ namespace FRTools.Web.Controllers
 
             return true;
         }
-
-        //private bool CheckCommand(string module, string command, DiscordServerUser currentUser)
-        //{
-        //    if (CheckModule(module))
-        //    {
-        //        var discordCommand = DiscordMetadata.Modules.Where(x => x.Name.ToLower() == module).SelectMany(x => x.Commands).FirstOrDefault(x => x.Name.ToLower() == command);
-
-        //        if (discordCommand == null)
-        //            return false;
-
-        //        if (discordCommand.RequireOwner && _currentUserId != DiscordBotOwnerId)
-        //            return false;
-
-        //        if (currentUser.Roles.Any(x => (x.DiscordPermissions & discordCommand.RequireGuildPermission) != 0))
-        //            return true;
-        //    }
-        //    return false;
-        //}
     }
 }

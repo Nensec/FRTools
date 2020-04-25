@@ -80,7 +80,7 @@
             $.post({
                 url: '@Url.RouteUrl("DiscordSaveSetting")',
                 data: {
-                    discordServer: @(Model.ParentServer.ServerId),
+                    discordServer: '@(Model.ParentServer.ServerId)',
                     module: @(Model.Module == null ? "undefined" : $"`{Model.Module}`"),
                     key: key,
                     value: value

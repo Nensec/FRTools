@@ -17,15 +17,16 @@ namespace FRTools.Discord.Handlers
     [DiscordSetting("GUILDCONFIG_ANN_CHANNEL", typeof(ITextChannel), "Announcement channel", "The channel the bot will post announcement messages")]
     public class GuildHandler
     {
-        private readonly SocketGuild _guild;
         private readonly DiscordSocketClient _client;
         private readonly CommandService _globalCommandService;
         private readonly SettingManager _settingManager;
         private readonly IServiceProvider _serviceProvider;
 
+        public SocketGuild Guild { get; }
+
         public GuildHandler(SocketGuild guild, DiscordSocketClient client, CommandService globalCommandService, SettingManager settingManager, IServiceProvider serviceProvider)
         {
-            _guild = guild;
+            Guild = guild;
             _client = client;
             _globalCommandService = globalCommandService;
             _settingManager = settingManager;
@@ -146,7 +147,7 @@ namespace FRTools.Discord.Handlers
         internal async Task HandleMessage(SocketMessage msg)
         {
             int argPos = 0;
-            var prefix = _settingManager.GetSettingValue("GUILDCONFIG_PREFIX", _guild) ?? "$";
+            var prefix = _settingManager.GetSettingValue("GUILDCONFIG_PREFIX", Guild) ?? "$";
 
 #if DEBUG
             prefix = "!!!";
@@ -214,8 +215,13 @@ namespace FRTools.Discord.Handlers
         {
             if (dominanceUpdate.Message == "Updated")
             {
-                await DominanceHandler.UpdateGuild(_settingManager, _guild);
+                await DominanceHandler.UpdateGuild(_settingManager, Guild);
             }
+        }
+
+        internal async Task HandleSettingUpdate(GenericMessage settingUpdate)
+        {
+            await Task.Run(() => _settingManager.ForceUpdate(Guild, settingUpdate.Message));
         }
 
         internal Task Available()
@@ -224,30 +230,30 @@ namespace FRTools.Discord.Handlers
             {
                 using (var ctx = new DataContext())
                 {
-                    var dbServer = ctx.DiscordServers.Include(x => x.Users.Select(u => u.User)).Include(x => x.Users.Select(u => u.Roles)).Include(x => x.Roles).Include(x => x.Channels).FirstOrDefault(x => x.ServerId == (long)_guild.Id);
+                    var dbServer = ctx.DiscordServers.Include(x => x.Users.Select(u => u.User)).Include(x => x.Users.Select(u => u.Roles)).Include(x => x.Roles).Include(x => x.Channels).FirstOrDefault(x => x.ServerId == (long)Guild.Id);
                     if (dbServer == null)
                     {
                         ctx.DiscordServers.Add(dbServer = new DiscordServer());
-                        dbServer.ServerId = (long)_guild.Id;
+                        dbServer.ServerId = (long)Guild.Id;
                     }
-                    dbServer.Name = _guild.Name;
+                    dbServer.Name = Guild.Name;
 
-                    if (_guild.IconUrl != null)
+                    if (Guild.IconUrl != null)
                     {
                         using (var client = new WebClient())
                         {
-                            var iconData = client.DownloadData(_guild.IconUrl);
+                            var iconData = client.DownloadData(Guild.IconUrl);
                             dbServer.IconBase64 = Convert.ToBase64String(iconData);
                         }
                     }
 
                     foreach (var existingRole in dbServer.Roles.ToList())
                     {
-                        if (!_guild.Roles.Any(x => (long)x.Id == existingRole.RoleId))
+                        if (!Guild.Roles.Any(x => (long)x.Id == existingRole.RoleId))
                             dbServer.Roles.Remove(existingRole);
                     }
 
-                    foreach (var role in _guild.Roles)
+                    foreach (var role in Guild.Roles)
                     {
                         var dbRole = dbServer.Roles.FirstOrDefault(x => x.RoleId == (long)role.Id);
                         if (dbRole == null)
@@ -262,11 +268,11 @@ namespace FRTools.Discord.Handlers
 
                     foreach (var existingChannel in dbServer.Channels.ToList())
                     {
-                        if (!_guild.Channels.Any(x => (long)x.Id == existingChannel.ChannelId))
+                        if (!Guild.Channels.Any(x => (long)x.Id == existingChannel.ChannelId))
                             dbServer.Channels.Remove(existingChannel);
                     }
 
-                    foreach (var channel in _guild.Channels)
+                    foreach (var channel in Guild.Channels)
                     {
                         var dbChannel = dbServer.Channels.FirstOrDefault(x => x.ChannelId == (long)channel.Id);
                         if (dbChannel == null)
@@ -278,7 +284,7 @@ namespace FRTools.Discord.Handlers
                         dbChannel.Name = channel.Name;
                     }
 
-                    foreach (var user in _guild.Users)
+                    foreach (var user in Guild.Users)
                     {
                         var dbServerUser = dbServer.Users.FirstOrDefault(x => x.User.UserId == (long)user.Id);
                         if (dbServerUser == null)
