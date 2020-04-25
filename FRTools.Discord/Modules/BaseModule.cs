@@ -1,9 +1,12 @@
-﻿using Discord.Addons.Interactive;
+﻿using Discord;
+using Discord.Addons.Interactive;
 using Discord.Commands;
 using FRTools.Data;
 using FRTools.Data.DataModels.DiscordModels;
 using FRTools.Discord.Infrastructure;
+using System.Configuration;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FRTools.Discord.Modules
 {
@@ -13,6 +16,22 @@ namespace FRTools.Discord.Modules
         protected SettingManager SettingManager { get; }
         protected DiscordServer Server { get; private set; }
         protected DiscordChannel Channel { get; private set; }
+        private string _moduleName;
+        protected string ModuleName
+        {
+            get
+            {
+                if (_moduleName != null)
+                    return _moduleName;
+
+                if (GetType().GetCustomAttributes(typeof(GroupAttribute), true).FirstOrDefault() is GroupAttribute groupAttr)
+                    return _moduleName = groupAttr.Prefix;
+                if (GetType().GetCustomAttributes(typeof(NameAttribute), true).FirstOrDefault() is NameAttribute nameAttr)
+                    return _moduleName = nameAttr.Text;
+
+                return _moduleName = GetType().Name.Replace("Module", "").ToLower();
+            }
+        }
 
         public BaseModule(DataContext dbContext, SettingManager settingManager)
         {
@@ -41,6 +60,11 @@ namespace FRTools.Discord.Modules
             }
 
             base.AfterExecute(command);
+        }
+
+        public virtual async Task ManageModule()
+        {
+            await ReplyAsync(embed: new EmbedBuilder().WithDescription($"Visit the following page to manage this module: {ConfigurationManager.AppSettings["WebsiteBaseURL"]}/discord/manage/{Context.Guild.Id}/{ModuleName}").Build());
         }
     }
 }

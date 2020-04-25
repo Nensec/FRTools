@@ -22,7 +22,7 @@ namespace FRTools.Discord.Modules
     [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_6", typeof(IRole), "Shadow role", null)]
     [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_7", typeof(IRole), "Light role", null)]
     [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_8", typeof(IRole), "Arcane role", null)]
-    [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_0", typeof(IRole), "Nature role", null)]
+    [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_9", typeof(IRole), "Nature role", null)]
     [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_10", typeof(IRole), "Fire role", null)]
     [DiscordHelp("DominanceModule")]
     public class DominanceModule : BaseModule
@@ -131,7 +131,7 @@ namespace FRTools.Discord.Modules
 
             if (domRole != null && flightRoles.All(x => x != null))
             {
-                embedBuilder.Description = $"Great! I've found the role {flightRoles[10].Mention} and will set that as the role used for **{(Flight.Fire)}**.\r\nThat was the end of the setup, everything is now saved and when dominance rolls over on Flight Rising I will update your users' roles!";
+                embedBuilder.Description = $"Great! I've found the role {flightRoles[10].Mention} and will set that as the role used for **{(Flight.Fire)}**.\r\n\nThat was the end of the setup, everything is now saved and when dominance rolls over on Flight Rising I will update your users' roles!\r\n\nMake sure to have people opt in to this using `{SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}dom optin`!";
                 await interactiveMessage.ModifyAsync(x => x.Embed = embedBuilder.Build());
 
                 SettingManager.SetSettingValue("GUILDCONFIG_DOMINANCE", "true", Context.Guild);
@@ -155,10 +155,10 @@ namespace FRTools.Discord.Modules
             if (SettingManager.GetSettingValue("GUILDCONFIG_DOMINANCE_ROLE", Context.Guild) != null && Enumerable.Range(0, 10).All(x => SettingManager.GetSettingValue($"GUILDCONFIG_DOMINANCE_ROLE_{x}", Context.Guild) != null))
             {
                 SettingManager.SetSettingValue("GUILDCONFIG_DOMINANCE", "true", Context.Guild);
-                await ReplyAsync("Automatic dominance role has been enabled");
+                await ReplyAsync(embed: new EmbedBuilder().WithDescription("Automatic dominance role has been enabled.").Build());
             }
             else
-                await ReplyAsync("I do not have the required data to automatically assign the dominance role, please run `dom setup` first");
+                await ReplyAsync(embed: new EmbedBuilder().WithDescription($"I do not have the required data to automatically assign the dominance role, please run `{SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}dom setup` first.").Build());
         }
 
         [RequireUserPermission(GuildPermission.Administrator)]
@@ -167,7 +167,7 @@ namespace FRTools.Discord.Modules
         public async Task Disable()
         {
             SettingManager.SetSettingValue("GUILDCONFIG_DOMINANCE", "false", Context.Guild);
-            await ReplyAsync("Automatic dominance role has been disabled");
+            await ReplyAsync(embed: new EmbedBuilder().WithDescription( "Automatic dominance role has been disabled.").Build());
         }
 
         [RequireUserPermission(GuildPermission.Administrator)]
@@ -177,12 +177,14 @@ namespace FRTools.Discord.Modules
         {
             if (SettingManager.GetSettingValue("GUILDCONFIG_DOMINANCE", Context.Guild) == "true")
             {
-                await ReplyAsync("Running a manual update for this guild to assign dominance roles, this might take a bit..");
+                var embed = new EmbedBuilder().WithDescription("Running a manual update for this guild to assign dominance roles, this might take a bit..");
+                var msg = await ReplyAsync(embed: embed.Build());
                 await DominanceHandler.UpdateGuild(SettingManager, Context.Guild);
-                await ReplyAsync("Manual update of dominance roles completed");
+                embed.Description = "Manual update of dominance roles completed.";
+                await msg.ModifyAsync(x => x.Embed = embed.Build());
             }
             else
-                await ReplyAsync("Enable automatic dominance role first using `dom enable`");
+                await ReplyAsync(embed: new EmbedBuilder().WithDescription($"Enable automatic dominance role first using `{SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}dom enable`.").Build());
         }
 
         [Name("Optin"), Command("join"), Alias("iam", "optin"), Summary("Opt in to receive the dominance role when the flight you are part of wins dominance")]
@@ -191,18 +193,18 @@ namespace FRTools.Discord.Modules
         {
             if (SettingManager.GetSettingValue("GUILDCONFIG_DOMINANCE_ROLE", Context.Guild) == null || Enumerable.Range(0, 10).Any(x => SettingManager.GetSettingValue($"GUILDCONFIG_DOMINANCE_ROLE_{x}", Context.Guild) == null))
             {
-                await ReplyAsync("This server does not have a dominance role set that I know off. Have an administrator run `dom setup` first");
+                await ReplyAsync(embed: new EmbedBuilder().WithDescription($"This server does not have a dominance role set that I know of. Have an administrator run `{SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}dom setup` first.").Build());
                 return;
             }
 
             if (SettingManager.GetSettingValue($"GUILDCONFIG_DOMINANCE_USER_{Context.User.Id}", Context.Guild) == "true")
             {
-                await ReplyAsync("You are already signed up to receive the dominance role on this server");
+                await ReplyAsync(embed: new EmbedBuilder().WithDescription("You are already signed up to receive the dominance role on this server.").Build());
                 return;
             }
 
             SettingManager.SetSettingValue($"GUILDCONFIG_DOMINANCE_USER_{Context.User.Id}", "true", Context.Guild);
-            await ReplyAsync("You are now signed up to receive the dominance role on this server");
+            await ReplyAsync(embed: new EmbedBuilder().WithDescription("You are now signed up to receive the dominance role on this server.").Build());
             using (var ctx = new DataContext())
             {
                 var lastDominance = ctx.FRDominances.OrderByDescending(x => x.Timestamp).FirstOrDefault();
@@ -223,18 +225,21 @@ namespace FRTools.Discord.Modules
 
             if (dominanceRole == null)
             {
-                await ReplyAsync("This server does not have a dominance role set that I know off. Have an administrator run `dom setup` first");
+                await ReplyAsync(embed: new EmbedBuilder().WithDescription($"This server does not have a dominance role set that I know of. Have an administrator run `{SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}dom setup` first.").Build());
                 return;
             }
 
             if (SettingManager.GetSettingValue($"GUILDCONFIG_DOMINANCE_USER_{Context.User.Id}", Context.Guild) == "false")
             {
-                await ReplyAsync("You are already set to not receive the dominance role");
+                await ReplyAsync(embed: new EmbedBuilder().WithDescription("You are already set to not receive the dominance role.").Build());
                 return;
             }
             SettingManager.SetSettingValue($"GUILDCONFIG_DOMINANCE_USER_{Context.User.Id}", "false", Context.Guild);
-            await ReplyAsync("You will now no longer receive the dominance role");
+            await ReplyAsync(embed: new EmbedBuilder().WithDescription("You will now no longer receive the dominance role.").Build());
             await (Context.User as IGuildUser).RemoveRoleAsync(Context.Guild.GetRole(ulong.Parse(dominanceRole)));
         }
+
+        [Command("manage")]
+        public override Task ManageModule() => base.ManageModule();
     }
 }
