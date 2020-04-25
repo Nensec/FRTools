@@ -130,7 +130,7 @@
             @if ((string)ViewContext.Controller.ControllerContext.RouteData.Values["controller"] != "Pinglist")
             {
                 <div class="alert alert-info" role="alert">
-                    A new feature has emerged! Do you own a Discord server and want access to small but powerful Flight Rising related commands? Check out the new Discord bot <a href="@Url.RouteUrl("DiscordHome")">here!</a>
+                    A new feature has emerged! Do you own a Discord server and want access to a set of small but powerful FR related commands? Check out the new Discord bot <a href="@Url.RouteUrl("DiscordHome")">here!</a>
                 </div>
             }
             @if (TempData["Error"] != null)
