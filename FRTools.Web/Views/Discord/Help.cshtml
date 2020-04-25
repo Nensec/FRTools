@@ -21,7 +21,7 @@
                         <div class="panel panel-default panel-transparent" style="margin-bottom:0">
                             <div class="panel-body">
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    <div class="col-lg-3 col-md-4 col-xs-2">
                                         <div class="moduleIcon">
                                             @if (string.IsNullOrEmpty(module.Help?.IconBase64))
                                             {
@@ -33,9 +33,9 @@
                                             }
                                         </div>
                                     </div>
-                                    <div class="col-md-9">
+                                    <div class="col-lg-9 col-md-8 col-xs-10">
                                         <h4 style="margin-bottom:15px;">@module.Name</h4>
-                                        <p class="hidden-sm">@(module.Help.Synopsis)</p>
+                                        <p>@(module.Help.Synopsis)</p>
                                     </div>
                                 </div>
                             </div>
@@ -58,17 +58,21 @@
                 @foreach (var module in Model.Modules)
                 {
                     <div module="@(module.Name.ToLower())" class="moduleHelp" style="display:none;">
-                        <div class="well" style="margin-bottom:10px">
-                            @if (!string.IsNullOrEmpty(module.Help?.IconBase64))
-                            {
-                                <img style="width:128px;height:128px;" src="@($"data:image/png;base64, {module.Help.IconBase64}")" />
-                            }
-                            @Html.Partial("_Help", module.Help)
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                @if (!string.IsNullOrEmpty(module.Help?.IconBase64))
+                                {
+                                    <img style="width:128px;height:128px; padding-right:15px" class="pull-left" src="@($"data:image/png;base64, {module.Help.IconBase64}")" />
+                                }
+                                <div style="padding-top:15px">
+                                    @Html.Partial("_Help", module.Help)
+                                </div>
+                            </div>
                         </div>
                         @foreach (var command in module.Commands)
                         {
                             <div class="panel panel-default" style="margin-bottom:0; margin-top:5px;">
-                                <div class="panel-heading" data-toggle="collapse" data-target=".panel-body[command=@(command.Name.ToLower())]">
+                                <div class="panel-heading" style="cursor:pointer" data-toggle="collapse" data-target=".panel-body[command=@(command.Name.ToLower())]">
                                     @(command.Name)
                                     @if ((command.Help.RequiresGuildPermission & 8) != 0)
                                     {

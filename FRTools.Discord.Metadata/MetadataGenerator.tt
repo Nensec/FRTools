@@ -99,6 +99,9 @@ foreach(var module in modules)
 		var methodAttributes = method.GetCustomAttributes();
 
 		var cmdNameAttribute = methodAttributes.FirstOrDefault(x => x.GetType().Name == "NameAttribute");
+		if(cmdNameAttribute == null)
+			continue;
+
 		commandTemplate.Name = (string)cmdNameAttribute.GetType().GetProperty("Text").GetValue(cmdNameAttribute);
 
 		var cmdSummaryAttribute = methodAttributes.FirstOrDefault(x => x.GetType().Name == "SummaryAttribute");
