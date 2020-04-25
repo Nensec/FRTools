@@ -969,7 +969,7 @@
     <ItemGroup>
       <_CustomFiles Include="$(TargetDir)\DiscordMetadata.json" />
       <FilesForPackagingFromProject Include="%(_CustomFiles.Identity)">
-        <DestinationRelativePath>%(Filename)%(Extension)</DestinationRelativePath>
+        <DestinationRelativePath>bin\%(Filename)%(Extension)</DestinationRelativePath>
       </FilesForPackagingFromProject>
     </ItemGroup>
   </Target>
