@@ -952,9 +952,13 @@
   </Target>
   <Import Project="..\packages\EntityFramework.6.4.0-preview3-19553-01\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.0-preview3-19553-01\build\EntityFramework.targets')" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(SolutionDir)\DiscordMetadata.json" "$(TargetDir)\DiscordMetadata.json"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets" Condition="Exists('..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets')" />
+  <PropertyGroup>
+    <PreBuildEvent>copy "$(SolutionDir)\DiscordMetadata.json" "$(TargetDir)\DiscordMetadata.json"</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
