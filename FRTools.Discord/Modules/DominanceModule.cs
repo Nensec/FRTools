@@ -137,7 +137,7 @@ namespace FRTools.Discord.Modules
                 SettingManager.SetSettingValue("GUILDCONFIG_DOMINANCE", "true", Context.Guild);
 
                 SettingManager.SetSettingValue("GUILDCONFIG_DOMINANCE_ROLE", domRole.Id.ToString(), Context.Guild);
-                for (var i = 0; i < 10; i++)
+                for (var i = 0; i < 11; i++)
                     SettingManager.SetSettingValue($"GUILDCONFIG_DOMINANCE_ROLE_{i}", flightRoles[i].Id.ToString(), Context.Guild);
             }
             else
