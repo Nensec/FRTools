@@ -296,6 +296,7 @@
     <Compile Include="Modules\AdminModule.cs" />
     <Compile Include="Modules\BaseModule.cs" />
     <Compile Include="Modules\DominanceModule.cs" />
+    <Compile Include="Modules\LookupModule.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
@@ -313,6 +314,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FRTools.Common\FRTools.Common.csproj">
+      <Project>{46FF50D2-FBAB-421E-BAC4-41533AF80A95}</Project>
+      <Name>FRTools.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FRTools.Data\FRTools.Data.csproj">
       <Project>{79570267-a759-4be0-a466-17b3baa67c03}</Project>
       <Name>FRTools.Data</Name>

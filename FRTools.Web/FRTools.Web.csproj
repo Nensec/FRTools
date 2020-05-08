@@ -317,9 +317,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Infrastructure\AzureImageService.cs" />
     <Compile Include="Infrastructure\CodeHelpers.cs" />
-    <Compile Include="Infrastructure\FRHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\CopyBoxHelpers.cs" />
     <Compile Include="Infrastructure\Managers\JobManager.cs" />
     <Compile Include="Infrastructure\Managers\UserStore.cs" />
@@ -902,6 +900,10 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FRTools.Common\FRTools.Common.csproj">
+      <Project>{46ff50d2-fbab-421e-bac4-41533af80a95}</Project>
+      <Name>FRTools.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FRTools.Data\FRTools.Data.csproj">
       <Project>{79570267-a759-4be0-a466-17b3baa67c03}</Project>
       <Name>FRTools.Data</Name>

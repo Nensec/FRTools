@@ -15,6 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools.Discord", "FRTools.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{717F4F05-C6A5-43BE-9C81-4B25A18B9955}"
 	ProjectSection(SolutionItems) = preProject
+		debug.config = debug.config
 		DiscordMetadata.json = DiscordMetadata.json
 		nuget.config = nuget.config
 	EndProjectSection
@@ -27,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools.Discord.Metadata", 
 	ProjectSection(ProjectDependencies) = postProject
 		{FEF250C7-D806-4BC8-890F-740997B87714} = {FEF250C7-D806-4BC8-890F-740997B87714}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools.Common", "FRTools.Common\FRTools.Common.csproj", "{46FF50D2-FBAB-421E-BAC4-41533AF80A95}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,6 +61,10 @@ Global
 		{C3D76C34-F2FB-4B34-8E1C-26D92EB24B2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3D76C34-F2FB-4B34-8E1C-26D92EB24B2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3D76C34-F2FB-4B34-8E1C-26D92EB24B2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46FF50D2-FBAB-421E-BAC4-41533AF80A95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46FF50D2-FBAB-421E-BAC4-41533AF80A95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46FF50D2-FBAB-421E-BAC4-41533AF80A95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46FF50D2-FBAB-421E-BAC4-41533AF80A95}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
