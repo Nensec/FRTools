@@ -244,7 +244,8 @@ namespace FRTools.Data
         Ringlets,
         Peacock,
         Veined = 38,
-        Keel = 53
+        Keel = 53,
+        Glowtail
     }
 
     public enum WingGene
