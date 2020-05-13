@@ -1,6 +1,5 @@
 ﻿using FRTools.Data;
 using FRTools.Data.DataModels.FlightRisingModels;
-using FRTools.Web.Infrastructure;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -10,13 +9,11 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace FRTools.Web.Controllers
+namespace FRTools.Common
 {
-    public class BaseSkinController : BaseController
+    public static class SkinTester
     {
-        protected bool IsAncientBreed(DragonType type) => type == DragonType.Gaoler || type == DragonType.Banescale;
-
-        protected async Task<PreviewResult> GenerateOrFetchPreview(string skinId, int version, string dragonId, string dragonUrl, DragonCache dragon, string dressingRoomUrl = null, bool force = false)
+        public static async Task<PreviewResult> GenerateOrFetchPreview(string skinId, int version, string dragonId, string dragonUrl, DragonCache dragon, string dressingRoomUrl = null, bool force = false)
         {
             var result = new PreviewResult { Forced = force, RealDragon = dragonId != "preview" ? dragonId : null, DressingRoomUrl = dressingRoomUrl };
 
@@ -36,7 +33,6 @@ namespace FRTools.Web.Controllers
                 }
                 catch (Exception ex)
                 {
-                    TempData["Error"] = "Could not get dragon from Flight Rising:<br/>" + ex.Message;
                     result.Exception = ex.ToString();
                     return result;
                 }
@@ -45,13 +41,13 @@ namespace FRTools.Web.Controllers
                 using (var skinImageStream = await azureImageService.GetImage($@"skins\{skinId}.png"))
                     skinImage = Image.FromStream(skinImageStream);
 
-                var eyeMask = (Bitmap)Image.FromFile(Server.MapPath($@"\Masks\{(int)dragon.DragonType}_{(int)dragon.Gender}_{(dragon.EyeType == EyeType.Primal || dragon.EyeType == EyeType.MultiGaze ? (int)dragon.EyeType : 0)}_{(dragon.EyeType == EyeType.Primal ? (int)dragon.Element : 0)}.png"));
+                var eyeMask = (Bitmap)Image.FromFile(CodeHelpers.MapPath($@"\Masks\{(int)dragon.DragonType}_{(int)dragon.Gender}_{(dragon.EyeType == EyeType.Primal || dragon.EyeType == EyeType.MultiGaze ? (int)dragon.EyeType : 0)}_{(dragon.EyeType == EyeType.Primal ? (int)dragon.Element : 0)}.png"));
 
                 if (dragon.EyeType == EyeType.MultiGaze)
                 {
                     using (var graphics = Graphics.FromImage(eyeMask))
                     {
-                        var normaleye = Image.FromFile(Server.MapPath($@"\Masks\{(int)dragon.DragonType}_{(int)dragon.Gender}_0_0.png"));
+                        var normaleye = Image.FromFile(CodeHelpers.MapPath($@"\Masks\{(int)dragon.DragonType}_{(int)dragon.Gender}_0_0.png"));
                         graphics.DrawImage(normaleye, new Rectangle(0, 0, 350, 350));
                         graphics.Save();
                     }
@@ -125,7 +121,7 @@ namespace FRTools.Web.Controllers
                     apparelPreviewUrl = await GenerateApparelPreview(invisibleDragon, cacheUrl);
                 }
             }
-            else if (dragonId != null && dragonId != "preview" && !IsAncientBreed(dragon.DragonType))
+            else if (dragonId != null && dragonId != "preview" && !FRHelpers.IsAncientBreed(dragon.DragonType))
             {
                 var cacheUrl = $@"previews\{skinId}\{dragonId}_apparel.png";
                 if (force || !azureImageService.Exists(cacheUrl, out apparelPreviewUrl))
@@ -143,7 +139,7 @@ namespace FRTools.Web.Controllers
             return result;
         }
 
-        protected async Task<Bitmap> GetInvisibleDragonWithApparel(string dragonId, AzureImageService azureImageService, bool force = false)
+        public static async Task<Bitmap> GetInvisibleDragonWithApparel(string dragonId, AzureImageService azureImageService, bool force = false)
         {
             Bitmap invisibleDwagon;
             var azureUrl = $@"dragoncache\{dragonId}_invisible.png";
@@ -181,12 +177,9 @@ namespace FRTools.Web.Controllers
                 }
                 catch (Exception ex)
                 {
-                    // Something wrong fetching the image from FR
-                    TempData["Error"] = "Could not get dragon from Flight Rising:<br/>" + ex.Message;
                     return null;
                 }
             }
         }
-
     }
 }

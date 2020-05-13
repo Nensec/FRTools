@@ -15,13 +15,14 @@ using System.Web.Mvc;
 using FRTools.Data;
 using FRTools.Web.Infrastructure;
 using Microsoft.Owin.Security;
+using FRTools.Common;
 
 namespace FRTools.Web.Controllers
 {
 
     [Authorize]
     [RoutePrefix("manage")]
-    public class ManageController : BaseSkinController
+    public class ManageController : BaseController
     {
         private IAuthenticationManager AuthenticationManager => HttpContext.GetOwinContext().Authentication;
         private SignInManager<User, int> _signInManager;
@@ -37,7 +38,7 @@ namespace FRTools.Web.Controllers
         {
             var model = new AccountViewModel
             {
-                GetDummyPreviewImage = (string skinId, int dragonType, int gender, int version) => GenerateOrFetchPreview(skinId, version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, dragonType, gender), null).GetAwaiter().GetResult().Urls[0]
+                GetDummyPreviewImage = (string skinId, int dragonType, int gender, int version) => SkinTester.GenerateOrFetchPreview(skinId, version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, dragonType, gender), null).GetAwaiter().GetResult().Urls[0]
             };
             var userid = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
             using (var ctx = new DataContext())

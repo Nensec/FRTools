@@ -1,9 +1,7 @@
 ﻿using FRTools.Data;
-using FRTools.Data.DataModels;
 using FRTools.Data.DataModels.FlightRisingModels;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -11,10 +9,9 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web;
 using Color = FRTools.Data.Color;
 
-namespace FRTools.Web.Infrastructure
+namespace FRTools.Common
 {
     public static class FRHelpers
     {
@@ -24,6 +21,9 @@ namespace FRTools.Web.Infrastructure
         public const string DragonProfileUrl = "https://flightrising.com/main.php?dragon={0}";
         public const string DressingRoomDragonApparalUrl = "https://www1.flightrising.com/dgen/dressing-room/dragon?did={0}&apparel={1}";
         public const string DressingRoomDummyApparalUrl = "https://www1.flightrising.com/dgen/dressing-room/dummy?breed={0}&gender={1}&apparel={1}";
+
+        public static bool IsAncientBreed(DragonType type) => type == DragonType.Gaoler || type == DragonType.Banescale;
+
 
         public static async Task<Bitmap> GetInvisibleDressingRoomDragon(DragonCache dragon)
         {

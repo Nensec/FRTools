@@ -1,4 +1,5 @@
-﻿using FRTools.Web.Infrastructure;
+﻿using FRTools.Common;
+using FRTools.Web.Infrastructure;
 using FRTools.Web.Models;
 using System.Drawing;
 using System.Drawing.Imaging;

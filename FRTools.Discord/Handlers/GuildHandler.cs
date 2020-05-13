@@ -89,6 +89,7 @@ namespace FRTools.Discord.Handlers
                     dbServer.Users.Add(dbServerUser = new DiscordServerUser { User = dbUser });
                 }
                 dbServerUser.Nickname = userNew.Nickname;
+                dbServerUser.Roles.Clear();
                 dbServerUser.Roles = dbServer.Roles.Where(x => userNew.Roles.Any(r => (long)r.Id == x.RoleId)).ToList();
                 dbServerUser.User.Username = userNew.Username;
                 dbServerUser.User.Discriminator = userNew.DiscriminatorValue;

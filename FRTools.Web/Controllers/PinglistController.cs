@@ -12,6 +12,7 @@ using System.Data.Entity;
 using Newtonsoft.Json;
 using FRTools.Web.Infrastructure.Managers;
 using FRTools.Data.DataModels.PinglistModels;
+using FRTools.Common;
 
 namespace FRTools.Web.Controllers
 {

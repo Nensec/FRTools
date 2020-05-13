@@ -7,6 +7,7 @@ using FRTools.Discord.Infrastructure;
 using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
+using Color = Discord.Color;
 
 namespace FRTools.Discord.Modules
 {
@@ -16,6 +17,8 @@ namespace FRTools.Discord.Modules
         protected SettingManager SettingManager { get; }
         protected DiscordServer Server { get; private set; }
         protected DiscordChannel Channel { get; private set; }
+        protected string CDNBasePath = ConfigurationManager.AppSettings["CDNBasePath"];
+        protected string WebsiteBaseUrl = ConfigurationManager.AppSettings["WebsiteBaseUrl"];
         private string _moduleName;
         protected string ModuleName
         {
@@ -66,5 +69,7 @@ namespace FRTools.Discord.Modules
         {
             await ReplyAsync(embed: new EmbedBuilder().WithDescription($"Visit the following page to manage this module: {ConfigurationManager.AppSettings["WebsiteBaseURL"]}/discord/manage/{Context.Guild.Id}/{ModuleName}").Build());
         }
+
+        protected EmbedBuilder ErrorEmbed(string errorMessage) => new EmbedBuilder().WithColor(Color.Red).WithDescription(errorMessage);
     }
 }

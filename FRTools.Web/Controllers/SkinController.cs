@@ -17,11 +17,12 @@ using System.Web.Mvc;
 using FRTools.Data;
 using Color = FRTools.Data.Color;
 using FRTools.Data.DataModels.FlightRisingModels;
+using FRTools.Common;
 
 namespace FRTools.Web.Controllers
 {
     [RoutePrefix("skintester")]
-    public class SkinController : BaseSkinController
+    public class SkinController : BaseController
     {
         public SkinController()
         {
@@ -63,7 +64,7 @@ namespace FRTools.Web.Controllers
                         Title = skin.Title,
                         Description = skin.Description,
                         SkinId = model.SkinId,
-                        PreviewUrl = (await GenerateOrFetchPreview(model.SkinId, skin.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
+                        PreviewUrl = (await SkinTester.GenerateOrFetchPreview(model.SkinId, skin.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
                         Coverage = skin.Coverage,
                         Creator = skin.Creator,
                         DragonType = (DragonType)skin.DragonType,
@@ -135,15 +136,15 @@ namespace FRTools.Web.Controllers
                     dragon = FRHelpers.GetDragonFromDragonId(dragonId.Value);
                 }
 
-                if (IsAncientBreed(dragon.DragonType))
+                if (FRHelpers.IsAncientBreed(dragon.DragonType))
                 {
-                    TempData["Error"] = $"Ancient breeds cannot wear apparal, how did you even get a dressing room link in here?";
+                    TempData["Error"] = $"Ancient breeds cannot wear apparal.";
                     return RedirectToRoute("Preview", new { skinId });
                 }
                 dragon.Apparel = apparelDragon.Apparel;
                 if (dragon.GetApparel().Length == 0)
                 {
-                    TempData["Error"] = $"This dressing room URL contains no apparel";
+                    TempData["Error"] = $"This dressing room URL contains no apparel.";
                     return RedirectToRoute("Preview", new { skinId });
                 }
             }
@@ -152,7 +153,7 @@ namespace FRTools.Web.Controllers
 
             if (dragon.Age == Age.Hatchling)
             {
-                TempData["Error"] = $"Skins can only be previewed on adult dragons";
+                TempData["Error"] = $"Skins can only be previewed on adult dragons.";
                 return RedirectToRoute("Preview", new { skinId });
             }
 
@@ -177,7 +178,7 @@ namespace FRTools.Web.Controllers
                     return RedirectToRoute("Preview", new { skinId });
                 }
 
-                var previewResult = await GenerateOrFetchPreview(skinId, skin.Version, dragonId?.ToString(), dragonUrl, dragon, dressingRoomUrl, force);
+                var previewResult = await SkinTester.GenerateOrFetchPreview(skinId, skin.Version, dragonId?.ToString(), dragonUrl, dragon, dressingRoomUrl, force);
 
                 var loggedInUserId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
 
@@ -280,7 +281,7 @@ namespace FRTools.Web.Controllers
                     {
                         SkinId = randomizedId,
                         SecretKey = secretKey,
-                        PreviewUrl = (await GenerateOrFetchPreview(randomizedId, skin.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
+                        PreviewUrl = (await SkinTester.GenerateOrFetchPreview(randomizedId, skin.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
                         ShareUrl = await BitlyHelper.TryGenerateUrl(Url.RouteUrl("Preview", new { SkinId = randomizedId }, "https"))
                     });
                 }
@@ -325,7 +326,7 @@ namespace FRTools.Web.Controllers
                     return View(new ManageModelViewModel
                     {
                         Skin = skin,
-                        PreviewUrl = (await GenerateOrFetchPreview(model.SkinId, skin.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
+                        PreviewUrl = (await SkinTester.GenerateOrFetchPreview(model.SkinId, skin.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
                         ShareUrl = await BitlyHelper.TryGenerateUrl(Url.RouteUrl("Preview", new { SkinId = skin.GeneratedId }, "https"))
                     });
                 }
@@ -544,7 +545,7 @@ namespace FRTools.Web.Controllers
                 }).ToList();
 
                 foreach (var result in model.Results)
-                    result.PreviewUrl = (await GenerateOrFetchPreview(result.SkinId, result.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, (int)result.DragonType, (int)result.Gender), null)).Urls[0];
+                    result.PreviewUrl = (await SkinTester.GenerateOrFetchPreview(result.SkinId, result.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, (int)result.DragonType, (int)result.Gender), null)).Urls[0];
             }
 
             return View(model);

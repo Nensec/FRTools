@@ -12,7 +12,7 @@
 <#@ output extension=".json" #>
 <#
 var botAssembly = Assembly.GetAssembly(typeof(BaseModule));
-var modules = botAssembly.GetTypes().Where(x => x.BaseType == typeof(BaseModule));
+var modules = botAssembly.GetTypes().Where(x => !x.IsNested && x.BaseType == typeof(BaseModule));
 var guildHandler = botAssembly.GetTypes().First(x => x.Name == "GuildHandler");
 var output = new DiscordMetadata();
 
@@ -126,11 +126,73 @@ foreach(var module in modules)
 		var commandName = (string)commandAttribute.GetType().GetProperty("Text").GetValue(commandAttribute);
 
 		var cmdAliasAttribute = methodAttributes.FirstOrDefault(x => x.GetType().Name == "AliasAttribute");
-		commandTemplate.Aliases = cmdAliasAttribute == null ? new[] { commandName } : ((string[])cmdAliasAttribute.GetType().GetProperty("Aliases").GetValue(cmdAliasAttribute)).Concat(new[] { commandName }).ToArray();
+		commandTemplate.Aliases = cmdAliasAttribute == null ? new[] { commandName } : new[] { commandName }.Concat((string[])cmdAliasAttribute.GetType().GetProperty("Aliases").GetValue(cmdAliasAttribute)).ToArray();
 
 		commandTemplate.RequireOwner = reqOwnerAttribute != null || methodAttributes.Any(x => x.GetType().Name == "RequireOwnerAttribute");
 
 		var cmdReqPermAttributes = methodAttributes.Where(x => x.GetType().Name == "RequireUserPermissionAttribute");
+		long cmdGuildPermRequired = guildPermRequired, cmdChannelPermRequired = channelPermRequired;
+		if(cmdReqPermAttributes.Any())
+		{
+			foreach(var cmdReqPermAttribute in cmdReqPermAttributes)
+			{
+				var guildPerm = cmdReqPermAttribute.GetType().GetProperty("GuildPermission").GetValue(cmdReqPermAttribute);
+				cmdGuildPermRequired |= guildPerm != null ? (long)(ulong)guildPerm : 0;
+
+				var channelPerm = cmdReqPermAttribute.GetType().GetProperty("ChannelPermission").GetValue(cmdReqPermAttribute);
+				cmdChannelPermRequired |= channelPerm != null ? (long)(ulong)channelPerm : 0;
+			}
+		}
+
+		commandTemplate.RequireGuildPermission = cmdGuildPermRequired;
+		commandTemplate.RequireChannelPermission = cmdChannelPermRequired;
+
+		moduleTemplate.Commands.Add(commandTemplate);
+	}
+
+	var subCommands = module.GetNestedTypes().Where(x => x.BaseType?.Name == "BaseModule");
+	foreach(var subCommand in subCommands)
+	{
+		var commandTemplate = new CommandTemplate();
+		var subCommandAttributes = subCommand.GetCustomAttributes();
+
+		var subCommandGroupAttribute = subCommandAttributes.FirstOrDefault(x => x.GetType().Name == "GroupAttribute");
+		if(subCommandGroupAttribute != null)
+		{
+			var group = (string)subCommandGroupAttribute.GetType().GetProperty("Prefix").GetValue(subCommandGroupAttribute);
+			var aliasAttribute = subCommandAttributes.FirstOrDefault(x => x.GetType().Name == "AliasAttribute");		
+			commandTemplate.Aliases = aliasAttribute == null ? new[] { group } : new[] { group }.Concat((string[])aliasAttribute.GetType().GetProperty("Aliases").GetValue(aliasAttribute)).ToArray();
+		}
+		else
+			continue;
+
+		var cmdNameAttribute = subCommandAttributes.FirstOrDefault(x => x.GetType().Name == "NameAttribute");
+		if(cmdNameAttribute != null)
+			commandTemplate.Name = (string)cmdNameAttribute.GetType().GetProperty("Text").GetValue(cmdNameAttribute);
+		else
+			continue;
+
+		var cmdSummaryAttribute = subCommandAttributes.FirstOrDefault(x => x.GetType().Name == "SummaryAttribute");
+		if(cmdSummaryAttribute != null)
+			commandTemplate.Description = (string)cmdSummaryAttribute.GetType().GetProperty("Text").GetValue(cmdSummaryAttribute);
+
+		var commandHelpAttribute = subCommandAttributes.FirstOrDefault(x => x.GetType().Name == "DiscordHelpAttribute");
+		if(commandHelpAttribute != null)
+		{
+			var help = new HelpTemplate();
+			help.Synopsis = (string)commandHelpAttribute.GetType().GetProperty("Synopsis").GetValue(commandHelpAttribute);
+			help.Detailed = (string)commandHelpAttribute.GetType().GetProperty("Detailed").GetValue(commandHelpAttribute);
+			help.Images = (string[])commandHelpAttribute.GetType().GetProperty("Images").GetValue(commandHelpAttribute);
+			help.IconBase64 = (string)commandHelpAttribute.GetType().GetProperty("IconBase64").GetValue(commandHelpAttribute);
+			var permissionValue = commandHelpAttribute.GetType().GetProperty("RequiresPermission").GetValue(commandHelpAttribute);
+			if(permissionValue != null)
+				help.RequiresGuildPermission = (long)(ulong)permissionValue;
+			commandTemplate.Help = help;
+		}
+
+		commandTemplate.RequireOwner = reqOwnerAttribute != null || subCommandAttributes.Any(x => x.GetType().Name == "RequireOwnerAttribute");
+
+		var cmdReqPermAttributes = subCommandAttributes.Where(x => x.GetType().Name == "RequireUserPermissionAttribute");
 		long cmdGuildPermRequired = guildPermRequired, cmdChannelPermRequired = channelPermRequired;
 		if(cmdReqPermAttributes.Any())
 		{

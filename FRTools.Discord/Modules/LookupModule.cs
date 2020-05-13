@@ -1,7 +1,7 @@
 ﻿using Discord.Commands;
+using FRTools.Common;
 using FRTools.Data;
 using FRTools.Discord.Infrastructure;
-using FRTools.Web.Infrastructure;
 using System.Net;
 using System.Threading.Tasks;
 using System.Xml;

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Web;
 using FRTools.Data;
 using FRTools.Data.DataModels.FlightRisingModels;
+using FRTools.Common;
 
 namespace FRTools.Web.Models
 {
