@@ -1,8 +1,5 @@
 ﻿using FRTools.Data.DataModels.DiscordModels;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace FRTools.Web.Models
 {
@@ -41,6 +38,22 @@ namespace FRTools.Web.Models
         public long RequireChannelPermission { get; set; }
         public bool RequireOwner { get; set; }
         public DiscordHelp Help { get; set; }
+        public DiscordModule ParentModule { get; set; }
+        public List<DiscordCommandParameter> Parameters { get; set; }
+        public List<DiscordSubCommand> SubCommands { get; set; }
+    }
+
+    public class DiscordSubCommand
+    {
+        public List<DiscordCommandParameter> Parameters { get; set; } = new List<DiscordCommandParameter>();
+    }
+
+    public class DiscordCommandParameter
+    {
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public object MustMatchValue { get; set; }
+        public bool IsOptional { get; set; }
     }
     
     public class DiscordHelp
@@ -122,14 +135,16 @@ namespace FRTools.Web.Models
 
     public class DiscordModuleHelpViewModel
     {
-        public string Name { get; set; }
-        public DiscordHelp Help { get; set; }
+        public DiscordModule Module { get; set; }
+        public string Name => Module.Name;
+        public DiscordHelp Help => Module.Help;
         public List<DiscordCommandHelpViewModel> Commands { get; set; }
     }
 
     public class DiscordCommandHelpViewModel
     {
-        public string Name { get; set; }
-        public DiscordHelp Help { get; set; }
+        public DiscordCommand Command { get; set; }
+        public string Name => Command.Name;
+        public DiscordHelp Help => Command.Help;
     }
 }

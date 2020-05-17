@@ -29,7 +29,6 @@ namespace FRTools.Web.Controllers
         {
             var json = System.IO.File.ReadAllText(HostingEnvironment.MapPath("~/bin/DiscordMetadata.json"));
             DiscordMetadata = JsonConvert.DeserializeObject<DiscordMetadata>(json);
-
             if (long.TryParse(ConfigurationManager.AppSettings["DiscordBotOwner"], out var id))
                 DiscordBotOwnerId = id;
         }
@@ -52,7 +51,7 @@ namespace FRTools.Web.Controllers
                 }
             }
 
-            base.OnActionExecuting(filterContext);
+            base.OnActionExecuting(filterContext);                
         }
 
         [Route(Name = "DiscordHome")]
@@ -67,9 +66,8 @@ namespace FRTools.Web.Controllers
             var model = new DiscordHelpViewModel();
             model.Modules = DiscordMetadata.Modules.Where(x => !x.RequireOwner).Select(x => new DiscordModuleHelpViewModel
             {
-                Name = x.Name,
-                Help = x.Help,
-                Commands = x.Commands.Select(c => new DiscordCommandHelpViewModel { Name = c.Name, Help = c.Help }).ToList()
+                Module = x,
+                Commands = x.Commands.Select(c => new DiscordCommandHelpViewModel { Command = c }).ToList()
             }).ToList();
             return View(model);
         }
@@ -83,7 +81,7 @@ namespace FRTools.Web.Controllers
                 var moduleCommand = discordModule.Commands.FirstOrDefault(x => x.Name.ToLower() == command.ToLower());
                 if(moduleCommand != null)
                 {
-                    return PartialView("_Help", moduleCommand.Help);
+                    return PartialView("_CommandHelp", moduleCommand);
                 }
             }
             return HttpNotFound();
@@ -221,38 +219,6 @@ namespace FRTools.Web.Controllers
                 : DiscordMetadata.Modules.First(x => x.Name.ToUpper() == module).Settings;
             return settings.First(x => x.Key == key);
         }
-
-        //[Route("manage/{discordServer}/{module}/{command}", Name = "DiscordManageCommand")]
-        //[Authorize]
-        //[MustHaveLoginProvider("discord", "DiscordHome")]
-        //public ActionResult ManageCommand(long discordServer, string module, string command)
-        //{
-        //    using (var ctx = new DataContext())
-        //    {
-        //        var currentUser = ctx.DiscordUsers.First(x => x.UserId == _currentUserId);
-
-        //        if (CheckMutualServer(discordServer, currentUser))
-        //        {
-        //            if (CheckCommand(module, command, currentUser.Servers.First(x => x.Server.ServerId == discordServer)))
-        //            {
-        //                var model = new CommandViewModel
-        //                {
-        //                    ServerId = discordServer,
-        //                    SelectedModule = DiscordMetadata.Modules.First(x => x.Name.ToLower() == module)
-        //                };
-        //                model.SelectedCommand = model.SelectedModule.Commands.First(x => x.Name.ToLower() == command);
-        //                return View(model);
-        //            }
-        //            else
-        //            {
-        //                TempData["Error"] = $"Could not find command '{command}', or you do not have access to it on this server";
-        //                return RedirectToRoute("DiscordManageModule", new { discordServer, module });
-        //            }
-        //        }
-        //        else
-        //            return RedirectToRoute("DiscordManage");
-        //    }
-        //}
 
         [Route("save", Name = "DiscordSaveSetting")]
         [Authorize]

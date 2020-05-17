@@ -294,5 +294,50 @@ namespace FRTools.Discord {
                 return ResourceManager.GetString("DominanceUpdateSynopsis", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string LookupModuleDetailed {
+            get {
+                return ResourceManager.GetString("LookupModuleDetailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lookup data from Flight Rising.
+        /// </summary>
+        internal static string LookupModuleSynopsis {
+            get {
+                return ResourceManager.GetString("LookupModuleSynopsis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string SkinTesterModuleDetailed {
+            get {
+                return ResourceManager.GetString("SkinTesterModuleDetailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAALiIAAC4iAari3ZIAAAAHdElNRQfjCxoALg+PyFHbAAAAGHRFWHRTb2Z0d2FyZQBwYWludC5uZXQgNC4xLjb9TgnoAAAli0lEQVR4Xu2dCXhU5b3/xWq1td7We73t7fLovf3712uWSTITEBCMKArKJpBJAoQdkpkEEsKqiASVvYqiSGZCIBAykzkTsp+ZJAQI+44gIosoto9tvW2t7W2tIpmZc39vOLEheRNmObPm+3mez4NCZsk5v9+7n/e9BQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwBcK [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SkinTesterModuleIcon {
+            get {
+                return ResourceManager.GetString("SkinTesterModuleIcon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skin Tester skins and previews in Discord.
+        /// </summary>
+        internal static string SkinTesterModuleSynopsis {
+            get {
+                return ResourceManager.GetString("SkinTesterModuleSynopsis", resourceCulture);
+            }
+        }
     }
 }

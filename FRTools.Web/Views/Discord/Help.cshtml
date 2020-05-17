@@ -65,7 +65,7 @@
                                     <img style="width:128px;height:128px; padding-right:15px" class="pull-left" src="@($"data:image/png;base64, {module.Help.IconBase64}")" />
                                 }
                                 <div style="padding-top:15px">
-                                    @Html.Partial("_Help", module.Help)
+                                    @Html.Partial("_ModuleHelp", module.Module)
                                 </div>
                             </div>
                         </div>
@@ -93,6 +93,14 @@
 </div>
 
 <style>
+    .module .panel {
+        margin-top:15px;
+    }
+
+        .module:first-of-type .panel {
+            margin: 0;
+        }
+
     .moduleIcon {
         border-radius: 32px;
         transition: all 0.25s cubic-bezier(0.29,-0.07, 0.56, 1.65);

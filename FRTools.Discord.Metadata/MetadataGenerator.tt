@@ -72,7 +72,7 @@ foreach(var module in modules)
 	{
 		var group = (string)groupAttribute.GetType().GetProperty("Prefix").GetValue(groupAttribute);
 		var aliasAttribute = moduleAttributes.FirstOrDefault(x => x.GetType().Name == "AliasAttribute");		
-		moduleTemplate.Aliases = aliasAttribute == null ? new[] { group } : ((string[])aliasAttribute.GetType().GetProperty("Aliases").GetValue(aliasAttribute)).Concat(new[] { group }).ToArray();
+		moduleTemplate.Aliases = aliasAttribute == null ? new[] { group } : new[] { group }.Concat(((string[])aliasAttribute.GetType().GetProperty("Aliases").GetValue(aliasAttribute))).ToArray();
 	}
 	
 	var reqOwnerAttribute = moduleAttributes.FirstOrDefault(x => x.GetType().Name == "RequireOwnerAttribute");
@@ -92,11 +92,11 @@ foreach(var module in modules)
 		}
 	}
 
-	var methods = module.GetMethods((BindingFlags)20).Where(x => x.ReturnType == typeof(Task));
-	foreach(var method in methods)
+	var commands = module.GetMethods((BindingFlags)20).Where(x => x.ReturnType == typeof(Task));
+	foreach(var command in commands)
 	{
-		var commandTemplate = new CommandTemplate();
-		var methodAttributes = method.GetCustomAttributes();
+		var commandTemplate = new CommandTemplate { ParentModule = moduleTemplate };
+		var methodAttributes = command.GetCustomAttributes();
 
 		var cmdNameAttribute = methodAttributes.FirstOrDefault(x => x.GetType().Name == "NameAttribute");
 		if(cmdNameAttribute == null)
@@ -147,14 +147,29 @@ foreach(var module in modules)
 		commandTemplate.RequireGuildPermission = cmdGuildPermRequired;
 		commandTemplate.RequireChannelPermission = cmdChannelPermRequired;
 
+		foreach(var parameter in command.GetParameters())
+		{
+			var parameterTemplate = new CommandParameterTemplate
+			{
+				Name = parameter.Name,
+				Type = parameter.ParameterType.Name,
+				IsOptional = parameter.IsOptional
+			};
+			var parameterAttributes = parameter.GetCustomAttributes();
+			var exactValuePrecondition = parameterAttributes.FirstOrDefault(x => x.GetType().Name == "ExactValuePreconditionAttribute");
+			if(exactValuePrecondition != null)
+				parameterTemplate.MustMatchValue = exactValuePrecondition.GetType().GetProperty("ExactValue").GetValue(exactValuePrecondition);
+			commandTemplate.Parameters.Add(parameterTemplate);
+		}
+
 		moduleTemplate.Commands.Add(commandTemplate);
 	}
 
-	var subCommands = module.GetNestedTypes().Where(x => x.BaseType?.Name == "BaseModule");
-	foreach(var subCommand in subCommands)
+	var groupCommands = module.GetNestedTypes().Where(x => x.BaseType?.Name == "BaseModule");
+	foreach(var groupCommand in groupCommands)
 	{
-		var commandTemplate = new CommandTemplate();
-		var subCommandAttributes = subCommand.GetCustomAttributes();
+		var commandTemplate = new CommandTemplate { ParentModule = moduleTemplate };
+		var subCommandAttributes = groupCommand.GetCustomAttributes();
 
 		var subCommandGroupAttribute = subCommandAttributes.FirstOrDefault(x => x.GetType().Name == "GroupAttribute");
 		if(subCommandGroupAttribute != null)
@@ -206,6 +221,26 @@ foreach(var module in modules)
 			}
 		}
 
+		foreach(var subCommand in groupCommand.GetMethods((BindingFlags)20).Where(x => x.GetCustomAttributes().Any(x => x.GetType().Name == "CommandAttribute") && x.GetParameters().Any()))
+		{
+			var subCommandTemplate = new SubCommandTemplate();
+			foreach(var parameter in subCommand.GetParameters())
+			{
+				var parameterTemplate = new CommandParameterTemplate
+				{
+					Name = parameter.Name,
+					Type = parameter.ParameterType.Name,
+					IsOptional = parameter.IsOptional
+				};
+				var parameterAttributes = parameter.GetCustomAttributes();
+				var exactValuePrecondition = parameterAttributes.FirstOrDefault(x => x.GetType().Name == "ExactValuePreconditionAttribute");
+				if(exactValuePrecondition != null)
+					parameterTemplate.MustMatchValue = exactValuePrecondition.GetType().GetProperty("ExactValue").GetValue(exactValuePrecondition);
+				subCommandTemplate.Parameters.Add(parameterTemplate);
+			}
+			commandTemplate.SubCommands.Add(subCommandTemplate);
+		}
+
 		commandTemplate.RequireGuildPermission = cmdGuildPermRequired;
 		commandTemplate.RequireChannelPermission = cmdChannelPermRequired;
 
@@ -214,7 +249,7 @@ foreach(var module in modules)
 
 	output.Modules.Add(moduleTemplate);
 }
-var json = JsonConvert.SerializeObject(output);
+var json = JsonConvert.SerializeObject(output, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore, PreserveReferencesHandling = PreserveReferencesHandling.Objects });
 #>
 <#= json #>
 <#+
@@ -233,6 +268,16 @@ var json = JsonConvert.SerializeObject(output);
 		public List<CommandTemplate> Commands { get; set; } = new List<CommandTemplate>();
 		public List<SettingTemplate> Settings { get; set; } = new List<SettingTemplate>();
 		public HelpTemplate Help { get; set; }
+
+		public bool ShouldSerializeCommands()
+		{
+			return Commands.Any();
+		}
+
+		public bool ShouldSerializeSettings()
+		{
+			return Settings.Any();
+		}
 	}
 
 	class CommandTemplate
@@ -244,6 +289,37 @@ var json = JsonConvert.SerializeObject(output);
 		public long RequireChannelPermission { get; set; }
 		public bool RequireOwner { get; set; }
 		public HelpTemplate Help { get; set; }
+		public ModuleTemplate ParentModule { get; set; }
+		public List<CommandParameterTemplate> Parameters { get; set; } = new List<CommandParameterTemplate>();
+		public List<SubCommandTemplate> SubCommands { get; set; } = new List<SubCommandTemplate>();
+
+		public bool ShouldSerializeSubCommands()
+		{
+			return SubCommands.Any();
+		}
+
+		public bool ShouldSerializeParameters()
+		{
+			return Parameters.Any();
+		}
+	}
+
+	class SubCommandTemplate
+	{
+		public List<CommandParameterTemplate> Parameters { get; set; } = new List<CommandParameterTemplate>();
+
+		public bool ShouldSerializeParameters()
+		{
+			return Parameters.Any();
+		}
+	}
+
+	class CommandParameterTemplate
+	{
+		public string Name { get; set; }
+		public string Type { get; set; }
+		public bool IsOptional { get; set; }
+		public object MustMatchValue { get; set; }
 	}
 
 	class SettingTemplate
@@ -253,6 +329,11 @@ var json = JsonConvert.SerializeObject(output);
 		public string Type { get; set; }
 		public string Key { get; set; }
 		public string[] ExtraArgs { get; set; }
+
+		public bool ShouldSerializeExtraArgs()
+		{
+			return ExtraArgs.Any();
+		}
 	}
 
 	class HelpTemplate

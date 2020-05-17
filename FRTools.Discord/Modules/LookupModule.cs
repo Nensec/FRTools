@@ -17,6 +17,7 @@ namespace FRTools.Discord.Modules
         }
 
         [Command("dragon"), Name("Dragon"), Alias("d")]
+        [DiscordHelp("LookupDragon")]
         public async Task DragonLookup(int id)
         {
             using (var client = new WebClient())
@@ -48,12 +49,14 @@ namespace FRTools.Discord.Modules
         }
 
         [Command("skin"), Name("Skin"), Alias("accent", "a", "s")]
+        [DiscordHelp("LookupSkin")]
         public async Task SkinLookup(int id)
         {
 
         }
 
         [Command("familiar"), Name("Familiar"), Alias("f")]
+        [DiscordHelp("LookupFamiliar")]
         public async Task FamiliarLookup(int id)
         {
             // https://www1.flightrising.com/hoard/preview-image?breed=14&gender=0&item=551

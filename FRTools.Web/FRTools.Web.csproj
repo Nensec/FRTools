@@ -425,6 +425,8 @@
     <Content Include="Views\Shared\EditorTemplates\DiscordSettingViewModel.cshtml" />
     <Content Include="Views\Discord\Help.cshtml" />
     <Content Include="Views\Discord\_Help.cshtml" />
+    <Content Include="Views\Discord\_ModuleHelp.cshtml" />
+    <Content Include="Views\Discord\_CommandHelp.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -1,0 +1,16 @@
+﻿@model FRTools.Web.Models.DiscordModule
+
+<p>
+    <b>Prefix:</b> <kbd><b>@(Model.Aliases[0])</b></kbd>
+    @if (Model.Aliases.Length > 1)
+    {
+        <br />
+        <b>Aliases:</b>
+        foreach (var alias in Model.Aliases.Skip(1))
+        {
+            <kbd><b>@(alias)</b></kbd>
+        }
+    }
+</p>
+
+@Html.Partial("_Help", Model.Help)
