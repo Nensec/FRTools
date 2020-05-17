@@ -70,9 +70,7 @@ namespace FRTools.Discord {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;b&gt;Command usage:&lt;/b&gt; &lt;kbd&gt;dom disable&lt;/kbd&gt;
-        ///&lt;br&gt;&lt;br&gt;
-        ///This command turns the automatic role assignment off. You&apos;ll need to use the &lt;kbd&gt;dom enable&lt;/kbd&gt; command to manually turn it back on.
+        ///   Looks up a localized string similar to This command turns the automatic role assignment off. You&apos;ll need to use the &lt;kbd&gt;dom enable&lt;/kbd&gt; command to manually turn it back on.
         ///&lt;br&gt;&lt;br&gt;
         ///{0}.
         /// </summary>
@@ -101,9 +99,7 @@ namespace FRTools.Discord {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;b&gt;Command usage:&lt;/b&gt; &lt;kbd&gt;dom enable&lt;/kbd&gt;
-        ///&lt;br&gt;&lt;br&gt;
-        ///This command turns the automatic role assignment on. After you finish the setup, auto assignment is on by default, so you only really use this command if you have manually disabled the assignment with the &lt;kbd&gt;dom disable&lt;/kbd&gt; command.
+        ///   Looks up a localized string similar to This command turns the automatic role assignment on. After you finish the setup, auto assignment is on by default, so you only really use this command if you have manually disabled the assignment with the &lt;kbd&gt;dom disable&lt;/kbd&gt; command.
         ///&lt;br&gt;&lt;br&gt;
         ///You can only use this command after &lt;kbd&gt;dom setup&lt;/kbd&gt;, otherwise it won&apos;t know all the roles needed and throw an error.
         ///&lt;br&gt;&lt;br&gt;
@@ -170,14 +166,15 @@ namespace FRTools.Discord {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;b&gt;Command usage:&lt;/b&gt; &lt;kbd&gt;dom optin&lt;/kbd&gt;
-        ///&lt;br&gt;
-        ///&lt;b&gt;Aliases:&lt;/b&gt; &lt;kbd&gt;dom iam&lt;/kbd&gt;, &lt;kbd&gt;dom join&lt;/kbd&gt;
-        ///&lt;br&gt;&lt;br&gt;
-        ///Use this command to sign yourself up to receive the automatic dominance role. If your flight gets discounts this week, you&apos;ll get the appropriate discount role people can ping. Additionally, using this command will also immediately grant you the discount role if your flight has dominance. To stop receiving the role, you can use the &lt;kbd&gt;dom optout&lt;/kbd&gt; command.
+        ///   Looks up a localized string similar to Use this command to sign yourself up to receive the automatic dominance role. If your flight gets discounts this week, you&apos;ll get the appropriate discount role people can ping. Additionally, using this command will also immediately grant you the discount role if your flight has dominance. To stop receiving the role, you can use the &lt;kbd&gt;dom optout&lt;/kbd&gt; command.
         ///&lt;br&gt;&lt;br&gt;
         ///Example of usage:
-        /// [rest of string was truncated]&quot;;.
+        ///&lt;br&gt;&lt;br&gt;
+        ///{0}
+        ///&lt;br&gt;
+        ///User profile with roles applied:
+        ///&lt;br&gt;&lt;br&gt;
+        ///{1}.
         /// </summary>
         internal static string DominanceOptInDetailed {
             get {
@@ -204,11 +201,7 @@ namespace FRTools.Discord {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;b&gt;Command usage:&lt;/b&gt; &lt;kbd&gt;dom optout&lt;/kbd&gt;
-        ///&lt;br&gt;
-        ///&lt;b&gt;Aliases:&lt;/b&gt; &lt;kbd&gt;dom iamnot&lt;/kbd&gt;, &lt;kbd&gt;dom leave&lt;/kbd&gt;
-        ///&lt;br&gt;&lt;br&gt;
-        ///Use this command to sign yourself out of receiving the dominance role. You won&apos;t be automatically assigned the discount role anymore, even if your flight receives dominance, unless you sign up using &lt;kbd&gt;dom optin&lt;/kbd&gt; again. Additionally, using this command will also immediately remove your dominance role if you have it.
+        ///   Looks up a localized string similar to Use this command to sign yourself out of receiving the dominance role. You won&apos;t be automatically assigned the discount role anymore, even if your flight receives dominance, unless you sign up using &lt;kbd&gt;dom optin&lt;/kbd&gt; again. Additionally, using this command will also immediately remove your dominance role if you have it.
         ///&lt;br&gt;&lt;br&gt;
         ///{0}.
         /// </summary>
@@ -237,13 +230,12 @@ namespace FRTools.Discord {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;b&gt;Command usage:&lt;/b&gt; &lt;kbd&gt;dom setup&lt;/kbd&gt;
-        ///&lt;br&gt;&lt;br&gt;
-        ///This command is used to set up the entire dominance module in one go. You can set up each individual role using the website as well if you do not want to use this wizard.
+        ///   Looks up a localized string similar to This command is used to set up the entire dominance module in one go. You can set up each individual role using the website as well if you do not want to use this wizard.
         ///&lt;br&gt;&lt;br&gt;
         ///After executing the command in DIscord, you will be presented with a setup message from the bot which tells you what to do on each step. First, you set which role you want to use as the dominance discount role, and then you assign a role to each flight.
         ///&lt;br&gt;&lt;br&gt;
-        ///There are m [rest of string was truncated]&quot;;.
+        ///There are multiple ways to provide the roles to the bot:
+        ///&lt;br&gt;&lt;br [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DominanceSetupDetailed {
             get {
@@ -270,15 +262,13 @@ namespace FRTools.Discord {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;b&gt;Command usage:&lt;/b&gt; &lt;kbd&gt;dom update&lt;/kbd&gt;
-        ///&lt;br&gt;&lt;br&gt;
-        ///Using this command starts a manual update of the dominance status. The bot will find what flight is dominating and update the roles accordingly.
+        ///   Looks up a localized string similar to Using this command starts a manual update of the dominance status. The bot will find what flight is dominating and update the roles accordingly.
         ///&lt;br&gt;&lt;br&gt;
         ///You should only use this command if:
         ///&lt;br&gt;&lt;br&gt;
         ///&lt;ul&gt;
         ///&lt;li&gt; If anyone&apos;s changed flight roles and you&apos;d like them to update. Currently, the dominance role is not automatically applied/removed when people change the assigned flight roles.
-        ///&lt;li&gt; If, for some reason, the bot doesn&apos;t update roles after dom [rest of string was truncated]&quot;;.
+        ///&lt;li&gt; If, for some reason, the bot doesn&apos;t update roles after dominance rolls over. This might happen due to circumstanc [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DominanceUpdateDetailed {
             get {
@@ -301,6 +291,15 @@ namespace FRTools.Discord {
         internal static string LookupModuleDetailed {
             get {
                 return ResourceManager.GetString("LookupModuleDetailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAESFJREFUeNrsnc2OI1cVgGtGYREQcgdEQJGQHRAiIEbtkCDBhq5hByzaI7Km3exYjaNILNiMZ4eQAOcJxv0EuMUDjL1FSNNWlixwP0HaG1gO97iPM07H5b97btWtqu+TSt2apMvlqjrfPef+VN17+fJlAgD15D6nAAABAAACAAAEAAAIAAAQAAAgAABAAACAAAAAAQAAAgAABAAACAAAEAAAIAAAQAAAgAAAAAEAAAIAAAQAAIXwGqfAlgft94/cj/bKP8nvRxv+ZLzy+9UnV/+64SxCXtzjqcAHB3rqfrR0SzXIj412f+22mQhh+dOJYcxZBwRQXKuermzHBR3KVDMGEcPYSWHG1QEEECboJXXv6HYc6WEuhTB0MrjiqgEC8At6 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string LookupModuleIcon {
+            get {
+                return ResourceManager.GetString("LookupModuleIcon", resourceCulture);
             }
         }
         

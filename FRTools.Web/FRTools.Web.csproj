@@ -344,6 +344,7 @@
     <Content Include="Content\frtools.svg" />
     <Content Include="Content\frtools_discord_bot.png" />
     <Content Include="Content\frtools_embed.png" />
+    <Content Include="Content\mgglass.png" />
     <Content Include="Content\nodata.png" />
     <Content Include="favicon-16x16.png" />
     <Content Include="favicon-32x32.png" />

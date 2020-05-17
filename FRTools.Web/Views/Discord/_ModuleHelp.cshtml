@@ -2,15 +2,17 @@
 
 <p>
     <b>Prefix:</b> <kbd><b>@(Model.Aliases[0])</b></kbd>
-    @if (Model.Aliases.Length > 1)
-    {
-        <br />
+</p>
+
+@if (Model.Aliases.Length > 1)
+{
+    <p>
         <b>Aliases:</b>
-        foreach (var alias in Model.Aliases.Skip(1))
+        @foreach (var alias in Model.Aliases.Skip(1))
         {
             <kbd><b>@(alias)</b></kbd>
         }
-    }
-</p>
+    </p>
+}
 
 @Html.Partial("_Help", Model.Help)

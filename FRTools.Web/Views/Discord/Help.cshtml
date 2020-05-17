@@ -62,7 +62,7 @@
                             <div class="panel-body">
                                 @if (!string.IsNullOrEmpty(module.Help?.IconBase64))
                                 {
-                                    <img style="width:128px;height:128px; padding-right:15px" class="pull-left" src="@($"data:image/png;base64, {module.Help.IconBase64}")" />
+                                    <img style="width:128px;height:128px; margin-right:15px" class="pull-left" src="@($"data:image/png;base64, {module.Help.IconBase64}")" />
                                 }
                                 <div style="padding-top:15px">
                                     @Html.Partial("_ModuleHelp", module.Module)

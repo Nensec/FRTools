@@ -1,42 +1,47 @@
 ﻿@model FRTools.Web.Models.DiscordCommand
 
 <p>
+    <b>Command usage:</b>
     @if (Model.SubCommands?.Any() == true)
     {
         foreach (var subCommand in Model.SubCommands)
         {
-            if (subCommand.Parameters?.Any() == true)
-            {
-                <b>Command usage:</b> <kbd><b>@(Model.ParentModule.Aliases[0]) @(Model.Aliases[0])</b></kbd> <kbd>@(string.Join(" ", subCommand.Parameters.Select(x => x.IsOptional ? $"[{x.MustMatchValue ?? x.Name}]" : x.MustMatchValue ?? x.Name)))</kbd>
-            }
-            else
-            {
-                <b>Command usage:</b> <kbd><b>@(Model.ParentModule.Aliases[0]) @(Model.Aliases[0])</b></kbd>
-            }
-            <br />
+            <span style="display: list-item; margin-left:3em;">
+                @if (subCommand.Parameters?.Any() == true)
+                {
+                    <kbd><b>@(Model.ParentModule.Aliases[0]) @(Model.Aliases[0])</b></kbd>
+                    <kbd>@(string.Join(" ", subCommand.Parameters.Select(x => x.IsOptional ? $"[{x.MustMatchValue ?? x.Name}]" : x.MustMatchValue ?? x.Name)))</kbd>
+                }
+                else
+                {
+                    <kbd><b>@(Model.ParentModule.Aliases[0]) @(Model.Aliases[0])</b></kbd>
+                }
+            </span>
         }
     }
     else
     {
         if (Model.Parameters?.Any() == true)
         {
-            <b>Command usage:</b> <kbd><b>@(Model.ParentModule.Aliases[0]) @(Model.Aliases[0])</b></kbd> <kbd>@(string.Join(" ", Model.Parameters.Select(x => x.IsOptional ? $"[{x.MustMatchValue ?? x.Name}]" : x.MustMatchValue ?? x.Name)))</kbd>
+            <kbd><b>@(Model.ParentModule.Aliases[0]) @(Model.Aliases[0])</b></kbd> <kbd>@(string.Join(" ", Model.Parameters.Select(x => x.IsOptional ? $"[{x.MustMatchValue ?? x.Name}]" : x.MustMatchValue ?? x.Name)))</kbd>
         }
         else
         {
-            <b>Command usage:</b> <kbd><b>@(Model.ParentModule.Aliases[0]) @(Model.Aliases[0])</b></kbd>
+            <kbd><b>@(Model.ParentModule.Aliases[0]) @(Model.Aliases[0])</b></kbd>
         }
-        <br />
     }
-    @if (Model.Aliases.Length > 1)
-    {
+</p>
+@if (Model.Aliases.Length > 1)
+{
+    <p>
+
         <b>Aliases:</b>
-        foreach (var alias in Model.Aliases.Skip(1))
+        @foreach (var alias in Model.Aliases.Skip(1))
         {
             <kbd><b>@(Model.ParentModule.Aliases[0]) @(alias)</b></kbd>
         }
-        <br />
-    }
-</p>
+    </p>
+
+}
 
 @Html.Partial("_Help", Model.Help)
