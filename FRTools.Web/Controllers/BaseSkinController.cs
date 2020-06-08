@@ -160,9 +160,8 @@ namespace FRTools.Web.Controllers
                 try
                 {
                     var dragonProfileHtml = await dragonProfilePageTask;
-                    var apparelFieldset = Regex.Matches(dragonProfileHtml, @"<fieldset([\s\S]*?)<\/fieldset>").Cast<Match>().Where(x => x.Success).ElementAt(1).Groups[1].Value;
+                    var apparel = Regex.Matches(dragonProfileHtml, @"<div class="".*dragon-profile-apparel-item.*"".+data-itemid=""(\d+)"".+>.+</div>");
 
-                    var apparel = Regex.Matches(apparelFieldset, @"appPrev\((\d*)\)");
                     if (apparel.Count == 0)
                         return null;
 
