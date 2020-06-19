@@ -74,6 +74,7 @@ namespace FRTools.Data
         Scorpion,
         Wintercoat,
         Weathered,
+        Braids = 55
     }
 
     public enum BanescaleBodyGene
