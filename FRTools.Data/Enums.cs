@@ -216,7 +216,8 @@ namespace FRTools.Data
         Leopard = 40,
         Slime,
         Fade,
-        Swirl = 57
+        Swirl = 57,
+        Mosaic
     }
 
     public enum TertiaryGene
@@ -281,7 +282,8 @@ namespace FRTools.Data
         Clouded = 40,
         Sludge,
         Blend,
-        Marbled = 57
+        Marbled = 57,
+        Breakup
     }
 
     public enum Color
