@@ -238,6 +238,8 @@ namespace FRTools.Web.Controllers
                 }
                 try
                 {
+                    skinImage = FixPixelFormat(skinImage);
+
                     model.Skin.InputStream.Position = 0;
                     var url = await azureImageService.WriteImage($@"skins\{randomizedId}.png", model.Skin.InputStream);
 

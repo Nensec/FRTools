@@ -45,6 +45,19 @@ namespace FRTools.Web.Controllers
                 using (var skinImageStream = await azureImageService.GetImage($@"skins\{skinId}.png"))
                     skinImage = Image.FromStream(skinImageStream);
 
+                var fixPixelFormat = FixPixelFormat((Bitmap)skinImage);
+                if (fixPixelFormat != null)
+                {
+                    skinImage = fixPixelFormat;
+                    using (var memStream = new MemoryStream())
+                    {
+                        skinImage.Save(memStream, ImageFormat.Png);
+                        memStream.Position = 0;
+
+                        _ = await azureImageService.WriteImage($@"skins\{skinId}.png", memStream);
+                    }
+                }
+
                 var eyeMask = (Bitmap)Image.FromFile(Server.MapPath($@"\Masks\{(int)dragon.DragonType}_{(int)dragon.Gender}_{(dragon.EyeType == EyeType.Primal || dragon.EyeType == EyeType.MultiGaze ? (int)dragon.EyeType : 0)}_{(dragon.EyeType == EyeType.Primal ? (int)dragon.Element : 0)}.png"));
 
                 if (dragon.EyeType == EyeType.MultiGaze)
@@ -187,5 +200,18 @@ namespace FRTools.Web.Controllers
             }
         }
 
+        protected Bitmap FixPixelFormat(Bitmap skinImage)
+        {
+            if (skinImage.PixelFormat != PixelFormat.Format32bppArgb)
+            {
+                var clone = new Bitmap(skinImage.Width, skinImage.Height, PixelFormat.Format32bppArgb);
+                using (var gr = Graphics.FromImage(clone))
+                    gr.DrawImage(skinImage, new Rectangle(0, 0, clone.Width, clone.Height));
+
+                skinImage.Dispose();
+                return clone;
+            }
+            return skinImage;
+        }
     }
 }
