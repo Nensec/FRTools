@@ -41,6 +41,19 @@ namespace FRTools.Common
                 using (var skinImageStream = await azureImageService.GetImage($@"skins\{skinId}.png"))
                     skinImage = Image.FromStream(skinImageStream);
 
+                var fixPixelFormat = FixPixelFormat((Bitmap)skinImage);
+                if (fixPixelFormat != null)
+                {
+                    skinImage = fixPixelFormat;
+                    using (var memStream = new MemoryStream())
+                    {
+                        skinImage.Save(memStream, ImageFormat.Png);
+                        memStream.Position = 0;
+
+                        _ = await azureImageService.WriteImage($@"skins\{skinId}.png", memStream);
+                    }
+                }
+
                 var eyeMask = (Bitmap)Image.FromFile(CodeHelpers.MapPath($@"\Masks\{(int)dragon.DragonType}_{(int)dragon.Gender}_{(dragon.EyeType == EyeType.Primal || dragon.EyeType == EyeType.MultiGaze ? (int)dragon.EyeType : 0)}_{(dragon.EyeType == EyeType.Primal ? (int)dragon.Element : 0)}.png"));
 
                 if (dragon.EyeType == EyeType.MultiGaze)
@@ -156,9 +169,8 @@ namespace FRTools.Common
                 try
                 {
                     var dragonProfileHtml = await dragonProfilePageTask;
-                    var apparelFieldset = Regex.Matches(dragonProfileHtml, @"<fieldset([\s\S]*?)<\/fieldset>").Cast<Match>().Where(x => x.Success).ElementAt(1).Groups[1].Value;
+                    var apparel = Regex.Matches(dragonProfileHtml, @"<div class="".*dragon-profile-apparel-item.*"".+data-itemid=""(\d+)"".+>.+</div>");
 
-                    var apparel = Regex.Matches(apparelFieldset, @"appPrev\((\d*)\)");
                     if (apparel.Count == 0)
                         return null;
 
@@ -180,6 +192,20 @@ namespace FRTools.Common
                     return null;
                 }
             }
+        }
+
+        public static Bitmap FixPixelFormat(Bitmap skinImage)
+        {
+            if (skinImage.PixelFormat != PixelFormat.Format32bppArgb)
+            {
+                var clone = new Bitmap(skinImage.Width, skinImage.Height, PixelFormat.Format32bppArgb);
+                using (var gr = Graphics.FromImage(clone))
+                    gr.DrawImage(skinImage, new Rectangle(0, 0, clone.Width, clone.Height));
+
+                skinImage.Dispose();
+                return clone;
+            }
+            return skinImage;
         }
     }
 }
