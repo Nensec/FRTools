@@ -23,6 +23,6 @@ namespace FRTools
                 return HttpContext.Current.Server.MapPath("\\bin" + path);
 
             return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + path;
-        }
+        }        
     }
 }

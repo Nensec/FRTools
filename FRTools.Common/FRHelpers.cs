@@ -15,15 +15,16 @@ namespace FRTools.Common
 {
     public static class FRHelpers
     {
-        //                                          https://www1.flightrising.com/dgen/dressing-room/dummy?breed=18&gender=0.png
         public const string DressingRoomDummyUrl = "https://www1.flightrising.com/dgen/dressing-room/dummy?breed={0}&gender={1}";
         public const string ScryerUrl = "https://flightrising.com/includes/scryer_getdragon.php?zord={0}";
         public const string DragonProfileUrl = "https://www1.flightrising.com/dragon/{0}";
+        public const string DragonProfileUrlNoScenic = "https://www1.flightrising.com/dragon/{0}?view=default";
         public const string DressingRoomDragonApparalUrl = "https://www1.flightrising.com/dgen/dressing-room/dragon?did={0}&apparel={1}";
         public const string DressingRoomDummyApparalUrl = "https://www1.flightrising.com/dgen/dressing-room/dummy?breed={0}&gender={1}&apparel={1}";
 
-        public static bool IsAncientBreed(DragonType type) => type == DragonType.Gaoler || type == DragonType.Banescale;
+        public static string GetRenderUrl(int dragonId) => $"https://www1.flightrising.com/rendern/350/{(Math.Floor(dragonId / 100d) + 1)}/{dragonId}_350.png";
 
+        public static bool IsAncientBreed(DragonType type) => type == DragonType.Gaoler || type == DragonType.Banescale;
 
         public static async Task<Bitmap> GetInvisibleDressingRoomDragon(DragonCache dragon)
         {
@@ -271,6 +272,36 @@ namespace FRTools.Common
                 var frId = int.Parse(userBio.Groups[2].Value);
 
                 return (frName, frId);
+            }
+        }
+
+        public static Flight GetFlightFromGodName(string godName)
+        { 
+            switch (godName.ToLower())
+            {
+                default:
+                case "earthshaker":
+                    return Flight.Earth;
+                case "plaguebringer":
+                    return Flight.Plague;
+                case "windsinger":
+                    return Flight.Wind;
+                case "tidelord":
+                    return Flight.Water;
+                case "stormcatcher":
+                    return Flight.Lightning;
+                case "icewarden":
+                    return Flight.Ice;
+                case "shadowbinder":
+                    return Flight.Shadow;
+                case "lightweaver":
+                    return Flight.Light;
+                case "arcanist":
+                    return Flight.Arcane;
+                case "gladekeeper":
+                    return Flight.Nature;
+                case "flamecaller":
+                    return Flight.Fire;
             }
         }
     }
