@@ -7,7 +7,6 @@ using HtmlAgilityPack;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace FRTools.Discord.Modules
 {
@@ -137,28 +136,12 @@ namespace FRTools.Discord.Modules
                 }
             }
 
-
             using (var webClient = new WebClient())
             {
                 var dragonImage = webClient.OpenRead(FRHelpers.GetRenderUrl(id));
                 await Context.Channel.SendFileAsync(dragonImage, $"{id}_350.png", embed: embed.Build());
             }
             await lookingUpMessage.DeleteAsync();
-        }
-
-        [Command("skin"), Name("Skin"), Alias("accent", "a", "s")]
-        [DiscordHelp("LookupSkin")]
-        public async Task SkinLookup(int id)
-        {
-
-        }
-
-        [Command("familiar"), Name("Familiar"), Alias("f")]
-        [DiscordHelp("LookupFamiliar")]
-        public async Task FamiliarLookup(int id)
-        {
-            // https://www1.flightrising.com/hoard/preview-image?breed=14&gender=0&item=551
-            // https://flightrising.com/includes/itemajax.php?id=551&tab=equipment
         }
     }
 }

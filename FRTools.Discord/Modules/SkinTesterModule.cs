@@ -26,7 +26,6 @@ namespace FRTools.Discord.Modules
         [DiscordHelp("SkinTesterLookup")]
         public async Task Lookup(string skinId)
         {
-
             var skin = DbContext.Skins.Include(x => x.Creator.FRUser).FirstOrDefault(x => x.GeneratedId == skinId);
             if (skin == null)
                 await ReplyAsync(embed: ErrorEmbed("Skin not found.").Build());
@@ -46,7 +45,6 @@ namespace FRTools.Discord.Modules
 
                 await ReplyAsync(embed: embed.Build());
             }
-
         }
 
         [Group("preview"), Name("Preview"), Alias("p")]
@@ -158,7 +156,6 @@ namespace FRTools.Discord.Modules
                     return (await replyMessage).ModifyAsync(x => x.Embed = embed.Build());
                 }
             }
-
         }
 
         [Command("manage")]
