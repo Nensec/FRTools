@@ -129,8 +129,8 @@
         <div class="container body-content">
             @if ((string)ViewContext.Controller.ControllerContext.RouteData.Values["controller"] != "Pinglist")
             {
-                <div class="alert alert-info" role="alert">
-                    A new feature has emerged! Do you own a Discord server and want access to a set of small but powerful FR related commands? Check out the new Discord bot <a href="@Url.RouteUrl("DiscordHome")">here!</a>
+                <div class="alert alert-warning" role="alert">
+                    Hey everyone. We're in a bit of a tight spot for a few months and could really use your support, for more information see my <a href="https://frtools.tumblr.com/post/624464477171154944">tumblr post here</a>.
                 </div>
             }
             @if (TempData["Error"] != null)
