@@ -17,15 +17,13 @@ namespace FRTools.Common
         {
             var result = new PreviewResult { Forced = force, RealDragon = dragonId != "preview" ? dragonId : null, DressingRoomUrl = dressingRoomUrl };
 
-            var azureImageService = new AzureImageService();
-
             if (dragon == null)
                 dragon = FRHelpers.ParseUrlForDragon(dragonUrl);
 
             Bitmap dragonImage = null;
 
             var azureImagePreviewPath = $@"previews\{skinId}\{(version == 1 ? "" : $@"{version}\")}{dragonId ?? dragon.ToString()}.png";
-            if (force || !azureImageService.Exists(azureImagePreviewPath, out var previewUrl))
+            if (force || !new AzureImageService().Exists(azureImagePreviewPath, out var previewUrl))
             {
                 try
                 {
@@ -38,7 +36,7 @@ namespace FRTools.Common
                 }
 
                 Image skinImage;
-                using (var skinImageStream = await azureImageService.GetImage($@"skins\{skinId}.png"))
+                using (var skinImageStream = await new AzureImageService().GetImage($@"skins\{skinId}.png"))
                     skinImage = Image.FromStream(skinImageStream);
 
                 var fixPixelFormat = FixPixelFormat((Bitmap)skinImage);
@@ -50,7 +48,7 @@ namespace FRTools.Common
                         skinImage.Save(memStream, ImageFormat.Png);
                         memStream.Position = 0;
 
-                        _ = await azureImageService.WriteImage($@"skins\{skinId}.png", memStream);
+                        _ = await new AzureImageService().WriteImage($@"skins\{skinId}.png", memStream);
                     }
                 }
 
@@ -85,12 +83,12 @@ namespace FRTools.Common
                     graphics.DrawImage(skinImage, new Rectangle(0, 0, 350, 350));
                 }
 
-                using (var memStream = new MemoryStream())
+                using (var saveImageStream = new MemoryStream())
                 {
-                    dragonImage.Save(memStream, ImageFormat.Png);
-                    memStream.Position = 0;
+                    dragonImage.Save(saveImageStream, ImageFormat.Png);
+                    saveImageStream.Position = 0;
 
-                    previewUrl = await azureImageService.WriteImage(azureImagePreviewPath, memStream);
+                    previewUrl = await new AzureImageService().WriteImage(azureImagePreviewPath, saveImageStream);
                 }
             }
             else
@@ -101,19 +99,19 @@ namespace FRTools.Common
             async Task<string> GenerateApparelPreview(Bitmap invisibleDragon, string cacheUrl)
             {
                 if (dragonImage == null)
-                    dragonImage = (Bitmap)Image.FromStream(await azureImageService.GetImage(azureImagePreviewPath));
+                    dragonImage = (Bitmap)Image.FromStream(await new AzureImageService().GetImage(azureImagePreviewPath));
 
                 using (var graphics = Graphics.FromImage(dragonImage))
                 {
                     graphics.DrawImage(invisibleDragon, new Rectangle(0, 0, 350, 350));
                 }
 
-                using (var memStream = new MemoryStream())
+                using (var saveApparelImageStream = new MemoryStream())
                 {
-                    dragonImage.Save(memStream, ImageFormat.Png);
-                    memStream.Position = 0;
+                    dragonImage.Save(saveApparelImageStream, ImageFormat.Png);
+                    saveApparelImageStream.Position = 0;
 
-                    return await azureImageService.WriteImage(cacheUrl, memStream);
+                    return await new AzureImageService().WriteImage(cacheUrl, saveApparelImageStream);
                 }
 
             }
@@ -123,7 +121,7 @@ namespace FRTools.Common
             {
                 var apparelIds = dragon.GetApparel();
                 var cacheUrl = $@"previews\{skinId}\{dragonId ?? dragon.ToString()}_apparel.png";
-                if (force || !azureImageService.Exists(cacheUrl, out apparelPreviewUrl))
+                if (force || !new AzureImageService().Exists(cacheUrl, out apparelPreviewUrl))
                 {
                     if (dragonId != null)
                         dressingRoomUrl = string.Format(FRHelpers.DressingRoomDragonApparalUrl, dragonId, string.Join(",", apparelIds.Concat(new[] { 22046 })));
@@ -137,9 +135,9 @@ namespace FRTools.Common
             else if (dragonId != null && dragonId != "preview" && !FRHelpers.IsAncientBreed(dragon.DragonType))
             {
                 var cacheUrl = $@"previews\{skinId}\{dragonId}_apparel.png";
-                if (force || !azureImageService.Exists(cacheUrl, out apparelPreviewUrl))
+                if (force || !new AzureImageService().Exists(cacheUrl, out apparelPreviewUrl))
                 {
-                    var invisibleDragonWithApparel = await GetInvisibleDragonWithApparel(dragonId, azureImageService, force);
+                    var invisibleDragonWithApparel = await GetInvisibleDragonWithApparel(dragonId, force);
 
                     if (invisibleDragonWithApparel != null)
                         apparelPreviewUrl = await GenerateApparelPreview(invisibleDragonWithApparel, cacheUrl);
@@ -152,13 +150,13 @@ namespace FRTools.Common
             return result;
         }
 
-        public static async Task<Bitmap> GetInvisibleDragonWithApparel(string dragonId, AzureImageService azureImageService, bool force = false)
+        public static async Task<Bitmap> GetInvisibleDragonWithApparel(string dragonId,  bool force = false)
         {
             Bitmap invisibleDwagon;
             var azureUrl = $@"dragoncache\{dragonId}_invisible.png";
-            if (!force && azureImageService.Exists(azureUrl, out var cacheUrl))
+            if (!force && new AzureImageService().Exists(azureUrl, out var cacheUrl))
             {
-                using (var stream = await azureImageService.GetImage(azureUrl))
+                using (var stream = await new AzureImageService().GetImage(azureUrl))
                     invisibleDwagon = (Bitmap)Image.FromStream(stream);
                 return invisibleDwagon;
             }
@@ -179,7 +177,7 @@ namespace FRTools.Common
                     var invisibleDwagonImageBytes = await invisibleDragonBytesTask;
 
                     using (var memStream = new MemoryStream(invisibleDwagonImageBytes, false))
-                        await azureImageService.WriteImage(azureUrl, memStream);
+                        await new AzureImageService().WriteImage(azureUrl, memStream);
 
                     using (var memStream = new MemoryStream(invisibleDwagonImageBytes, false))
                     {

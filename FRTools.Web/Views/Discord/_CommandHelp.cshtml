@@ -10,7 +10,7 @@
                 @if (subCommand.Parameters?.Any() == true)
                 {
                     <kbd><b>@(Model.ParentModule.Aliases[0]) @(Model.Aliases[0])</b></kbd>
-                    <kbd>@(string.Join(" ", subCommand.Parameters.Select(x => x.IsOptional ? $"[{x.MustMatchValue ?? x.Name}]" : x.MustMatchValue ?? x.Name)))</kbd>
+                    @Html.Raw(string.Join(" ", subCommand.Parameters.Select(x => $"<kbd>{(x.IsOptional ? $"[{x.MustMatchValue ?? x.Name}]" : x.MustMatchValue ?? x.Name)}</kbd>")))
                 }
                 else
                 {
@@ -23,7 +23,8 @@
     {
         if (Model.Parameters?.Any() == true)
         {
-            <kbd><b>@(Model.ParentModule.Aliases[0]) @(Model.Aliases[0])</b></kbd> <kbd>@(string.Join(" ", Model.Parameters.Select(x => x.IsOptional ? $"[{x.MustMatchValue ?? x.Name}]" : x.MustMatchValue ?? x.Name)))</kbd>
+            <kbd><b>@(Model.ParentModule.Aliases[0]) @(Model.Aliases[0])</b></kbd>
+            @Html.Raw(string.Join(" ", Model.Parameters.Select(x => $"<kbd>{(x.IsOptional ? $"[{x.MustMatchValue ?? x.Name}]" : x.MustMatchValue ?? x.Name)}</kbd>")))
         }
         else
         {

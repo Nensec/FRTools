@@ -286,7 +286,27 @@ namespace FRTools.Discord {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to https://i.imgur.com/GWOdaii.png.
+        /// </summary>
+        internal static string LookupDragon_0 {
+            get {
+                return ResourceManager.GetString("LookupDragon_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This command allows you to look up a specific dragons information using its ID number. The bot will post an embed containing its name, breed, level, age and a link to the dragon on FR, an image of the dragon in question, its colors &amp; genes, eye type and element, hatchdate, ID, parents and offspring. The image is clickable so you can see the bigger, original size.
+        ///&lt;br&gt;&lt;br&gt;
+        ///{0}.
+        /// </summary>
+        internal static string LookupDragonDetailed {
+            get {
+                return ResourceManager.GetString("LookupDragonDetailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This module allows you to quickly look up FR related things, without having to leave Discord to check them. Currently there&apos;s only one command available..
         /// </summary>
         internal static string LookupModuleDetailed {
             get {
@@ -313,7 +333,27 @@ namespace FRTools.Discord {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to https://i.imgur.com/V4REa2B.png.
+        /// </summary>
+        internal static string SkinTesterLookup_0 {
+            get {
+                return ResourceManager.GetString("SkinTesterLookup_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This command just shows you the requested skin on a mannequin, along with the creators name (Anonymous if there&apos;s no account made), its name, a link to it on FRTools and its description.
+        ///&lt;br&gt;&lt;br&gt;
+        ///{0}.
+        /// </summary>
+        internal static string SkinTesterLookupDetailed {
+            get {
+                return ResourceManager.GetString("SkinTesterLookupDetailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This module allows you to look up skins uploaded on FRTools and preview them on dragons..
         /// </summary>
         internal static string SkinTesterModuleDetailed {
             get {
@@ -336,6 +376,47 @@ namespace FRTools.Discord {
         internal static string SkinTesterModuleSynopsis {
             get {
                 return ResourceManager.GetString("SkinTesterModuleSynopsis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://i.imgur.com/b8emHpT.png.
+        /// </summary>
+        internal static string SkinTesterPreview_0 {
+            get {
+                return ResourceManager.GetString("SkinTesterPreview_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://i.imgur.com/hlc1oWH.png.
+        /// </summary>
+        internal static string SkinTesterPreview_1 {
+            get {
+                return ResourceManager.GetString("SkinTesterPreview_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allows you to preview your requested skin on a dragon of your choice. You can supply:
+        ///&lt;br&gt;&lt;br&gt;
+        ///&lt;ul&gt;
+        ///&lt;li&gt;an existing dragon ID
+        ///&lt;li&gt;a scry image URL
+        ///&lt;li&gt;a dressing room image URL
+        ///&lt;/ul&gt;
+        ///&lt;br&gt;
+        ///Morphologies also work, both from the scrying workshop and the dressing room. By default all images shown don&apos;t include apparel (if available), if you want a preview with the skin and apparel on you add &lt;kbd&gt;-apparel&lt;/kbd&gt; at the end of your command.
+        ///&lt;br&gt;&lt;br&gt;
+        ///Example of a scry image URL:
+        ///&lt;br&gt;
+        ///{0}
+        ///&lt;br&gt;
+        ///Example [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SkinTesterPreviewDetailed {
+            get {
+                return ResourceManager.GetString("SkinTesterPreviewDetailed", resourceCulture);
             }
         }
     }
