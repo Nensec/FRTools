@@ -127,12 +127,9 @@
     </div>
     <div class="container-wrapper">
         <div class="container body-content">
-            @if ((string)ViewContext.Controller.ControllerContext.RouteData.Values["controller"] != "Pinglist")
-            {
-                <div class="alert alert-warning" role="alert">
-                    Hey everyone. We're in a bit of a tight spot for a few months and could really use your support, for more information see my <a href="https://frtools.tumblr.com/post/624464477171154944">tumblr post here</a>.
-                </div>
-            }
+            <div class="alert alert-info" role="alert">
+                Discord bot time! The <a href="@(Url.RouteUrl("DiscordHome"))">discord bot</a> has been updated with two new modules, paving the way for new things to come. Check out the <a href="">post here</a> for more info!
+            </div>
             @if (TempData["Error"] != null)
             {
                 <div class="alert alert-danger alert-dismissible" role="alert">

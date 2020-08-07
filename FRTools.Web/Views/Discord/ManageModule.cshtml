@@ -16,22 +16,28 @@
         </div>
     </div>
     <div class="panel-body">
-
         <div class="form-horizontal">
-            @foreach (var setting in Model.ModuleSettings)
+            @if (Model.ModuleSettings.Any())
             {
-                <div class="form-group">
-                    <label class="col-sm-3 control-label" style="text-align:left">
-                        @if (setting.Description != null)
-                        {
-                            <span class="glyphicon glyphicon-info-sign" title="@(setting.Description)"></span>
-                        }
-                        @(setting.SettingName)
-                    </label>
-                    <div class="col-sm-9">
-                        @Html.EditorFor(model => setting)
+                foreach (var setting in Model.ModuleSettings)
+                {
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" style="text-align:left">
+                            @if (setting.Description != null)
+                            {
+                                <span class="glyphicon glyphicon-info-sign" title="@(setting.Description)"></span>
+                            }
+                            @(setting.SettingName)
+                        </label>
+                        <div class="col-sm-9">
+                            @Html.EditorFor(model => setting)
+                        </div>
                     </div>
-                </div>
+                }
+            }
+            else
+            {
+                <p><b><i>There are no settings for this module</i></b></p>
             }
         </div>
     </div>

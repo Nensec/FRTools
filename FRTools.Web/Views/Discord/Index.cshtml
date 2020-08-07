@@ -4,7 +4,7 @@
 
 @section meta{
     <meta property="og:title" content="FRTools Discord bot" />
-    <meta property="og:image" content="/Content/frtools_discord_bot.png" />
+    <meta property="og:image" content="/Content/frtools_discord_embed.png" />
     <meta property="og:url" content="@Url.RouteUrl("DiscordHome")" />
     <meta property="og:description" content="A discord bot that provides various Flight Rising related features" />
 }
@@ -16,15 +16,55 @@
     <div class="panel-body">
         <div class="col-md-8">
             <p>
-                Designed to make handling FR things on Discord easier, this bot provides users with a handy set of tools to assist in sales, scrying, dominance etc.<br /><br />
-            </p>
-            <p class="text-center">
-                <img class="img-responsive" style="display:inline;" src="https://i.imgur.com/tUMWuzq.png" />
+                Designed to make handling FR things on Discord easier, this bot provides users with a handy set of tools to assist in sales, dominance, lookup etc.
             </p>
             <p>
-                Currently the first and only module available is automatic dominance roles, but more are to come in the (near!) future.
+                <div id="carousel" class="carousel slide" data-ride="carousel" data-interval="3000">
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner" role="listbox" style="background-color:#36393F">
+                        <div class="item active">
+                            <img class="center-block img-responsive" src="https://i.imgur.com/FCNwHwg.png">
+                        </div>
+                        <div class="item">
+                            <img class="center-block img-responsive" src="https://i.imgur.com/vyW8Xbt.png">
+                        </div>
+                        <div class="item">
+                            <img class="center-block img-responsive" src="https://i.imgur.com/3wpWb6E.png">
+                        </div>
+                        <div class="item">
+                            <img class="center-block img-responsive" src="https://i.imgur.com/s8u1QyF.png">
+                        </div>
+                        <div class="item">
+                            <img class="center-block img-responsive" src="https://i.imgur.com/HLg5MaG.png">
+                        </div>
+                        <div class="item">
+                            <img class="center-block img-responsive" src="https://i.imgur.com/pjBiu3f.png">
+                        </div>
+                    </div>
+                </div>
             </p>
-            <p class="text-center"><a class="btn btn-primary" href="https://discordapp.com/api/oauth2/authorize?client_id=648225754093715528&permissions=268789824&scope=bot">Invite me! &raquo;</a></p>
+            <p>
+                There are 3 modules available right now:
+                <ul>
+                    <li>
+                        <span>Skin tester - Show off your skin straight in Discord and allow users to preview them without having to leave discord!</span>
+                    </li>
+                    <li>
+                        <span>Dominance - Does your server handle flight roles and do your users run dom-shops? This module might help with that!</span>
+                    </li>
+                    <li>
+                        <span>Lookup - Look up public Flight Rising data, right now the only thing you can lookup are Dragons but more is in the works!</span>
+                    </li>
+                </ul>
+            </p>
+            <p class="text-center">
+                <a class="btn btn-primary" href="https://discordapp.com/api/oauth2/authorize?client_id=648225754093715528&permissions=268789824&scope=bot">Invite the bot to your own server! &raquo;</a>
+            </p>
+            <p class="text-center">
+                <a class="btn btn-success" href="@(Url.RouteUrl("DiscordManage"))">Manage your bot</a>
+                <a class="btn btn-info" href="@(Url.RouteUrl("DiscordHelp"))">View help</a>
+            </p>
+
         </div>
         <div class="col-md-4">
             <iframe src="https://discordapp.com/widget?id=703445708212273252&theme=dark@(Request.IsAuthenticated ? ("&username=" + User.Identity.Name) : "")" width="100%" height="350" allowtransparency="true" frameborder="0"></iframe>

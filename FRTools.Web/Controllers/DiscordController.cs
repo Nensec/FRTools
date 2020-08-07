@@ -33,6 +33,12 @@ namespace FRTools.Web.Controllers
                 DiscordBotOwnerId = id;
         }
 
+        public DiscordController()
+        {
+            ViewBag.PngLogo = "/Content/frtools_discord.png";
+            ViewBag.Logo = "/Content/frtools_discord.svg";
+        }
+
         private long? _currentUserId;
 
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
