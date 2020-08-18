@@ -1,4 +1,6 @@
-﻿using FRTools.Data;
+﻿using FRTools.Common;
+using FRTools.Common.Jobs;
+using FRTools.Data;
 using FRTools.Data.DataModels.FlightRisingModels;
 using FRTools.Data.Messages;
 using Microsoft.Azure.ServiceBus;
@@ -57,8 +59,7 @@ namespace FRTools.MS.DominanceChecker
                             ctx.FRDominances.Add(new FRDominance { Timestamp = DateTime.UtcNow, First = (int)positions[0], Second = (int)positions[1], Third = (int)positions[2] });
                             await ctx.SaveChangesAsync();
 
-                            await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new GenericMessage(MessageCategory.DominanceTracker, "Updated")))));
-                            await _serviceBus.CloseAsync();
+                            JobManager.StartNewJob(new SendUpdateDominanceMessage());
                             break;
                         }
                         else

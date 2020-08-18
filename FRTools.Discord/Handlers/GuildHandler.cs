@@ -305,8 +305,6 @@ namespace FRTools.Discord.Handlers
                }
            });
 
-            _ = DominanceHandler.UpdateGuild(_settingManager, Guild);
-
             return Task.CompletedTask;
         }
 

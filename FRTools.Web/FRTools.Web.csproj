@@ -16,7 +16,7 @@
     <RootNamespace>FRTools.Web</RootNamespace>
     <AssemblyName>FRTools.Web</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <MvcBuildViews>false</MvcBuildViews>
+    <MvcBuildViews>true</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <Use64BitIISExpress />
     <IISExpressSSLPort />
@@ -317,7 +317,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\Helpers\CopyBoxHelpers.cs" />
-    <Compile Include="Infrastructure\Managers\JobManager.cs" />
     <Compile Include="Infrastructure\Managers\UserStore.cs" />
     <Compile Include="Infrastructure\MustHaveLoginProviderAttribute.cs" />
     <Compile Include="Infrastructure\SmartRequiredAttribute.cs" />

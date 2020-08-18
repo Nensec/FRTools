@@ -131,7 +131,7 @@ namespace FRTools.Web.Controllers
                             return await LoginUser(identity);
                         else if (!identity.UserName.All(x => char.IsDigit(x)))
                         {
-                            (newUser, identity) = await CreateNewUser(loginInfo, GenerateId(5));
+                            (newUser, identity) = await CreateNewUser(loginInfo, CodeHelpers.GenerateId(5));
                             if (newUser.Succeeded)
                                 return await LoginUser(identity);
                             TempData["Error"] = $"Could not create user:<br/><br/><ul>{newUser.Errors.Select(x => $"<li>{x}</li>")}</ul>";

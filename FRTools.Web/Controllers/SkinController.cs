@@ -219,8 +219,8 @@ namespace FRTools.Web.Controllers
 
             using (var ctx = new DataContext())
             {
-                var randomizedId = GenerateId(5, ctx.Skins.Select(x => x.GeneratedId).ToList());
-                var secretKey = GenerateId(7);
+                var randomizedId = CodeHelpers.GenerateId(5, ctx.Skins.Select(x => x.GeneratedId).ToList());
+                var secretKey = CodeHelpers.GenerateId(7);
                 Bitmap skinImage = null;
                 try
                 {
