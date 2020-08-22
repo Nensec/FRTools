@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FRTools.Common.Jobs
 {
-    public class UpdatePinglist : IJob
+    public class UpdatePinglist : BaseJob
     {
         private readonly List<int> _frUserList;
 
-        public string RelatedEntityId { get; set; }
-        public string Description { get; set; }
+        public override string RelatedEntityId { get; set; }
+        public override string Description { get; set; }
 
         public UpdatePinglist(string listId, List<int> frUserList)
         {
@@ -17,10 +18,17 @@ namespace FRTools.Common.Jobs
             Description = $"Updating entries for pinglist '{RelatedEntityId}'";
         }
 
-        public async Task JobTask()
+        public override async Task JobTask()
         {
             foreach (var entry in _frUserList)
-                await FRHelpers.GetOrUpdateFRUser(entry);
+                try
+                {
+                    await FRHelpers.GetOrUpdateFRUser(entry);
+                }
+                catch (Exception ex)
+                {
+                    ReportError(ex.Message);
+                }
         }
     }
 }

@@ -10,5 +10,7 @@ namespace FRTools.Data.DataModels
         public DateTime StartTime { get; set; }
         public DateTime? Heartbeat { get; set; }
         public JobStatus Status { get; set; }
+
+        public string Errors { get; set; }
     }
 }

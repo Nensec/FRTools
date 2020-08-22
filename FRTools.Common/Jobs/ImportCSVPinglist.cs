@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 namespace FRTools.Common.Jobs
 {
-    public class ImportCSVPinglist : IJob
+    public class ImportCSVPinglist : BaseJob
     {
         private readonly string _csv;
 
-        public string RelatedEntityId { get; set; }
-        public string Description { get; set; }
+        public override string RelatedEntityId { get; set; }
+        public override string Description { get; set; }
 
         public ImportCSVPinglist(string listId, string csv)
         {
@@ -20,7 +20,7 @@ namespace FRTools.Common.Jobs
             Description = $"Importing pinglist for pinglist '{RelatedEntityId}'";
         }
 
-        public async Task JobTask()
+        public override async Task JobTask()
         {
             using (var ctx = new DataContext())
             {
@@ -29,10 +29,17 @@ namespace FRTools.Common.Jobs
                 var usernames = _csv.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var username in usernames)
                 {
-                    if (username.All(char.IsDigit))
-                        await PinglistHelpers.AddEntryToList(list, null, int.Parse(username), null, ctx);
-                    else
-                        await PinglistHelpers.AddEntryToList(list, username, null, null, ctx);
+                    try
+                    {
+                        if (username.All(char.IsDigit))
+                            await PinglistHelpers.AddEntryToList(list, null, int.Parse(username), null, ctx);
+                        else
+                            await PinglistHelpers.AddEntryToList(list, username, null, null, ctx);
+                    }
+                    catch (Exception ex)
+                    {
+                        ReportError(ex.Message);
+                    }
                 }
                 ctx.SaveChanges();
             }

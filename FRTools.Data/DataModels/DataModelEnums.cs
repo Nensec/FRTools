@@ -29,6 +29,8 @@ namespace FRTools.Data.DataModels
         Running,
         Finished,
         Error,
-        Cancelled
+        Cancelled,
+        FinishedWithErrors,
+        UserConfirmedDone
     }
 }

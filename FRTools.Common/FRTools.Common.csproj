@@ -149,7 +149,7 @@
     <Compile Include="CodeHelpers.cs" />
     <Compile Include="FRHelpers.cs" />
     <Compile Include="JobManager.cs" />
-    <Compile Include="Jobs\IJob.cs" />
+    <Compile Include="Jobs\BaseJob.cs" />
     <Compile Include="Jobs\ImportCSVPinglist.cs" />
     <Compile Include="Jobs\SendUpdateDominanceMessage.cs" />
     <Compile Include="Jobs\UpdatePinglist.cs" />

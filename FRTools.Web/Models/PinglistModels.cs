@@ -46,8 +46,9 @@ namespace FRTools.Web.Models
         public int? NewPinglistCategory { get; set; }
         public string ShareUrl { get; set; }
 
-
         public List<PinglistCategory> AvailableCategories { get; } = new List<PinglistCategory>();
+
+        public List<Job> FinishedJobs { get; set; } = new List<Job>();
 
         public class FormatModel
         {

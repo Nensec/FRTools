@@ -1,19 +1,17 @@
-﻿using FRTools.Data;
-using FRTools.Data.DataModels;
+﻿using FRTools.Common;
+using FRTools.Common.Jobs;
+using FRTools.Data;
+using FRTools.Data.DataModels.PinglistModels;
 using FRTools.Web.Infrastructure;
 using FRTools.Web.Models;
 using Microsoft.AspNet.Identity;
+using Newtonsoft.Json;
 using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Data.Entity;
-using Newtonsoft.Json;
-using FRTools.Web.Infrastructure.Managers;
-using FRTools.Data.DataModels.PinglistModels;
-using FRTools.Common;
-using FRTools.Common.Jobs;
 
 namespace FRTools.Web.Controllers
 {
@@ -175,17 +173,54 @@ namespace FRTools.Web.Controllers
                     ownerModel.AvailableCategories.AddRange(ctx.PinglistCategories.Where(x => x.Owner.Id == ownerModel.Owner.Id).ToList());
                     ownerModel.PinglistCategory = list.PinglistCategory;
                     ownerModel.ShareUrl = await BitlyHelper.TryGenerateUrl(Url.RouteUrl("PinglistDirect", new { listId = model.ListId }, "https"));
-                    var activeJobs = JobManager.GetActiveJobs(list.Id.ToString());
+                    ownerModel.FinishedJobs = JobManager.GetUnconfirmedFinishedJobs(model.ListId);
+                    var activeJobs = JobManager.GetActiveJobs(list.GeneratedId.ToString());
                     foreach (var job in activeJobs)
                     {
                         if (!string.IsNullOrEmpty(TempData["Info"] as string))
                             TempData["Info"] += "<br/>";
-                        TempData["Info"] += job.Description;
+                        TempData["Info"] += $"Still working on: {job.Description}";
                     }
                     return View("OwnerViewList", ownerModel);
                 }
 
                 return View("PublicViewList", model);
+            }
+        }
+
+        [Route("list/{listId}/{jobId}", Name = "MarkPinglistJobRead")]
+        public ActionResult MarkPinglistJobTaskRead(string listId, string secretKey, Guid jobId)
+        {
+            using (var ctx = new DataContext())
+            {
+                var list = PinglistHelpers.GetPinglist(listId, true, ctx);
+
+                if (list == null)
+                {
+                    TempData["Error"] = $"There is no pinglist with the ID '{listId}'.";
+                    return RedirectToRoute("PinglistInfo");
+                }
+
+                var model = new PinglistViewModel
+                {
+                    Name = list.Name,
+                    Owner = list.Creator,
+                    ListId = list.GeneratedId,
+                    IsPublic = list.IsPublic
+                };
+
+                if (Request.IsAuthenticated)
+                    model.CurrentFRUser = ctx.Users.Find(HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>()).FRUser;
+
+                if (!HasAccess(list, secretKey))
+                {
+                    TempData["Error"] = "You do not have access to this pinglist. Make sure you are logged in or provide the correct secret key.";
+                    return RedirectToRoute("Pinglist");
+                }
+
+                JobManager.MarkFinishedJobRead(jobId);
+
+                return RedirectToRoute("PinglistDirect", new { listId = model.ListId });
             }
         }
 

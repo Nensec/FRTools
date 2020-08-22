@@ -1,6 +1,7 @@
 ﻿using FRTools.Common.Jobs;
 using FRTools.Data;
 using FRTools.Data.DataModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -13,7 +14,7 @@ namespace FRTools.Common
     {
         private static Dictionary<string, List<Job>> _activeJobs { get; set; } = new Dictionary<string, List<Job>>();
 
-        public static (Guid JobId, DateTime StartTime) StartNewJob(IJob job)
+        public static (Guid JobId, DateTime StartTime) StartNewJob(BaseJob job)
         {
             var dbJob = new Job { Id = Guid.NewGuid(), StartTime = DateTime.UtcNow, RelatedEntity = job.RelatedEntityId, Description = job.Description, Status = JobStatus.Running };
             using (var ctx = new DataContext())
@@ -31,10 +32,13 @@ namespace FRTools.Common
 
             _ = Task.Run(async () =>
               {
-                  var task = job.JobTask();
                   using (var ctx = new DataContext())
                   {
                       ctx.Jobs.Attach(dbJob);
+
+                      job.ReportError = async x => await SaveError(x, dbJob, ctx);
+                      var task = job.JobTask();
+
                       while (!task.IsCompleted)
                       {
 
@@ -43,9 +47,18 @@ namespace FRTools.Common
 
                           await Task.Delay(1000);
                       }
-                      _activeJobs[dbJob.RelatedEntity].Remove(dbJob);
-                      dbJob.Status = task.IsFaulted ? JobStatus.Error : JobStatus.Finished;
+                      if (task.IsFaulted)
+                      {
+                          await SaveError(task.Exception.GetBaseException().Message, dbJob, ctx);
+                          dbJob.Status = JobStatus.Error;
+                      }
+                      else if (dbJob.Errors != null)
+                          dbJob.Status = JobStatus.FinishedWithErrors;
+                      else
+                          dbJob.Status = JobStatus.Finished;
+
                       await ctx.SaveChangesAsync();
+                      _activeJobs[dbJob.RelatedEntity].Remove(dbJob);
                       if (!_activeJobs[dbJob.RelatedEntity].Any())
                           _activeJobs.Remove(dbJob.RelatedEntity);
                   }
@@ -55,5 +68,32 @@ namespace FRTools.Common
         }
 
         public static List<Job> GetActiveJobs(string relatedEntityId) => _activeJobs.ContainsKey(relatedEntityId) ? _activeJobs[relatedEntityId] : new List<Job>();
+        public static List<Job> GetUnconfirmedFinishedJobs(string relatedEntityId)
+        {
+            using (var ctx = new DataContext())
+                return ctx.Jobs.Where(x => x.RelatedEntity == relatedEntityId && (x.Status == JobStatus.Finished || x.Status == JobStatus.FinishedWithErrors || x.Status == JobStatus.Error)).ToList();
+        }
+
+        private static async Task SaveError(string error, Job dbJob, DataContext ctx)
+        {
+            var errors = dbJob.Errors != null ? JsonConvert.DeserializeObject<List<string>>(dbJob.Errors) : new List<string>();
+            errors.Add(error);
+            dbJob.Errors = JsonConvert.SerializeObject(errors);
+
+            await ctx.SaveChangesAsync();
+        }
+
+        public static void MarkFinishedJobRead(Guid jobId)
+        {
+            using (var ctx = new DataContext())
+            {
+                var job = ctx.Jobs.Find(jobId);
+                if (job != null && (job.Status == JobStatus.FinishedWithErrors || job.Status == JobStatus.Finished || job.Status == JobStatus.Error))
+                {
+                    job.Status = JobStatus.UserConfirmedDone;
+                    ctx.SaveChanges();
+                }
+            }
+        }
     }
 }

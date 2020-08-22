@@ -181,6 +181,10 @@
     <Compile Include="Migrations\202001040702350_Discord channel type.designer.cs">
       <DependentUpon>202001040702350_Discord channel type.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202008221828462_Add error field to job.cs" />
+    <Compile Include="Migrations\202008221828462_Add error field to job.designer.cs">
+      <DependentUpon>202008221828462_Add error field to job.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -256,6 +260,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202001040702350_Discord channel type.resx">
       <DependentUpon>202001040702350_Discord channel type.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008221828462_Add error field to job.resx">
+      <DependentUpon>202008221828462_Add error field to job.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
