@@ -28,11 +28,10 @@ namespace FRTools.Common
 
             _activeJobs[dbJob.RelatedEntity].Add(dbJob);
 
-            var task = job.JobTask();
 
             _ = Task.Run(async () =>
               {
-                  task.Start();
+                  var task = job.JobTask();
                   using (var ctx = new DataContext())
                   {
                       ctx.Jobs.Attach(dbJob);
