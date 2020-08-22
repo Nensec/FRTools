@@ -32,6 +32,7 @@ namespace FRTools.Common
 
             _ = Task.Run(async () =>
               {
+                  task.Start();
                   using (var ctx = new DataContext())
                   {
                       ctx.Jobs.Attach(dbJob);
