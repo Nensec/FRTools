@@ -16,7 +16,7 @@ namespace FRTools.Common.Jobs
             await _serviceBus.CloseAsync();
         }
 
-        public string RelatedEntityId { get; set; }
+        public string RelatedEntityId { get; set; } = "DominanceUpdate";
         public string Description { get; set; }
     }
 }

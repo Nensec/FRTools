@@ -7,7 +7,6 @@ namespace FRTools.Common.Jobs
 {
     public class ImportCSVPinglist : IJob
     {
-        private readonly string _listId;
         private readonly string _csv;
 
         public string RelatedEntityId { get; set; }
@@ -15,17 +14,17 @@ namespace FRTools.Common.Jobs
 
         public ImportCSVPinglist(string listId, string csv)
         {
-            _listId = listId;
+            RelatedEntityId = listId;
             _csv = csv;
 
-            Description = $"Importing pinglist for pinglist '{_listId}'";
+            Description = $"Importing pinglist for pinglist '{RelatedEntityId}'";
         }
 
         public async Task JobTask()
         {
             using (var ctx = new DataContext())
             {
-                var list = PinglistHelpers.GetPinglist(_listId, false, ctx);
+                var list = PinglistHelpers.GetPinglist(RelatedEntityId, false, ctx);
 
                 var usernames = _csv.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var username in usernames)

@@ -6,7 +6,6 @@ namespace FRTools.Common.Jobs
     public class UpdatePinglist : IJob
     {
         private readonly List<int> _frUserList;
-        private readonly string _listId;
 
         public string RelatedEntityId { get; set; }
         public string Description { get; set; }
@@ -14,8 +13,8 @@ namespace FRTools.Common.Jobs
         public UpdatePinglist(string listId, List<int> frUserList)
         {
             _frUserList = frUserList;
-            _listId = listId;
-            Description = $"Updating entries for pinglist '{_listId}'";
+            RelatedEntityId = listId;
+            Description = $"Updating entries for pinglist '{RelatedEntityId}'";
         }
 
         public async Task JobTask()
