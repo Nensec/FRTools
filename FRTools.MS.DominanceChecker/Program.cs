@@ -59,7 +59,9 @@ namespace FRTools.MS.DominanceChecker
                             ctx.FRDominances.Add(new FRDominance { Timestamp = DateTime.UtcNow, First = (int)positions[0], Second = (int)positions[1], Third = (int)positions[2] });
                             await ctx.SaveChangesAsync();
 
-                            JobManager.StartNewJob(new SendUpdateDominanceMessage());
+                            var (JobId, StartTime, Task) = JobManager.StartNewJob(new SendUpdateDominanceMessage());
+                            while (!Task.IsCompleted)
+                                await Task.Delay(100);
                             break;
                         }
                         else

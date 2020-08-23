@@ -14,7 +14,7 @@ namespace FRTools.Common
     {
         private static Dictionary<string, List<Job>> _activeJobs { get; set; } = new Dictionary<string, List<Job>>();
 
-        public static (Guid JobId, DateTime StartTime) StartNewJob(BaseJob job)
+        public static (Guid JobId, DateTime StartTime, Task Task) StartNewJob(BaseJob job)
         {
             var dbJob = new Job { Id = Guid.NewGuid(), StartTime = DateTime.UtcNow, RelatedEntity = job.RelatedEntityId, Description = job.Description, Status = JobStatus.Running };
             using (var ctx = new DataContext())
@@ -29,15 +29,15 @@ namespace FRTools.Common
 
             _activeJobs[dbJob.RelatedEntity].Add(dbJob);
 
-
+            var task = job.JobTask();
+            bool taskSetup = false;
             _ = Task.Run(async () =>
               {
                   using (var ctx = new DataContext())
                   {
                       ctx.Jobs.Attach(dbJob);
-
                       job.ReportError = async x => await SaveError(x, dbJob, ctx);
-                      var task = job.JobTask();
+                      taskSetup = true;
 
                       while (!task.IsCompleted)
                       {
@@ -64,7 +64,10 @@ namespace FRTools.Common
                   }
               });
 
-            return (dbJob.Id, dbJob.StartTime);
+            while (!taskSetup)
+                Task.Delay(10).GetAwaiter().GetResult();
+
+            return (dbJob.Id, dbJob.StartTime, task);
         }
 
         public static List<Job> GetActiveJobs(string relatedEntityId) => _activeJobs.ContainsKey(relatedEntityId) ? _activeJobs[relatedEntityId] : new List<Job>();
