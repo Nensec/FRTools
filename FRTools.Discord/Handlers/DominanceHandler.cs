@@ -2,7 +2,6 @@
 using Discord.WebSocket;
 using FRTools.Data;
 using FRTools.Discord.Infrastructure;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,7 +10,7 @@ namespace FRTools.Discord.Handlers
 {
     public static class DominanceHandler
     {
-        public static async Task UpdateGuild(SettingManager settingManager, SocketGuild guild)
+        public static async Task UpdateGuild(SettingManager settingManager, SocketGuild guild, SocketGuildUser selfUser)
         {
             var flightEmojis = new Dictionary<Flight, string>
             {
@@ -46,47 +45,57 @@ namespace FRTools.Discord.Handlers
                     var annChannelId = settingManager.GetSettingValue("GUILDCONFIG_ANN_CHANNEL", guild);
                     if (annChannelId != null)
                         annChannel = (ITextChannel)guild.GetChannel(ulong.Parse(annChannelId));
-
-                    foreach (var user in dominanceRole.Members.ToList())
-                        await user.RemoveRoleAsync(dominanceRole);
-
-                    using (var ctx = new DataContext())
+                    if (selfUser.Roles.Any(x => x.Position > dominanceRole.Position))
                     {
-                        var externalEmojis = guild.CurrentUser.GuildPermissions.UseExternalEmojis;
+                        foreach (var user in dominanceRole.Members.ToList())
+                            await user.RemoveRoleAsync(dominanceRole);
 
-                        var latestDominance = ctx.FRDominances.OrderByDescending(x => x.Timestamp).First();
-                        if ((Flight)latestDominance.First != Flight.Beastclans)
+                        using (var ctx = new DataContext())
                         {
-                            if (ulong.TryParse(settingManager.GetSettingValue($"GUILDCONFIG_DOMINANCE_ROLE_{latestDominance.First}", guild), out var firstPlaceFlight))
+                            var externalEmojis = guild.CurrentUser.GuildPermissions.UseExternalEmojis;
+
+                            var latestDominance = ctx.FRDominances.OrderByDescending(x => x.Timestamp).First();
+                            if ((Flight)latestDominance.First != Flight.Beastclans)
                             {
-                                var firstPlaceRole = guild.GetRole(firstPlaceFlight);
-                                foreach (var user in firstPlaceRole.Members.ToList())
+                                if (ulong.TryParse(settingManager.GetSettingValue($"GUILDCONFIG_DOMINANCE_ROLE_{latestDominance.First}", guild), out var firstPlaceFlight))
                                 {
-                                    if (settingManager.GetSettingValue($"GUILDCONFIG_DOMINANCE_USER_{user.Id}", guild) == "true")
-                                        await user.AddRoleAsync(dominanceRole);
+                                    var firstPlaceRole = guild.GetRole(firstPlaceFlight);
+                                    foreach (var user in firstPlaceRole.Members.ToList())
+                                    {
+                                        if (settingManager.GetSettingValue($"GUILDCONFIG_DOMINANCE_USER_{user.Id}", guild) == "true")
+                                            await user.AddRoleAsync(dominanceRole);
+                                    }
+                                    if (annChannel != null)
+                                    {
+                                        var embed = new EmbedBuilder()
+                                            .WithTitle($"Congratulations to the {(externalEmojis ? (flightEmojis[(Flight)latestDominance.First] + " ") : "")}**{(Flight)latestDominance.First}** flight for claiming 1st place!")
+                                            .WithFields(
+                                                new EmbedFieldBuilder().WithIsInline(true).WithName("Info").WithValue($"Those who opted in for the {dominanceRole.Mention} role now have it, enjoy your discounts!\r\n\nSecond place: {(externalEmojis ? (flightEmojis[(Flight)latestDominance.Second] + " ") : "")}{(Flight)latestDominance.Second}\r\nThird place: {(externalEmojis ? (flightEmojis[(Flight)latestDominance.Third] + " ") : "")}{(Flight)latestDominance.Third}"),
+                                                new EmbedFieldBuilder().WithIsInline(true).WithName("Benefits").WithValue($"{(externalEmojis ? (domEmojis["dom"] + " ") : "")}15% off marketplace treasure items\r\n{(externalEmojis ? (domEmojis["lair"] + " ") : "")}5% off lair expansions\r\n{(externalEmojis ? (domEmojis["treasure"] + " ") : "")}+1500 treasure a day\r\n{(externalEmojis ? (domEmojis["food"] + " ") : "")}+3 gathering turns a day")
+                                                );
+                                        await annChannel.SendMessageAsync(embed: embed.Build());
+                                    }
                                 }
+                            }
+                            else
+                            {
                                 if (annChannel != null)
                                 {
                                     var embed = new EmbedBuilder()
-                                        .WithTitle($"Congratulations to the {(externalEmojis ? (flightEmojis[(Flight)latestDominance.First] + " ") : "")}**{(Flight)latestDominance.First}** flight for claiming 1st place!")
-                                        .WithFields(
-                                            new EmbedFieldBuilder().WithIsInline(true).WithName("Info").WithValue($"Those who opted in for the {dominanceRole.Mention} role now have it, enjoy your discounts!\r\n\nSecond place: {(externalEmojis ? (flightEmojis[(Flight)latestDominance.Second] + " ") : "")}{(Flight)latestDominance.Second}\r\nThird place: {(externalEmojis ? (flightEmojis[(Flight)latestDominance.Third] + " ") : "")}{(Flight)latestDominance.Third}"),
-                                            new EmbedFieldBuilder().WithIsInline(true).WithName("Benefits").WithValue($"{(externalEmojis ? (domEmojis["dom"] + " ") : "")}15% off marketplace treasure items\r\n{(externalEmojis ? (domEmojis["lair"] + " ") : "")}5% off lair expansions\r\n{(externalEmojis ? (domEmojis["treasure"] + " ") : "")}+1500 treasure a day\r\n{(externalEmojis ? (domEmojis["food"] + " ") : "")}+3 gathering turns a day")
-                                            );
+                                    .WithTitle($"{(externalEmojis ? (flightEmojis[Flight.Beastclans] + " ") : "")}Beastclans won 1st place this week, somehow, so nobody gets the dominance role : (")
+                                    .WithFields(
+                                        new EmbedFieldBuilder().WithIsInline(true).WithName("Info").WithValue($"How did {(externalEmojis ? (flightEmojis[Flight.Earth] + " ") : "")}Earth not get 1st place? Strange..\r\n\nSecond place: {(externalEmojis ? (flightEmojis[(Flight)latestDominance.Second] + " ") : "")}{(Flight)latestDominance.Second}\r\nThird place: {(externalEmojis ? (flightEmojis[(Flight)latestDominance.Third] + " ") : "")}{(Flight)latestDominance.Third}"),
+                                        new EmbedFieldBuilder().WithIsInline(true).WithName("Benefits (for 2nd place)").WithValue($"{(externalEmojis ? (domEmojis["dom"] + " ") : "")}7% off marketplace treasure items\r\n{(externalEmojis ? (domEmojis["lair"] + " ") : "")}1% off lair expansions\r\n{(externalEmojis ? (domEmojis["treasure"] + " ") : "")}+750 treasure a day\r\n{(externalEmojis ? (domEmojis["food"] + " ") : "")}+2 gathering turns a day")
+                                        );
                                     await annChannel.SendMessageAsync(embed: embed.Build());
                                 }
                             }
                         }
-                        else
-                        {
-                            var embed = new EmbedBuilder()
-                                .WithTitle($"{(externalEmojis ? (flightEmojis[Flight.Beastclans] + " ") : "")}Beastclans won 1st place this week, somehow, so nobody gets the dominance role : (")
-                                .WithFields(
-                                    new EmbedFieldBuilder().WithIsInline(true).WithName("Info").WithValue($"How did {(externalEmojis ? (flightEmojis[Flight.Earth] + " ") : "")}Earth not get 1st place? Strange..\r\n\nSecond place: {(externalEmojis ? (flightEmojis[(Flight)latestDominance.Second] + " ") : "")}{(Flight)latestDominance.Second}\r\nThird place: {(externalEmojis ? (flightEmojis[(Flight)latestDominance.Third] + " ") : "")}{(Flight)latestDominance.Third}"),
-                                    new EmbedFieldBuilder().WithIsInline(true).WithName("Benefits (for 2nd place)").WithValue($"{(externalEmojis ? (domEmojis["dom"] + " ") : "")}7% off marketplace treasure items\r\n{(externalEmojis ? (domEmojis["lair"] + " ") : "")}1% off lair expansions\r\n{(externalEmojis ? (domEmojis["treasure"] + " ") : "")}+750 treasure a day\r\n{(externalEmojis ? (domEmojis["food"] + " ") : "")}+2 gathering turns a day")
-                                    );
-                            await annChannel.SendMessageAsync(embed: embed.Build());
-                        }
+                    }
+                    else
+                    {
+                        if (annChannel != null)
+                            await annChannel.SendMessageAsync("Dominance has updated, but I does not have permission to grant dominance role on this server");
                     }
                 }
             }

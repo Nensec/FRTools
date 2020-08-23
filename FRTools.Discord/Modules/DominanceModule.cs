@@ -179,7 +179,7 @@ namespace FRTools.Discord.Modules
             {
                 var embed = new EmbedBuilder().WithDescription("Running a manual update for this guild to assign dominance roles, this might take a bit..");
                 var msg = await ReplyAsync(embed: embed.Build());
-                await DominanceHandler.UpdateGuild(SettingManager, Context.Guild);
+                await DominanceHandler.UpdateGuild(SettingManager, Context.Guild, Context.Guild.GetUser(Context.Client.CurrentUser.Id));
                 embed.Description = "Manual update of dominance roles completed.";
                 await msg.ModifyAsync(x => x.Embed = embed.Build());
             }

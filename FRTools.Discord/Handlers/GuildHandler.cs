@@ -7,6 +7,7 @@ using FRTools.Data.Messages;
 using FRTools.Discord.Infrastructure;
 using System;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -216,7 +217,15 @@ namespace FRTools.Discord.Handlers
         {
             if (dominanceUpdate.Message == "Updated")
             {
-                await DominanceHandler.UpdateGuild(_settingManager, Guild);
+                try
+                {
+                    await DominanceHandler.UpdateGuild(_settingManager, Guild, Guild.GetUser(_client.CurrentUser.Id)) ;
+                }
+                catch(Exception ex)
+                {
+                    Trace.WriteLine($"Could not update dominance for server '{Guild.Id}' ({Guild.Name})");
+                    Trace.WriteLine(ex.Message);
+                }
             }
         }
 
