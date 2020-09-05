@@ -93,8 +93,6 @@ namespace FRTools.Web.Controllers
                 default:
                     if (ModelState.IsValid)
                     {
-                        loginInfo.Login.ProviderKey = GetProviderData(loginInfo);
-
                         async Task<(IdentityResult, User)> CreateNewUser(ExternalLoginInfo externalLoginInfo, string usernameAffix = null)
                         {
                             var providerData = JsonConvert.DeserializeObject<UserStore.ProviderData>(externalLoginInfo.Login.ProviderKey);
@@ -118,7 +116,7 @@ namespace FRTools.Web.Controllers
                             }
                             else
                             {
-                                TempData["Error"] = $"Could not login user:<br/><br/><ul>{loginResult.Errors.Select(x => $"<li>{x}</li>")}</ul>";
+                                TempData["Error"] = $"Could not login user:<br/><br/><ul>{string.Join("", loginResult.Errors.Select(x => $"<li>{x}</li>"))}</ul>";
                                 return RedirectToRoute("Login");
                             }
                         };
@@ -134,7 +132,7 @@ namespace FRTools.Web.Controllers
                             (newUser, identity) = await CreateNewUser(loginInfo, CodeHelpers.GenerateId(5));
                             if (newUser.Succeeded)
                                 return await LoginUser(identity);
-                            TempData["Error"] = $"Could not create user:<br/><br/><ul>{newUser.Errors.Select(x => $"<li>{x}</li>")}</ul>";
+                            TempData["Error"] = $"Could not create user:<br/><br/><ul>{string.Join("", newUser.Errors.Select(x => $"<li>{x}</li>"))}</ul>";
                             return RedirectToRoute("Login");
                         }
                     }
