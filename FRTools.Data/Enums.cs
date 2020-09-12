@@ -217,7 +217,8 @@ namespace FRTools.Data
         Slime,
         Fade,
         Swirl = 57,
-        Mosaic
+        Mosaic,
+        Stitched
     }
 
     public enum TertiaryGene
@@ -283,7 +284,8 @@ namespace FRTools.Data
         Sludge,
         Blend,
         Marbled = 57,
-        Breakup
+        Breakup,
+        Patchwork
     }
 
     public enum Color
