@@ -227,7 +227,8 @@
                 labels: [@Html.Raw(string.Join(", ", previewColorData.GroupBy(x => x.Item1).Select(x => $"'{x.Key.ToString()}'")))],
                 datasets: [{
                     label: 'Primary',
-                    data: [@string.Join(", ", previewColorData.GroupBy(x => x.Item1).Select(x => x.Count()))]
+                    data: [@string.Join(", ", previewColorData.GroupBy(x => x.Item1).Select(x => x.Count()))],
+                    backgroundColor: [@Html.Raw(string.Join(", ", previewColorData.GroupBy(x => x.Item1).Select(x => $"'{x.Key.GetHex()}'")))]
                 }]
             },
             options: {
@@ -242,7 +243,8 @@
                 labels: [@Html.Raw(string.Join(", ", previewColorData.GroupBy(x => x.Item2).Select(x => $"'{x.Key.ToString()}'")))],
                 datasets: [{
                     label: 'Secondary',
-                    data: [@string.Join(", ", previewColorData.GroupBy(x => x.Item2).Select(x => x.Count()))]
+                    data: [@string.Join(", ", previewColorData.GroupBy(x => x.Item2).Select(x => x.Count()))],
+                    backgroundColor: [@Html.Raw(string.Join(", ", previewColorData.GroupBy(x => x.Item2).Select(x => $"'{x.Key.GetHex()}'")))]
                 }]
             },
             options: {
@@ -257,7 +259,8 @@
                 labels: [@Html.Raw(string.Join(", ", previewColorData.GroupBy(x => x.Item3).Select(x => $"'{x.Key.ToString()}'")))],
                 datasets: [{
                     label: 'Tertiary',
-                    data: [@string.Join(", ", previewColorData.GroupBy(x => x.Item3).Select(x => x.Count()))]
+                    data: [@string.Join(", ", previewColorData.GroupBy(x => x.Item3).Select(x => x.Count()))],
+                    backgroundColor: [@Html.Raw(string.Join(", ", previewColorData.GroupBy(x => x.Item3).Select(x => $"'{x.Key.GetHex()}'")))]
                 }]
             },
             options: {

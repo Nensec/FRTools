@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ColorAttribute.cs" />
     <Compile Include="DataContext.cs" />
     <Compile Include="DataModels\AccountModels\Role.cs" />
     <Compile Include="DataModels\AccountModels\User.cs" />
