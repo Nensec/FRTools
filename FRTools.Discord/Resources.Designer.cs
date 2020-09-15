@@ -406,13 +406,8 @@ namespace FRTools.Discord {
         ///&lt;li&gt;a dressing room image URL
         ///&lt;/ul&gt;
         ///&lt;br&gt;
-        ///Morphologies also work, both from the scrying workshop and the dressing room. By default all images shown don&apos;t include apparel (if available), if you want a preview with the skin and apparel on you add &lt;kbd&gt;-apparel&lt;/kbd&gt; at the end of your command.
-        ///&lt;br&gt;&lt;br&gt;
-        ///Example of a scry image URL:
-        ///&lt;br&gt;
-        ///{0}
-        ///&lt;br&gt;
-        ///Example [rest of string was truncated]&quot;;.
+        ///You can swap the gender of your dragon by adding &lt;kbd&gt;-s&lt;/kbd&gt; at the end of your command. This only works when previewing on an existing dragon using it&apos;s ID.&lt;br&gt;
+        ///Morphologies also work, both from the scrying workshop and the dressing room. By default all images shown don&apos;t include apparel (if available), if you  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SkinTesterPreviewDetailed {
             get {

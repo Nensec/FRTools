@@ -56,22 +56,39 @@ namespace FRTools.Discord.Modules
             }
 
             [Command]
-            public async Task Preview(string skinId, int dragonId, [ExactValuePrecondition("-apparel")]string apparel = null)
+            public async Task Preview(string skinId, int dragonId, [ExactValuePrecondition("-apparel")] string apparel = null)
             {
-                string dragonUrl = FRHelpers.GetDragonImageUrlFromDragonId(dragonId);
-                if (dragonUrl.StartsWith(".."))
-                    await ReplyAsync(embed: ErrorEmbed($"**{dragonId}** appears to be an invalid dragon id").Build());
-                else
+                string dragonUrl = await GetDragonUrl(dragonId);
+                if (dragonUrl != null)
                     await GeneratePreview(skinId, dragonUrl, dragonId, apparel == "-apparel");
             }
 
             [Command]
-            public async Task Preview(string skinId, string dressingRoomUrl, [ExactValuePrecondition("-apparel")]string apparel = null)
+            public async Task Preview(string skinId, int dragonId, [ExactValuePrecondition("-s")] string swapSilhouette, [ExactValuePrecondition("-apparel")] string apparel = null)
+            {
+                string dragonUrl = await GetDragonUrl(dragonId);
+                if (dragonUrl != null)
+                    await GeneratePreview(skinId, dragonUrl, dragonId, swapSilhouette == "-s", apparel == "-apparel");
+            }
+
+            private async Task<string> GetDragonUrl(int dragonId)
+            {
+                var dragonUrl = FRHelpers.GetDragonImageUrlFromDragonId(dragonId);
+                if (dragonUrl.StartsWith(".."))
+                {
+                    await ReplyAsync(embed: ErrorEmbed($"**{dragonId}** appears to be an invalid dragon id").Build());
+                    return null;
+                }
+                return dragonUrl;
+            }
+
+            [Command]
+            public async Task Preview(string skinId, string dressingRoomUrl, [ExactValuePrecondition("-apparel")] string apparel = null)
             {
                 await GeneratePreview(skinId, dressingRoomUrl, null, apparel == "-apparel");
             }
 
-            private async Task<Task> GeneratePreview(string skinId, string dragonUrl, int? dragonId = null, bool showApparel = false)
+            private async Task<Task> GeneratePreview(string skinId, string dragonUrl, int? dragonId = null, bool swapSilhouette = false, bool showApparel = false)
             {
                 var replyMessage = ReplyAsync(embed: new EmbedBuilder().WithTitle("Generating your preview..").WithDescription("I'm fetching all the required data to preview your skin, this takes a moment..").Build());
 
@@ -107,6 +124,12 @@ namespace FRTools.Discord.Modules
 
                 if (dragon.Age == Age.Hatchling)
                     return (await replyMessage).ModifyAsync(x => x.Embed = ErrorEmbed("Skins can only be previewed on adult dragons.").Build());
+
+                if (swapSilhouette)
+                {
+                    dragon.Gender = dragon.Gender == Gender.Male ? Gender.Female : Gender.Male;
+                    dragon = FRHelpers.ParseUrlForDragon(FRHelpers.GenerateDragonImageUrl(dragon));
+                }
 
                 using (var ctx = new DataContext())
                 {

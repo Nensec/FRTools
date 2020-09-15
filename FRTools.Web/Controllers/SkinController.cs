@@ -99,7 +99,7 @@ namespace FRTools.Web.Controllers
                     return RedirectToRoute("Preview", new { model.SkinId });
                 }
 
-                return await GeneratePreview(model.SkinId, dwagonUrl, model.DragonId, model.Force);
+                return await GeneratePreview(model.SkinId, dwagonUrl, model.DragonId, model.SwapSilhouette, model.Force);
 
             }
             else if (!string.IsNullOrWhiteSpace(model.ScryerUrl))
@@ -114,7 +114,7 @@ namespace FRTools.Web.Controllers
             return RedirectToRoute("Preview", new { model.SkinId });
         }
 
-        private async Task<ActionResult> GeneratePreview(string skinId, string dragonUrl, int? dragonId = null, bool force = false)
+        private async Task<ActionResult> GeneratePreview(string skinId, string dragonUrl, int? dragonId = null, bool swapSilhouette = false, bool force = false)
         {
             DragonCache dragon = null;
             bool isDressingRoomUrl = dragonUrl.Contains("/dgen/dressing-room");
@@ -155,6 +155,12 @@ namespace FRTools.Web.Controllers
             {
                 TempData["Error"] = $"Skins can only be previewed on adult dragons.";
                 return RedirectToRoute("Preview", new { skinId });
+            }
+
+            if (swapSilhouette)
+            {
+                dragon.Gender = dragon.Gender == Gender.Male ? Gender.Female : Gender.Male;
+                dragon = FRHelpers.ParseUrlForDragon(FRHelpers.GenerateDragonImageUrl(dragon));
             }
 
             using (var ctx = new DataContext())

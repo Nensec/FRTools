@@ -145,24 +145,40 @@ namespace FRTools.Common
             {
                 var htmlPage = client.DownloadString(scryUrl);
                 var scryPageUrlParse = Regex.Match(htmlPage, @"breed=(\d+)&gender=(\d+)&age=(\d+)&bodygene=(\d+)&body=(\d+)&winggene=(\d+)&wings=(\d+)&tertgene=(\d+)&tert=(\d+)&element=(\d+)&eyetype=(\d+)");
+                return GenerateDragonImageUrl(int.Parse(scryPageUrlParse.Groups[1].Value), int.Parse(scryPageUrlParse.Groups[2].Value), int.Parse(scryPageUrlParse.Groups[3].Value),
+                    int.Parse(scryPageUrlParse.Groups[4].Value), int.Parse(scryPageUrlParse.Groups[5].Value), int.Parse(scryPageUrlParse.Groups[6].Value),
+                    int.Parse(scryPageUrlParse.Groups[7].Value), int.Parse(scryPageUrlParse.Groups[8].Value), int.Parse(scryPageUrlParse.Groups[9].Value),
+                    int.Parse(scryPageUrlParse.Groups[10].Value), int.Parse(scryPageUrlParse.Groups[11].Value));
+            }
+        }
+
+        public static string GenerateDragonImageUrl(DragonCache dragon) =>
+            GenerateDragonImageUrl((int)dragon.DragonType, (int)dragon.Gender, (int)dragon.Age, dragon.BodyGene, (int)dragon.BodyColor,
+                dragon.WingGene, (int)dragon.WingColor, dragon.TertiaryGene, (int)dragon.TertiaryColor, (int)dragon.Element, (int)dragon.EyeType);
+
+        public static string GenerateDragonImageUrl(int breed, int gender, int age, int bodygene, int body, int winggene, int wings, int tertgene, int tert, int element, int eyetype)
+        {
+            using (var client = new WebClient())
+            {
                 var result = client.UploadValues("https://www1.flightrising.com/scrying/ajax-predict", new System.Collections.Specialized.NameValueCollection
                 {
-                    { "breed", scryPageUrlParse.Groups[1].Value },
-                    { "gender", scryPageUrlParse.Groups[2].Value },
-                    { "age", scryPageUrlParse.Groups[3].Value },
-                    { "bodygene", scryPageUrlParse.Groups[4].Value },
-                    { "body", scryPageUrlParse.Groups[5].Value },
-                    { "winggene", scryPageUrlParse.Groups[6].Value },
-                    { "wings", scryPageUrlParse.Groups[7].Value },
-                    { "tertgene", scryPageUrlParse.Groups[8].Value },
-                    { "tert", scryPageUrlParse.Groups[9].Value },
-                    { "element", scryPageUrlParse.Groups[10].Value },
-                    { "eyetype", scryPageUrlParse.Groups[11].Value },
+                    { "breed", breed.ToString() },
+                    { "gender", gender.ToString() },
+                    { "age", age.ToString() },
+                    { "bodygene", bodygene.ToString() },
+                    { "body", body.ToString() },
+                    { "winggene", winggene.ToString() },
+                    { "wings", wings.ToString() },
+                    { "tertgene", tertgene.ToString() },
+                    { "tert", tert.ToString() },
+                    { "element", element.ToString() },
+                    { "eyetype", eyetype.ToString() },
                 });
                 var str = Encoding.UTF8.GetString(result);
                 var dragonUrl = JsonConvert.DeserializeObject<dynamic>(str).dragon_url;
                 return "https://www1.flightrising.com" + dragonUrl;
             }
+
         }
 
         public static DragonCache GetDragonFromDragonId(int dragonId) => ParseUrlForDragon(GetDragonImageUrlFromDragonId(dragonId));
@@ -276,7 +292,7 @@ namespace FRTools.Common
         }
 
         public static Flight GetFlightFromGodName(string godName)
-        { 
+        {
             switch (godName.ToLower())
             {
                 default:

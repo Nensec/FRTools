@@ -16,7 +16,10 @@
             <div class="col-md-8">
                 <div class="input-group">
                     @Html.EditorFor(model => model.DragonId, new { htmlAttributes = new { @class = "form-control", onchange = "clear_DragonId()", oninput = "clear_DragonId()" } })
-                    <span class="input-group-addon">
+                    <span class="input-group-addon" style="padding:0; border-left:0; border-right:0" data-toggle="tooltip" title="Toggle this to swap the gender of the supplied dragon">
+                        @Html.CheckBoxFor(model => model.SwapSilhouette, new { data_on = "Swap", data_off = "Original", data_toggle="toggle"})                        
+                    </span>
+                    <span class="input-group-addon">                        
                         <span id="DragonHelp" data-toggle="popover" class="glyphicon glyphicon-info-sign"></span>
                     </span>
                 </div>
@@ -119,5 +122,10 @@
     .popover {
         max-width: 100%;
         z-index: 100;
+    }
+
+    .toggle.btn, .toggle .btn {
+        border-radius: 0;
+        border:0;
     }
 </style>
