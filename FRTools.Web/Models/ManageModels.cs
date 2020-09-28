@@ -1,6 +1,4 @@
 ﻿using FRTools.Data.DataModels;
-using Microsoft.AspNet.Identity;
-using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -27,21 +25,16 @@ namespace FRTools.Web.Models
 
     public class VerifyFRPostViewModel : BaseManageModel
     {
-        [Display(Name = "User/Lair Id")]
         [Required]
         public int LairId { get; set; }
     }
 
     public class UserPostViewModel : BaseManageModel
     {
-        [Display(Name = "Username"), StringLength(50, MinimumLength = 1)]
+        [StringLength(50, MinimumLength = 1)]
         public string Username { get; set; }
-        [Display(Name = "Email")]
         public string Email { get; set; }
-        [Display(Name = "Profile visibility")]
-        public Privacy Privacy { get; set; }
-        [Display(Name = "Default skin visibility")]
-        public SkinVisiblity DefaultVisibility { get; set; }
+        public bool ShowFRLinkStatus { get; set; }
     }
 
     public class ManageLoginsViewModel

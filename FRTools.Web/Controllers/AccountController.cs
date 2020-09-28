@@ -65,7 +65,7 @@ namespace FRTools.Web.Controllers
                 loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
                 if (loginInfo == null)
                 {
-                    TempData["Error"] = "Could not retrieve external login information from request, please try again.<br/>If the issue persists then please let me know <a href=\"https://github.com/Nensec/FRTools/issues/5\">here</a>.";
+                    AddErrorNotification("Could not retrieve external login information from request, please try again.<br/>If the issue persists then please let me know <a href=\"https://github.com/Nensec/FRTools/issues/5\">here</a>.");
                     return RedirectToRoute("Login");
                 }
             }
@@ -99,7 +99,8 @@ namespace FRTools.Web.Controllers
                             var user = new User
                             {
                                 UserName = providerData.ProviderUsername + usernameAffix,
-                                Email = externalLoginInfo.Email
+                                Email = externalLoginInfo.Email,
+                                ProfileSettings = new ProfileSettings()
                             };
 
                             return (await UserManager.CreateAsync(user), user);
@@ -116,7 +117,7 @@ namespace FRTools.Web.Controllers
                             }
                             else
                             {
-                                TempData["Error"] = $"Could not login user:<br/><br/><ul>{string.Join("", loginResult.Errors.Select(x => $"<li>{x}</li>"))}</ul>";
+                                AddErrorNotification($"Could not login user:<br/><br/><ul>{string.Join("", loginResult.Errors.Select(x => $"<li>{x}</li>"))}</ul>");
                                 return RedirectToRoute("Login");
                             }
                         };
@@ -132,12 +133,12 @@ namespace FRTools.Web.Controllers
                             (newUser, identity) = await CreateNewUser(loginInfo, CodeHelpers.GenerateId(5));
                             if (newUser.Succeeded)
                                 return await LoginUser(identity);
-                            TempData["Error"] = $"Could not create user:<br/><br/><ul>{string.Join("", newUser.Errors.Select(x => $"<li>{x}</li>"))}</ul>";
+                            AddErrorNotification($"Could not create user:<br/><br/><ul>{string.Join("", newUser.Errors.Select(x => $"<li>{x}</li>"))}</ul>");
                             return RedirectToRoute("Login");
                         }
                     }
 
-                    TempData["Error"] = "Something went wrong submitting the request";
+                    AddErrorNotification("Something went wrong submitting the request");
 
                     ViewBag.ReturnUrl = returnUrl;
                     return RedirectToRoute("Login");
@@ -158,10 +159,10 @@ namespace FRTools.Web.Controllers
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                 }
 
-                TempData["Success"] = $"Succesfully removed the specified {loginProvider} login from your account!";
+                AddSuccessNotification($"Succesfully removed the specified {loginProvider} login from your account!");
             }
             else
-                TempData["Error"] = result.Errors.First();
+                AddErrorNotification(result.Errors.First());
             return RedirectToRoute("ManageLogins");
         }
 
@@ -179,7 +180,7 @@ namespace FRTools.Web.Controllers
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync(ChallengeResult._xsrfKey, User.Identity.GetUserId());
             if (loginInfo == null)
             {
-                TempData["Error"] = "Could not retrieve external login information from request, please try again.<br/>If the issue persists then please let me know <a href=\"https://github.com/Nensec/FRTools/issues/5\">here</a>.";
+                AddErrorNotification("Could not retrieve external login information from request, please try again.<br/>If the issue persists then please let me know <a href=\"https://github.com/Nensec/FRTools/issues/5\">here</a>.");
                 return RedirectToRoute("ManageLogins");
             }
 
@@ -187,9 +188,9 @@ namespace FRTools.Web.Controllers
 
             var result = await UserManager.AddLoginAsync(User.Identity.GetUserId<int>(), loginInfo.Login);
             if (!result.Succeeded)
-                TempData["Error"] = result.Errors.First();
+                AddErrorNotification(result.Errors.First());
             else
-                TempData["Success"] = $"Succesfully added your {loginInfo.Login.LoginProvider} login to your account!";
+                AddSuccessNotification($"Succesfully added your {loginInfo.Login.LoginProvider} login to your account!");
 
             return RedirectToRoute("ManageLogins");
         }
@@ -209,6 +210,19 @@ namespace FRTools.Web.Controllers
                     break;
             }
             return JsonConvert.SerializeObject(providerData);
+        }
+
+        [Route("logins", Name = "ManageLogins")]
+        [Authorize]
+        public async Task<ActionResult> ManageLogins()
+        {
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId<int>());
+
+            return View(new ManageLoginsViewModel
+            {
+                CurrentLogins = user.Logins.ToList(),
+                ShowRemoveButton = user.Logins.Count > 1
+            });
         }
     }
 }

@@ -57,7 +57,7 @@ namespace FRTools.Web.Controllers
                 }
             }
 
-            base.OnActionExecuting(filterContext);                
+            base.OnActionExecuting(filterContext);
         }
 
         [Route(Name = "DiscordHome")]
@@ -82,10 +82,10 @@ namespace FRTools.Web.Controllers
         public ActionResult CommandHelp(string module, string command)
         {
             var discordModule = DiscordMetadata.Modules.FirstOrDefault(x => x.Name.ToLower() == module.ToLower());
-            if(discordModule != null)
+            if (discordModule != null)
             {
                 var moduleCommand = discordModule.Commands.FirstOrDefault(x => x.Name.ToLower() == command.ToLower());
-                if(moduleCommand != null)
+                if (moduleCommand != null)
                 {
                     return PartialView("_CommandHelp", moduleCommand);
                 }
@@ -98,26 +98,23 @@ namespace FRTools.Web.Controllers
         [MustHaveLoginProvider("discord", "DiscordHome")]
         public ActionResult Manage()
         {
-            using (var ctx = new DataContext())
+            var currentUser = DataContext.DiscordUsers.FirstOrDefault(x => x.UserId == _currentUserId);
+            if (currentUser == null)
+                TempData["Warning"] = "The bot has not encountered you at all yet in any servers, are you in a mutual server with the bot?";
+            return View(new ServersViewModel
             {
-                var currentUser = ctx.DiscordUsers.FirstOrDefault(x => x.UserId == _currentUserId);
-                if (currentUser == null)
-                    TempData["Warning"] = "The bot has not encountered you at all yet in any servers, are you in a mutual server with the bot?";
-                return View(new ServersViewModel
+                Servers = currentUser?.Servers.Where(x => x.Roles.Any(r => (r.DiscordPermissions & 8) != 0)).Select(x => new ServerViewModel
                 {
-                    Servers = currentUser?.Servers.Where(x => x.Roles.Any(r => (r.DiscordPermissions & 8) != 0)).Select(x => new ServerViewModel
-                    {
-                        ServerId = x.Server.ServerId,
-                        UserCount = x.Server.Users.Count,
-                        IconBase64 = x.Server.IconBase64,
-                        ServerName = x.Server.Name
-                    }).ToList() ?? new System.Collections.Generic.List<ServerViewModel>(),
-                    CurrentUser = currentUser
-                });
-            }
+                    ServerId = x.Server.ServerId,
+                    UserCount = x.Server.Users.Count,
+                    IconBase64 = x.Server.IconBase64,
+                    ServerName = x.Server.Name
+                }).ToList() ?? new System.Collections.Generic.List<ServerViewModel>(),
+                CurrentUser = currentUser
+            });
         }
 
-        private ServerViewModel GetServerViewModel(DataContext ctx, DiscordUser currentUser, long discordServer)
+        private ServerViewModel GetServerViewModel(DataContext DataContext, DiscordUser currentUser, long discordServer)
         {
             var server = currentUser.Servers.First(x => x.Server.ServerId == discordServer).Server;
             var serverModel = new ServerViewModel
@@ -132,7 +129,7 @@ namespace FRTools.Web.Controllers
             {
                 Key = x.Key,
                 ParentServer = serverModel,
-                Value = ctx.DiscordSettings.FirstOrDefault(s => s.Server.ServerId == discordServer && s.Key == x.Key)?.Value,
+                Value = DataContext.DiscordSettings.FirstOrDefault(s => s.Server.ServerId == discordServer && s.Key == x.Key)?.Value,
                 SettingType = x.Type,
                 SettingName = x.Name,
                 Description = ParseDescription(x),
@@ -147,15 +144,12 @@ namespace FRTools.Web.Controllers
         [MustHaveLoginProvider("discord", "DiscordHome")]
         public ActionResult ManageServer(long discordServer)
         {
-            using (var ctx = new DataContext())
-            {
-                var currentUser = ctx.DiscordUsers.First(x => x.UserId == _currentUserId);
+            var currentUser = DataContext.DiscordUsers.First(x => x.UserId == _currentUserId);
 
-                if (CheckMutualServer(discordServer, currentUser))
-                    return View(GetServerViewModel(ctx, currentUser, discordServer));
-                else
-                    return RedirectToRoute("DiscordManage");
-            }
+            if (CheckMutualServer(discordServer, currentUser))
+                return View(GetServerViewModel(DataContext, currentUser, discordServer));
+            else
+                return RedirectToRoute("DiscordManage");
         }
 
         [Route("manage/{discordServer}/{module}", Name = "DiscordManageModule")]
@@ -163,44 +157,42 @@ namespace FRTools.Web.Controllers
         [MustHaveLoginProvider("discord", "DiscordHome")]
         public ActionResult ManageModule(long discordServer, string module)
         {
-            using (var ctx = new DataContext())
+            var currentUser = DataContext.DiscordUsers.First(x => x.UserId == _currentUserId);
+
+            if (CheckMutualServer(discordServer, currentUser))
             {
-                var currentUser = ctx.DiscordUsers.First(x => x.UserId == _currentUserId);
-
-                if (CheckMutualServer(discordServer, currentUser))
+                if (CheckModule(module))
                 {
-                    if (CheckModule(module))
-                    {
-                        var serverModel = GetServerViewModel(ctx, currentUser, discordServer);
+                    var serverModel = GetServerViewModel(DataContext, currentUser, discordServer);
 
-                        var model = new DiscordModuleViewModel
-                        {
-                            ParentServer = serverModel,
-                            SelectedModule = DiscordMetadata.Modules.First(x => x.Name.ToLower() == module.ToLower())
-                        };
-                        var moduleSettings = model.SelectedModule.Settings.OrderBy(x => x.Type).Select(x => new DiscordSettingViewModel
-                        {
-                            Key = x.Key,
-                            SettingName = x.Name,
-                            Description = ParseDescription(x),
-                            ParentServer = serverModel,
-                            SettingType = x.Type,
-                            Value = ctx.DiscordSettings.FirstOrDefault(s => s.Server.ServerId == discordServer && s.Key == x.Key)?.Value,
-                            ExtraArgs = x.ExtraArgs,
-                            Module = module
-                        }).ToList();
-                        model.ModuleSettings = moduleSettings;
-                        return View(model);
-                    }
-                    else
+                    var model = new DiscordModuleViewModel
                     {
-                        TempData["Error"] = $"Could not find module '{module}', or you do not have access to it on this server";
-                        return RedirectToRoute("DiscordManageServer", new { discordServer });
-                    }
+                        ParentServer = serverModel,
+                        SelectedModule = DiscordMetadata.Modules.First(x => x.Name.ToLower() == module.ToLower())
+                    };
+                    var moduleSettings = model.SelectedModule.Settings.OrderBy(x => x.Type).Select(x => new DiscordSettingViewModel
+                    {
+                        Key = x.Key,
+                        SettingName = x.Name,
+                        Description = ParseDescription(x),
+                        ParentServer = serverModel,
+                        SettingType = x.Type,
+                        Value = DataContext.DiscordSettings.FirstOrDefault(s => s.Server.ServerId == discordServer && s.Key == x.Key)?.Value,
+                        ExtraArgs = x.ExtraArgs,
+                        Module = module
+                    }).ToList();
+                    model.ModuleSettings = moduleSettings;
+                    return View(model);
                 }
                 else
-                    return RedirectToRoute("DiscordManage");
+                {
+                    AddErrorNotification($"Could not find module '{module}', or you do not have access to it on this server");
+                    return RedirectToRoute("DiscordManageServer", new { discordServer });
+                }
             }
+            else
+                return RedirectToRoute("DiscordManage");
+
         }
 
         private string ParseDescription(Models.DiscordSetting setting)
@@ -234,52 +226,49 @@ namespace FRTools.Web.Controllers
         {
             var discordServerId = long.Parse(discordServer);
             ActionResult ErrorResult() => new HttpUnauthorizedResult("User does not have required permission");
-            using (var ctx = new DataContext())
+            var currentUser = DataContext.DiscordUsers.FirstOrDefault(x => x.UserId == _currentUserId)?.Servers.FirstOrDefault(x => x.Server.ServerId == discordServerId);
+            if (currentUser == null)
+                return ErrorResult();
+
+            Data.DataModels.DiscordModels.DiscordSetting setting = null;
+            if (module == null)
             {
-                var currentUser = ctx.DiscordUsers.FirstOrDefault(x => x.UserId == _currentUserId)?.Servers.FirstOrDefault(x => x.Server.ServerId == discordServerId);
-                if (currentUser == null)
+                var botSetting = DiscordMetadata.BotSettings.FirstOrDefault(x => x.Key.ToLower() == key.ToLower());
+                if (botSetting == null)
                     return ErrorResult();
 
-                Data.DataModels.DiscordModels.DiscordSetting setting = null;
-                if (module == null)
+                if (currentUser.Roles.Any(x => (x.DiscordPermissions & 8) != 0))
                 {
-                    var botSetting = DiscordMetadata.BotSettings.FirstOrDefault(x => x.Key.ToLower() == key.ToLower());
-                    if (botSetting == null)
-                        return ErrorResult();
-
-                    if (currentUser.Roles.Any(x => (x.DiscordPermissions & 8) != 0))
-                    {
-                        setting = ctx.DiscordSettings.FirstOrDefault(x => x.Server.ServerId == currentUser.Server.ServerId && x.Key == botSetting.Key);
-                        if (setting == null)
-                            setting = ctx.DiscordSettings.Add(new Data.DataModels.DiscordModels.DiscordSetting { Server = currentUser.Server, Key = botSetting.Key });
-                        setting.Value = value;
-                    }
+                    setting = DataContext.DiscordSettings.FirstOrDefault(x => x.Server.ServerId == currentUser.Server.ServerId && x.Key == botSetting.Key);
+                    if (setting == null)
+                        setting = DataContext.DiscordSettings.Add(new Data.DataModels.DiscordModels.DiscordSetting { Server = currentUser.Server, Key = botSetting.Key });
+                    setting.Value = value;
                 }
-                else
-                {
-                    var discordModule = DiscordMetadata.Modules.FirstOrDefault(x => x.Name.ToLower() == module.ToLower());
-                    if (discordModule == null)
-                        return ErrorResult();
-
-                    var moduleSetting = discordModule.Settings.FirstOrDefault(x => x.Key.ToLower() == key.ToLower());
-                    if (moduleSetting == null)
-                        return ErrorResult();
-
-                    if (currentUser.Roles.Any(x => (x.DiscordPermissions & 8) != 0))
-                    {
-                        setting = ctx.DiscordSettings.FirstOrDefault(x => x.Server.ServerId == currentUser.Server.ServerId && x.Key == moduleSetting.Key);
-                        if (setting == null)
-                            setting = ctx.DiscordSettings.Add(new Data.DataModels.DiscordModels.DiscordSetting { Server = currentUser.Server, Key = moduleSetting.Key });
-                        setting.Value = value;
-                    }
-                }
-
-                ctx.SaveChanges();
-                var _serviceBus = new QueueClient(ConfigurationManager.AppSettings["AzureSBConnString"], ConfigurationManager.AppSettings["AzureSBQueueName"]);
-                await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new GenericMessage(MessageCategory.SettingUpdated, setting.Key) { DiscordServer = discordServerId }))));
-
-                return Json(JsonConvert.SerializeObject(new { result = 1, setting.Key, setting.Value }));
             }
+            else
+            {
+                var discordModule = DiscordMetadata.Modules.FirstOrDefault(x => x.Name.ToLower() == module.ToLower());
+                if (discordModule == null)
+                    return ErrorResult();
+
+                var moduleSetting = discordModule.Settings.FirstOrDefault(x => x.Key.ToLower() == key.ToLower());
+                if (moduleSetting == null)
+                    return ErrorResult();
+
+                if (currentUser.Roles.Any(x => (x.DiscordPermissions & 8) != 0))
+                {
+                    setting = DataContext.DiscordSettings.FirstOrDefault(x => x.Server.ServerId == currentUser.Server.ServerId && x.Key == moduleSetting.Key);
+                    if (setting == null)
+                        setting = DataContext.DiscordSettings.Add(new Data.DataModels.DiscordModels.DiscordSetting { Server = currentUser.Server, Key = moduleSetting.Key });
+                    setting.Value = value;
+                }
+            }
+
+            DataContext.SaveChanges();
+            var _serviceBus = new QueueClient(ConfigurationManager.AppSettings["AzureSBConnString"], ConfigurationManager.AppSettings["AzureSBQueueName"]);
+            await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new GenericMessage(MessageCategory.SettingUpdated, setting.Key) { DiscordServer = discordServerId }))));
+
+            return Json(JsonConvert.SerializeObject(new { result = 1, setting.Key, setting.Value }));
         }
 
         private bool CheckMutualServer(long discordServer, DiscordUser currentUser)
@@ -288,7 +277,7 @@ namespace FRTools.Web.Controllers
                 return true;
             else
             {
-                TempData["Error"] = $"Could not find server id '{discordServer}' in the list of mutual servers where you are an administrator between you and the bot";
+                AddErrorNotification($"Could not find server id '{discordServer}' in the list of mutual servers where you are an administrator between you and the bot");
                 return false;
             }
         }

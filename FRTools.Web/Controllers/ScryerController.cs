@@ -24,25 +24,25 @@ namespace FRTools.Web.Controllers
 
             if (scryerDragon.Age == Data.Age.Hatchling)
             {
-                TempData["Error"] = $"You can only dress an adult dragon!";
+                AddErrorNotification($"You can only dress an adult dragon!");
                 return RedirectToRoute("ScryerDresser");
             }
 
             if (scryerDragon.DragonType != dressingRoomDragon.DragonType)
             {
-                TempData["Error"] = $"The breeds of the two images do not match. Scryer image is a <b>{scryerDragon.DragonType}</b> while the dressing room is a <b>{dressingRoomDragon.DragonType}</b>!";
+                AddErrorNotification($"The breeds of the two images do not match. Scryer image is a <b>{scryerDragon.DragonType}</b> while the dressing room is a <b>{dressingRoomDragon.DragonType}</b>!");
                 return RedirectToRoute("ScryerDresser");
             }
 
             if (scryerDragon.Gender != dressingRoomDragon.Gender)
             {
-                TempData["Error"] = $"The genders of the two images do not match. Scryer image is a <b>{scryerDragon.Gender}</b> while the dressing room is a <b>{dressingRoomDragon.Gender}</b>!";
+                AddErrorNotification($"The genders of the two images do not match. Scryer image is a <b>{scryerDragon.Gender}</b> while the dressing room is a <b>{dressingRoomDragon.Gender}</b>!");
                 return RedirectToRoute("ScryerDresser");
             }
 
             var azureImageService = new AzureImageService();
 
-            var azureImagePreviewPath = $@"previews\dresser\{scryerDragon.ToString().Trim('_')}\{dressingRoomDragon.Apparel.Replace(',', '-').ToString()}.png";
+            var azureImagePreviewPath = $@"previews\dresser\{scryerDragon.ToString().Trim('_')}\{dressingRoomDragon.Apparel?.Replace(',', '-').ToString()}.png";
             if (!azureImageService.Exists(azureImagePreviewPath, out var previewUrl))
             {
                 var invisibleDragon = await FRHelpers.GetInvisibleDressingRoomDragon(dressingRoomDragon);

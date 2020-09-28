@@ -1,0 +1,91 @@
+﻿@model EditProfileViewModel
+
+@{
+    ViewBag.Title = "Edit profile";
+}
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>@(ViewBag.Title)</h4>
+    </div>
+    <div class="panel-body">
+        <p>You can edit how your profile is shown to others on this page</p>
+        <div class="col-sm-12 col-md-6">
+            @using (Html.BeginRouteForm("EditProfilePost", FormMethod.Post, new { @class = "form-horizontal" }))
+            {
+                <div class="form-group">
+                    <label class="col-md-5">Profile visibility</label>
+                    <div class="col-md-7">
+                        @Html.CheckBoxFor(model => model.PublicProfile, new { data_toggle = "toggle", data_on = "Public", data_off = "Private", data_width = "100" })
+                        @Html.ValidationMessageFor(model => model.PublicProfile)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-5">FR link visibility</label>
+                    <div class="col-md-7">
+                        @Html.CheckBoxFor(model => model.ShowFRLinkStatus, new { data_toggle = "toggle", data_on = "Show", data_off = "Hide", data_width = "100" })
+                        @Html.ValidationMessageFor(model => model.ShowFRLinkStatus)
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <label class="col-md-5">Profile bio <span class="glyphicon glyphicon-info-sign" title="This is just plain tekst, rich-text is not supported (yet)" data-toggle="tooltip"></span></label>
+                    <div class="col-md-7">
+                        @Html.TextAreaFor(model => model.ProfileBio, new { @class = "form-control", rows = 4 })
+                        @Html.ValidationMessageFor(model => model.ProfileBio)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-5">Show skins on your profile</label>
+                    <div class="col-md-7">
+                        @Html.CheckBoxFor(model => model.ShowSkinsOnProfile, new { data_toggle = "toggle", data_on = "Show", data_off = "Hide", data_width = "100" })
+                        @Html.ValidationMessageFor(model => model.ShowSkinsOnProfile)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-5">Show previews on your profile</label>
+                    <div class="col-md-7">
+                        @Html.CheckBoxFor(model => model.ShowPreviewsOnProfile, new { data_toggle = "toggle", data_on = "Show", data_off = "Hide", data_width = "100" })
+                        @Html.ValidationMessageFor(model => model.ShowPreviewsOnProfile)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-5">Show pinglists on your profile</label>
+                    <div class="col-md-7">
+                        @Html.CheckBoxFor(model => model.ShowPingListsOnProfile, new { data_toggle = "toggle", data_on = "Show", data_off = "Hide", data_width = "100" })
+                        @Html.ValidationMessageFor(model => model.ShowPingListsOnProfile)
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <label class="col-md-5">By default, show skins in browse</label>
+                    <div class="col-md-7">
+                        @Html.CheckBoxFor(model => model.DefaultShowSkinsInBrowse, new { data_toggle = "toggle", data_on = "Show", data_off = "Hide", data_width = "100" })
+                        @Html.ValidationMessageFor(model => model.DefaultShowSkinsInBrowse)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-5">By default, make skins public</label>
+                    <div class="col-md-7">
+                        @Html.CheckBoxFor(model => model.DefaultSkinsArePublic, new { data_toggle = "toggle", data_on = "Show", data_off = "Hide", data_width = "100" })
+                        @Html.ValidationMessageFor(model => model.DefaultSkinsArePublic)
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+
+                    <div class="col-md-offset-5 col-md-7">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+
+    </script>
+}

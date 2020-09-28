@@ -1,7 +1,7 @@
 ﻿using FRTools.Data;
 using FRTools.Data.DataModels;
+using FRTools.Web.Infrastructure.Managers;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
@@ -9,13 +9,12 @@ using Microsoft.Owin.Security.MicrosoftAccount;
 using Microsoft.Owin.Security.Twitter;
 using Owin;
 using Owin.Security.Providers.DeviantArt;
+using Owin.Security.Providers.Discord;
 using Owin.Security.Providers.Google;
 using Owin.Security.Providers.Tumblr;
-using Owin.Security.Providers.Discord;
 using System;
 using System.Configuration;
 using System.Linq;
-using FRTools.Web.Infrastructure.Managers;
 
 [assembly: OwinStartup(typeof(FRTools.App_Start.Startup))]
 namespace FRTools.App_Start

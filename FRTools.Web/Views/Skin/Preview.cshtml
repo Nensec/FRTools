@@ -34,12 +34,19 @@
                     <div class="form-group">
                         <label class="text-right col-md-4">Creator</label>
                         <div class="col-md-8">
-                            @if (Model.Creator != null)
+                            @if (Model.Creator != null && Model.Creator.ProfileSettings.PublicProfile)
                             {
                                 <p>
                                     @if (Model.Creator.FRUser != null)
                                     {
-                                        <a href="@($"https://www1.flightrising.com/clan-profile/{Model.Creator.FRUser.FRId}")" target="_blank" title="Visit the creator's Flight Rising profile!">@Model.Creator.FRUser.Username</a>
+                                        if (Model.Creator.ProfileSettings.ShowFRLinkStatus)
+                                        {
+                                            <a href="@($"https://www1.flightrising.com/clan-profile/{Model.Creator.FRUser.FRId}")" target="_blank" title="Visit the creator's Flight Rising profile!">@Model.Creator.FRUser.Username</a>
+                                        }
+                                        else
+                                        {
+                                            @Model.Creator.UserName
+                                        }
                                         <span class="glyphicon glyphicon-ok text-success" data-toggle="tooltip" title="This user account is verified on Flight Rising"></span>
                                     }
                                     else

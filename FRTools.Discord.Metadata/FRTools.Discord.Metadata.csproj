@@ -101,6 +101,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>MetadataGenerator.tt</DependentUpon>
     </None>
+    <None Include="app.config" />
   </ItemGroup>
   <ProjectExtensions />
 </Project>

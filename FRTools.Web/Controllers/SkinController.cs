@@ -1,5 +1,8 @@
-﻿using FRTools.Web.Infrastructure;
+﻿using FRTools.Common;
+using FRTools.Data;
 using FRTools.Data.DataModels;
+using FRTools.Data.DataModels.FlightRisingModels;
+using FRTools.Web.Infrastructure;
 using FRTools.Web.Models;
 using Microsoft.AspNet.Identity;
 using System;
@@ -14,10 +17,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using FRTools.Data;
-using Color = FRTools.Data.Color;
-using FRTools.Data.DataModels.FlightRisingModels;
-using FRTools.Common;
 
 namespace FRTools.Web.Controllers
 {
@@ -47,38 +46,35 @@ namespace FRTools.Web.Controllers
         [Route("~/preview/{skinId}")] /* TODO: Delete this */
         public async Task<ActionResult> Preview(PreviewModelGet model)
         {
-            using (var ctx = new DataContext())
+            var skin = DataContext.Skins.Include(x => x.Creator.FRUser).FirstOrDefault(x => x.GeneratedId == model.SkinId);
+            if (skin == null)
             {
-                var skin = ctx.Skins.Include(x => x.Creator.FRUser).FirstOrDefault(x => x.GeneratedId == model.SkinId);
-                if (skin == null)
+                AddErrorNotification("Skin not found");
+                return RedirectToRoute("Home");
+            }
+            if (skin.Coverage == null)
+                await UpdateCoverage(skin, DataContext);
+            try
+            {
+                return View(new PreviewModelViewModel
                 {
-                    TempData["Error"] = "Skin not found";
-                    return RedirectToRoute("Home");
-                }
-                if (skin.Coverage == null)
-                    await UpdateCoverage(skin, ctx);
-                try
-                {
-                    return View(new PreviewModelViewModel
-                    {
-                        Title = skin.Title,
-                        Description = skin.Description,
-                        SkinId = model.SkinId,
-                        PreviewUrl = (await SkinTester.GenerateOrFetchPreview(model.SkinId, skin.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
-                        Coverage = skin.Coverage,
-                        Creator = skin.Creator,
-                        DragonType = (DragonType)skin.DragonType,
-                        Gender = (Gender)skin.GenderType,
-                        Visibility = skin.Visibility,
-                        Version = skin.Version,
-                        IsOwn = Request.IsAuthenticated && skin.Creator?.Id == HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>()
-                    });
-                }
-                catch (FileNotFoundException)
-                {
-                    TempData["Error"] = "Skin not found";
-                    return RedirectToRoute("Home");
-                }
+                    Title = skin.Title,
+                    Description = skin.Description,
+                    SkinId = model.SkinId,
+                    PreviewUrl = (await SkinTester.GenerateOrFetchPreview(model.SkinId, skin.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
+                    Coverage = skin.Coverage,
+                    Creator = skin.Creator,
+                    DragonType = (DragonType)skin.DragonType,
+                    Gender = (Gender)skin.GenderType,
+                    Visibility = skin.Visibility,
+                    Version = skin.Version,
+                    IsOwn = Request.IsAuthenticated && skin.Creator?.Id == HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>()
+                });
+            }
+            catch (FileNotFoundException)
+            {
+                AddErrorNotification("Skin not found");
+                return RedirectToRoute("Home");
             }
         }
 
@@ -95,7 +91,7 @@ namespace FRTools.Web.Controllers
 
                 if (dwagonUrl.StartsWith(".."))
                 {
-                    TempData["Error"] = $"<b>{model.DragonId}</b> appears to be an invalid dragon id";
+                    AddErrorNotification($"<b>{model.DragonId}</b> appears to be an invalid dragon id");
                     return RedirectToRoute("Preview", new { model.SkinId });
                 }
 
@@ -138,13 +134,13 @@ namespace FRTools.Web.Controllers
 
                 if (FRHelpers.IsAncientBreed(dragon.DragonType))
                 {
-                    TempData["Error"] = $"Ancient breeds cannot wear apparal.";
+                    AddErrorNotification($"Ancient breeds cannot wear apparal.");
                     return RedirectToRoute("Preview", new { skinId });
                 }
                 dragon.Apparel = apparelDragon.Apparel;
                 if (dragon.GetApparel().Length == 0)
                 {
-                    TempData["Error"] = $"This dressing room URL contains no apparel.";
+                    AddErrorNotification($"This dressing room URL contains no apparel.");
                     return RedirectToRoute("Preview", new { skinId });
                 }
             }
@@ -153,7 +149,7 @@ namespace FRTools.Web.Controllers
 
             if (dragon.Age == Age.Hatchling)
             {
-                TempData["Error"] = $"Skins can only be previewed on adult dragons.";
+                AddErrorNotification($"Skins can only be previewed on adult dragons.");
                 return RedirectToRoute("Preview", new { skinId });
             }
 
@@ -163,55 +159,53 @@ namespace FRTools.Web.Controllers
                 dragon = FRHelpers.ParseUrlForDragon(FRHelpers.GenerateDragonImageUrl(dragon));
             }
 
-            using (var ctx = new DataContext())
+            var skin = DataContext.Skins.FirstOrDefault(x => x.GeneratedId == skinId);
+            if (skin == null)
             {
-                var skin = ctx.Skins.FirstOrDefault(x => x.GeneratedId == skinId);
-                if (skin == null)
+                AddErrorNotification("Skin not found");
+                return RedirectToRoute("Home");
+            }
+
+            if (skin.DragonType != (int)dragon.DragonType)
+            {
+                AddErrorNotification($"This skin is meant for a <b>{(DragonType)skin.DragonType} {(Gender)skin.GenderType}</b>, the dragon you provided is a <b>{dragon.DragonType} {dragon.Gender}</b>");
+                return RedirectToRoute("Preview", new { skinId });
+            }
+
+            if (skin.GenderType != (int)dragon.Gender)
+            {
+                AddErrorNotification($"This skin is meant for a <b>{(Gender)skin.GenderType}</b>, the dragon you provided is a <b>{dragon.Gender}</b>");
+                return RedirectToRoute("Preview", new { skinId });
+            }
+
+            var previewResult = await SkinTester.GenerateOrFetchPreview(skinId, skin.Version, dragonId?.ToString(), dragonUrl, dragon, dressingRoomUrl, force);
+
+            var loggedInUserId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
+
+            var user = DataContext.Users.Find(loggedInUserId);
+            foreach (var url in previewResult.Urls.Where(url => !skin.Previews.Any(x => x.Requestor == user && x.PreviewImage == url)))
+            {
+                skin.Previews.Add(new Preview
                 {
-                    TempData["Error"] = "Skin not found";
-                    return RedirectToRoute("Home");
-                }
-
-                if (skin.DragonType != (int)dragon.DragonType)
-                {
-                    TempData["Error"] = $"This skin is meant for a <b>{(DragonType)skin.DragonType} {(Gender)skin.GenderType}</b>, the dragon you provided is a <b>{dragon.DragonType} {dragon.Gender}</b>";
-                    return RedirectToRoute("Preview", new { skinId });
-                }
-
-                if (skin.GenderType != (int)dragon.Gender)
-                {
-                    TempData["Error"] = $"This skin is meant for a <b>{(Gender)skin.GenderType}</b>, the dragon you provided is a <b>{dragon.Gender}</b>";
-                    return RedirectToRoute("Preview", new { skinId });
-                }
-
-                var previewResult = await SkinTester.GenerateOrFetchPreview(skinId, skin.Version, dragonId?.ToString(), dragonUrl, dragon, dressingRoomUrl, force);
-
-                var loggedInUserId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
-
-                var user = ctx.Users.Find(loggedInUserId);
-                foreach (var url in previewResult.Urls.Where(url => !skin.Previews.Any(x => x.Requestor == user && x.PreviewImage == url)))
-                {
-                    skin.Previews.Add(new Preview
-                    {
-                        DragonId = dragonId,
-                        ScryerUrl = dragonId == null ? dragonUrl : null,
-                        PreviewImage = url,
-                        DragonData = dragon.ToString(),
-                        PreviewTime = DateTime.UtcNow,
-                        Requestor = ctx.Users.Find(loggedInUserId),
-                        Version = skin.Version
-                    });
-                }
-
-                await ctx.SaveChangesAsync();
-
-                return View("PreviewResult", new PreviewModelPostViewModel
-                {
-                    SkinId = skinId,
-                    Result = previewResult,
-                    Dragon = dragon
+                    DragonId = dragonId,
+                    ScryerUrl = dragonId == null ? dragonUrl : null,
+                    PreviewImage = url,
+                    DragonData = dragon.ToString(),
+                    PreviewTime = DateTime.UtcNow,
+                    Requestor = DataContext.Users.Find(loggedInUserId),
+                    Version = skin.Version
                 });
             }
+
+            await DataContext.SaveChangesAsync();
+
+            return View("PreviewResult", new PreviewModelPostViewModel
+            {
+                SkinId = skinId,
+                Result = previewResult,
+                Dragon = dragon
+            });
+
         }
 
         [Route("upload", Name = "Upload")]
@@ -223,121 +217,116 @@ namespace FRTools.Web.Controllers
         {
             var azureImageService = new AzureImageService();
 
-            using (var ctx = new DataContext())
+            var randomizedId = CodeHelpers.GenerateId(5, DataContext.Skins.Select(x => x.GeneratedId).ToList());
+            var secretKey = CodeHelpers.GenerateId(7);
+            Bitmap skinImage = null;
+            try
             {
-                var randomizedId = CodeHelpers.GenerateId(5, ctx.Skins.Select(x => x.GeneratedId).ToList());
-                var secretKey = CodeHelpers.GenerateId(7);
-                Bitmap skinImage = null;
-                try
+                skinImage = (Bitmap)Image.FromStream(model.Skin.InputStream);
+                if (skinImage.Width != 350 || skinImage.Height != 350)
                 {
-                    skinImage = (Bitmap)Image.FromStream(model.Skin.InputStream);
-                    if (skinImage.Width != 350 || skinImage.Height != 350)
-                    {
-                        TempData["Error"] = "Image needs to be 350px x 350px. Just like FR.";
-                        return View();
-                    }
-
-                }
-                catch
-                {
-                    TempData["Error"] = "Upload is not a valid png image";
+                    AddErrorNotification("Image needs to be 350px x 350px. Just like FR.");
                     return View();
                 }
-                try
+
+            }
+            catch
+            {
+                AddErrorNotification("Upload is not a valid png image");
+                return View();
+            }
+            try
+            {
+                skinImage = SkinTester.FixPixelFormat(skinImage);
+
+                model.Skin.InputStream.Position = 0;
+                var url = await azureImageService.WriteImage($@"skins\{randomizedId}.png", model.Skin.InputStream);
+
+                Bitmap dragonImage = null;
+                using (var client = new WebClient())
                 {
-                    skinImage = SkinTester.FixPixelFormat(skinImage);
-
-                    model.Skin.InputStream.Position = 0;
-                    var url = await azureImageService.WriteImage($@"skins\{randomizedId}.png", model.Skin.InputStream);
-
-                    Bitmap dragonImage = null;
-                    using (var client = new WebClient())
+                    var dwagonImageBytes = client.DownloadDataTaskAsync(string.Format(FRHelpers.DressingRoomDummyUrl, (int)model.DragonType, (int)model.Gender));
+                    try
                     {
-                        var dwagonImageBytes = client.DownloadDataTaskAsync(string.Format(FRHelpers.DressingRoomDummyUrl, (int)model.DragonType, (int)model.Gender));
-                        try
-                        {
-                            using (var memStream = new MemoryStream(await dwagonImageBytes, false))
-                                dragonImage = (Bitmap)Image.FromStream(memStream);
-                        }
-                        catch
-                        {
-                        }
+                        using (var memStream = new MemoryStream(await dwagonImageBytes, false))
+                            dragonImage = (Bitmap)Image.FromStream(memStream);
                     }
-
-                    var skin = new Skin
+                    catch
                     {
-                        GeneratedId = randomizedId,
-                        SecretKey = secretKey,
-                        Title = model.Title,
-                        Description = model.Description,
-                        DragonType = (int)model.DragonType,
-                        GenderType = (int)model.Gender,
-                        Coverage = GetCoveragePercentage(skinImage, dragonImage)
-                    };
-                    skinImage.Dispose();
-
-                    if (Request.IsAuthenticated)
-                    {
-                        var userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
-                        skin.Creator = ctx.Users.FirstOrDefault(x => x.Id == userId);
-                        skin.Visibility = skin.Creator.DefaultVisibility;
                     }
-
-                    ctx.Skins.Add(skin);
-                    await ctx.SaveChangesAsync();
-                    return View("UploadResult", new UploadModelPostViewModel
-                    {
-                        SkinId = randomizedId,
-                        SecretKey = secretKey,
-                        PreviewUrl = (await SkinTester.GenerateOrFetchPreview(randomizedId, skin.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
-                        ShareUrl = await BitlyHelper.TryGenerateUrl(Url.RouteUrl("Preview", new { SkinId = randomizedId }, "https"))
-                    });
                 }
-                catch
+
+                var skin = new Skin
                 {
-                    TempData["Error"] = "Something went wrong uploading";
-                    return View();
+                    GeneratedId = randomizedId,
+                    SecretKey = secretKey,
+                    Title = model.Title,
+                    Description = model.Description,
+                    DragonType = (int)model.DragonType,
+                    GenderType = (int)model.Gender,
+                    Coverage = GetCoveragePercentage(skinImage, dragonImage)
+                };
+                skinImage.Dispose();
+
+                if (Request.IsAuthenticated)
+                {
+                    var userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
+                    skin.Creator = DataContext.Users.FirstOrDefault(x => x.Id == userId);
+                    skin.Visibility = skin.Creator.ProfileSettings.DefaultSkinsArePublic ? skin.Creator.ProfileSettings.DefaultShowSkinsInBrowse ? SkinVisiblity.Visible : SkinVisiblity.HideFromBrowse : SkinVisiblity.HideEverywhere;
                 }
+
+                DataContext.Skins.Add(skin);
+                await DataContext.SaveChangesAsync();
+                return View("UploadResult", new UploadModelPostViewModel
+                {
+                    SkinId = randomizedId,
+                    SecretKey = secretKey,
+                    PreviewUrl = (await SkinTester.GenerateOrFetchPreview(randomizedId, skin.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
+                    ShareUrl = await BitlyHelper.TryGenerateUrl(Url.RouteUrl("Preview", new { SkinId = randomizedId }, "https"))
+                });
+            }
+            catch
+            {
+                AddErrorNotification("Something went wrong uploading");
+                return View();
             }
         }
+
 
         [Route("manage/skin/{skinId}/{secretKey}", Name = "Manage")]
         [Route("~/manage/skin/{skinId}/{secretKey}")] /* TODO: Delete this */
         public async Task<ActionResult> Manage(ManageModelGet model)
         {
-            using (var ctx = new DataContext())
+            var skin = DataContext.Skins.Include(x => x.Previews).FirstOrDefault(x => x.GeneratedId == model.SkinId && x.SecretKey == model.SecretKey);
+            if (skin == null)
             {
-                var skin = ctx.Skins.Include(x => x.Previews).FirstOrDefault(x => x.GeneratedId == model.SkinId && x.SecretKey == model.SecretKey);
-                if (skin == null)
+                AddErrorNotification("Skin not found or secret invalid");
+                return RedirectToRoute("Home");
+            }
+            else
+            {
+                if (skin.Creator != null)
                 {
-                    TempData["Error"] = "Skin not found or secret invalid";
-                    return RedirectToRoute("Home");
-                }
-                else
-                {
-                    if (skin.Creator != null)
+                    if (!Request.IsAuthenticated)
                     {
-                        if (!Request.IsAuthenticated)
-                        {
-                            TempData["Error"] = "This skin is linked to an acocunt, please log in to manage this skin.";
-                            return RedirectToRoute("Home");
-                        }
-                        else if (skin.Creator.Id != HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>())
-                        {
-                            TempData["Error"] = "This skin is linked to a different account than the one that is logged in, you can only manage your own skins.";
-                            return RedirectToRoute("Home");
-                        }
+                        AddErrorNotification("This skin is linked to an acocunt, please log in to manage this skin.");
+                        return RedirectToRoute("Home");
                     }
-
-                    if (skin.Coverage == null)
-                        await UpdateCoverage(skin, ctx);
-                    return View(new ManageModelViewModel
+                    else if (skin.Creator.Id != HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>())
                     {
-                        Skin = skin,
-                        PreviewUrl = (await SkinTester.GenerateOrFetchPreview(model.SkinId, skin.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
-                        ShareUrl = await BitlyHelper.TryGenerateUrl(Url.RouteUrl("Preview", new { SkinId = skin.GeneratedId }, "https"))
-                    });
+                        AddErrorNotification("This skin is linked to a different account than the one that is logged in, you can only manage your own skins.");
+                        return RedirectToRoute("Home");
+                    }
                 }
+
+                if (skin.Coverage == null)
+                    await UpdateCoverage(skin, DataContext);
+                return View(new ManageModelViewModel
+                {
+                    Skin = skin,
+                    PreviewUrl = (await SkinTester.GenerateOrFetchPreview(model.SkinId, skin.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0],
+                    ShareUrl = await BitlyHelper.TryGenerateUrl(Url.RouteUrl("Preview", new { SkinId = skin.GeneratedId }, "https"))
+                });
             }
         }
 
@@ -345,47 +334,44 @@ namespace FRTools.Web.Controllers
         [HttpPost]
         public async Task<ActionResult> Manage(ManageModelPost model)
         {
-            using (var ctx = new DataContext())
+            var skin = DataContext.Skins.FirstOrDefault(x => x.GeneratedId == model.SkinId && x.SecretKey == model.SecretKey);
+            if (skin == null)
             {
-                var skin = ctx.Skins.FirstOrDefault(x => x.GeneratedId == model.SkinId && x.SecretKey == model.SecretKey);
-                if (skin == null)
+                AddErrorNotification("Skin not found or secret invalid");
+                return RedirectToRoute("Home");
+            }
+            else
+            {
+                if (skin.Creator != null)
                 {
-                    TempData["Error"] = "Skin not found or secret invalid";
-                    return RedirectToRoute("Home");
+                    if (!Request.IsAuthenticated)
+                    {
+                        AddErrorNotification("This skin is linked to an acocunt, please log in to manage this skin.");
+                        return RedirectToRoute("Home");
+                    }
+                    else if (skin.Creator.Id != HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>())
+                    {
+                        AddErrorNotification("This skin is linked to a different account than the one that is logged in, you can only manage your own or unclaimed skins.");
+                        return RedirectToRoute("Home");
+                    }
                 }
-                else
+
+                if (skin.GenderType != (int)model.Gender || skin.DragonType != (int)model.DragonType)
                 {
-                    if (skin.Creator != null)
-                    {
-                        if (!Request.IsAuthenticated)
-                        {
-                            TempData["Error"] = "This skin is linked to an acocunt, please log in to manage this skin.";
-                            return RedirectToRoute("Home");
-                        }
-                        else if (skin.Creator.Id != HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>())
-                        {
-                            TempData["Error"] = "This skin is linked to a different account than the one that is logged in, you can only manage your own or unclaimed skins.";
-                            return RedirectToRoute("Home");
-                        }
-                    }
-
-                    if (skin.GenderType != (int)model.Gender || skin.DragonType != (int)model.DragonType)
-                    {
-                        var azureImageService = new AzureImageService();
-                        await azureImageService.DeleteImage($@"previews\{model.SkinId}\preview.png");
-                    }
-
-                    skin.Title = model.Title;
-                    skin.Description = model.Description;
-                    skin.GenderType = (int)model.Gender;
-                    skin.DragonType = (int)model.DragonType;
-                    skin.Visibility = model.Visibility;
-
-                    await ctx.SaveChangesAsync();
-
-                    TempData["Info"] = "Changes have been saved!";
-                    return RedirectToRoute("Manage", new { model.SkinId, model.SecretKey });
+                    var azureImageService = new AzureImageService();
+                    await azureImageService.DeleteImage($@"previews\{model.SkinId}\preview.png");
                 }
+
+                skin.Title = model.Title;
+                skin.Description = model.Description;
+                skin.GenderType = (int)model.Gender;
+                skin.DragonType = (int)model.DragonType;
+                skin.Visibility = model.Visibility;
+
+                await DataContext.SaveChangesAsync();
+
+                AddSuccessNotification("Changes have been saved!");
+                return RedirectToRoute("Manage", new { model.SkinId, model.SecretKey });
             }
         }
 
@@ -395,111 +381,105 @@ namespace FRTools.Web.Controllers
         {
             var azureImageService = new AzureImageService();
 
-            using (var ctx = new DataContext())
+            var skin = DataContext.Skins.FirstOrDefault(x => x.GeneratedId == model.SkinId && x.SecretKey == model.SecretKey);
+            if (skin == null)
             {
-                var skin = ctx.Skins.FirstOrDefault(x => x.GeneratedId == model.SkinId && x.SecretKey == model.SecretKey);
-                if (skin == null)
+                AddErrorNotification("Skin not found or secret invalid");
+                return RedirectToRoute("Home");
+            }
+            else
+            {
+                if (skin.Creator != null)
                 {
-                    TempData["Error"] = "Skin not found or secret invalid";
-                    return RedirectToRoute("Home");
-                }
-                else
-                {
-                    if (skin.Creator != null)
+                    if (!Request.IsAuthenticated)
                     {
-                        if (!Request.IsAuthenticated)
-                        {
-                            TempData["Error"] = "This skin is linked to an acocunt, please log in to update this skin.";
-                            return RedirectToRoute("Home");
-                        }
-                        else if (skin.Creator.Id != HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>())
-                        {
-                            TempData["Error"] = "This skin is linked to a different account than the one that is logged in, you can only update your own or unclaimed skins.";
-                            return RedirectToRoute("Home");
-                        }
+                        AddErrorNotification("This skin is linked to an acocunt, please log in to update this skin.");
+                        return RedirectToRoute("Home");
                     }
-                }
-
-                Bitmap skinImage = null;
-                try
-                {
-                    skinImage = (Bitmap)Image.FromStream(model.Skin.InputStream);
-                    if (skinImage.Width != 350 || skinImage.Height != 350)
+                    else if (skin.Creator.Id != HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>())
                     {
-                        TempData["Error"] = "Image needs to be 350px x 350px. Just like FR.";
-                        return RedirectToRoute("Manage", new { model.SkinId, model.SecretKey });
+                        AddErrorNotification("This skin is linked to a different account than the one that is logged in, you can only update your own or unclaimed skins.");
+                        return RedirectToRoute("Home");
                     }
-
-                }
-                catch
-                {
-                    TempData["Error"] = "Upload is not a valid png image";
-                    return RedirectToRoute("Manage", new { model.SkinId, model.SecretKey });
-                }
-
-                try
-                {
-                    model.Skin.InputStream.Position = 0;
-                    var url = await azureImageService.WriteImage($@"skins\{model.SkinId}.png", model.Skin.InputStream);
-
-                    Bitmap dragonImage = null;
-                    using (var client = new WebClient())
-                    {
-                        var dwagonImageBytes = client.DownloadDataTaskAsync(string.Format(FRHelpers.DressingRoomDummyUrl, skin.DragonType, (int)skin.GenderType));
-                        try
-                        {
-                            using (var memStream = new MemoryStream(await dwagonImageBytes, false))
-                                dragonImage = (Bitmap)Image.FromStream(memStream);
-                        }
-                        catch
-                        {
-                        }
-                    }
-
-                    skin.Version += 1;
-                    skin.Coverage = GetCoveragePercentage(skinImage, dragonImage);
-
-                    skinImage.Dispose();
-
-                    if (Request.IsAuthenticated)
-                    {
-                        var userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
-                        skin.Creator = ctx.Users.FirstOrDefault(x => x.Id == userId);
-                    }
-
-                    await ctx.SaveChangesAsync();
-                    TempData["Success"] = $"Skin succesfully updated to version <b>v{skin.Version}</b>!";
-                    return RedirectToRoute("Manage", new { model.SkinId, model.SecretKey });
-                }
-                catch
-                {
-                    TempData["Error"] = "Something went wrong uploading";
-                    return RedirectToRoute("Manage", new { model.SkinId, model.SecretKey });
                 }
             }
 
+            Bitmap skinImage = null;
+            try
+            {
+                skinImage = (Bitmap)Image.FromStream(model.Skin.InputStream);
+                if (skinImage.Width != 350 || skinImage.Height != 350)
+                {
+                    AddErrorNotification("Image needs to be 350px x 350px. Just like FR.");
+                    return RedirectToRoute("Manage", new { model.SkinId, model.SecretKey });
+                }
+
+            }
+            catch
+            {
+                AddErrorNotification("Upload is not a valid png image");
+                return RedirectToRoute("Manage", new { model.SkinId, model.SecretKey });
+            }
+
+            try
+            {
+                model.Skin.InputStream.Position = 0;
+                var url = await azureImageService.WriteImage($@"skins\{model.SkinId}.png", model.Skin.InputStream);
+
+                Bitmap dragonImage = null;
+                using (var client = new WebClient())
+                {
+                    var dwagonImageBytes = client.DownloadDataTaskAsync(string.Format(FRHelpers.DressingRoomDummyUrl, skin.DragonType, (int)skin.GenderType));
+                    try
+                    {
+                        using (var memStream = new MemoryStream(await dwagonImageBytes, false))
+                            dragonImage = (Bitmap)Image.FromStream(memStream);
+                    }
+                    catch
+                    {
+                    }
+                }
+
+                skin.Version += 1;
+                skin.Coverage = GetCoveragePercentage(skinImage, dragonImage);
+
+                skinImage.Dispose();
+
+                if (Request.IsAuthenticated)
+                {
+                    var userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
+                    skin.Creator = DataContext.Users.FirstOrDefault(x => x.Id == userId);
+                }
+
+                await DataContext.SaveChangesAsync();
+                AddSuccessNotification($"Skin succesfully updated to version <b>v{skin.Version}</b>!");
+                return RedirectToRoute("Manage", new { model.SkinId, model.SecretKey });
+            }
+            catch
+            {
+                AddErrorNotification("Something went wrong uploading");
+                return RedirectToRoute("Manage", new { model.SkinId, model.SecretKey });
+            }
         }
 
         [Route("delete", Name = "Delete")]
         public async Task<ActionResult> Delete(DeleteSkinPost model)
         {
-            using (var ctx = new DataContext())
+            var skin = DataContext.Skins.FirstOrDefault(x => x.GeneratedId == model.SkinId && x.SecretKey == model.SecretKey);
+            if (skin == null)
             {
-                var skin = ctx.Skins.FirstOrDefault(x => x.GeneratedId == model.SkinId && x.SecretKey == model.SecretKey);
-                if (skin == null)
-                {
-                    TempData["Error"] = "Skin not found or secret invalid";
-                    return RedirectToRoute("Home");
-                }
-                else
-                {
-                    var azureImageService = new AzureImageService();
-                    await azureImageService.DeleteImage($@"skins\{model.SkinId}.png");
-                    skin.Previews.Clear();
-                    ctx.Skins.Remove(skin);
-                    await ctx.SaveChangesAsync();
-                }
+                AddErrorNotification("Skin not found or secret invalid");
+                return RedirectToRoute("Home");
             }
+            else
+            {
+                var azureImageService = new AzureImageService();
+                await azureImageService.DeleteImage($@"skins\{model.SkinId}.png");
+                skin.Previews.Clear();
+                DataContext.Skins.Remove(skin);
+                await DataContext.SaveChangesAsync();
+            }
+
             return View();
         }
 
@@ -525,36 +505,33 @@ namespace FRTools.Web.Controllers
         public async Task<ActionResult> Browse(BrowseFilterModel filter)
         {
             var model = new BrowseViewModel { Filter = filter };
-            using (var ctx = new DataContext())
+            var query = DataContext.Skins
+                .Where(x => x.Visibility == SkinVisiblity.Visible)
+                .Where(x => filter.DragonTypes.Contains((DragonType)x.DragonType))
+                .Where(x => filter.Genders.Contains((Gender)x.GenderType))
+                .Where(x => filter.SkinTypes.Contains((BrowseFilterModel.SkinType)(x.Coverage >= 31 ? 1 : 0)));
+
+            if (!string.IsNullOrEmpty(filter.Name))
+                query = query.Where(x => x.Title.Contains(filter.Name));
+
+            model.TotalResults = query.Count();
+
+            query = query.OrderByDescending(x => x.Id).Skip(filter.PageAmount * (filter.Page - 1)).Take(filter.PageAmount);
+
+            model.Results = query.Select(x => new PreviewModelViewModel
             {
-                var query = ctx.Skins
-                    .Where(x => x.Visibility == SkinVisiblity.Visible)
-                    .Where(x => filter.DragonTypes.Contains((DragonType)x.DragonType))
-                    .Where(x => filter.Genders.Contains((Gender)x.GenderType))
-                    .Where(x => filter.SkinTypes.Contains((BrowseFilterModel.SkinType)(x.Coverage >= 31 ? 1 : 0)));
+                Title = x.Title,
+                Description = x.Description,
+                SkinId = x.GeneratedId,
+                Coverage = x.Coverage,
+                Creator = x.Creator,
+                DragonType = (DragonType)x.DragonType,
+                Gender = (Gender)x.GenderType,
+                Version = x.Version
+            }).ToList();
 
-                if (!string.IsNullOrEmpty(filter.Name))
-                    query = query.Where(x => x.Title.Contains(filter.Name));
-
-                model.TotalResults = query.Count();
-
-                query = query.OrderByDescending(x => x.Id).Skip(filter.PageAmount * (filter.Page - 1)).Take(filter.PageAmount);
-
-                model.Results = query.Select(x => new PreviewModelViewModel
-                {
-                    Title = x.Title,
-                    Description = x.Description,
-                    SkinId = x.GeneratedId,
-                    Coverage = x.Coverage,
-                    Creator = x.Creator,
-                    DragonType = (DragonType)x.DragonType,
-                    Gender = (Gender)x.GenderType,
-                    Version = x.Version
-                }).ToList();
-
-                foreach (var result in model.Results)
-                    result.PreviewUrl = (await SkinTester.GenerateOrFetchPreview(result.SkinId, result.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, (int)result.DragonType, (int)result.Gender), null)).Urls[0];
-            }
+            foreach (var result in model.Results)
+                result.PreviewUrl = (await SkinTester.GenerateOrFetchPreview(result.SkinId, result.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, (int)result.DragonType, (int)result.Gender), null)).Urls[0];
 
             return View(model);
         }
@@ -566,27 +543,42 @@ namespace FRTools.Web.Controllers
         [Route("link", Name = "LinkExistingPost")]
         public ActionResult LinkExistingSkin(ClaimSkinPostViewModel model)
         {
-            using (var ctx = new DataContext())
+            var skin = DataContext.Skins.FirstOrDefault(x => x.GeneratedId == model.SkinId && x.SecretKey == model.SecretKey);
+            if (skin == null)
             {
-                var skin = ctx.Skins.FirstOrDefault(x => x.GeneratedId == model.SkinId && x.SecretKey == model.SecretKey);
-                if (skin == null)
-                {
-                    TempData["Error"] = "Skin not found or secret invalid";
-                    return View();
-                }
-                int userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
-
-                if (skin.Creator != null)
-                {
-                    TempData["Error"] = "This skin is already linked to an acocunt, skins can only be claimed by a single account.";
-                    return View();
-                }
-
-                skin.Creator = ctx.Users.Find(userId);
-                ctx.SaveChanges();
+                AddErrorNotification("Skin not found or secret invalid");
+                return View();
             }
-            TempData["Success"] = $"Succesfully linked skin '{model.SkinId}' to your account!";
+            int userId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
+
+            if (skin.Creator != null)
+            {
+                AddErrorNotification("This skin is already linked to an acocunt, skins can only be claimed by a single account.");
+                return View();
+            }
+
+            skin.Creator = DataContext.Users.Find(userId);
+            DataContext.SaveChanges();
+
+            AddSuccessNotification($"Succesfully linked skin '{model.SkinId}' to your account!");
             return RedirectToRoute("ManageAccount");
+        }
+
+
+        [Route("unlink", Name = "UnlinkPreview")]
+        [HttpPost]
+        public ActionResult UnlinkPreview(int previewId)
+        {
+            var userid = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
+            var user = DataContext.Users.Include(x => x.Previews.Select(p => p.Skin)).FirstOrDefault(x => x.Id == userid);
+            var preview = user.Previews.FirstOrDefault(x => x.Id == previewId);
+            if (preview != null)
+            {
+                preview.Requestor = null;
+                DataContext.SaveChanges();
+            }
+
+            return Json(new { previewId });
         }
 
         private double? GetCoveragePercentage(Bitmap skinImage, Bitmap dragonImage)

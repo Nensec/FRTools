@@ -29,6 +29,7 @@ namespace FRTools.Data
 
         // FRTools tables
         public DbSet<Job> Jobs { get; set; }
+        public DbSet<ProfileSettings> ProfileSettings { get; set; }
 
         // Skintester tables
         public DbSet<Skin> Skins { get; set; }
@@ -46,7 +47,7 @@ namespace FRTools.Data
         // Flight rising tables
         public DbSet<DragonCache> DragonCache { get; set; }
         public DbSet<FRUser> FRUsers { get; set; }
-        public DbSet<FRDominance> FRDominances { get; set;  }
+        public DbSet<FRDominance> FRDominances { get; set; }
 
         // Discord tables
         public DbSet<DiscordLog> DiscordLogs { get; set; }
@@ -67,6 +68,7 @@ namespace FRTools.Data
             modelBuilder.Entity<UserLogin>().ToTable("UserLogins");
 
             modelBuilder.Entity<User>().HasOptional(x => x.FRUser).WithOptionalDependent(x => x.User);
+            modelBuilder.Entity<User>().HasOptional(x => x.ProfileSettings).WithOptionalPrincipal(x => x.User);
         }
     }
 }

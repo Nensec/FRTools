@@ -399,7 +399,6 @@
     <Content Include="Views\Manage\Verify.cshtml" />
     <Content Include="Views\Manage\_verifyForm.cshtml" />
     <Content Include="Views\Skin\LinkExistingSkin.cshtml" />
-    <Content Include="Views\Manage\ManageUser.cshtml" />
     <Content Include="Views\Profile\Index.cshtml" />
     <Content Include="Views\Skin\_PreviewForm.cshtml" />
     <Content Include="Views\Skin\PreviewHome.cshtml" />
@@ -420,7 +419,7 @@
     <Content Include="Views\Pinglist\List.cshtml" />
     <Content Include="Views\Pinglist\LinkExisting.cshtml" />
     <Content Include="Views\Discord\Index.cshtml" />
-    <Content Include="Views\Manage\ManageLogins.cshtml" />
+    <Content Include="Views\Account\ManageLogins.cshtml" />
     <Content Include="Views\Discord\Manage.cshtml" />
     <Content Include="Views\Discord\ManageServer.cshtml" />
     <Content Include="Views\Discord\ManageModule.cshtml" />
@@ -429,6 +428,7 @@
     <Content Include="Views\Discord\_Help.cshtml" />
     <Content Include="Views\Discord\_ModuleHelp.cshtml" />
     <Content Include="Views\Discord\_CommandHelp.cshtml" />
+    <Content Include="Views\Profile\Edit.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
