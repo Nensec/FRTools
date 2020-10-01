@@ -9,7 +9,7 @@
 @if (Model.IsOwn)
 {
     <div class="alert alert-info">
-        You are looking at your own profile, you will see everything regardless of settings. To see your profile as others see it visit <a href="@Url.RouteUrl("Profile", new { username = Model.User.UserName })"><b>this link</b></a>. To edit your profile, go to the edit page <a href="@Url.RouteUrl("EditProfile")"><b>here.</b></a>
+        You are looking at your own profile, you will see everything regardless of settings. To see your profile as others see it visit <a href="@Url.RouteUrl("Profile", new { username = Model.User.UserName })"><b>this link</b></a>. To edit your profile, go to the edit page <a href="@Url.RouteUrl("EditProfile")"><b>here</b></a>.
     </div>
 }
 <div class="panel panel-default">
@@ -20,10 +20,10 @@
         <p>
             @if (Model.User.FRUser != null)
             {
-                @(Model.User.UserName) @:has verified their account on Flight Rising
+                @(Model.User.UserName) @:has verified their account on Flight Rising.
                 if (Model.User.ProfileSettings.ShowFRLinkStatus)
                 {
-                    @:- you can view their Flight Rising account <a href="@($"https://www1.flightrising.com/clan-profile/{Model.User.FRUser.FRId}")" target="_blank">here</a>.
+                    @:You can view their Flight Rising account <a href="@($"https://www1.flightrising.com/clan-profile/{Model.User.FRUser.FRId}")" target="_blank">here</a>.
                 }
             }
             else
@@ -35,7 +35,7 @@
         <div>
             @if (string.IsNullOrEmpty(Model.User.ProfileSettings.ProfileBio))
             {
-                <i>@(Model.User.UserName) has not filled in their bio yet</i>
+                <i>@(Model.User.UserName) has not filled in their bio yet.</i>
             }
             else
             {
