@@ -29,8 +29,8 @@
             Sql(@"INSERT INTO ProfileSettings (User_Id, PublicProfile, ShowSkinsOnProfile, ShowPreviewsOnProfile, ShowPingListsOnProfile, DefaultShowSkinsInBrowse, DefaultSkinsArePublic, ShowFRLinkStatus)
                   SELECT Id,
                   CASE
-                      WHEN Privacy = 3 THEN 1
-                      ELSE 0
+                      WHEN Privacy = 3 THEN 0
+                      ELSE 1
                   END AS PublicProfile,
                   CASE
                       WHEN Privacy < 3 THEN 1

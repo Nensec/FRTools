@@ -56,7 +56,7 @@ namespace FRTools.Web.Controllers
             }
             if (user.ProfileSettings.ShowPingListsOnProfile)
             {
-                vm.Pinglists = user.Pinglists.Where(x => x.IsPublic || x.Entries.Any(e => e.FRUser.User.Id == LoggedInUser.Id)).ToList();
+                vm.Pinglists = user.Pinglists.Where(x => x.IsPublic || x.Entries.Any(e => e.FRUser.User?.Id == LoggedInUser.Id)).ToList();
             }
             return View(vm);
         }
