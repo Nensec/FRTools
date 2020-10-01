@@ -30,6 +30,13 @@
                 </div>
                 <hr />
                 <div class="form-group">
+                    <label class="col-md-5">Username</label>
+                    <div class="col-md-7">
+                        @Html.TextBoxFor(model => model.Username, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Username)
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="col-md-5">Profile bio <span class="glyphicon glyphicon-info-sign" title="This is just plain tekst, rich-text is not supported (yet)" data-toggle="tooltip"></span></label>
                     <div class="col-md-7">
                         @Html.TextAreaFor(model => model.ProfileBio, new { @class = "form-control", rows = 4 })
