@@ -14,8 +14,6 @@ namespace FRTools.Web.Models
     public class AccountViewModel : BaseManageModel
     {
         public User User { get; set; }
-        public List<Skin> Skins { get; set; }
-        public Func<string, int, int, int, string> GetDummyPreviewImage { get; set; }
     }
 
     public class VerifyFRViewModel : BaseManageModel

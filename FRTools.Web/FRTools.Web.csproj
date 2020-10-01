@@ -429,6 +429,7 @@
     <Content Include="Views\Discord\_ModuleHelp.cshtml" />
     <Content Include="Views\Discord\_CommandHelp.cshtml" />
     <Content Include="Views\Profile\Edit.cshtml" />
+    <Content Include="Views\Skin\ManageSkins.cshtml" />
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

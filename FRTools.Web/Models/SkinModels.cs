@@ -1,14 +1,14 @@
-﻿using FRTools.Web.Infrastructure;
+﻿using FRTools.Common;
+using FRTools.Data;
 using FRTools.Data.DataModels;
+using FRTools.Data.DataModels.FlightRisingModels;
+using FRTools.Web.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 using System.Linq;
 using System.Web;
-using FRTools.Data;
-using FRTools.Data.DataModels.FlightRisingModels;
-using FRTools.Common;
 
 namespace FRTools.Web.Models
 {
@@ -130,6 +130,12 @@ namespace FRTools.Web.Models
         public SkinVisiblity Visibility { get; set; }
         public string SkinId { get; set; }
         public string SecretKey { get; set; }
+    }
+
+    public class ManageSkinsViewModel : BaseSkinModel
+    {
+        public List<Skin> Skins { get; set; }
+        public Func<string, int, int, int, string> GetDummyPreviewImage { get; set; }
     }
 
     public class BrowseViewModel

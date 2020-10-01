@@ -1,0 +1,104 @@
+﻿@model ManageSkinsViewModel
+
+@{
+    ViewBag.Title = "Manage your skins";
+}
+
+@section head {
+    @Scripts.Render("~/bundles/chartjs")
+}
+
+<div class="panel panel-success">
+    <div class="panel-heading">
+        <h4>These are your skins</h4>
+    </div>
+    <div class="panel-body">
+        <p>
+            Click on an image to go to its manage page.
+        </p>
+        @if (Model.Skins.Any())
+        {
+            <script>
+                var previewData = {};
+            </script>
+            <div class="well clearfix">
+                @foreach (var skin in Model.Skins.Select((x, i) => (x, i)))
+                {
+                    var previews = skin.Item1.Previews.Select((x, i) => (x, i)).ToList();
+                    var scries = previews.Where(x => x.Item1.DragonId == null).ToList();
+                    var reals = previews.Where(x => x.Item1.DragonId != null).GroupBy(x => x.Item1.DragonId).Select(x => x.First()).ToList();
+
+                    <script>
+                        @{ var previewData = reals.Concat(scries).Where(x => x.Item1.PreviewTime != null).Select(x => x.Item1.PreviewTime).OrderBy(x => x.Value).GroupBy(x => x.Value.Date).Select(x => (x.First().Value.ToString("dd/MM/yyyy"), x.Count())); }
+                        previewData.data_Skin@(skin.Item2) = {
+                            labels: [@Html.Raw(string.Join(", ", previewData.Select(x => $"'{x.Item1}'")))],
+                        data: [@string.Join(", ", previewData.Select(x => x.Item2))]};
+                    </script>
+                    <div class="col-sm-2">
+                        <a href="@Url.RouteUrl("Manage", new { SkinId = skin.Item1.GeneratedId, SecretKey = skin.Item1.SecretKey })">
+                            <img id="Skin@(skin.Item2)" data-toggle="popover" style="max-width:100%; max-height:100%" src="@(Model.CDNBasePath + Model.GetDummyPreviewImage(skin.Item1.GeneratedId, skin.Item1.DragonType, skin.Item1.GenderType, skin.Item1.Version))" />
+                            <div id="Skin@(skin.Item2)_popover" class="hide">
+                                <ul style="list-style:none; padding:0">
+                                    <li><b>Id:</b> @(skin.Item1.GeneratedId)</li>
+                                    @if (skin.Item1.Version != 1)
+                                    {
+                                        <li><b>Version:</b> v@(skin.Item1.Version)</li>
+                                    }
+                                    <li><b>Title:</b> @(skin.Item1.Title ?? "No title")</li>
+                                    <li><b>Description:</b> @(skin.Item1.Description ?? "No description")</li>
+                                    <li><b>Coverage:</b> @(skin.Item1.Coverage)% (@(skin.Item1.Coverage < 31 ? "Accent" : "Skin"))</li>
+                                    <li><b>Skin info:</b> @((Gender)skin.Item1.GenderType) @((DragonType)skin.Item1.DragonType)</li>
+                                    <li><b>Preview stats:</b> @($"{scries.Count + reals.Count} Total ({reals.Count} real, {scries.Count} scries)")</li>
+                                </ul>
+                                <canvas id="Chart_Skin@(skin.Item2)" style="width:100px; height:50px; @(skin.Item1.Previews.Count == 0 ? "display:none;" : "")"></canvas>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p>You do not have any skins linked to your account</p>
+        }
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        $("[data-toggle=popover]").each(function (i, obj) {
+            $(this).popover({
+                html: true,
+                content: function () {
+                    var id = $(this).attr('id');
+                    var popover = $(`#${id}_popover`);
+                    return popover.html();
+                },
+                trigger: 'hover focus'
+            });
+            $(this).on('shown.bs.popover', function () {
+                var id = $(this).attr('id');
+                var chart = new Chart(document.getElementById(`Chart_${id}`).getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: previewData[`data_${id}`].labels,
+                        datasets: [{
+                            label: 'Previews',
+                            data: previewData[`data_${id}`].data,
+                            borderColor: '#bce8f1',
+                            backgroundColor: '#d9edf7'
+                        }]
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+<style>
+    .popover {
+        width: 300px;
+        max-width: 300px;
+    }
+</style>

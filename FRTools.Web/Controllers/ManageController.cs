@@ -1,21 +1,15 @@
-﻿using FRTools.Data.DataModels;
+﻿using FRTools.Common;
+using FRTools.Data;
+using FRTools.Data.DataModels;
 using FRTools.Web.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
-using System.Data.Entity;
-using System.Data.SqlClient;
-using System.Linq;
 using System.Net;
 using System.Runtime.Caching;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using FRTools.Data;
-using FRTools.Web.Infrastructure;
-using Microsoft.Owin.Security;
-using FRTools.Common;
 
 namespace FRTools.Web.Controllers
 {
@@ -35,20 +29,7 @@ namespace FRTools.Web.Controllers
         [Route(Name = "ManageAccount")]
         public ActionResult Index()
         {
-            var model = new AccountViewModel
-            {
-                GetDummyPreviewImage = (string skinId, int dragonType, int gender, int version) => SkinTester.GenerateOrFetchPreview(skinId, version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, dragonType, gender), null).GetAwaiter().GetResult().Urls[0]
-            };
-            var userid = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
-            using (var ctx = new DataContext())
-            {
-                var user = ctx.Users
-                    .Include(x => x.Skins.Select(s => s.Previews))
-                    .Include(x => x.FRUser)
-                    .FirstOrDefault(x => x.Id == userid);
-                model.User = user;
-                model.Skins = user.Skins.ToList();
-            }
+            var model = new AccountViewModel { User = LoggedInUser };
             return View(model);
         }
 

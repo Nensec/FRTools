@@ -36,14 +36,12 @@ namespace FRTools.Web.Controllers
         }
 
         [Route("preview", Name = "PreviewHome")]
-        [Route("~/preview")] /* TODO: Delete this */
         public ActionResult PreviewHome()
         {
             return View();
         }
 
         [Route("preview/{skinId}", Name = "Preview")]
-        [Route("~/preview/{skinId}")] /* TODO: Delete this */
         public async Task<ActionResult> Preview(PreviewModelGet model)
         {
             var skin = DataContext.Skins.Include(x => x.Creator.FRUser).FirstOrDefault(x => x.GeneratedId == model.SkinId);
@@ -294,7 +292,6 @@ namespace FRTools.Web.Controllers
 
 
         [Route("manage/skin/{skinId}/{secretKey}", Name = "Manage")]
-        [Route("~/manage/skin/{skinId}/{secretKey}")] /* TODO: Delete this */
         public async Task<ActionResult> Manage(ManageModelGet model)
         {
             var skin = DataContext.Skins.Include(x => x.Previews).FirstOrDefault(x => x.GeneratedId == model.SkinId && x.SecretKey == model.SecretKey);
@@ -373,6 +370,17 @@ namespace FRTools.Web.Controllers
                 AddSuccessNotification("Changes have been saved!");
                 return RedirectToRoute("Manage", new { model.SkinId, model.SecretKey });
             }
+        }
+
+        [Route("manage", Name = "ManageSkins")]
+        public ActionResult ManageSkins()
+        {
+            var model = new ManageSkinsViewModel
+            {
+                GetDummyPreviewImage = (string skinId, int dragonType, int gender, int version) => SkinTester.GenerateOrFetchPreview(skinId, version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, dragonType, gender), null).GetAwaiter().GetResult().Urls[0]
+            };
+            model.Skins = LoggedInUser.Skins.ToList();
+            return View(model);
         }
 
         [Route("manage/skin/update", Name = "UpdateSkinPost")]
@@ -462,7 +470,7 @@ namespace FRTools.Web.Controllers
             }
         }
 
-        [Route("delete", Name = "Delete")]
+        [Route("manage/skin/delete", Name = "Delete")]
         public async Task<ActionResult> Delete(DeleteSkinPost model)
         {
             var skin = DataContext.Skins.FirstOrDefault(x => x.GeneratedId == model.SkinId && x.SecretKey == model.SecretKey);
@@ -536,11 +544,11 @@ namespace FRTools.Web.Controllers
             return View(model);
         }
 
-        [Route("link", Name = "LinkExisting")]
+        [Route("manage/link", Name = "LinkExisting")]
         public ActionResult LinkExistingSkin() => View();
 
         [HttpPost]
-        [Route("link", Name = "LinkExistingPost")]
+        [Route("manage/link", Name = "LinkExistingPost")]
         public ActionResult LinkExistingSkin(ClaimSkinPostViewModel model)
         {
             var skin = DataContext.Skins.FirstOrDefault(x => x.GeneratedId == model.SkinId && x.SecretKey == model.SecretKey);
@@ -565,7 +573,7 @@ namespace FRTools.Web.Controllers
         }
 
 
-        [Route("unlink", Name = "UnlinkPreview")]
+        [Route("manage/preview/unlink", Name = "UnlinkPreview")]
         [HttpPost]
         public ActionResult UnlinkPreview(int previewId)
         {
