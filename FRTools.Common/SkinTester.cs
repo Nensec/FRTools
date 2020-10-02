@@ -18,7 +18,7 @@ namespace FRTools.Common
             var result = new PreviewResult { Forced = force, RealDragon = dragonId != "preview" ? dragonId : null, DressingRoomUrl = dressingRoomUrl };
 
             if (dragon == null)
-                dragon = FRHelpers.ParseUrlForDragon(dragonUrl);
+                dragon = FRHelpers.ParseUrlForDragon(dragonUrl, skinId, version);
 
             Bitmap dragonImage = null;
 
