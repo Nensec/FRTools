@@ -21,6 +21,7 @@ namespace FRTools.Data.DataModels.FlightRisingModels
         public EyeType EyeType { get; set; }
         public Element Element { get; set; }
         public Age Age { get; set; }
+        [NotMapped]
         public string Apparel { get; set; }
         [StringLength(40)]
         [Index]
@@ -112,5 +113,8 @@ namespace FRTools.Data.DataModels.FlightRisingModels
         public Enum GetBodyGene() => (Enum)Enum.Parse(DragonType == DragonType.Gaoler ? typeof(GaolerBodyGene) : typeof(BodyGene), BodyGene.ToString());
         public Enum GetWingGene() => (Enum)Enum.Parse(DragonType == DragonType.Gaoler ? typeof(GaolerWingGene) : typeof(WingGene), WingGene.ToString());
         public Enum GetTertGene() => (Enum)Enum.Parse(DragonType == DragonType.Gaoler ? typeof(GaolerTertGene) : typeof(TertiaryGene), TertiaryGene.ToString());
+
+        [NotMapped]
+        public string PreviewUrl { get; set; }
     }
 }

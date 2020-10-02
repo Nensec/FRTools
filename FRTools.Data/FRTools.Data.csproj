@@ -191,6 +191,10 @@
     <Compile Include="Migrations\202009212152160_Add profilesettings.designer.cs">
       <DependentUpon>202009212152160_Add profilesettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202010020119343_Remove Apparal From DragonCache.cs" />
+    <Compile Include="Migrations\202010020119343_Remove Apparal From DragonCache.designer.cs">
+      <DependentUpon>202010020119343_Remove Apparal From DragonCache.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -272,6 +276,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202009212152160_Add profilesettings.resx">
       <DependentUpon>202009212152160_Add profilesettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202010020119343_Remove Apparal From DragonCache.resx">
+      <DependentUpon>202010020119343_Remove Apparal From DragonCache.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

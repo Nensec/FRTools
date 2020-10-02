@@ -23,7 +23,8 @@ namespace FRTools.Common
             Bitmap dragonImage = null;
 
             var azureImagePreviewPath = $@"previews\{skinId}\{(version == 1 ? "" : $@"{version}\")}{dragonId ?? dragon.ToString()}.png";
-            if (force || !new AzureImageService().Exists(azureImagePreviewPath, out var previewUrl))
+            string previewUrl = dragon.PreviewUrl;
+            if (force || (previewUrl == null && !new AzureImageService().Exists(azureImagePreviewPath, out previewUrl)))
             {
                 try
                 {
@@ -88,13 +89,16 @@ namespace FRTools.Common
                     dragonImage.Save(saveImageStream, ImageFormat.Png);
                     saveImageStream.Position = 0;
 
-                    previewUrl = await new AzureImageService().WriteImage(azureImagePreviewPath, saveImageStream);
+                    dragon.PreviewUrl = await new AzureImageService().WriteImage(azureImagePreviewPath, saveImageStream);
                 }
             }
             else
+            {
                 result.Cached = true;
+                dragon.PreviewUrl = previewUrl;
+            }
 
-            result.Urls = new[] { previewUrl };
+            result.Urls = new[] { dragon.PreviewUrl };
 
             async Task<string> GenerateApparelPreview(Bitmap invisibleDragon, string cacheUrl)
             {
@@ -145,12 +149,12 @@ namespace FRTools.Common
                 }
             }
             if (apparelPreviewUrl != null)
-                result.Urls = new[] { previewUrl, apparelPreviewUrl };
+                result.Urls = new[] { dragon.PreviewUrl, apparelPreviewUrl };
 
             return result;
         }
 
-        public static async Task<Bitmap> GetInvisibleDragonWithApparel(string dragonId,  bool force = false)
+        public static async Task<Bitmap> GetInvisibleDragonWithApparel(string dragonId, bool force = false)
         {
             Bitmap invisibleDwagon;
             var azureUrl = $@"dragoncache\{dragonId}_invisible.png";
