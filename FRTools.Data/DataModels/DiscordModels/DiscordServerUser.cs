@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace FRTools.Data.DataModels.DiscordModels
 {
@@ -12,6 +8,7 @@ namespace FRTools.Data.DataModels.DiscordModels
         public virtual DiscordServer Server { get; set; }
         public virtual DiscordUser User { get; set; }
         public string Nickname { get; set; }
+        public bool IsOwner { get; set; }
         public virtual ICollection<DiscordRole> Roles { get; set; } = new HashSet<DiscordRole>();
     }
 }

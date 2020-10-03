@@ -208,7 +208,7 @@ namespace FRTools.Discord.Handlers
                 if (dbServerUser == null)
                     return;
 
-                dbServer.Users.Remove(dbServerUser);
+                ctx.DiscordServerUsers.Remove(dbServerUser);
                 await ctx.SaveChangesAsync();
             }
         }
@@ -269,7 +269,7 @@ namespace FRTools.Discord.Handlers
                        foreach (var existingRole in dbServer.Roles.ToList())
                        {
                            if (!Guild.Roles.Any(x => (long)x.Id == existingRole.RoleId))
-                               dbServer.Roles.Remove(existingRole);
+                               ctx.DiscordRoles.Remove(existingRole);
                        }
 
                        foreach (var role in Guild.Roles)
@@ -295,7 +295,7 @@ namespace FRTools.Discord.Handlers
                        foreach (var existingChannel in dbServer.Channels.ToList())
                        {
                            if (!Guild.Channels.Any(x => (long)x.Id == existingChannel.ChannelId))
-                               dbServer.Channels.Remove(existingChannel);
+                               ctx.DiscordChannels.Remove(existingChannel);
                        }
 
                        foreach (var channel in Guild.Channels)
@@ -332,6 +332,7 @@ namespace FRTools.Discord.Handlers
                            dbServerUser.Roles = dbServer.Roles.Where(x => user.Roles.Any(r => (long)r.Id == x.RoleId)).ToList();
                            dbServerUser.User.Username = user.Username;
                            dbServerUser.User.Discriminator = user.DiscriminatorValue;
+                           dbServerUser.IsOwner = Guild.OwnerId == user.Id;
                        }
 
                        ctx.SaveChanges();

@@ -29,7 +29,7 @@ namespace FRTools.Common
 
             _activeJobs[dbJob.RelatedEntity].Add(dbJob);
 
-            var task = job.JobTask();
+            Task task = null;
             bool taskSetup = false;
             _ = Task.Run(async () =>
               {
@@ -38,6 +38,7 @@ namespace FRTools.Common
                       ctx.Jobs.Attach(dbJob);
                       job.ReportError = async x => await SaveError(x, dbJob, ctx);
                       taskSetup = true;
+                      task = job.JobTask();
 
                       while (!task.IsCompleted)
                       {
