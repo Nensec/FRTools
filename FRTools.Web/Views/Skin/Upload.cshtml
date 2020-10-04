@@ -96,7 +96,7 @@
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <div class="center-block" style="width:350px;height:350px;">
-                                <img id="Dummy" style="z-index:1;position:absolute;" src="@Url.Action("GetDummyDragon")?dragonType=14&gender=0" />
+                                <img id="Dummy" style="z-index:1;position:absolute;display:none;" />
                                 <img id="Preview" style="z-index:2;position:absolute;display:none;" />
                             </div>
                             <div id="CoverageContainer" style="display:none;">
@@ -113,7 +113,7 @@
 </div>
 
 <script>
-    $('#@(Html.IdFor(model => model.DragonType)), #@(Html.IdFor(model => model.Gender))').change(function () {
+    setDummySource = function () {
         var dragonType = $('#@(Html.IdFor(model => model.DragonType))').val();
         var gender = $('#@(Html.IdFor(model => model.Gender))').val();
 
@@ -123,7 +123,9 @@
             updateCoverage(undefined, dragonImage);
         };
         dragonImage.src = $('#Dummy').attr('src');
-    });
+    };
+
+    $('#@(Html.IdFor(model => model.DragonType)), #@(Html.IdFor(model => model.Gender))').change(setDummySource);
 
     $('#@(Html.IdFor(model => model.Skin))').change(function () {
         var t = $(this).val();
@@ -154,6 +156,7 @@
     $('document').ready(function () {
         dragonImg = new Image();
         dragonImg.src = $('#Dummy').attr('src');
+        setDummySource();
     });
 
     updateCoverage = function (skinImage, dragonImage) {
