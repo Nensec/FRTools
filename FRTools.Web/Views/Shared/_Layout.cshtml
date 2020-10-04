@@ -107,9 +107,10 @@
                                     <li>
                                         @Html.RouteLink($"Logins", "ManageLogins", null, new { title = "Manage logins to your account" })
                                     </li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="javascript:document.getElementById('logoutForm').submit()"><span class="glyphicon glyphicon-off"></span> Log out</a></li>
                                 </ul>
                             </li>
-                            <li><a href="javascript:document.getElementById('logoutForm').submit()"><span class="glyphicon glyphicon-off"></span> Log out</a></li>
                         </ul>
 
                     }
