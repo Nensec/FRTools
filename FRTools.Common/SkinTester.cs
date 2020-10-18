@@ -17,12 +17,12 @@ namespace FRTools.Common
         public static async Task<PreviewResult> GenerateOrFetchPreview(string skinId, int dragonId, bool swapSilhouette = false, bool force = false, int? version = null)
         {
             var dragonUrl = FRHelpers.GetDragonImageUrlFromDragonId(dragonId);
-            if (dragonUrl.StartsWith(".."))            
-                return new PreviewResult { Forced = force, ErrorMessage = $"<b>{dragonId}</b> appears to be an invalid dragon id" };
+            if (dragonUrl.StartsWith(".."))
+                return new PreviewResult { Forced = force }.WithErrorMessage("{0} appears to be an invalid dragon id", dragonId);
 
             var dragon = FRHelpers.ParseUrlForDragon(dragonUrl);
             dragon.FRDragonId = dragonId;
-            return await GenerateOrFetchPreview(skinId, version, dragon, false, false, force);
+            return await GenerateOrFetchPreview(skinId, version, dragon, false, swapSilhouette, force);
         }
 
         public static async Task<PreviewResult> GenerateOrFetchPreview(string skinId, string dragonUrl, bool force = false, int? version = null)
@@ -47,11 +47,11 @@ namespace FRTools.Common
                 }
 
                 if (FRHelpers.IsAncientBreed(dragon.DragonType))
-                    return new PreviewResult { Forced = force, Success = false, ErrorMessage = "Ancient breeds cannot wear apparal." };
+                    return new PreviewResult { Forced = force, Success = false }.WithErrorMessage("Ancient breeds cannot wear apparal.");
 
                 dragon.Apparel = apparelDragon.Apparel;
                 if (dragon.GetApparel().Length == 0)
-                    return new PreviewResult { Forced = force, Success = false, ErrorMessage = "This dressing room URL contains no apparel." };
+                    return new PreviewResult { Forced = force, Success = false }.WithErrorMessage("This dressing room URL contains no apparel.");
 
                 return await GenerateOrFetchPreview(skinId, version, dragon, true, false, force);
             }
@@ -61,7 +61,7 @@ namespace FRTools.Common
                 var dragon = FRHelpers.ParseUrlForDragon(dragonUrl);
                 return await GenerateOrFetchPreview(skinId, version, dragon, false, false, force);
             }
-            return new PreviewResult { Forced = force, Success = false, ErrorMessage = "The URL provided is not valid." };
+            return new PreviewResult { Forced = force, Success = false }.WithErrorMessage("The URL provided is not valid.");
         }
 
         public static Task<PreviewResult> GenerateOrFetchDummyPreview(string skinId, int version) => GenerateOrFetchPreview(skinId, version, null, false, false, false);
@@ -80,7 +80,7 @@ namespace FRTools.Common
                     skin = skins.FirstOrDefault(x => x.Version == version);
 
                 if (skin == null)
-                    return new PreviewResult { Forced = force, Success = false, ErrorMessage = "Skin not found." };
+                    return new PreviewResult { Forced = force, Success = false }.WithErrorMessage("Skin not found.");
 
                 result.Skin = skin;
 
@@ -91,20 +91,21 @@ namespace FRTools.Common
 
                 if (dragon.Age == Age.Hatchling)
                 {
-                    return new PreviewResult { Forced = force, Success = false, ErrorMessage = "Skins can only be previewed on adult dragons." };
+                    return new PreviewResult { Forced = force, Success = false }.WithErrorMessage("Skins can only be previewed on adult dragons.");
                 }
 
                 if (swapSilhouette)
                 {
-                    dragon.Gender = dragon.Gender == Gender.Male ? Gender.Female : Gender.Male;
-                    dragon = FRHelpers.ParseUrlForDragon(FRHelpers.GenerateDragonImageUrl(dragon));
+                    var swappedDragon = FRHelpers.ParseUrlForDragon(FRHelpers.GenerateDragonImageUrl(dragon, swapSilhouette));
+                    swappedDragon.FRDragonId = dragon.FRDragonId;
+                    dragon = swappedDragon;
                 }
 
                 if (skin.DragonType != (int)dragon.DragonType)
-                    return new PreviewResult { Forced = force, Success = false, ErrorMessage = $"This skin is meant for a <b>{(DragonType)skin.DragonType} {(Gender)skin.GenderType}</b>, the dragon you provided is a <b>{dragon.DragonType} {dragon.Gender}</b>." };
+                    return new PreviewResult { Forced = force, Success = false }.WithErrorMessage("This skin is meant for a {0} {1}, the dragon you provided is a {2} {3}.", (DragonType)skin.DragonType, (Gender)skin.GenderType, dragon.DragonType, dragon.Gender);
 
                 if (skin.GenderType != (int)dragon.Gender)
-                    return new PreviewResult { Forced = force, Success = false, ErrorMessage = $"This skin is meant for a <b>{(Gender)skin.GenderType}</b>, the dragon you provided is a <b>{dragon.Gender}</b>." };
+                    return new PreviewResult { Forced = force, Success = false }.WithErrorMessage("This skin is meant for a {0}, the dragon you provided is a {1}.", (Gender)skin.GenderType, dragon.Gender);
             }
 
             Bitmap dragonImage = null;
@@ -119,7 +120,7 @@ namespace FRTools.Common
                 }
                 catch (Exception ex)
                 {
-                    result.ErrorMessage = ex.ToString();
+                    result.WithErrorMessage(ex.ToString());
                     return result;
                 }
 
@@ -226,10 +227,10 @@ namespace FRTools.Common
             }
             else if (dragon.FRDragonId.HasValue && !FRHelpers.IsAncientBreed(dragon.DragonType))
             {
-                var cacheUrl = $@"previews\{skinId}\{dragon.FRDragonId}_apparel.png";
+                var cacheUrl = $@"previews\{skinId}\{dragon.FRDragonId}_{dragon.Gender}_apparel.png";
                 if (force || !new AzureImageService().Exists(cacheUrl, out apparelPreviewUrl))
                 {
-                    var invisibleDragonWithApparel = await GetInvisibleDragonWithApparel(dragon.FRDragonId.Value, force);
+                    var invisibleDragonWithApparel = await GetInvisibleDragonWithApparel(dragon, force);
 
                     if (invisibleDragonWithApparel != null)
                         apparelPreviewUrl = await GenerateApparelPreview(invisibleDragonWithApparel, cacheUrl);
@@ -239,13 +240,14 @@ namespace FRTools.Common
             if (apparelPreviewUrl != null)
                 result.Urls = new[] { dragon.PreviewUrl, apparelPreviewUrl };
 
+            result.Success = true;
             return result;
         }
 
-        public static async Task<Bitmap> GetInvisibleDragonWithApparel(int dragonId, bool force = false)
+        public static async Task<Bitmap> GetInvisibleDragonWithApparel(DragonCache dragon, bool force = false)
         {
             Bitmap invisibleDwagon;
-            var azureUrl = $@"dragoncache\{dragonId}_invisible.png";
+            var azureUrl = $@"dragoncache\{dragon.FRDragonId}_{dragon.Gender}_invisible.png";
             if (!force && new AzureImageService().Exists(azureUrl, out var cacheUrl))
             {
                 using (var stream = await new AzureImageService().GetImage(azureUrl))
@@ -255,7 +257,7 @@ namespace FRTools.Common
 
             using (var client = new WebClient())
             {
-                var dragonProfilePageTask = client.DownloadStringTaskAsync(string.Format(FRHelpers.DragonProfileUrl, dragonId));
+                var dragonProfilePageTask = client.DownloadStringTaskAsync(string.Format(FRHelpers.DragonProfileUrl, dragon.FRDragonId));
                 try
                 {
                     var dragonProfileHtml = await dragonProfilePageTask;
@@ -264,7 +266,7 @@ namespace FRTools.Common
                     if (apparel.Count == 0)
                         return null;
 
-                    var invisibleDragonBytesTask = client.DownloadDataTaskAsync(string.Format(FRHelpers.DressingRoomDragonApparalUrl, dragonId, string.Join(",", apparel.Cast<Match>().Where(x => x.Success).Select(x => x.Groups[1].Value).Concat(new[] { "22046" }))));
+                    var invisibleDragonBytesTask = client.DownloadDataTaskAsync(string.Format(FRHelpers.DressingRoomDummyApparalUrl, (int)dragon.DragonType, (int)dragon.Gender, string.Join(",", apparel.Cast<Match>().Where(x => x.Success).Select(x => x.Groups[1].Value).Concat(new[] { "22046" }))));
 
                     var invisibleDwagonImageBytes = await invisibleDragonBytesTask;
 

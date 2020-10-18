@@ -89,9 +89,9 @@ namespace FRTools.Web.Controllers
             else if (!string.IsNullOrWhiteSpace(model.DressingRoomUrl))
                 result = await SkinTester.GenerateOrFetchPreview(model.SkinId, model.DressingRoomUrl, model.Force);
 
-            if (result == null || result.ErrorMessage != null)
+            if (result == null || !result.Success)
             {
-                AddErrorNotification(result?.ErrorMessage);
+                AddErrorNotification(result?.GetHtmlErrorMessage);
                 return RedirectToRoute("Preview", new { model.SkinId });
             }
 
@@ -149,7 +149,6 @@ namespace FRTools.Web.Controllers
                     AddErrorNotification("Image needs to be 350px x 350px. Just like FR.");
                     return View();
                 }
-
             }
             catch
             {

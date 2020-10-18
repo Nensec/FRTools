@@ -60,11 +60,13 @@ namespace FRTools.Discord.Modules
                 await StartPreview().ContinueWith(async msg =>
                 {
                     var result = await SkinTester.GenerateOrFetchPreview(skinId, dragonId);
-                    if (result.ErrorMessage != null)
-                        await msg.Result.ModifyAsync(x => x.Embed = ErrorEmbed(result.ErrorMessage).Build());
-
-                    SaveStatistics(result);
-                    await msg.Result.ModifyAsync(x => x.Embed = GeneratedPreviewEmbed(result, apparel != null));
+                    if (!result.Success)
+                        await msg.Result.ModifyAsync(x => x.Embed = ErrorEmbed(result.GetDiscordErrorMessage).Build());
+                    else
+                    {
+                        SaveStatistics(result);
+                        await msg.Result.ModifyAsync(x => x.Embed = GeneratedPreviewEmbed(result, apparel != null));
+                    }
                 });
             }
 
@@ -74,11 +76,13 @@ namespace FRTools.Discord.Modules
                 await StartPreview().ContinueWith(async msg =>
                 {
                     var result = await SkinTester.GenerateOrFetchPreview(skinId, dragonId, true);
-                    if (result.ErrorMessage != null)
-                        await msg.Result.ModifyAsync(x => x.Embed = ErrorEmbed(result.ErrorMessage).Build());
-
-                    SaveStatistics(result);
-                    await msg.Result.ModifyAsync(x => x.Embed = GeneratedPreviewEmbed(result, apparel != null));
+                    if (!result.Success)
+                        await msg.Result.ModifyAsync(x => x.Embed = ErrorEmbed(result.GetDiscordErrorMessage).Build());
+                    else
+                    {
+                        SaveStatistics(result);
+                        await msg.Result.ModifyAsync(x => x.Embed = GeneratedPreviewEmbed(result, apparel != null));
+                    }
                 });
             }
 
@@ -88,11 +92,13 @@ namespace FRTools.Discord.Modules
                 await StartPreview().ContinueWith(async msg =>
                 {
                     var result = await SkinTester.GenerateOrFetchPreview(skinId, dragonUrl);
-                    if (result.ErrorMessage != null)
-                        await msg.Result.ModifyAsync(x => x.Embed = ErrorEmbed(result.ErrorMessage).Build());
-
-                    SaveStatistics(result);
-                    await msg.Result.ModifyAsync(x => x.Embed = GeneratedPreviewEmbed(result, apparel != null));
+                    if (!result.Success)
+                        await msg.Result.ModifyAsync(x => x.Embed = ErrorEmbed(result.GetDiscordErrorMessage).Build());
+                    else
+                    {
+                        SaveStatistics(result);
+                        await msg.Result.ModifyAsync(x => x.Embed = GeneratedPreviewEmbed(result, apparel != null));
+                    }
                 });
             }
 
