@@ -20,12 +20,13 @@ namespace FRTools.Data.DataModels.FlightRisingModels
         public Color TertiaryColor { get; set; }
         public EyeType EyeType { get; set; }
         public Element Element { get; set; }
-        public Age Age { get; set; }
+        public Age Age { get; set; } = Age.Adult;
         [NotMapped]
         public string Apparel { get; set; }
         [StringLength(40)]
         [Index]
         public string SHA1Hash { get; set; }
+        public int? FRDragonId { get; set; }
 
         public static DragonCache FromString(string data)
         {

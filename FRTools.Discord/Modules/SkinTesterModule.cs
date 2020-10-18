@@ -1,16 +1,15 @@
-﻿using Discord.Commands;
-using FRTools.Data;
-using FRTools.Discord.Infrastructure;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Data.Entity;
-using Discord;
+﻿using Discord;
+using Discord.Commands;
 using FRTools.Common;
-using FRTools.Data.DataModels.FlightRisingModels;
-using System.Text.RegularExpressions;
+using FRTools.Data;
 using FRTools.Data.DataModels;
-using System;
+using FRTools.Discord.Infrastructure;
 using FRTools.Discord.Preconditions;
+using System;
+using System.Data.Entity;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace FRTools.Discord.Modules
 {
@@ -31,7 +30,7 @@ namespace FRTools.Discord.Modules
                 await ReplyAsync(embed: ErrorEmbed("Skin not found.").Build());
             else
             {
-                var previewUrl = (await SkinTester.GenerateOrFetchPreview(skinId, skin.Version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, skin.DragonType, skin.GenderType), null)).Urls[0];
+                var previewUrl = (await SkinTester.GenerateOrFetchDummyPreview(skin.GeneratedId, skin.Version)).Urls[0];
 
                 var embed = new EmbedBuilder();
                 embed.WithTitle(skin.Title ?? "_No title_");
@@ -58,126 +57,86 @@ namespace FRTools.Discord.Modules
             [Command]
             public async Task Preview(string skinId, int dragonId, [ExactValuePrecondition("-apparel")] string apparel = null)
             {
-                string dragonUrl = await GetDragonUrl(dragonId);
-                if (dragonUrl != null)
-                    await GeneratePreview(skinId, dragonUrl, dragonId, apparel == "-apparel");
+                await StartPreview().ContinueWith(async msg =>
+                {
+                    var result = await SkinTester.GenerateOrFetchPreview(skinId, dragonId);
+                    if (result.ErrorMessage != null)
+                        await msg.Result.ModifyAsync(x => x.Embed = ErrorEmbed(result.ErrorMessage).Build());
+
+                    SaveStatistics(result);
+                    await msg.Result.ModifyAsync(x => x.Embed = GeneratedPreviewEmbed(result, apparel != null));
+                });
             }
 
             [Command]
             public async Task Preview(string skinId, int dragonId, [ExactValuePrecondition("-s")] string swapSilhouette, [ExactValuePrecondition("-apparel")] string apparel = null)
             {
-                string dragonUrl = await GetDragonUrl(dragonId);
-                if (dragonUrl != null)
-                    await GeneratePreview(skinId, dragonUrl, dragonId, swapSilhouette == "-s", apparel == "-apparel");
-            }
-
-            private async Task<string> GetDragonUrl(int dragonId)
-            {
-                var dragonUrl = FRHelpers.GetDragonImageUrlFromDragonId(dragonId);
-                if (dragonUrl.StartsWith(".."))
+                await StartPreview().ContinueWith(async msg =>
                 {
-                    await ReplyAsync(embed: ErrorEmbed($"**{dragonId}** appears to be an invalid dragon id").Build());
-                    return null;
-                }
-                return dragonUrl;
+                    var result = await SkinTester.GenerateOrFetchPreview(skinId, dragonId, true);
+                    if (result.ErrorMessage != null)
+                        await msg.Result.ModifyAsync(x => x.Embed = ErrorEmbed(result.ErrorMessage).Build());
+
+                    SaveStatistics(result);
+                    await msg.Result.ModifyAsync(x => x.Embed = GeneratedPreviewEmbed(result, apparel != null));
+                });
             }
 
             [Command]
-            public async Task Preview(string skinId, string dressingRoomUrl, [ExactValuePrecondition("-apparel")] string apparel = null)
+            public async Task Preview(string skinId, string dragonUrl, [ExactValuePrecondition("-apparel")] string apparel = null)
             {
-                await GeneratePreview(skinId, dressingRoomUrl, null, apparel == "-apparel");
+                await StartPreview().ContinueWith(async msg =>
+                {
+                    var result = await SkinTester.GenerateOrFetchPreview(skinId, dragonUrl);
+                    if (result.ErrorMessage != null)
+                        await msg.Result.ModifyAsync(x => x.Embed = ErrorEmbed(result.ErrorMessage).Build());
+
+                    SaveStatistics(result);
+                    await msg.Result.ModifyAsync(x => x.Embed = GeneratedPreviewEmbed(result, apparel != null));
+                });
             }
 
-            private async Task<Task> GeneratePreview(string skinId, string dragonUrl, int? dragonId = null, bool swapSilhouette = false, bool showApparel = false)
+            private async Task<IUserMessage> StartPreview() => await ReplyAsync(embed: new EmbedBuilder().WithTitle("Generating your preview..").WithDescription("I'm fetching all the required data to preview your skin, this takes a moment..").Build());
+
+            private void SaveStatistics(PreviewResult previewResult)
             {
-                var replyMessage = ReplyAsync(embed: new EmbedBuilder().WithTitle("Generating your preview..").WithDescription("I'm fetching all the required data to preview your skin, this takes a moment..").Build());
-
-                DragonCache dragon = null;
-                bool isDressingRoomUrl = dragonUrl.Contains("/dgen/dressing-room");
-                string dressingRoomUrl = isDressingRoomUrl ? dragonUrl : null;
-                if (isDressingRoomUrl)
-                {
-                    var apparelDragon = FRHelpers.ParseUrlForDragon(dragonUrl);
-                    if (dragonUrl.Contains("/dgen/dressing-room/dummy"))
-                        dragon = FRHelpers.ParseUrlForDragon(dragonUrl);
-                    else if (dragonUrl.Contains("dgen/dressing-room/scry"))
-                    {
-                        var scryId = int.Parse(Regex.Match(dragonUrl, @"sdid=([\d]*)").Groups[1].Value);
-                        var scryUrl = FRHelpers.GetDragonImageUrlFromScryId(scryId);
-                        dragon = FRHelpers.ParseUrlForDragon(scryUrl);
-                    }
-                    else
-                    {
-                        dragonId = int.Parse(Regex.Match(dragonUrl, @"did=([\d]*)").Groups[1].Value);
-                        dragon = FRHelpers.GetDragonFromDragonId(dragonId.Value);
-                    }
-
-                    if (FRHelpers.IsAncientBreed(dragon.DragonType))
-                        return (await replyMessage).ModifyAsync(x => x.Embed = ErrorEmbed("Ancient breeds cannot wear apparal.").Build());
-
-                    dragon.Apparel = apparelDragon.Apparel;
-                    if (dragon.GetApparel().Length == 0)
-                        return (await replyMessage).ModifyAsync(x => x.Embed = ErrorEmbed("This dressing room URL contains no apparel.").Build());
-                }
-                else
-                    dragon = FRHelpers.ParseUrlForDragon(dragonUrl);
-
-                if (dragon.Age == Age.Hatchling)
-                    return (await replyMessage).ModifyAsync(x => x.Embed = ErrorEmbed("Skins can only be previewed on adult dragons.").Build());
-
-                if (swapSilhouette)
-                {
-                    dragon.Gender = dragon.Gender == Gender.Male ? Gender.Female : Gender.Male;
-                    dragon = FRHelpers.ParseUrlForDragon(FRHelpers.GenerateDragonImageUrl(dragon));
-                }
-
                 using (var ctx = new DataContext())
                 {
-                    var skin = ctx.Skins.FirstOrDefault(x => x.GeneratedId == skinId);
-                    if (skin == null)
-                        return (await replyMessage).ModifyAsync(x => x.Embed = ErrorEmbed("Skin not found.").Build());
-
-                    if (skin.DragonType != (int)dragon.DragonType)
-                        return (await replyMessage).ModifyAsync(x => x.Embed = ErrorEmbed($"This skin is meant for a **{(DragonType)skin.DragonType} {(Gender)skin.GenderType}**, the dragon you provided is a **{dragon.DragonType} {dragon.Gender}**.").Build());
-
-                    if (skin.GenderType != (int)dragon.Gender)
-                        return (await replyMessage).ModifyAsync(x => x.Embed = ErrorEmbed($"This skin is meant for a **{(Gender)skin.GenderType}**, the dragon you provided is a **{dragon.Gender}**.").Build());
-
-                    var previewResult = await SkinTester.GenerateOrFetchPreview(skinId, skin.Version, dragonId?.ToString(), dragonUrl, dragon, dressingRoomUrl);
-
-                    foreach (var url in previewResult.Urls.Where(url => !skin.Previews.Any(x => x.PreviewImage == url)))
+                    foreach (var url in previewResult.Urls.Where(url => !ctx.Previews.Where(x => x.Skin.Id == previewResult.Skin.Id).Any(x => x.PreviewImage == url)))
                     {
-                        skin.Previews.Add(new Preview
+                        ctx.Previews.Add(new Preview
                         {
-                            DragonId = dragonId,
-                            ScryerUrl = dragonId == null ? dragonUrl : null,
+                            Skin = ctx.Skins.Find(previewResult.Skin.Id),
+                            DragonId = previewResult.Dragon.FRDragonId,
+                            ScryerUrl = previewResult.DragonUrl,
                             PreviewImage = url,
-                            DragonData = dragon.ToString(),
+                            DragonData = previewResult.Dragon.ToString(),
                             PreviewTime = DateTime.UtcNow,
                             Requestor = null,
-                            Version = skin.Version
+                            Version = previewResult.Skin.Version
                         });
                     }
-
-                    await ctx.SaveChangesAsync();
-
-                    var embed = new EmbedBuilder();
-                    embed.WithDescription($"Here is your preview on **{skin.Title ?? skin.GeneratedId}**");
-                    if (!showApparel && previewResult.Urls.Length > 1)
-                        embed.Description += "\r\n\nYou can show the apparel version of the preview by adding **-apparel** at the end of the preview command.";
-
-                    embed.WithFields(new EmbedFieldBuilder().WithName("Dragon preview").WithValue($"[click here]({CDNBasePath}{previewResult.Urls[0]})"));
-                    if (previewResult.Urls.Length > 1)
-                        embed.WithFields(new EmbedFieldBuilder().WithName("Apparel preview").WithValue($"[click here]({CDNBasePath}{previewResult.Urls[1]})"));
-                    if (!showApparel || previewResult.Urls.Length == 1)
-                        embed.WithImageUrl($"{CDNBasePath}{previewResult.Urls[0]}");
-                    else
-                        embed.WithImageUrl($"{CDNBasePath}{previewResult.Urls[1]}");
-
-                    embed.WithAuthor(new EmbedAuthorBuilder().WithName($"{skin.Title ?? skin.GeneratedId} v{skin.Version}"));
-                    embed.WithThumbnailUrl($"{CDNBasePath}/previews/{skinId}/preview.png");
-                    return (await replyMessage).ModifyAsync(x => x.Embed = embed.Build());
                 }
+            }
+
+            private Embed GeneratedPreviewEmbed(PreviewResult previewResult, bool showApparel = false)
+            {
+                var embed = new EmbedBuilder();
+                embed.WithDescription($"Here is your preview on **{previewResult.Skin.Title ?? previewResult.Skin.GeneratedId}**");
+                if (!showApparel && previewResult.Urls.Length > 1)
+                    embed.Description += "\r\n\nYou can show the apparel version of the preview by adding **-apparel** at the end of the preview command.";
+
+                embed.WithFields(new EmbedFieldBuilder().WithName("Dragon preview").WithValue($"[click here]({CDNBasePath}{previewResult.Urls[0]})"));
+                if (previewResult.Urls.Length > 1)
+                    embed.WithFields(new EmbedFieldBuilder().WithName("Apparel preview").WithValue($"[click here]({CDNBasePath}{previewResult.Urls[1]})"));
+                if (!showApparel || previewResult.Urls.Length == 1)
+                    embed.WithImageUrl($"{CDNBasePath}{previewResult.Urls[0]}");
+                else
+                    embed.WithImageUrl($"{CDNBasePath}{previewResult.Urls[1]}");
+
+                embed.WithAuthor(new EmbedAuthorBuilder().WithName($"{previewResult.Skin.Title ?? previewResult.Skin.GeneratedId} v{previewResult.Skin.Version}"));
+                embed.WithThumbnailUrl($"{CDNBasePath}/previews/{previewResult.Skin.GeneratedId}/preview.png");
+                return embed.Build();
             }
         }
 

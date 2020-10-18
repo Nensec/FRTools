@@ -35,23 +35,32 @@ namespace FRTools.Web.Controllers
 
         protected void AddErrorNotification(string error)
         {
-            if (!string.IsNullOrEmpty(TempData["Error"] as string))
-                TempData["Error"] += "<br/>";
-            TempData["Error"] += error;
+            if (error != null)
+            {
+                if (!string.IsNullOrEmpty(TempData["Error"] as string))
+                    TempData["Error"] += "<br/>";
+                TempData["Error"] += error;
+            }
         }
 
         protected void AddInfoNotification(string info)
         {
-            if (!string.IsNullOrEmpty(TempData["Info"] as string))
-                TempData["Info"] += "<br/>";
-            TempData["Info"] += info;
+            if (info != null)
+            {
+                if (!string.IsNullOrEmpty(TempData["Info"] as string))
+                    TempData["Info"] += "<br/>";
+                TempData["Info"] += info;
+            }
         }
 
         protected void AddSuccessNotification(string success)
         {
-            if (!string.IsNullOrEmpty(TempData["Success"] as string))
-                TempData["Success"] += "<br/>";
-            TempData["Success"] += success;
+            if (success != null)
+            {
+                if (!string.IsNullOrEmpty(TempData["Success"] as string))
+                    TempData["Success"] += "<br/>";
+                TempData["Success"] += success;
+            }
         }
     }
 }

@@ -135,7 +135,7 @@ namespace FRTools.Web.Models
     public class ManageSkinsViewModel : BaseSkinModel
     {
         public List<Skin> Skins { get; set; }
-        public Func<string, int, int, int, string> GetDummyPreviewImage { get; set; }
+        public Func<string, int, string> GetDummyPreviewImage { get; set; }
     }
 
     public class BrowseViewModel

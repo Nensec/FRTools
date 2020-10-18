@@ -26,7 +26,7 @@ namespace FRTools.Web.Controllers
                 Skins = LoggedInUser.Skins.ToList(),
                 Pinglists = LoggedInUser.Pinglists.ToList(),
                 IsOwn = true,
-                GetDummyPreviewImage = (string skinId, int dragonType, int gender, int version) => SkinTester.GenerateOrFetchPreview(skinId, version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, dragonType, gender), null).GetAwaiter().GetResult().Urls[0]
+                GetDummyPreviewImage = (string skinId, int version) => SkinTester.GenerateOrFetchDummyPreview(skinId, version).GetAwaiter().GetResult().Urls[0]
             };
             return View(vm);
         }
@@ -52,7 +52,7 @@ namespace FRTools.Web.Controllers
             if (user.ProfileSettings.ShowSkinsOnProfile)
             {
                 vm.Skins = user.Skins.Where(x => x.Visibility == SkinVisiblity.Visible || x.Visibility == SkinVisiblity.HideFromBrowse).ToList();
-                vm.GetDummyPreviewImage = (string skinId, int dragonType, int gender, int version) => SkinTester.GenerateOrFetchPreview(skinId, version, "preview", string.Format(FRHelpers.DressingRoomDummyUrl, dragonType, gender), null).GetAwaiter().GetResult().Urls[0];
+                vm.GetDummyPreviewImage = (string skinId, int version) => SkinTester.GenerateOrFetchDummyPreview(skinId, version).GetAwaiter().GetResult().Urls[0];
             }
             if (user.ProfileSettings.ShowPingListsOnProfile)
             {

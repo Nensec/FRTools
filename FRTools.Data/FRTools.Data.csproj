@@ -199,6 +199,10 @@
     <Compile Include="Migrations\202010030314283_Add IsOwner column.designer.cs">
       <DependentUpon>202010030314283_Add IsOwner column.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202010181242050_Save DragonID in cache.cs" />
+    <Compile Include="Migrations\202010181242050_Save DragonID in cache.designer.cs">
+      <DependentUpon>202010181242050_Save DragonID in cache.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -286,6 +290,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202010030314283_Add IsOwner column.resx">
       <DependentUpon>202010030314283_Add IsOwner column.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202010181242050_Save DragonID in cache.resx">
+      <DependentUpon>202010181242050_Save DragonID in cache.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

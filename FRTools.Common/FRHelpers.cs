@@ -3,6 +3,7 @@ using FRTools.Data.DataModels.FlightRisingModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -77,6 +78,7 @@ namespace FRTools.Common
             {
                 var dragonId = int.Parse(Regex.Match(dragonUrl, @"did=([\d]*)").Groups[1].Value);
                 dragon = GetDragonFromDragonId(dragonId);
+                dragon.FRDragonId = dragonId;
                 if ((regexParse = Regex.Match(dragonUrl, @"apparel=([\d,]*)")).Success)
                     dragon.Apparel = regexParse.Groups[1].Value;
                 return dragon;
@@ -93,7 +95,10 @@ namespace FRTools.Common
                 if (skinId != null && version != null)
                     dragon.SHA1Hash = $"DUMMY_{(int)dragon.DragonType}_{(int)dragon.Gender}_{skinId}_v{version}";
                 else
+                {
                     dragon.SHA1Hash = $"DUMMY_{(int)dragon.DragonType}_{(int)dragon.Gender}";
+                    Debug.WriteLine("Caching dummy image without skin info");
+                }
             }
 
             if (!Cache.TryGetValue(dragon.SHA1Hash, out var cachedDragon))
@@ -125,7 +130,8 @@ namespace FRTools.Common
                     if ((regexParse = Regex.Match(dragonUrl, @"age=([\d]*)")).Success)
                         dragon.Age = (Age)int.Parse(regexParse.Groups[1].Value);
 
-                    ctx.SaveChanges();
+                    if(dragon.Age == Age.Adult)
+                        ctx.SaveChanges();
                 }
             }
             else

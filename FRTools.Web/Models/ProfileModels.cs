@@ -14,7 +14,7 @@ namespace FRTools.Web.Models
         public List<Pinglist> Pinglists { get; set; } = new List<Pinglist>();
         public string CDNBasePath => ConfigurationManager.AppSettings["CDNBasePath"];
         public bool IsOwn { get; set; }
-        public Func<string, int, int, int, string> GetDummyPreviewImage { get; set; }
+        public Func<string, int, string> GetDummyPreviewImage { get; set; }
     }
 
 
