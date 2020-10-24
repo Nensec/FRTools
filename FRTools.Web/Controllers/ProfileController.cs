@@ -1,14 +1,13 @@
-﻿using FRTools.Data.DataModels;
-using FRTools.Web.Models;
-using Microsoft.AspNet.Identity;
-using System.Data.Entity;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using FRTools.Common;
 using FRTools.Data;
-using FRTools.Common;
-using System.Data.SqlClient;
+using FRTools.Data.DataModels;
+using FRTools.Web.Models;
 using System;
+using System.Data.Entity;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace FRTools.Web.Controllers
 {
@@ -17,7 +16,7 @@ namespace FRTools.Web.Controllers
     public class ProfileController : BaseController
     {
         [Route(Name = "SelfProfile")]
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
             var vm = new ViewProfileViewModel
             {
@@ -26,14 +25,13 @@ namespace FRTools.Web.Controllers
                 Skins = LoggedInUser.Skins.ToList(),
                 Pinglists = LoggedInUser.Pinglists.ToList(),
                 IsOwn = true,
-                GetDummyPreviewImage = (string skinId, int version) => SkinTester.GenerateOrFetchDummyPreview(skinId, version).GetAwaiter().GetResult().Urls[0]
             };
             return View(vm);
         }
 
         [Route("{*username}", Name = "Profile")]
         [AllowAnonymous]
-        public ActionResult Index(string username)
+        public async Task<ActionResult> Index(string username)
         {
             var user = DataContext.Users.Include(x => x.FRUser).Include(x => x.Previews.Select(p => p.Skin)).FirstOrDefault(x => x.UserName.ToLower() == username.ToLower());
             if (user == null)
@@ -52,7 +50,6 @@ namespace FRTools.Web.Controllers
             if (user.ProfileSettings.ShowSkinsOnProfile)
             {
                 vm.Skins = user.Skins.Where(x => x.Visibility == SkinVisiblity.Visible || x.Visibility == SkinVisiblity.HideFromBrowse).ToList();
-                vm.GetDummyPreviewImage = (string skinId, int version) => SkinTester.GenerateOrFetchDummyPreview(skinId, version).GetAwaiter().GetResult().Urls[0];
             }
             if (user.ProfileSettings.ShowPingListsOnProfile)
             {

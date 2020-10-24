@@ -64,7 +64,7 @@ namespace FRTools.Common
             return new PreviewResult { Forced = force, Success = false }.WithErrorMessage("The URL provided is not valid.");
         }
 
-        public static Task<PreviewResult> GenerateOrFetchDummyPreview(string skinId, int version) => GenerateOrFetchPreview(skinId, version, null, false, false, false);
+        public static async Task<PreviewResult> GenerateOrFetchDummyPreview(string skinId, int version) => await GenerateOrFetchPreview(skinId, version, null, false, false, false);
 
         private static async Task<PreviewResult> GenerateOrFetchPreview(string skinId, int? version, DragonCache dragon, bool isDressingRoom, bool swapSilhouette, bool force)
         {

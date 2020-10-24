@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace FRTools.Web.Models
@@ -135,7 +136,10 @@ namespace FRTools.Web.Models
     public class ManageSkinsViewModel : BaseSkinModel
     {
         public List<Skin> Skins { get; set; }
-        public Func<string, int, string> GetDummyPreviewImage { get; set; }
+        public async Task<string> GetDummyPreviewImage(string skinId, int version)
+        {
+            return (await SkinTester.GenerateOrFetchDummyPreview(skinId, version)).Urls[0];
+        }
     }
 
     public class BrowseViewModel

@@ -246,8 +246,8 @@ namespace FRTools.Common
 
             using (var client = new WebClient())
             {
-                var dwagonImageBytesTask = client.DownloadDataTaskAsync(dragon.ConstructImageString() ?? string.Format(DressingRoomDummyUrl, (int)dragon.DragonType, (int)dragon.Gender));
-                var dwagonImageBytes = await dwagonImageBytesTask;
+                
+                var dwagonImageBytes = await client.DownloadDataTaskAsync(dragon.ConstructImageString() ?? string.Format(DressingRoomDummyUrl, (int)dragon.DragonType, (int)dragon.Gender));
                 using (var memStream = new MemoryStream(dwagonImageBytes, false))
                     await azureImageService.WriteImage(azureUrl, memStream);
 

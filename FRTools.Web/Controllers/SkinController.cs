@@ -6,6 +6,7 @@ using FRTools.Web.Models;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -295,13 +296,12 @@ namespace FRTools.Web.Controllers
         }
 
         [Route("manage", Name = "ManageSkins")]
-        public ActionResult ManageSkins()
+        public async Task<ActionResult> ManageSkins()
         {
             var model = new ManageSkinsViewModel
             {
-                GetDummyPreviewImage = (string skinId, int version) => SkinTester.GenerateOrFetchDummyPreview(skinId, version).GetAwaiter().GetResult().Urls[0]
+                Skins = LoggedInUser.Skins.ToList()
             };
-            model.Skins = LoggedInUser.Skins.ToList();
             return View(model);
         }
 
@@ -555,6 +555,21 @@ namespace FRTools.Web.Controllers
             catch
             {
                 // TODO: Something went wrong
+            }
+        }
+
+        [Route("dummy", Name = "DummyPreview")]
+        public async Task<ActionResult> GenerateOrFetchDummyPreview(string skinid, int version)
+        {
+            var result = await SkinTester.GenerateOrFetchDummyPreview(skinid, version);
+            if (Request.Headers["If-Modified-Since"] != null && result.Cached)
+                return new HttpStatusCodeResult(HttpStatusCode.NotModified, "Not Modified");
+            else
+            {
+                using (var client = new WebClient())
+                {
+                    return File(await client.DownloadDataTaskAsync(ConfigurationManager.AppSettings["CDNBasePath"] + result.Urls[0]), "image/png");
+                }
             }
         }
     }
