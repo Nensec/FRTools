@@ -4,6 +4,14 @@ using System.Linq;
 
 namespace FRTools.Common
 {
+    public enum PreviewSource
+    {
+        DragonId,
+        Scry,
+        DressingRoom,
+        Dummy
+    }
+
     public class PreviewResult
     {
         public string[] Urls { get; set; }
@@ -13,6 +21,12 @@ namespace FRTools.Common
         public string DragonUrl { get; set; }
         public DragonCache Dragon { get; set; }
         public Skin Skin { get; set; }
+        public PreviewSource PreviewSource { get; set; }
+
+        public PreviewResult(PreviewSource previewSource)
+        {
+            PreviewSource = previewSource;
+        }
 
         private string _errorMessage;
         private object[] _errorMessageArgs;
@@ -20,6 +34,7 @@ namespace FRTools.Common
         {
             _errorMessage = format;
             _errorMessageArgs = args;
+            Success = false;
             return this;
         }
 

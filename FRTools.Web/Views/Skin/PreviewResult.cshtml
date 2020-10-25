@@ -47,20 +47,24 @@
 
             }
         </div>
-        @if (Model.Result.Cached && Model.Result.Dragon.FRDragonId != null)
+        @if (Model.Result.Cached)
         {
             using (Html.BeginRouteForm("PreviewPost", FormMethod.Post, htmlAttributes: new { id = "forceRegen" }))
             {
                 @Html.HiddenFor(model => model.SkinId)
-                if (Model.Result.DragonUrl != null)
+                switch (Model.Result.PreviewSource)
                 {
-                    @Html.Hidden("DressingRoomUrl", Model.Result.DragonUrl)
+                    case FRTools.Common.PreviewSource.DragonId:
+                        @Html.Hidden("DragonId", Model.Result.Dragon.FRDragonId)
+                        break;
+                    case FRTools.Common.PreviewSource.Scry:
+                        @Html.Hidden("ScryerUrl", Model.Result.DragonUrl)
+                        break;
+                    case FRTools.Common.PreviewSource.DressingRoom:
+                        @Html.Hidden("DressingRoomUrl", Model.Result.DragonUrl)
+                        break;
                 }
-                else
-                {
-                    @Html.Hidden("DragonId", Model.Result.Dragon.FRDragonId)
 
-                }
                 @Html.Hidden("Force", true)
             }
             <div class="alert alert-info">

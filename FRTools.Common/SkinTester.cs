@@ -16,20 +16,24 @@ namespace FRTools.Common
     {
         public static async Task<PreviewResult> GenerateOrFetchPreview(string skinId, int dragonId, bool swapSilhouette = false, bool force = false, int? version = null)
         {
+            var result = new PreviewResult(PreviewSource.DragonId) { Forced = force };
             var dragonUrl = FRHelpers.GetDragonImageUrlFromDragonId(dragonId);
             if (dragonUrl.StartsWith(".."))
-                return new PreviewResult { Forced = force }.WithErrorMessage("{0} appears to be an invalid dragon id", dragonId);
+                return result.WithErrorMessage("{0} appears to be an invalid dragon id", dragonId);
 
             var dragon = FRHelpers.ParseUrlForDragon(dragonUrl);
             dragon.FRDragonId = dragonId;
-            return await GenerateOrFetchPreview(skinId, version, dragon, false, swapSilhouette, force);
+            return await GenerateOrFetchPreview(result, skinId, version, dragon, false, swapSilhouette, force);
         }
 
         public static async Task<PreviewResult> GenerateOrFetchPreview(string skinId, string dragonUrl, bool force = false, int? version = null)
         {
+            PreviewResult result = null;
             if (dragonUrl.Contains("/dgen/dressing-room"))
             {
                 // Dressing room link
+                result = new PreviewResult(PreviewSource.DressingRoom) { Forced = force };
+
                 var apparelDragon = FRHelpers.ParseUrlForDragon(dragonUrl);
                 DragonCache dragon;
                 if (dragonUrl.Contains("/dgen/dressing-room/dummy"))
@@ -47,29 +51,33 @@ namespace FRTools.Common
                 }
 
                 if (FRHelpers.IsAncientBreed(dragon.DragonType))
-                    return new PreviewResult { Forced = force, Success = false }.WithErrorMessage("Ancient breeds cannot wear apparal.");
+                    return result.WithErrorMessage("Ancient breeds cannot wear apparal.");
 
                 dragon.Apparel = apparelDragon.Apparel;
                 if (dragon.GetApparel().Length == 0)
-                    return new PreviewResult { Forced = force, Success = false }.WithErrorMessage("This dressing room URL contains no apparel.");
+                    return result.WithErrorMessage("This dressing room URL contains no apparel.");
 
-                return await GenerateOrFetchPreview(skinId, version, dragon, true, false, force);
+                result = await GenerateOrFetchPreview(result, skinId, version, dragon, true, false, force);
             }
             else if (dragonUrl.Contains("dgen/preview/dragon"))
             {
                 // Scry image link
+                result = new PreviewResult(PreviewSource.Scry) { Forced = force };
+
                 var dragon = FRHelpers.ParseUrlForDragon(dragonUrl);
-                return await GenerateOrFetchPreview(skinId, version, dragon, false, false, force);
+                result = await GenerateOrFetchPreview(result, skinId, version, dragon, false, false, force);
             }
-            return new PreviewResult { Forced = force, Success = false }.WithErrorMessage("The URL provided is not valid.");
+            else
+                return result.WithErrorMessage("The URL provided is not valid.");
+
+            result.DragonUrl = dragonUrl;
+            return result;
         }
 
-        public static async Task<PreviewResult> GenerateOrFetchDummyPreview(string skinId, int version) => await GenerateOrFetchPreview(skinId, version, null, false, false, false);
+        public static async Task<PreviewResult> GenerateOrFetchDummyPreview(string skinId, int version) => await GenerateOrFetchPreview(new PreviewResult(PreviewSource.Dummy), skinId, version, null, false, false, false);
 
-        private static async Task<PreviewResult> GenerateOrFetchPreview(string skinId, int? version, DragonCache dragon, bool isDressingRoom, bool swapSilhouette, bool force)
+        private static async Task<PreviewResult> GenerateOrFetchPreview(PreviewResult result, string skinId, int? version, DragonCache dragon, bool isDressingRoom, bool swapSilhouette, bool force)
         {
-            var result = new PreviewResult { Forced = force };
-
             using (var ctx = new DataContext())
             {
                 Skin skin;
@@ -80,7 +88,7 @@ namespace FRTools.Common
                     skin = skins.FirstOrDefault(x => x.Version == version);
 
                 if (skin == null)
-                    return new PreviewResult { Forced = force, Success = false }.WithErrorMessage("Skin not found.");
+                    return result.WithErrorMessage("Skin not found.");
 
                 result.Skin = skin;
 
@@ -91,7 +99,7 @@ namespace FRTools.Common
 
                 if (dragon.Age == Age.Hatchling)
                 {
-                    return new PreviewResult { Forced = force, Success = false }.WithErrorMessage("Skins can only be previewed on adult dragons.");
+                    return result.WithErrorMessage("Skins can only be previewed on adult dragons.");
                 }
 
                 if (swapSilhouette)
@@ -102,10 +110,10 @@ namespace FRTools.Common
                 }
 
                 if (skin.DragonType != (int)dragon.DragonType)
-                    return new PreviewResult { Forced = force, Success = false }.WithErrorMessage("This skin is meant for a {0} {1}, the dragon you provided is a {2} {3}.", (DragonType)skin.DragonType, (Gender)skin.GenderType, dragon.DragonType, dragon.Gender);
+                    return result.WithErrorMessage("This skin is meant for a {0} {1}, the dragon you provided is a {2} {3}.", (DragonType)skin.DragonType, (Gender)skin.GenderType, dragon.DragonType, dragon.Gender);
 
                 if (skin.GenderType != (int)dragon.Gender)
-                    return new PreviewResult { Forced = force, Success = false }.WithErrorMessage("This skin is meant for a {0}, the dragon you provided is a {1}.", (Gender)skin.GenderType, dragon.Gender);
+                    return result.WithErrorMessage("This skin is meant for a {0}, the dragon you provided is a {1}.", (Gender)skin.GenderType, dragon.Gender);
             }
 
             Bitmap dragonImage = null;
@@ -120,8 +128,7 @@ namespace FRTools.Common
                 }
                 catch (Exception ex)
                 {
-                    result.WithErrorMessage(ex.ToString());
-                    return result;
+                    return result.WithErrorMessage(ex.ToString());
                 }
 
                 Image skinImage;
