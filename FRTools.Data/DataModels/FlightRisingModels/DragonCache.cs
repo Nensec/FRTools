@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -116,6 +117,6 @@ namespace FRTools.Data.DataModels.FlightRisingModels
         public Enum GetTertGene() => (Enum)Enum.Parse(DragonType == DragonType.Gaoler ? typeof(GaolerTertGene) : typeof(TertiaryGene), TertiaryGene.ToString());
 
         [NotMapped]
-        public string PreviewUrl { get; set; }
+        public Dictionary<string, string> PreviewUrls { get; } = new Dictionary<string, string>();
     }
 }

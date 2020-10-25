@@ -119,7 +119,8 @@ namespace FRTools.Common
             Bitmap dragonImage = null;
 
             var azureImagePreviewPath = $@"previews\{skinId}\{(version == 1 ? "" : $@"{version}\")}{dragon.FRDragonId?.ToString() ?? dragon.ToString()}.png";
-            string previewUrl = dragon.PreviewUrl;
+            dragon.PreviewUrls.TryGetValue(skinId, out var previewUrl);
+
             if (force || (previewUrl == null && !new AzureImageService().Exists(azureImagePreviewPath, out previewUrl)))
             {
                 try
@@ -184,17 +185,16 @@ namespace FRTools.Common
                     dragonImage.Save(saveImageStream, ImageFormat.Png);
                     saveImageStream.Position = 0;
 
-                    dragon.PreviewUrl = await new AzureImageService().WriteImage(azureImagePreviewPath, saveImageStream);
+                    dragon.PreviewUrls.Add(skinId, previewUrl = await new AzureImageService().WriteImage(azureImagePreviewPath, saveImageStream));
                 }
             }
             else
             {
                 result.Cached = true;
-                dragon.PreviewUrl = previewUrl;
             }
 
-            result.Urls = new[] { dragon.PreviewUrl };
-
+            result.Urls = new[] { previewUrl };
+    
             async Task<string> GenerateApparelPreview(Bitmap invisibleDragon, string cacheUrl)
             {
                 if (dragonImage == null)
@@ -245,7 +245,7 @@ namespace FRTools.Common
                 }
             }
             if (apparelPreviewUrl != null)
-                result.Urls = new[] { dragon.PreviewUrl, apparelPreviewUrl };
+                result.Urls = new[] { previewUrl, apparelPreviewUrl };
 
             result.Success = true;
             return result;
