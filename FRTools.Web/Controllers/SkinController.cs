@@ -112,7 +112,13 @@ namespace FRTools.Web.Controllers
 
             var user = DataContext.Users.Find(loggedInUserId);
 
-            foreach (var url in previewResult.Urls.Where(url => !DataContext.Previews.Where(x => x.Skin.Id == previewResult.Skin.Id).Any(x => x.Requestor.Id == user.Id && x.PreviewImage == url)))
+            Func<string, bool> existing;
+            if (user == null)
+                existing = url => !DataContext.Previews.Where(x => x.Skin.Id == previewResult.Skin.Id).Any(x => x.PreviewImage == url);
+            else
+                existing = url => !DataContext.Previews.Where(x => x.Skin.Id == previewResult.Skin.Id).Any(x => x.Requestor.Id == user.Id && x.PreviewImage == url);
+
+            foreach (var url in previewResult.Urls.Where(existing))
             {
                 DataContext.Previews.Add(new Preview
                 {
