@@ -16,7 +16,7 @@
         <h4>Upload your skin</h4>
     </div>
     <div class="panel-body" style="min-height:370px">
-
+        <p>Selecting a file, even without actually uploading, will give you some useful information such as the coverage % and an indication if there is anything outside the dragon</p>
         @using (Html.BeginRouteForm("UploadPost", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
             @Html.AntiForgeryToken()
@@ -102,6 +102,7 @@
                             <div id="CoverageContainer" style="display:none;">
                                 <p class="text-center">
                                     Coverage: <b><span id="Coverage"></span>%</b>
+                                    Outside: <b><span id="Outside"></span>%</b>
                                 </p>
                             </div>
                         </div>
@@ -185,21 +186,33 @@
         skinContext.clearRect(0, 0, 350, 350);
         skinContext.drawImage(skinImage, 0, 0, 350, 350);
 
-        var alphaSum = 0;
-        var pixelCount = 0;
+        var coveringAlphaSum = 0;
+        var coveringPixelCount = 0;
+        var outsideAlphaSum = 0;
+        var outsidePixelCount = 0;
 
         var skinData = skinContext.getImageData(0, 0, 350, 350).data;
         var dragonData = dragonContext.getImageData(0, 0, 350, 350).data;
 
         for (var i = 0, n = skinData.length; i < n; i += 4) {
             if (dragonData[i + 3] > 95) {
-                alphaSum += skinData[i + 3];
-                pixelCount++;
+                coveringAlphaSum += skinData[i + 3];
+                coveringPixelCount++;
+            }
+            else {
+                if (dragonData[i + 3] == 0) {
+                    outsideAlphaSum += skinData[i + 3];
+                    outsidePixelCount++;
+                }
             }
         }
 
-        var coverage = (alphaSum / pixelCount / 255 * 100).toFixed(2);
-        $('#CoverageContainer').show().find('#Coverage').html(coverage);
+        var coverage = (coveringAlphaSum / coveringPixelCount / 255 * 100).toFixed(2);
+        var outside = (outsideAlphaSum / outsidePixelCount / 255 * 100).toFixed(2);
+
+        var coveringContainer = $('#CoverageContainer').show();
+        coveringContainer.find('#Coverage').html(coverage);
+        coveringContainer.find('#Outside').html(outside);
     };
 </script>
 
