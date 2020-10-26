@@ -118,7 +118,7 @@ namespace FRTools.Common
 
             Bitmap dragonImage = null;
 
-            var azureImagePreviewPath = $@"previews\{skinId}\{(version == 1 ? "" : $@"{version}\")}{dragon.FRDragonId?.ToString() ?? dragon.ToString()}.png";
+            var azureImagePreviewPath = $@"previews\{skinId}\{(version == 1 ? "" : $@"{version}\")}{dragon.FRDragonId?.ToString() ?? dragon.ToString()}_{dragon.Gender}.png";
             dragon.PreviewUrls.TryGetValue(skinId, out var previewUrl);
 
             if (force || (previewUrl == null && !new AzureImageService().Exists(azureImagePreviewPath, out previewUrl)))
@@ -219,7 +219,7 @@ namespace FRTools.Common
             if (isDressingRoom)
             {
                 var apparelIds = dragon.GetApparel();
-                var cacheUrl = $@"previews\{skinId}\{dragon.FRDragonId?.ToString() ?? dragon.ToString()}_apparel.png";
+                var cacheUrl = $@"previews\{skinId}\{dragon.FRDragonId?.ToString() ?? dragon.ToString()}_{dragon.Gender}_apparel.png";
                 if (force || !new AzureImageService().Exists(cacheUrl, out apparelPreviewUrl))
                 {
                     string dressingRoomUrl;
