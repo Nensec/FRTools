@@ -1,0 +1,23 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+@section meta{
+    <meta property="og:title" content="FR Tools" />
+    <meta property="og:image" content="/Content/frtools_embed.png" />
+    <meta property="og:url" content="@Url.RouteUrl("Contact")" />
+    <meta property="og:description" content="This site will host various tools aimed at making your Flight Rising experience better!" />
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Contact info</h4>
+            </div>
+            <div class="panel-body">
+                @Html.Partial("_Contact")
+            </div>
+        </div>
+    </div>
+</div>

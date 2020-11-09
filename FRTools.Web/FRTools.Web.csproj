@@ -431,6 +431,9 @@
     <Content Include="Views\Discord\_CommandHelp.cshtml" />
     <Content Include="Views\Profile\Edit.cshtml" />
     <Content Include="Views\Skin\ManageSkins.cshtml" />
+    <Content Include="Views\Home\Privacy.cshtml" />
+    <Content Include="Views\Home\Contact.cshtml" />
+    <Content Include="Views\Home\_Contact.cshtml" />
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
