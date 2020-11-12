@@ -14,7 +14,7 @@ namespace FRTools.Web.Controllers
         protected ActionResult RedirectToLocal(string returnUrl) => Url.IsLocalUrl(returnUrl) ? Redirect(returnUrl) : (ActionResult)RedirectToAction("Index", "Home");
 
         protected DataContext DataContext { get; } = new DataContext();
-        protected User LoggedInUser => _loggedInUser ?? (_loggedInUser = GetLoggedInUser());
+        public User LoggedInUser => _loggedInUser ?? (_loggedInUser = GetLoggedInUser());
 
         private User GetLoggedInUser()
         {

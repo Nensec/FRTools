@@ -1,7 +1,6 @@
 ﻿/* Set padding to keep content from hitting the edges */
-.body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+.container {
+    position: relative;
 }
 
 .container-wrapper {
@@ -217,4 +216,12 @@ input[type=file] {
 
 .tooltip.bottom .tooltip-arrow {
     border-bottom-color: #505050 !important;
+}
+
+#ad {
+    width:120px;
+    height:600px;
+    position:absolute;
+    top:0;
+    right:-120px;
 }

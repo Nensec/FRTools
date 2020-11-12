@@ -129,51 +129,57 @@
         </div>
     </div>
     <div class="container-wrapper">
-        <div class="container body-content">
-            <div class="alert alert-info" role="alert">
-                A new update is now live regarding user profiles. A few things have changed and some things have moved, read all about it <a href="https://frtools.tumblr.com/post/630827798361194496/profile-update">here!</a>
+        <div class="container">
+            <div class="body-content">
+                <div class="alert alert-info" role="alert">
+                    A new update is now live regarding user profiles. A few things have changed and some things have moved, read all about it <a href="https://frtools.tumblr.com/post/630827798361194496/profile-update">here!</a>
+                </div>
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        @Html.Raw(TempData["Error"])
+                    </div>
+                }
+                @if (TempData["Warning"] != null)
+                {
+                    <div class="alert alert-warning alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        @Html.Raw(TempData["Warning"])
+                    </div>
+                }
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        @Html.Raw(TempData["Success"])
+                    </div>
+                }
+                @if (TempData["Info"] != null)
+                {
+                    <div class="alert alert-info alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        @Html.Raw(TempData["Info"])
+                    </div>
+                }
+                @RenderBody()
+                <hr />
+                <footer>
+                    <div class="pull-left">
+                        <p>Dragons &copy; - Stormlight Workshop LLC</p>
+                        <p>Skins &copy; - respective owners</p>
+                        <p>Code and idea &copy; @DateTime.Now.Year - Perry van Velzen</p>
+                        <p><a href="@Url.RouteUrl("Privacy")">View privacy policy</a> - <a href="@Url.RouteUrl("Contact")">View contact info</a></p>
+                    </div>
+                    <div class="pull-right">
+                        <a href='https://ko-fi.com/X8X6RLCS' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+                    </div>
+                </footer>
             </div>
-            @if (TempData["Error"] != null)
+            @if (Request.IsAuthenticated && (ViewContext.Controller as FRTools.Web.Controllers.BaseController).LoggedInUser.ProfileSettings.ShowAds)
             {
-                <div class="alert alert-danger alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    @Html.Raw(TempData["Error"])
-                </div>
+                <div id="ad" class="hidden-sm hidden-xs"></div>
             }
-            @if (TempData["Warning"] != null)
-            {
-                <div class="alert alert-warning alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    @Html.Raw(TempData["Warning"])
-                </div>
-            }
-            @if (TempData["Success"] != null)
-            {
-                <div class="alert alert-success alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    @Html.Raw(TempData["Success"])
-                </div>
-            }
-            @if (TempData["Info"] != null)
-            {
-                <div class="alert alert-info alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    @Html.Raw(TempData["Info"])
-                </div>
-            }
-            @RenderBody()
-            <hr />
-            <footer>
-                <div class="pull-left">
-                    <p>Dragons &copy; - Stormlight Workshop LLC</p>
-                    <p>Skins &copy; - respective owners</p>
-                    <p>Code and idea &copy; @DateTime.Now.Year - Perry van Velzen</p>
-                    <p><a href="@Url.RouteUrl("Privacy")">View privacy policy</a> - <a href="@Url.RouteUrl("Contact")">View contact info</a></p>
-                </div>
-                <div class="pull-right">
-                    <a href='https://ko-fi.com/X8X6RLCS' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
-                </div>
-            </footer>
         </div>
     </div>
 
