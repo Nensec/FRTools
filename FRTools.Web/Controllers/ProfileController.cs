@@ -71,7 +71,8 @@ namespace FRTools.Web.Controllers
                 ShowPingListsOnProfile = LoggedInUser.ProfileSettings.ShowPingListsOnProfile,
                 ShowFRLinkStatus = LoggedInUser.ProfileSettings.ShowFRLinkStatus,
                 ShowPreviewsOnProfile = LoggedInUser.ProfileSettings.ShowPreviewsOnProfile,
-                ShowSkinsOnProfile = LoggedInUser.ProfileSettings.ShowSkinsOnProfile
+                ShowSkinsOnProfile = LoggedInUser.ProfileSettings.ShowSkinsOnProfile,
+                ShowAds = LoggedInUser.ProfileSettings.ShowAds
             };
             return View(vm);
         }
@@ -93,6 +94,7 @@ namespace FRTools.Web.Controllers
                 LoggedInUser.ProfileSettings.ShowPingListsOnProfile = model.ShowPingListsOnProfile;
                 LoggedInUser.ProfileSettings.ShowPreviewsOnProfile = model.ShowPreviewsOnProfile;
                 LoggedInUser.ProfileSettings.ShowSkinsOnProfile = model.ShowSkinsOnProfile;
+                LoggedInUser.ProfileSettings.ShowAds = model.ShowAds;
                 DataContext.SaveChanges();
                 AddSuccessNotification("Your profile has been updated!");
             }

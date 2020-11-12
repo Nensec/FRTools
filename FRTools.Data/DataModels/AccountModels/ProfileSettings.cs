@@ -14,6 +14,7 @@
         public bool DefaultShowSkinsInBrowse { get; set; } = true;
         public bool DefaultSkinsArePublic { get; set; } = true;
         public bool ShowFRLinkStatus { get; set; } = true;
+        public bool ShowAds { get; set; } = true;
 
         public virtual User User { get; set; }
     }

@@ -19,8 +19,11 @@ namespace FRTools.Data
         Skydancer,
         Bogsneak,
         Gaoler = 17,
-        Banescale
+        Banescale,
+        Veilspun
     }
+
+    // $('select[name="tertgene"] option[style*="display: block"]').map(function() { return this.outerHTML; })
 
     public enum GaolerBodyGene
     {
@@ -79,6 +82,7 @@ namespace FRTools.Data
 
     public enum BanescaleBodyGene
     {
+        Basic = 0,
         Cherub = 43,
         Jaguar,
         Pinstripe,
@@ -97,6 +101,7 @@ namespace FRTools.Data
 
     public enum BanescaleWingGene
     {
+        Basic = 0,
         Rosette = 44,
         Trail,
         Stripes,
@@ -112,6 +117,7 @@ namespace FRTools.Data
 
     public enum BanescaleTertGene
     {
+        Basic = 0,
         Underbelly = 31,
         Blossom = 36,
         Trimmings = 39,
@@ -127,6 +133,60 @@ namespace FRTools.Data
         Porcupine,
         Crackle,
         Plumage,
+    }
+
+    public enum VeilspunBodyGene
+    {
+        Basic = 0,
+        Fade = 60,
+        Laced,
+        Tapir,
+        Vipera,
+        Jupiter,
+        Starmap,
+        Stitched,
+        Skink,
+        Wasp,
+        Bright,
+        Arc,
+        Shell,
+        Sphinxmoth
+    }
+
+    public enum VeilspunWingGene
+    {
+        Basic = 0,
+        Bee = 60,
+        Blend,
+        Edged,
+        Striation,
+        Hypnotic,
+        Saturn,
+        Constellation,
+        Patchwork,
+        Spinner,
+        Vivid,
+        Loop,
+        Web,
+        Hawkmoth
+    }
+
+    public enum VeilspunTertGene
+    {
+        Basic = 0,
+        Capsule = 56,
+        Runes,
+        Crackle,
+        Okapi,
+        Peacock,
+        Firefly,
+        Opal,
+        Branches,
+        Flecks,
+        Beetle,
+        Diaphanous,
+        Mop,
+        Thorns
     }
 
     public enum Gender

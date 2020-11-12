@@ -204,6 +204,10 @@
     <Compile Include="Migrations\202010181242050_Save DragonID in cache.designer.cs">
       <DependentUpon>202010181242050_Save DragonID in cache.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202011112216037_Ads.cs" />
+    <Compile Include="Migrations\202011112216037_Ads.designer.cs">
+      <DependentUpon>202011112216037_Ads.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -294,6 +298,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202010181242050_Save DragonID in cache.resx">
       <DependentUpon>202010181242050_Save DragonID in cache.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202011112216037_Ads.resx">
+      <DependentUpon>202011112216037_Ads.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -44,13 +44,16 @@ namespace FRTools.Data.DataModels.FlightRisingModels
                 dragon.EyeType = (EyeType)int.Parse(split[3]);
             if (split.Length > 4)
             {
-                switch(dragon.DragonType)
+                switch (dragon.DragonType)
                 {
                     case DragonType.Gaoler:
                         dragon.BodyGene = (int)Enum.Parse(typeof(GaolerBodyGene), split[4]);
                         break;
                     case DragonType.Banescale:
                         dragon.BodyGene = (int)Enum.Parse(typeof(BanescaleBodyGene), split[4]);
+                        break;
+                    case DragonType.Veilspun:
+                        dragon.BodyGene = (int)Enum.Parse(typeof(VeilspunBodyGene), split[4]);
                         break;
                     default:
                         dragon.BodyGene = (int)Enum.Parse(typeof(BodyGene), split[4]);
@@ -66,6 +69,9 @@ namespace FRTools.Data.DataModels.FlightRisingModels
                     case DragonType.Banescale:
                         dragon.WingGene = (int)Enum.Parse(typeof(BanescaleWingGene), split[5]);
                         break;
+                    case DragonType.Veilspun:
+                        dragon.WingGene = (int)Enum.Parse(typeof(VeilspunWingGene), split[5]);
+                        break;
                     default:
                         dragon.WingGene = (int)Enum.Parse(typeof(WingGene), split[5]);
                         break;
@@ -78,6 +84,9 @@ namespace FRTools.Data.DataModels.FlightRisingModels
                         break;
                     case DragonType.Banescale:
                         dragon.TertiaryGene = (int)Enum.Parse(typeof(BanescaleTertGene), split[6]);
+                        break;
+                    case DragonType.Veilspun:
+                        dragon.TertiaryGene = (int)Enum.Parse(typeof(VeilspunTertGene), split[5]);
                         break;
                     default:
                         dragon.TertiaryGene = (int)Enum.Parse(typeof(TertiaryGene), split[6]);
