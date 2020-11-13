@@ -28,7 +28,7 @@ namespace FRTools.Common
 
         public static bool IsAncientBreed(DragonType type) => type == DragonType.Gaoler || type == DragonType.Banescale || type == DragonType.Veilspun;
 
-        private static Dictionary<string, DragonCache> Cache { get; } = new Dictionary<string, DragonCache>();
+        private static Dictionary<string, DragonCache> Cache { get; } = new Dictionary<string, DragonCache>(StringComparer.InvariantCultureIgnoreCase);
 
         public static async Task<Bitmap> GetInvisibleDressingRoomDragon(DragonCache dragon)
         {

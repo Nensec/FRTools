@@ -176,7 +176,7 @@
                     </div>
                 </footer>
             </div>
-            @if (Request.IsAuthenticated && (ViewContext.Controller as FRTools.Web.Controllers.BaseController).LoggedInUser.ProfileSettings.ShowAds)
+            @if (Request.IsAuthenticated && (ViewContext.Controller as FRTools.Web.Controllers.BaseController).LoggedInUser?.ProfileSettings.ShowAds == true)
             {
                 <div id="ad" class="hidden-sm hidden-xs"></div>
             }
