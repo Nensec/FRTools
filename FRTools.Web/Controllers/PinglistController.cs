@@ -161,7 +161,7 @@ namespace FRTools.Web.Controllers
                 ownerModel.AvailableCategories.Add(new PinglistCategory { Id = -1 });
                 ownerModel.AvailableCategories.AddRange(DataContext.PinglistCategories.Where(x => x.Owner.Id == ownerModel.Owner.Id).ToList());
                 ownerModel.PinglistCategory = list.PinglistCategory;
-                ownerModel.ShareUrl = await BitlyHelper.TryGenerateUrl(Url.RouteUrl("PinglistDirect", new { listId = model.ListId }, "https"));
+                ownerModel.ShareUrl = list.ShareUrl;
                 ownerModel.FinishedJobs = JobManager.GetUnconfirmedFinishedJobs(model.ListId);
                 var activeJobs = JobManager.GetActiveJobs(list.GeneratedId.ToString());
                 foreach (var job in activeJobs)

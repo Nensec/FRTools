@@ -208,6 +208,10 @@
     <Compile Include="Migrations\202011112216037_Ads.designer.cs">
       <DependentUpon>202011112216037_Ads.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202011161733082_Share URL.cs" />
+    <Compile Include="Migrations\202011161733082_Share URL.designer.cs">
+      <DependentUpon>202011161733082_Share URL.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -301,6 +305,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202011112216037_Ads.resx">
       <DependentUpon>202011112216037_Ads.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202011161733082_Share URL.resx">
+      <DependentUpon>202011161733082_Share URL.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

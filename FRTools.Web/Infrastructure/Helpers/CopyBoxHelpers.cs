@@ -6,12 +6,12 @@ namespace FRTools.Web.Infrastructure.Helpers
 {
     public static class TextBoxExtentions
     {
-        public static MvcHtmlString CopyTextBoxFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression)
+        public static MvcHtmlString CopyTextBoxFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, string type = null, string id = null)
         {
-            return CopyTextBox(htmlHelper, ModelMetadata.FromLambdaExpression(expression, htmlHelper.ViewData).Model.ToString(), ExpressionHelper.GetExpressionText(expression));
+            return CopyTextBox(htmlHelper, ModelMetadata.FromLambdaExpression(expression, htmlHelper.ViewData).Model.ToString(), ExpressionHelper.GetExpressionText(expression), type, id);
         }
 
-        public static MvcHtmlString CopyTextBox(this HtmlHelper htmlHelper, string text, string name)
+        public static MvcHtmlString CopyTextBox(this HtmlHelper htmlHelper, string text, string name, string type = null, string id = null)
         {
             var fullName = htmlHelper.ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName(name);
 
@@ -31,8 +31,8 @@ namespace FRTools.Web.Infrastructure.Helpers
             var buttonTag = new TagBuilder("button");
             buttonTag.MergeAttribute("class", "btn btn-success");
             buttonTag.MergeAttribute("type", "button");
-            buttonTag.MergeAttribute("onclick", $"document.getElementById('{inputTag.Attributes["id"]}').select(); document.execCommand('copy'); this.innerHTML = 'Copied!'");
-            buttonTag.InnerHtml = "Copy!";
+            buttonTag.MergeAttribute("onclick", $"copyOrGenerateUrl(document.getElementById('{inputTag.Attributes["id"]}'), this, '{type}', '{id}')");
+            buttonTag.InnerHtml = text == null ? "Generate!" : "Copy!";
 
             spanTag.InnerHtml = buttonTag.ToString();
             outerTag.InnerHtml = inputTag.ToString() + spanTag.ToString();

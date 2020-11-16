@@ -208,8 +208,7 @@ namespace FRTools.Web.Controllers
                 {
                     SkinId = randomizedId,
                     SecretKey = secretKey,
-                    PreviewUrl = (await SkinTester.GenerateOrFetchDummyPreview(randomizedId, skin.Version)).Urls[0],
-                    ShareUrl = await BitlyHelper.TryGenerateUrl(Url.RouteUrl("Preview", new { SkinId = randomizedId }, "https"))
+                    PreviewImageUrl = (await SkinTester.GenerateOrFetchDummyPreview(randomizedId, skin.Version)).Urls[0]
                 });
             }
             catch
@@ -250,8 +249,9 @@ namespace FRTools.Web.Controllers
                 return View(new ManageModelViewModel
                 {
                     Skin = skin,
-                    PreviewUrl = (await SkinTester.GenerateOrFetchDummyPreview(skin.GeneratedId, skin.Version)).Urls[0],
-                    ShareUrl = await BitlyHelper.TryGenerateUrl(Url.RouteUrl("Preview", new { SkinId = skin.GeneratedId }, "https"))
+                    PreviewImageUrl = (await SkinTester.GenerateOrFetchDummyPreview(skin.GeneratedId, skin.Version)).Urls[0],
+                    PreviewUrl = Url.RouteUrl("Preview", new { SkinId = skin.GeneratedId }, "https"),
+                    ShareUrl = skin.ShareUrl
                 });
             }
         }
@@ -302,7 +302,7 @@ namespace FRTools.Web.Controllers
         }
 
         [Route("manage", Name = "ManageSkins")]
-        public async Task<ActionResult> ManageSkins()
+        public ActionResult ManageSkins()
         {
             var model = new ManageSkinsViewModel
             {

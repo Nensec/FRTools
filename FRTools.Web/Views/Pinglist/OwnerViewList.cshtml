@@ -81,10 +81,18 @@
                     {
                         <div class="form-group">
                             <label class="col-md-3 control-label" for="PinglistLink">
-                                Your link
+                                Your link <span class="glyphicon glyphicon-alert text-danger" data-toggle="tooltip" title="This link will not work on the Flight Rising forums due to their censorship of off-site tools."></span>
                             </label>
                             <div class="col-md-9">
-                                @Html.CopyTextBox(Model.ShareUrl, "PinglistLink")
+                                @Html.CopyTextBox(Url.RouteUrl("PinglistDirect", new { listId = Model.ListId }, "https"), "PinglistLink", "pinglist", Model.ListId)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="PinglistShareLink">
+                                Share link <span class="glyphicon glyphicon-alert text-warning" data-toggle="tooltip" title="Generating a share link allows you to post links on the Flight Rising forums."></span>
+                            </label>
+                            <div class="col-md-9">
+                                @Html.CopyTextBox(Model.ShareUrl, "PinglistShareLink", "pinglist", Model.ListId)
                             </div>
                         </div>
                         <hr />

@@ -37,7 +37,7 @@ namespace FRTools.Web.Models
     {
         public string SkinId { get; set; }
         public string SecretKey { get; set; }
-        public string PreviewUrl { get; set; }
+        public string PreviewImageUrl { get; set; }
         public string ShareUrl { get; set; }
     }
 
@@ -113,6 +113,7 @@ namespace FRTools.Web.Models
     public class ManageModelViewModel : BaseSkinModel
     {
         public Skin Skin { get; set; }
+        public string PreviewImageUrl { get; set; }
         public string PreviewUrl { get; set; }
         public string ShareUrl { get; set; }
     }

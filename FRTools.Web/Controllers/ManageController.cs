@@ -1,10 +1,12 @@
 ﻿using FRTools.Common;
 using FRTools.Data;
 using FRTools.Data.DataModels;
+using FRTools.Web.Infrastructure;
 using FRTools.Web.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
+using System.Linq;
 using System.Net;
 using System.Runtime.Caching;
 using System.Threading.Tasks;
@@ -95,6 +97,35 @@ namespace FRTools.Web.Controllers
                     AddErrorNotification("Verify token expired, please try again!");
                     return RedirectToRoute("VerifyFR");
                 }
+            }
+        }
+
+        [Route("createShareUrl", Name = "GetShareUrl")]
+        
+        public async Task<ActionResult> GetShareUrl(string type, string id)
+        {
+            switch (type)
+            {
+                case "skin":
+                    var skin = DataContext.Skins.FirstOrDefault(x => x.GeneratedId == id);
+                    if (skin != null)
+                    {
+                        skin.ShareUrl = await BitlyHelper.TryGenerateUrl(Url.RouteUrl("Preview", new { skinId = id }, "https"));
+                        DataContext.SaveChanges();
+                        return Json(skin.ShareUrl, JsonRequestBehavior.AllowGet);
+                    }
+                    goto default;
+                case "pinglist":
+                    var pinglist = DataContext.Pinglists.FirstOrDefault(x => x.GeneratedId == id);
+                    if(pinglist != null)
+                    {
+                        pinglist.ShareUrl = await BitlyHelper.TryGenerateUrl(Url.RouteUrl("PinglistDirect", new { listId = id }, "https"));
+                        DataContext.SaveChanges();
+                        return Json(pinglist.ShareUrl, JsonRequestBehavior.AllowGet);
+                    }
+                    goto default;
+                default:
+                    return HttpNotFound();
             }
         }
     }

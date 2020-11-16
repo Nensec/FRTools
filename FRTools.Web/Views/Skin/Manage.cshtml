@@ -44,7 +44,7 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="text-center">
-                    <img class="dragonImage" src="@(Model.CDNBasePath + Model.PreviewUrl)" />
+                    <img class="dragonImage" src="@(Model.CDNBasePath + Model.PreviewImageUrl)" />
                 </div>
                 <div>
                     <p class="text-center">
@@ -64,10 +64,18 @@
                 <div class="form-horizontal">
                     <div class="form-group">
                         <label style="padding-top:7px; text-align:left" class="col-md-4 control-label" for="PreviewLink">
-                            Dragon preview
+                            Your link <span class="glyphicon glyphicon-alert text-danger" data-toggle="tooltip" title="This link will not work on the Flight Rising forums due to their censorship of off-site tools."></span>
                         </label>
                         <div class="col-md-8">
-                            @Html.CopyTextBox(Model.ShareUrl, "PreviewLink")
+                            @Html.CopyTextBox(Url.RouteUrl("Preview", new { skinId = Model.Skin.GeneratedId }, "https"), "PreviewLink", "skin", Model.Skin.GeneratedId)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label style="padding-top:7px; text-align:left" class="col-md-4 control-label" for="PreviewShareLink">
+                            Share link <span class="glyphicon glyphicon-alert text-warning" data-toggle="tooltip" title="Generating a share link allows you to post links on the Flight Rising forums."></span>
+                        </label>
+                        <div class="col-md-8">
+                            @Html.CopyTextBox(Model.ShareUrl, "PreviewShareLink", "skin", Model.Skin.GeneratedId)
                         </div>
                     </div>
                 </div>
@@ -79,12 +87,12 @@
             </div>
             <div class="panel-body">
                 @if (Model.Skin.Previews.Any())
-                {
+                                {
                     <div class="col-sm-2" style="padding:0;">
                         <!-- Indicators -->
                         <ol class="carousel-indicators">
                             @foreach (var preview in previews)
-                            {
+                                {
                                 <li data-item="@(preview.Item2)" data-target="#carousel-previews" data-slide-to="@(preview.Item2)" class="@(preview.Item2 == 0 ? "activeIndicator" : "")">
                                     <div>
                                     </div>
@@ -98,8 +106,8 @@
                             <!-- Wrapper for slides -->
                             <div class="carousel-inner" role="listbox">
                                 @foreach (var preview in previews)
-                                {
-                                    var dragon = DragonCache.FromString(preview.Item1.DragonData);
+                            {
+                                var dragon = DragonCache.FromString(preview.Item1.DragonData);
                                     <div class="item @(preview.Item2 == 0 ? "active" : "")" data-item="@(preview.Item2)">
                                         <div class="row">
                                             <img id="Preview@(preview.Item2)" class="center-block" src="@(Model.CDNBasePath + preview.Item1.PreviewImage)" data-toggle="popover">
@@ -115,14 +123,14 @@
                                         </div>
                                         <div class="text-center">
                                             @if (preview.Item1.Version != Model.Skin.Version)
-                                            {
+                            {
                                                 <p>
                                                     <i>Older version skin: <b>v@(preview.Item1.Version)</b></i>
                                                 </p>
                                             }
                                             <b>@(preview.Item1.DragonId != null ? "Real dragon" : "Scry dragon")</b>
                                             @if (preview.Item1.ScryerUrl != null)
-                                            {
+                            {
                                                 @: - <a href="@($"https://www1.flightrising.com/scrying/predict?breed={(int)dragon.DragonType}&gender={(int)dragon.Gender}&age={(int)dragon.Age}&bodygene={dragon.BodyGene}&body={(int)dragon.BodyColor}&winggene={dragon.WingGene}&wings={(int)dragon.WingColor}&tertgene={dragon.TertiaryGene}&tert={(int)dragon.TertiaryColor}&element={(int)dragon.Element}&eyetype={(int)dragon.EyeType}")" target="_blank">Visit scrying workshop</a>
                                             }
                                         </div>

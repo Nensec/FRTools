@@ -11,29 +11,40 @@
                 <h4>Upload success!</h4>
             </div>
             <div class="panel-body">
-                <div class="alert alert-info">
-                    Hey you, artist you! I need your help! People who preview with <b>Primal</b> or <b>Glowing</b> eyes get really ugly results because the eye masks are bad. You can help!<br />
-                    Click <a href="https://github.com/Nensec/FRTools/issues/9">here</a> to go to the Github issue page where I am keeping track of eye mask updates!
-                </div>
                 <h4>Your skin's URLs</h4>
                 <hr />
-                <p class="col-md-12">
+                <p>
                     This URL is what you share with others to preview your skin.
                 </p>
-                <div class="col-md-12">
-                    @Html.CopyTextBox(Model.ShareUrl, "PreviewLink")
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label style="padding-top:7px; text-align:left" class="col-md-4 control-label" for="PreviewLink">
+                            Your link <span class="glyphicon glyphicon-alert text-danger" data-toggle="tooltip" title="This link will not work on the Flight Rising forums due to their censorship of off-site tools."></span>
+                        </label>
+                        <div class="col-md-8">
+                            @Html.CopyTextBox(Url.RouteUrl("Preview", new { skinId = Model.SkinId }, "https"), "PreviewLink", "skin", Model.SkinId)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label style="padding-top:7px; text-align:left" class="col-md-4 control-label" for="PreviewShareLink">
+                            Share link <span class="glyphicon glyphicon-alert text-warning" data-toggle="tooltip" title="Generating a share link allows you to post links on the Flight Rising forums."></span>
+                        </label>
+                        <div class="col-md-8">
+                            @Html.CopyTextBox(Model.ShareUrl, "PreviewShareLink", "skin", Model.SkinId)
+                        </div>
+                    </div>
                 </div>
 
                 @if (Request.IsAuthenticated)
                 {
-                    <div class="col-md-12">
+                    <div>
                         <hr />
-                        <p>Since you are logged in you can manage this skin from your management page: @Html.RouteLink("Here", "ManageAccount")</p>
+                        <p>Since you are logged in you can manage this skin from your management page: @Html.RouteLink("Here", "ManageSkins")</p>
                     </div>
                 }
                 else
                 {
-                    <div class="col-md-12">
+                    <div>
                         <hr />
                         <h4>You can use this link to manage your skin, keep this safe!</h4><br />
                         <div class="alert alert-danger">
@@ -46,7 +57,7 @@
                             Management page
                         </label>
                         <div class="col-md-9">
-                            @Html.CopyTextBox(Url.RouteUrl("Manage", new { SkinId = Model.SkinId, SecretKey = Model.SecretKey }, "https"), "ManageLink")
+                            @Html.CopyTextBox(Url.RouteUrl("Manage", new { SkinId = Model.SkinId, SecretKey = Model.SecretKey }, "https"), "ManageLink", null, null)
                         </div>
                     </div>
                     <p>
@@ -62,7 +73,7 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="text-center">
-                    <img style="width:100%" src="@(Model.CDNBasePath + Model.PreviewUrl)" />
+                    <img style="width:100%" src="@(Model.CDNBasePath + Model.PreviewImageUrl)" />
                 </div>
             </div>
         </div>

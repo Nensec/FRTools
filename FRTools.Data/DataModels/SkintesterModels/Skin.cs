@@ -14,6 +14,7 @@ namespace FRTools.Data.DataModels
         public double? Coverage { get; set; }
         public SkinVisiblity Visibility { get; set; }
         public int Version { get; set; } = 1;
+        public string ShareUrl { get; set; }
 
         public virtual User Creator { get; set; }
 
