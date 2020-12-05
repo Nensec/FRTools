@@ -41,6 +41,7 @@ namespace FRTools.Data
         Crystal,
         Mosaic,
         Phantom,
+        Laced = 73,
     }
 
     public enum GaolerWingGene
@@ -59,13 +60,14 @@ namespace FRTools.Data
         Facet,
         Breakup,
         Spirit,
+        Edged = 73
     }
 
     public enum GaolerTertGene
     {
         Basic = 0,
-        Fans = 3,
         Veined = 2,
+        Fans,
         Ghost = 25,
         Shardflank,
         Gnarlhorns,
@@ -77,7 +79,8 @@ namespace FRTools.Data
         Scorpion,
         Wintercoat,
         Weathered,
-        Braids = 55
+        Braids = 55,
+        Stained = 71
     }
 
     public enum BanescaleBodyGene
@@ -96,7 +99,8 @@ namespace FRTools.Data
         Poison,
         Chevron,
         Candycane,
-        Ragged
+        Ragged,
+        Tapir = 74
     }
 
     public enum BanescaleWingGene
@@ -113,6 +117,7 @@ namespace FRTools.Data
         Toxin,
         Arrow,
         Sugarplum,
+        Striation = 74
     }
 
     public enum BanescaleTertGene
@@ -133,6 +138,7 @@ namespace FRTools.Data
         Porcupine,
         Crackle,
         Plumage,
+        Stained = 69
     }
 
     public enum VeilspunBodyGene
@@ -186,7 +192,9 @@ namespace FRTools.Data
         Beetle,
         Diaphanous,
         Mop,
-        Thorns
+        Thorns,
+        Underbelly = 70,
+        Stained = 72
     }
 
     public enum Gender
