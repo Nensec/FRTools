@@ -185,7 +185,7 @@ namespace FRTools.Common
                     dragonImage.Save(saveImageStream, ImageFormat.Png);
                     saveImageStream.Position = 0;
 
-                    dragon.PreviewUrls.Add(skinId, previewUrl = await new AzureImageService().WriteImage(azureImagePreviewPath, saveImageStream));
+                    dragon.PreviewUrls[skinId] = await new AzureImageService().WriteImage(azureImagePreviewPath, saveImageStream);
                 }
             }
             else
