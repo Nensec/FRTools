@@ -185,7 +185,12 @@ namespace FRTools.Common
                     dragonImage.Save(saveImageStream, ImageFormat.Png);
                     saveImageStream.Position = 0;
 
-                    dragon.PreviewUrls[skinId] = await new AzureImageService().WriteImage(azureImagePreviewPath, saveImageStream);
+                    previewUrl = await new AzureImageService().WriteImage(azureImagePreviewPath, saveImageStream);
+
+                    if (dragon.PreviewUrls.ContainsKey(skinId))
+                        dragon.PreviewUrls[skinId] = previewUrl;
+                    else
+                        dragon.PreviewUrls.Add(skinId, previewUrl);
                 }
             }
             else
@@ -194,7 +199,7 @@ namespace FRTools.Common
             }
 
             result.Urls = new[] { previewUrl };
-    
+
             async Task<string> GenerateApparelPreview(Bitmap invisibleDragon, string cacheUrl)
             {
                 if (dragonImage == null)
@@ -212,40 +217,47 @@ namespace FRTools.Common
 
                     return await new AzureImageService().WriteImage(cacheUrl, saveApparelImageStream);
                 }
-
             }
 
-            string apparelPreviewUrl = null;
-            if (isDressingRoom)
-            {
-                var apparelIds = dragon.GetApparel();
-                var cacheUrl = $@"previews\{skinId}\{dragon.FRDragonId?.ToString() ?? dragon.ToString()}_{dragon.Gender}_apparel.png";
-                if (force || !new AzureImageService().Exists(cacheUrl, out apparelPreviewUrl))
+            dragon.PreviewUrls.TryGetValue(skinId, out var apparelPreviewUrl);
+            if (force || apparelPreviewUrl == null)
+                if (isDressingRoom)
                 {
-                    string dressingRoomUrl;
-                    if (dragon.FRDragonId.HasValue)
-                        dressingRoomUrl = string.Format(FRHelpers.DressingRoomDragonApparalUrl, dragon.FRDragonId, string.Join(",", apparelIds.Concat(new[] { 22046 })));
-                    else
-                        dressingRoomUrl = string.Format(FRHelpers.DressingRoomDummyUrl, (int)dragon.DragonType, (int)dragon.Gender) + $"&apparel={string.Join(",", apparelIds.Concat(new[] { 22046 }))}";
+                    var apparelIds = dragon.GetApparel();
+                    var cacheUrl = $@"previews\{skinId}\{dragon.FRDragonId?.ToString() ?? dragon.ToString()}_{dragon.Gender}_apparel.png";
+                    if (force || !new AzureImageService().Exists(cacheUrl, out apparelPreviewUrl))
+                    {
+                        string dressingRoomUrl;
+                        if (dragon.FRDragonId.HasValue)
+                            dressingRoomUrl = string.Format(FRHelpers.DressingRoomDragonApparalUrl, dragon.FRDragonId, string.Join(",", apparelIds.Concat(new[] { 22046 })));
+                        else
+                            dressingRoomUrl = string.Format(FRHelpers.DressingRoomDummyUrl, (int)dragon.DragonType, (int)dragon.Gender) + $"&apparel={string.Join(",", apparelIds.Concat(new[] { 22046 }))}";
 
-                    var invisibleDragon = await FRHelpers.GetInvisibleDressingRoomDragon(dressingRoomUrl);
-                    apparelPreviewUrl = await GenerateApparelPreview(invisibleDragon, cacheUrl);
+                        var invisibleDragon = await FRHelpers.GetInvisibleDressingRoomDragon(dressingRoomUrl);
+                        apparelPreviewUrl = await GenerateApparelPreview(invisibleDragon, cacheUrl);
+                    }
                 }
-            }
-            else if (dragon.FRDragonId.HasValue && !FRHelpers.IsAncientBreed(dragon.DragonType))
-            {
-                var cacheUrl = $@"previews\{skinId}\{dragon.FRDragonId}_{dragon.Gender}_apparel.png";
-                if (force || !new AzureImageService().Exists(cacheUrl, out apparelPreviewUrl))
+                else if (dragon.FRDragonId.HasValue && !FRHelpers.IsAncientBreed(dragon.DragonType))
                 {
-                    var invisibleDragonWithApparel = await GetInvisibleDragonWithApparel(dragon, force);
+                    var cacheUrl = $@"previews\{skinId}\{dragon.FRDragonId}_{dragon.Gender}_apparel.png";
+                    if (force || !new AzureImageService().Exists(cacheUrl, out apparelPreviewUrl))
+                    {
+                        var invisibleDragonWithApparel = await GetInvisibleDragonWithApparel(dragon, force);
 
-                    if (invisibleDragonWithApparel != null)
-                        apparelPreviewUrl = await GenerateApparelPreview(invisibleDragonWithApparel, cacheUrl);
+                        if (invisibleDragonWithApparel != null)
+                            apparelPreviewUrl = await GenerateApparelPreview(invisibleDragonWithApparel, cacheUrl);
 
+                    }
                 }
-            }
             if (apparelPreviewUrl != null)
+            {
+                if (dragon.PreviewUrls.ContainsKey(skinId + "apparel"))
+                    dragon.PreviewUrls[skinId + "apparel"] = previewUrl;
+                else
+                    dragon.PreviewUrls.Add(skinId + "apparel", previewUrl);
+
                 result.Urls = new[] { previewUrl, apparelPreviewUrl };
+            }
 
             result.Success = true;
             return result;
