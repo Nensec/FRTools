@@ -219,7 +219,7 @@ namespace FRTools.Common
                 }
             }
 
-            dragon.PreviewUrls.TryGetValue(skinId, out var apparelPreviewUrl);
+            dragon.PreviewUrls.TryGetValue(skinId + "apparel", out var apparelPreviewUrl);
             if (force || apparelPreviewUrl == null)
                 if (isDressingRoom)
                 {
