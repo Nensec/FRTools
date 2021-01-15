@@ -121,9 +121,68 @@ namespace FRTools.Data.DataModels.FlightRisingModels
 
         public int[] GetApparel() => string.IsNullOrEmpty(Apparel) ? new int[] { } : Apparel.Split(',').Select(x => int.Parse(x)).ToArray();
 
-        public Enum GetBodyGene() => (Enum)Enum.Parse(DragonType == DragonType.Gaoler ? typeof(GaolerBodyGene) : typeof(BodyGene), BodyGene.ToString());
-        public Enum GetWingGene() => (Enum)Enum.Parse(DragonType == DragonType.Gaoler ? typeof(GaolerWingGene) : typeof(WingGene), WingGene.ToString());
-        public Enum GetTertGene() => (Enum)Enum.Parse(DragonType == DragonType.Gaoler ? typeof(GaolerTertGene) : typeof(TertiaryGene), TertiaryGene.ToString());
+        public Enum GetBodyGene()
+        {
+            Type enumType;
+            switch (DragonType)
+            {
+                case DragonType.Gaoler:
+                    enumType = typeof(GaolerBodyGene);
+                    break;
+                case DragonType.Banescale:
+                    enumType = typeof(BanescaleBodyGene);
+                    break;
+                case DragonType.Veilspun:
+                    enumType = typeof(VeilspunBodyGene);
+                    break;
+                default:
+                    enumType = typeof(BodyGene);
+                    break;
+            }
+            return (Enum)Enum.Parse(enumType, BodyGene.ToString());
+        }
+
+        public Enum GetWingGene()
+        {
+            Type enumType;
+            switch (DragonType)
+            {
+                case DragonType.Gaoler:
+                    enumType = typeof(GaolerWingGene);
+                    break;
+                case DragonType.Banescale:
+                    enumType = typeof(BanescaleWingGene);
+                    break;
+                case DragonType.Veilspun:
+                    enumType = typeof(VeilspunWingGene);
+                    break;
+                default:
+                    enumType = typeof(WingGene);
+                    break;
+            }
+            return (Enum)Enum.Parse(enumType, WingGene.ToString());
+        }
+
+        public Enum GetTertGene()
+        {
+            Type enumType;
+            switch (DragonType)
+            {
+                case DragonType.Gaoler:
+                    enumType = typeof(GaolerTertGene);
+                    break;
+                case DragonType.Banescale:
+                    enumType = typeof(BanescaleTertGene);
+                    break;
+                case DragonType.Veilspun:
+                    enumType = typeof(VeilspunTertGene);
+                    break;
+                default:
+                    enumType = typeof(TertiaryGene);
+                    break;
+            }
+            return (Enum)Enum.Parse(enumType, TertiaryGene.ToString());
+        }
 
         [NotMapped]
         public Dictionary<(string, int), string> PreviewUrls { get; } = new Dictionary<(string, int), string>();
