@@ -119,7 +119,7 @@ namespace FRTools.Common
             Bitmap dragonImage = null;
 
             var azureImagePreviewPath = $@"previews\{skinId}\{(version == 1 ? "" : $@"{version}\")}{dragon.FRDragonId?.ToString() ?? dragon.ToString()}_{dragon.Gender}.png";
-            dragon.PreviewUrls.TryGetValue(skinId, out var previewUrl);
+            dragon.PreviewUrls.TryGetValue((skinId, version ?? 1), out var previewUrl);
 
             if (force || (previewUrl == null && !new AzureImageService().Exists(azureImagePreviewPath, out previewUrl)))
             {
@@ -187,10 +187,10 @@ namespace FRTools.Common
 
                     previewUrl = await new AzureImageService().WriteImage(azureImagePreviewPath, saveImageStream);
 
-                    if (dragon.PreviewUrls.ContainsKey(skinId))
-                        dragon.PreviewUrls[skinId] = previewUrl;
+                    if (dragon.PreviewUrls.ContainsKey((skinId, version ?? 1)))
+                        dragon.PreviewUrls[(skinId, version ?? 1)] = previewUrl;
                     else
-                        dragon.PreviewUrls.Add(skinId, previewUrl);
+                        dragon.PreviewUrls.Add((skinId, version ?? 1), previewUrl);
                 }
             }
             else
@@ -219,7 +219,7 @@ namespace FRTools.Common
                 }
             }
 
-            dragon.PreviewUrls.TryGetValue(skinId + "apparel", out var apparelPreviewUrl);
+            dragon.PreviewUrls.TryGetValue((skinId + "apparel", version ?? 1), out var apparelPreviewUrl);
             if (force || apparelPreviewUrl == null)
                 if (isDressingRoom)
                 {
@@ -251,10 +251,10 @@ namespace FRTools.Common
                 }
             if (apparelPreviewUrl != null)
             {
-                if (dragon.PreviewUrls.ContainsKey(skinId + "apparel"))
-                    dragon.PreviewUrls[skinId + "apparel"] = previewUrl;
+                if (dragon.PreviewUrls.ContainsKey((skinId + "apparel", version ?? 1)))
+                    dragon.PreviewUrls[(skinId + "apparel", version ?? 1)] = previewUrl;
                 else
-                    dragon.PreviewUrls.Add(skinId + "apparel", previewUrl);
+                    dragon.PreviewUrls.Add((skinId + "apparel", version ?? 1), previewUrl);
 
                 result.Urls = new[] { previewUrl, apparelPreviewUrl };
             }

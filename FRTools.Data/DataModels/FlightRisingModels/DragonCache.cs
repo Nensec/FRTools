@@ -126,6 +126,6 @@ namespace FRTools.Data.DataModels.FlightRisingModels
         public Enum GetTertGene() => (Enum)Enum.Parse(DragonType == DragonType.Gaoler ? typeof(GaolerTertGene) : typeof(TertiaryGene), TertiaryGene.ToString());
 
         [NotMapped]
-        public Dictionary<string, string> PreviewUrls { get; } = new Dictionary<string, string>();
+        public Dictionary<(string, int), string> PreviewUrls { get; } = new Dictionary<(string, int), string>();
     }
 }
