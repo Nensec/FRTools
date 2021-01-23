@@ -21,7 +21,7 @@ namespace FRTools.Data.DataModels.FlightRisingModels
         public Color TertiaryColor { get; set; }
         public EyeType EyeType { get; set; }
         public Element Element { get; set; }
-        public Age Age { get; set; } = Age.Adult;
+        public Age Age { get; set; } = Age.Dragon;
         [NotMapped]
         public string Apparel { get; set; }
         [StringLength(40)]

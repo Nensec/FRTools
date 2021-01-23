@@ -131,7 +131,7 @@ namespace FRTools.Common
                     if ((regexParse = Regex.Match(dragonUrl, @"age=([\d]*)")).Success)
                         dragon.Age = (Age)int.Parse(regexParse.Groups[1].Value);
 
-                    if (dragon.Age == Age.Adult)
+                    if (dragon.Age == Age.Dragon)
                         ctx.SaveChanges();
                 }
             }
