@@ -50,7 +50,7 @@ namespace FRTools.Common
                     dragon = FRHelpers.GetDragonFromDragonId(dragonId);
                 }
 
-                if (FRHelpers.IsAncientBreed(dragon.DragonType))
+                if (dragon.DragonType.IsAncientBreed())
                     return result.WithErrorMessage("Ancient breeds cannot wear apparal.");
 
                 dragon.Apparel = apparelDragon.Apparel;
@@ -104,7 +104,7 @@ namespace FRTools.Common
 
                 if (swapSilhouette)
                 {
-                    var swappedDragon = FRHelpers.ParseUrlForDragon(FRHelpers.GenerateDragonImageUrl(dragon, swapSilhouette));
+                    var swappedDragon = FRHelpers.ParseUrlForDragon(GeneratedFRHelpers.GenerateDragonImageUrl(dragon, swapSilhouette));
                     swappedDragon.FRDragonId = dragon.FRDragonId;
                     dragon = swappedDragon;
                 }
@@ -237,7 +237,7 @@ namespace FRTools.Common
                         apparelPreviewUrl = await GenerateApparelPreview(invisibleDragon, cacheUrl);
                     }
                 }
-                else if (dragon.FRDragonId.HasValue && !FRHelpers.IsAncientBreed(dragon.DragonType))
+                else if (dragon.FRDragonId.HasValue && !dragon.DragonType.IsAncientBreed())
                 {
                     var cacheUrl = $@"previews\{skinId}\{dragon.FRDragonId}_{dragon.Gender}_apparel.png";
                     if (force || !new AzureImageService().Exists(cacheUrl, out apparelPreviewUrl))
