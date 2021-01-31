@@ -72,7 +72,11 @@ namespace FRTools.Web.Controllers
                 ShowFRLinkStatus = LoggedInUser.ProfileSettings.ShowFRLinkStatus,
                 ShowPreviewsOnProfile = LoggedInUser.ProfileSettings.ShowPreviewsOnProfile,
                 ShowSkinsOnProfile = LoggedInUser.ProfileSettings.ShowSkinsOnProfile,
-                ShowAds = LoggedInUser.ProfileSettings.ShowAds
+                ShowAds = LoggedInUser.ProfileSettings.ShowAds,
+                DefaultAdvancedCoverageSkinOpacity = LoggedInUser.ProfileSettings.DefaultAdvancedCoverageSkinOpacity,
+                DefaultAdvancedCoverageOverlayColor = LoggedInUser.ProfileSettings.DefaultAdvancedCoverageOverlayColor,
+                DefaultAdvancedCoverageBackgroundColor = LoggedInUser.ProfileSettings.DefaultAdvancedCoverageBackgroundColor,
+                DefaultAdvancedCoverageDummyOpacity = LoggedInUser.ProfileSettings.DefaultAdvancedCoverageDummyOpacity
             };
             return View(vm);
         }
@@ -95,6 +99,10 @@ namespace FRTools.Web.Controllers
                 LoggedInUser.ProfileSettings.ShowPreviewsOnProfile = model.ShowPreviewsOnProfile;
                 LoggedInUser.ProfileSettings.ShowSkinsOnProfile = model.ShowSkinsOnProfile;
                 LoggedInUser.ProfileSettings.ShowAds = model.ShowAds;
+                LoggedInUser.ProfileSettings.DefaultAdvancedCoverageBackgroundColor = model.DefaultAdvancedCoverageBackgroundColor;
+                LoggedInUser.ProfileSettings.DefaultAdvancedCoverageDummyOpacity = model.DefaultAdvancedCoverageDummyOpacity;
+                LoggedInUser.ProfileSettings.DefaultAdvancedCoverageOverlayColor = model.DefaultAdvancedCoverageOverlayColor;
+                LoggedInUser.ProfileSettings.DefaultAdvancedCoverageSkinOpacity = model.DefaultAdvancedCoverageSkinOpacity;
                 DataContext.SaveChanges();
                 AddSuccessNotification("Your profile has been updated!");
             }

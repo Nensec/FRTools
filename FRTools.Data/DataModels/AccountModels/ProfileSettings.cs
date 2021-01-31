@@ -15,6 +15,10 @@
         public bool DefaultSkinsArePublic { get; set; } = true;
         public bool ShowFRLinkStatus { get; set; } = true;
         public bool ShowAds { get; set; } = true;
+        public string DefaultAdvancedCoverageBackgroundColor { get; set; } = "#FFFFFF";
+        public string DefaultAdvancedCoverageOverlayColor { get; set; } = "#FF0000";
+        public int DefaultAdvancedCoverageDummyOpacity { get; set; } = 40;
+        public int DefaultAdvancedCoverageSkinOpacity { get; set; } = 40;
 
         public virtual User User { get; set; }
     }

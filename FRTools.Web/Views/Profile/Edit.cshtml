@@ -10,92 +10,151 @@
         <h4>@(ViewBag.Title)</h4>
     </div>
     <div class="panel-body">
-        <p>You can edit how your profile is shown to others on this page.</p>
-        <div class="col-sm-12 col-md-6">
-            @using (Html.BeginRouteForm("EditProfilePost", FormMethod.Post, new { @class = "form-horizontal" }))
-            {
-                <div class="form-group">
-                    <label class="col-md-6">Profile visibility</label>
-                    <div class="col-md-6">
-                        @Html.CheckBoxFor(model => model.PublicProfile, new { data_toggle = "toggle", data_on = "Public", data_off = "Private", data_width = "100" })
-                        @Html.ValidationMessageFor(model => model.PublicProfile)
+        @using (Html.BeginRouteForm("EditProfilePost", FormMethod.Post, new { @class = "form-horizontal" }))
+        {
+            <div style="width:100%">
+                <div class="col-sm-12 col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Profile settings
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="col-md-6">Profile visibility</label>
+                                <div class="col-md-6">
+                                    @Html.CheckBoxFor(model => model.PublicProfile, new { data_toggle = "toggle", data_on = "Public", data_off = "Private", data_width = "100" })
+                                    @Html.ValidationMessageFor(model => model.PublicProfile)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-6">FR link visibility</label>
+                                <div class="col-md-6">
+                                    @Html.CheckBoxFor(model => model.ShowFRLinkStatus, new { data_toggle = "toggle", data_on = "Public", data_off = "Hidden", data_width = "100" })
+                                    @Html.ValidationMessageFor(model => model.ShowFRLinkStatus)
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="form-group">
+                                <label class="col-md-6">Username</label>
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(model => model.Username, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Username)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-6">Profile bio <span class="glyphicon glyphicon-info-sign" title="This is just plain tekst, rich-text is not supported (yet)" data-toggle="tooltip"></span></label>
+                                <div class="col-md-6">
+                                    @Html.TextAreaFor(model => model.ProfileBio, new { @class = "form-control", rows = 4 })
+                                    @Html.ValidationMessageFor(model => model.ProfileBio)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Skin and preview settings
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="col-md-6">Show skins on your profile</label>
+                                <div class="col-md-6">
+                                    @Html.CheckBoxFor(model => model.ShowSkinsOnProfile, new { data_toggle = "toggle", data_on = "Show", data_off = "Hide", data_width = "100" })
+                                    @Html.ValidationMessageFor(model => model.ShowSkinsOnProfile)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-6">Show previews on your profile</label>
+                                <div class="col-md-6">
+                                    @Html.CheckBoxFor(model => model.ShowPreviewsOnProfile, new { data_toggle = "toggle", data_on = "Show", data_off = "Hide", data_width = "100" })
+                                    @Html.ValidationMessageFor(model => model.ShowPreviewsOnProfile)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-6">Show pinglists on your profile</label>
+                                <div class="col-md-6">
+                                    @Html.CheckBoxFor(model => model.ShowPingListsOnProfile, new { data_toggle = "toggle", data_on = "Show", data_off = "Hide", data_width = "100" })
+                                    @Html.ValidationMessageFor(model => model.ShowPingListsOnProfile)
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="form-group">
+                                <label class="col-md-6">By default, show skins in browse</label>
+                                <div class="col-md-6">
+                                    @Html.CheckBoxFor(model => model.DefaultShowSkinsInBrowse, new { data_toggle = "toggle", data_on = "Show", data_off = "Hide", data_width = "100" })
+                                    @Html.ValidationMessageFor(model => model.DefaultShowSkinsInBrowse)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-6">By default, make skins public</label>
+                                <div class="col-md-6">
+                                    @Html.CheckBoxFor(model => model.DefaultSkinsArePublic, new { data_toggle = "toggle", data_on = "Public", data_off = "Private", data_width = "100" })
+                                    @Html.ValidationMessageFor(model => model.DefaultSkinsArePublic)
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="col-md-6">FR link visibility</label>
-                    <div class="col-md-6">
-                        @Html.CheckBoxFor(model => model.ShowFRLinkStatus, new { data_toggle = "toggle", data_on = "Public", data_off = "Hidden", data_width = "100" })
-                        @Html.ValidationMessageFor(model => model.ShowFRLinkStatus)
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h5>Advanced coverage settings</h5>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="col-md-6">Default opacity dummy dragon</label>
+                                <div class="col-md-6">
+                                    <input style="margin-top:3px" type="range" min="1" max="100" value="@Model.DefaultAdvancedCoverageDummyOpacity" id="@Html.IdFor(model => model.DefaultAdvancedCoverageDummyOpacity)" name="@Html.NameFor(model => model.DefaultAdvancedCoverageDummyOpacity)">
+                                    @Html.ValidationMessageFor(model => model.DefaultAdvancedCoverageDummyOpacity)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-6">Default opacity skin dragon</label>
+                                <div class="col-md-6">
+                                    <input style="margin-top:3px" type="range" min="1" max="100" value="@Model.DefaultAdvancedCoverageSkinOpacity" id="@Html.IdFor(model => model.DefaultAdvancedCoverageSkinOpacity)" name="@Html.NameFor(model => model.DefaultAdvancedCoverageSkinOpacity)">
+                                    @Html.ValidationMessageFor(model => model.DefaultAdvancedCoverageDummyOpacity)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-6">Default background color</label>
+                                <div class="col-md-6">
+                                    <input type="color" value="@Model.DefaultAdvancedCoverageBackgroundColor" id="@Html.IdFor(model => model.DefaultAdvancedCoverageBackgroundColor)" name="@Html.NameFor(model => model.DefaultAdvancedCoverageBackgroundColor)" style="width:100%;">
+                                    @Html.ValidationMessageFor(model => model.DefaultAdvancedCoverageBackgroundColor)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-6">Default outside overlay color</label>
+                                <div class="col-md-6">
+                                    <input type="color" value="@Model.DefaultAdvancedCoverageOverlayColor" id="@Html.IdFor(model => model.DefaultAdvancedCoverageOverlayColor)" name="@Html.NameFor(model => model.DefaultAdvancedCoverageOverlayColor)" style="width:100%;">
+                                    @Html.ValidationMessageFor(model => model.DefaultAdvancedCoverageOverlayColor)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h5>Misc site settings</h5>
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label class="col-md-6">Enable or disable ads on the site <span class="glyphicon glyphicon-info-sign" title="Ads are something coming in the near future, you can enable them to support the site or disable them if you don't want to see them. Disabling ads does not remove any features from the site for you." data-toggle="tooltip"></span></label>
+                                <div class="col-md-6">
+                                    @Html.CheckBoxFor(model => model.ShowAds, new { data_toggle = "toggle", data_on = "Enabled", data_off = "Disabled", data_width = "100" })
+                                    @Html.ValidationMessageFor(model => model.ShowAds)
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <hr />
-                <div class="form-group">
-                    <label class="col-md-6">Username</label>
-                    <div class="col-md-6">
-                        @Html.TextBoxFor(model => model.Username, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.Username)
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-md-6">Profile bio <span class="glyphicon glyphicon-info-sign" title="This is just plain tekst, rich-text is not supported (yet)" data-toggle="tooltip"></span></label>
-                    <div class="col-md-6">
-                        @Html.TextAreaFor(model => model.ProfileBio, new { @class = "form-control", rows = 4 })
-                        @Html.ValidationMessageFor(model => model.ProfileBio)
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-md-6">Show skins on your profile</label>
-                    <div class="col-md-6">
-                        @Html.CheckBoxFor(model => model.ShowSkinsOnProfile, new { data_toggle = "toggle", data_on = "Show", data_off = "Hide", data_width = "100" })
-                        @Html.ValidationMessageFor(model => model.ShowSkinsOnProfile)
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-md-6">Show previews on your profile</label>
-                    <div class="col-md-6">
-                        @Html.CheckBoxFor(model => model.ShowPreviewsOnProfile, new { data_toggle = "toggle", data_on = "Show", data_off = "Hide", data_width = "100" })
-                        @Html.ValidationMessageFor(model => model.ShowPreviewsOnProfile)
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-md-6">Show pinglists on your profile</label>
-                    <div class="col-md-6">
-                        @Html.CheckBoxFor(model => model.ShowPingListsOnProfile, new { data_toggle = "toggle", data_on = "Show", data_off = "Hide", data_width = "100" })
-                        @Html.ValidationMessageFor(model => model.ShowPingListsOnProfile)
-                    </div>
-                </div>
-                <hr />
-                <div class="form-group">
-                    <label class="col-md-6">By default, show skins in browse</label>
-                    <div class="col-md-6">
-                        @Html.CheckBoxFor(model => model.DefaultShowSkinsInBrowse, new { data_toggle = "toggle", data_on = "Show", data_off = "Hide", data_width = "100" })
-                        @Html.ValidationMessageFor(model => model.DefaultShowSkinsInBrowse)
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-md-6">By default, make skins public</label>
-                    <div class="col-md-6">
-                        @Html.CheckBoxFor(model => model.DefaultSkinsArePublic, new { data_toggle = "toggle", data_on = "Public", data_off = "Private", data_width = "100" })
-                        @Html.ValidationMessageFor(model => model.DefaultSkinsArePublic)
-                    </div>
-                </div>
-                <hr />
-                <div class="form-group">
-                    <label class="col-md-6">Enable or disable ads on the site <span class="glyphicon glyphicon-info-sign" title="Ads are something coming in the near future, you can enable them to support the site or disable them if you don't want to see them. Disabling ads does not remove any features from the site for you." data-toggle="tooltip"></span></label>
-                    <div class="col-md-6">
-                        @Html.CheckBoxFor(model => model.ShowAds, new { data_toggle = "toggle", data_on = "Enabled", data_off = "Disabled", data_width = "100" })
-                        @Html.ValidationMessageFor(model => model.ShowAds)
-                    </div>
-                </div>
-                <hr />
-                <div class="form-group">
+            </div>
 
-                    <div class="col-md-offset-6 col-md-6">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <div class="pull-right">
                         <button type="submit" class="btn btn-primary">Save Changes</button>
                     </div>
                 </div>
-            }
-        </div>
+            </div>
+        }
     </div>
 </div>
 

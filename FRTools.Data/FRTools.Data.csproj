@@ -234,6 +234,10 @@
     <Compile Include="Migrations\202011161733082_Share URL.designer.cs">
       <DependentUpon>202011161733082_Share URL.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202101310326114_AdvancedCoverageSettings.cs" />
+    <Compile Include="Migrations\202101310326114_AdvancedCoverageSettings.designer.cs">
+      <DependentUpon>202101310326114_AdvancedCoverageSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -330,6 +334,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202011161733082_Share URL.resx">
       <DependentUpon>202011161733082_Share URL.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101310326114_AdvancedCoverageSettings.resx">
+      <DependentUpon>202101310326114_AdvancedCoverageSettings.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -21,7 +21,7 @@
         {
             @Html.AntiForgeryToken()
 
-            <div class="form-horizontal col-md-12">
+            <div class="form-horizontal">
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                 <div class="col-md-6">
@@ -93,15 +93,61 @@
                 <div class="col-md-6">
                     <div class="panel panel-default">
                         <div class="panel-body">
-                            <div class="center-block" style="width:350px;height:350px;">
-                                <img id="Dummy" style="z-index:1;position:absolute;display:none;" />
-                                <img id="Preview" style="z-index:2;position:absolute;display:none;" />
-                            </div>
                             <div id="CoverageContainer" style="display:none;">
                                 <p class="text-center">
                                     Coverage: <b><span id="Coverage"></span>%</b>
                                     Outside: <b><span id="Outside"></span>%</b>
                                 </p>
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li role="presentation" class="active"><a href="#skinpreview" aria-controls="skinpreview" role="tab" data-toggle="tab">Skin preview</a></li>
+                                    <li role="presentation"><a href="#advancedcoverage" aria-controls="advancedcoverage" role="tab" data-toggle="tab">Advanced coverage info</a></li>
+                                </ul>
+                            </div>
+                            <div class="tab-content" style="margin-top:5px">
+                                <div role="tabpanel" class="tab-pane active" id="skinpreview">
+                                    <div class="center-block" style="width:350px;height:350px;">
+                                        <img class="dummyDragon" style="z-index:1;position:absolute;display:none;" />
+                                        <img class="preview" style="z-index:2;position:absolute;display:none;" />
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="advancedcoverage">
+                                    <div id="imagecontainer" class="center-block" style="width:350px;height:350px;background-color:black">
+                                        <img class="dummyDragon" style="z-index:1;position:absolute;display:none;opacity:0.4" />
+                                        <img class="preview" style="z-index:2;position:absolute;" />
+                                        <canvas id="overlay" style="z-index:2;position:absolute;" width="350" height="350" />
+                                    </div>
+                                    <div id="options" class="panel" style="margin-bottom:0">
+                                        <div class="panel-body" style="padding-bottom:0">
+                                            <hr />
+                                            <div class="form-horizontal">
+                                                <div class="form-group">
+                                                    <span class="col-xs-4">Dummy transparency</span>
+                                                    <div class="col-xs-8">
+                                                        <input style="margin-top:3px" oninput="$('#advancedcoverage .dummyDragon').css('opacity', this.value / 100);" type="range" min="1" max="100" value="@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageDummyOpacity ?? 40)">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <span class="col-xs-4">Skin transparency</span>
+                                                    <div class="col-xs-8">
+                                                        <input style="margin-top:3px" oninput="$('#advancedcoverage .preview').css('opacity', this.value / 100);" type="range" min="1" max="100" value="@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageSkinOpacity ?? 40)">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <span class="col-xs-4">Background color</span>
+                                                    <div class="col-xs-8">
+                                                        <input type="color" onchange="$('#advancedcoverage #imagecontainer').css('background-color', this.value);" value="@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageBackgroundColor ?? "#000000")" style="width:100%;">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <span class="col-xs-4">Outside pixel overlay color</span>
+                                                    <div class="col-xs-8">
+                                                        <input type="color" id="overlayColorPicker" onchange="updateCoverage();" value="@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageOverlayColor ?? "#FF0000")" style="width:100%;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -116,12 +162,12 @@
         var dragonType = $('#@(Html.IdFor(model => model.DragonType))').val();
         var gender = $('#@(Html.IdFor(model => model.Gender))').val();
 
-        $('#Dummy').show().attr('src', `@Url.Action("GetDummyDragon")?dragonType=${dragonType}&gender=${gender}`);
+        $('.dummyDragon').show().attr('src', `@Url.Action("GetDummyDragon")?dragonType=${dragonType}&gender=${gender}`);
         var dragonImage = new Image();
         dragonImage.onload = function () {
             updateCoverage(undefined, dragonImage);
         };
-        dragonImage.src = $('#Dummy').attr('src');
+        dragonImage.src = $('.dummyDragon').attr('src');
     };
 
     $('#@(Html.IdFor(model => model.DragonType)), #@(Html.IdFor(model => model.Gender))').change(setDummySource);
@@ -137,13 +183,13 @@
             if (file && file.type === 'image/png') {
                 var skinImage = new Image();
                 skinImage.onload = function () {
-                    $('#Preview').show().attr('src', e.target.result);
+                    $('.preview').show().attr('src', e.target.result);
                     updateCoverage(skinImage);
                 };
                 skinImage.src = e.target.result;
             }
             else {
-                $('#Preview').hide();
+                $('.preview').hide();
             }
         };
 
@@ -154,7 +200,6 @@
 
     $('document').ready(function () {
         dragonImg = new Image();
-        dragonImg.src = $('#Dummy').attr('src');
         setDummySource();
     });
 
@@ -165,20 +210,21 @@
             dragonImg = dragonImage;
         }
 
-        var dragonContext = $('#dragon')[0].getContext('2d');
-        dragonContext.clearRect(0, 0, 350, 350);
-        dragonContext.drawImage(dragonImage, 0, 0, 350, 350, 0, 0, 350, 350);
-
-        if (!$('#Preview').is(':visible')) {
-            $('#CoverageContainer').hide();
-            return;
-        }
-
         if (skinImage === undefined) {
             skinImage = skinImg;
         } else {
             skinImg = skinImage;
         }
+
+        if (!skinImage || !dragonImage)
+            return;
+
+        var dragonContext = $('#dragon')[0].getContext('2d');
+        dragonContext.clearRect(0, 0, 350, 350);
+        dragonContext.drawImage(dragonImage, 0, 0, 350, 350, 0, 0, 350, 350);
+
+        var overlayContext = $('#overlay')[0].getContext('2d');
+        var overlayImageData = overlayContext.createImageData(350, 350);
 
         var skinContext = $('#skin')[0].getContext('2d');
         skinContext.clearRect(0, 0, 350, 350);
@@ -189,21 +235,37 @@
         var outsideAlphaSum = 0;
         var outsidePixelCount = 0;
 
-        var skinData = skinContext.getImageData(0, 0, 350, 350).data;
-        var dragonData = dragonContext.getImageData(0, 0, 350, 350).data;
+        var skinImageData = skinContext.getImageData(0, 0, 350, 350).data;
+        var dragonImageData = dragonContext.getImageData(0, 0, 350, 350).data;
 
-        for (var i = 0, n = skinData.length; i < n; i += 4) {
-            if (dragonData[i + 3] > 95) {
-                coveringAlphaSum += skinData[i + 3];
+        var overlayColorR, overlayColorG, overlayColorB;
+
+        var overlayColor = $('#overlayColorPicker').val();
+        overlayColorR = parseInt('0x' + overlayColor.substr(1, 2));
+        overlayColorG = parseInt('0x' + overlayColor.substr(3, 2));
+        overlayColorB = parseInt('0x' + overlayColor.substr(5, 2));
+
+        for (var i = 0; i < skinImageData.length; i += 4) {
+            if (dragonImageData[i + 3] > 95) {
+                coveringAlphaSum += skinImageData[i + 3];
                 coveringPixelCount++;
             }
             else {
-                if (dragonData[i + 3] == 0) {
-                    outsideAlphaSum += skinData[i + 3];
+                if (dragonImageData[i + 3] == 0) {
+                    outsideAlphaSum += skinImageData[i + 3];
                     outsidePixelCount++;
+
+                    if (skinImageData[i + 3] != 0) {
+                        overlayImageData.data[i] = overlayColorR;
+                        overlayImageData.data[i + 1] = overlayColorG;
+                        overlayImageData.data[i + 2] = overlayColorB;
+                        overlayImageData.data[i + 3] = 255;
+                    }
                 }
             }
         }
+
+        overlayContext.putImageData(overlayImageData, 0, 0);
 
         var coverage = (coveringAlphaSum / coveringPixelCount / 255 * 100).toFixed(2);
         var outside = (outsideAlphaSum / outsidePixelCount / 255 * 100).toFixed(2);
