@@ -112,8 +112,8 @@
                                 </div>
                                 <div role="tabpanel" class="tab-pane" id="advancedcoverage">
                                     <div id="imagecontainer" class="center-block" style="width:350px;height:350px;background-color:black">
-                                        <img class="dummyDragon" style="z-index:1;position:absolute;display:none;opacity:0.4" />
-                                        <img class="preview" style="z-index:2;position:absolute;" />
+                                        <img class="dummyDragon" style="z-index:1;position:absolute;display:none;opacity:@((CurrentUser?.ProfileSettings.DefaultAdvancedCoverageDummyOpacity ?? 40) / 100d)" />
+                                        <img class="preview" style="z-index:2;position:absolute;opacity:@((CurrentUser?.ProfileSettings.DefaultAdvancedCoverageSkinOpacity ?? 40) / 100d)" />
                                         <canvas id="overlay" style="z-index:2;position:absolute;" width="350" height="350" />
                                     </div>
                                     <div id="options" class="panel" style="margin-bottom:0">
