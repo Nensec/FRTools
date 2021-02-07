@@ -1,0 +1,142 @@
+﻿@model Dictionary<string, BaseScriptModel>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Available snippets
+            </div>
+            <div class="panel-body">
+                @foreach (var script in Model.Values)
+                {
+                    <a href="#@(script.SanitizedName)" onclick="selectModule('@(script.SanitizedName)')" class="module">
+                        <div class="panel panel-default panel-transparent" style="margin-bottom:0">
+                            <div class="panel-body">
+                                <div class="moduleIcon">
+                                    @if (string.IsNullOrEmpty(script.IconBase64))
+                                    {
+                                        <span>@(script.Name[0])</span>
+                                    }
+                                    else
+                                    {
+                                        <img src="@($"data:image/png;base64, {script.IconBase64}")" />
+                                    }
+                                </div>
+                                <div class="moduleDescription">
+                                    <h4 style="margin-bottom:15px;">@(script.Name)</h4>
+                                    @(script.Description)
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="selectModuleHelp">
+                    <h4>What are snippets?</h4>
+                    <p>Code snippets, or just snippets, are simple scripts that are often simply transformative in nature. Meaning, it just changes a URL to a slightly different one for example. Or just shows you information based on a given input.</p>
+                    <p>To begin, select a snippet on the left.</p>
+                </div>
+
+                @foreach (var model in Model)
+                {
+                    var script = model.Value;
+                    <div module="@(script.SanitizedName)" class="moduleHelp" style="display:none;">
+                        @if (!string.IsNullOrEmpty(script.IconBase64))
+                        {
+                            <img style="width:128px;height:128px; margin-right:15px" class="pull-left" src="@($"data:image/png;base64, {script.IconBase64}")" />
+                        }
+                        <h4>@(script.Name)</h4>
+                        <p>@(script.Description)</p>
+                        <hr />
+                        @Html.Partial(model.Key, model.Value)
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .module .panel {
+        margin-top: 15px;
+    }
+
+    .module:first-of-type .panel {
+        margin: 0;
+    }
+
+    .moduleIcon {
+        border-radius: 32px;
+        transition: all 0.25s cubic-bezier(0.29,-0.07, 0.56, 1.65);
+        width: 64px;
+        height: 64px;
+        text-align: center;
+        background-color: #ddd;
+        float: left;
+        color: white;
+    }
+
+        .moduleIcon img {
+            width: 64px;
+            height: 64px;
+        }
+
+        .moduleIcon span {
+            display: block;
+            font-size: 24px;
+            margin-top: 15px;
+            font-family: 'Arimo', sans-serif;
+        }
+
+    .moduleDescription {
+        display: table-cell;
+        padding-left: 15px;
+    }
+</style>
+
+@section head {
+    <script>
+        var snippetInitializations = new Array();
+    </script>
+}
+
+@section scripts {
+    <script>
+        var activeModule;
+
+        $(document).ready(function () {
+            $('.module').on('mouseover', function () {
+                $('.moduleIcon', this).css('border-radius', 20);
+            }).on('mouseout', function () {
+                $('.moduleIcon', this).css('border-radius', 32);
+            });
+
+            if (window.location.hash.length) {
+                console.log(window.location.hash);
+                selectModule(window.location.hash.substr(1));
+            }
+
+            window.onhashchange = function () {
+                var hash = window.location.hash.substr(1);
+                if (activeModule !== hash) {
+                    selectModule(hash);
+                }
+            }
+
+            snippetInitializations.forEach(function (v) { v(); });
+        });
+
+        selectModule = function (module) {
+            $('.moduleHelp, .selectModuleHelp').hide();
+            $(`.moduleHelp[module="${module}"]`).show();
+
+            activeModule = module;
+        }
+    </script>
+}

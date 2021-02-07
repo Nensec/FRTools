@@ -1,0 +1,70 @@
+﻿@model SmallImageScriptModel
+
+<div>
+    <input id="SmallImageScriptInput" class="form-control" type="text" placeholder="Paste your dragon image URL" />
+    <div id="SmallImageResult" style="display:none;">
+        <hr />
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-md-2 control-label">Preview</label>
+                <div class="col-md-10">
+                    <img id="SmallImageResultImage" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="plainSmall">Direct link</label>
+                <div class="col-md-10">
+                    @Html.CopyTextBox("", "plainSmall")
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="plainSmall">BBCode link</label>
+                <div class="col-md-10">
+                    @Html.CopyTextBox("", "IMGSmall")
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="SmallImageError" style="display:none;">
+        <hr />
+        <div class="alert alert-danger">
+            The URL you provided is not a valid URL. Please make sure the URL is in the following format: <br />
+            <span class="text-muted">https://www1.flightrising.com/rendern/350/1/16_350.png</span>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    snippetInitializations.push(function () {
+        console.log('test');
+        $('#SmallImageScriptInput').on('input', $.debounce(500, SmallImageScript));
+    });
+
+
+    SmallImageScript = function () {
+        $('#SmallImageResult, #SmallImageError').hide();
+        //https://www1.flightrising.com/rendern/portraits/263949/26394868p.png
+        //https://www1.flightrising.com/rendern/350/1/16_350.png?mtime=ZAAAAAAAAAA
+
+        var input = $('#SmallImageScriptInput').val();
+
+        if (input.length == 0)
+            return;
+
+        var validUrlRegex = new RegExp('(http[s]?://www1.flightrising.com/rendern/350/1/16_350.png)(\\?mtime=[a-zA-Z]*)?');
+
+        var match = input.match(validUrlRegex);
+
+        if (match) {
+            var SmallUrl = match[1].replace('_350', '').replace('350', 'avatars');
+            $('#SmallImageResultImage').attr('src', SmallUrl);
+            $('#plainSmall').val(SmallUrl);
+            $('#IMGSmall').val(`[img]${SmallUrl}[/img]`);
+
+            $('#SmallImageResult').show();
+        }
+        else {
+            $('#SmallImageError').show();
+        }
+    }
+</script>

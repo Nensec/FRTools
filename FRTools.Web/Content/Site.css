@@ -190,7 +190,7 @@ input[type=file] {
 
 .input-group-addon-close {
     border-radius: 4px !important;
-    border:1px solid #ccc !important;
+    border: 1px solid #ccc !important;
 }
 
 .tooltip-inner {
@@ -219,9 +219,18 @@ input[type=file] {
 }
 
 #ad {
-    width:120px;
-    height:600px;
-    position:absolute;
-    top:0;
-    right:-120px;
+    width: 120px;
+    height: 600px;
+    position: absolute;
+    top: 0;
+    right: -120px;
+}
+
+.nav > li > a {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.navbar-brand {
+    margin-right: 5px;
 }

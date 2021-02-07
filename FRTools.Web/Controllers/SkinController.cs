@@ -419,7 +419,7 @@ namespace FRTools.Web.Controllers
             return View();
         }
 
-        static Dictionary<(int, int), byte[]> _dummyCache = new Dictionary<(int, int), byte[]>();
+        private static readonly Dictionary<(int, int), byte[]> _dummyCache = new Dictionary<(int, int), byte[]>();
 
         public async Task<ActionResult> GetDummyDragon(int dragonType, int gender)
         {

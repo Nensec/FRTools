@@ -20,23 +20,19 @@
                     <a href="#" onclick="selectModule('@(module.Name.ToLower())')" class="module">
                         <div class="panel panel-default panel-transparent" style="margin-bottom:0">
                             <div class="panel-body">
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 col-xs-2">
-                                        <div class="moduleIcon">
-                                            @if (string.IsNullOrEmpty(module.Help?.IconBase64))
-                                            {
-                                                <span>@module.Name[0]</span>
-                                            }
-                                            else
-                                            {
-                                                <img src="@($"data:image/png;base64, {module.Help.IconBase64}")" />
-                                            }
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-9 col-md-8 col-xs-10">
-                                        <h4 style="margin-bottom:15px;">@module.Name</h4>
-                                        <p>@(module.Help.Synopsis)</p>
-                                    </div>
+                                <div class="moduleIcon">
+                                    @if (string.IsNullOrEmpty(module.Help?.IconBase64))
+                                    {
+                                        <span>@module.Name[0]</span>
+                                    }
+                                    else
+                                    {
+                                        <img src="@($"data:image/png;base64, {module.Help.IconBase64}")" />
+                                    }
+                                </div>
+                                <div class="moduleDescription">
+                                    <h4 style="margin-bottom:15px;">@module.Name</h4>
+                                    <p>@(module.Help.Synopsis)</p>
                                 </div>
                             </div>
                         </div>
@@ -94,23 +90,21 @@
 
 <style>
     .module .panel {
-        margin-top:15px;
+        margin-top: 15px;
     }
 
-        .module:first-of-type .panel {
-            margin: 0;
-        }
+    .module:first-of-type .panel {
+        margin: 0;
+    }
 
     .moduleIcon {
         border-radius: 32px;
         transition: all 0.25s cubic-bezier(0.29,-0.07, 0.56, 1.65);
-        overflow: hidden;
         width: 64px;
         height: 64px;
         text-align: center;
         background-color: #ddd;
         float: left;
-        display: inline block;
         color: white;
     }
 
@@ -125,6 +119,11 @@
             margin-top: 15px;
             font-family: 'Arimo', sans-serif;
         }
+
+    .moduleDescription {
+        display: table-cell;
+        padding-left: 15px;
+    }
 
     .discordHelp img {
         border: 1px solid #ccc;
