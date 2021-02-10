@@ -94,59 +94,17 @@
                     <div class="panel panel-default">
                         <div class="panel-body">
                             <div id="CoverageContainer" style="display:none;">
-                                <p class="text-center">
+                                <div class="text-center">
                                     Coverage: <b><span id="Coverage"></span>%</b>
                                     Outside: <b><span id="Outside"></span>%</b>
-                                </p>
-                                <ul class="nav nav-tabs" role="tablist">
-                                    <li role="presentation" class="active"><a href="#skinpreview" aria-controls="skinpreview" role="tab" data-toggle="tab">Skin preview</a></li>
-                                    <li role="presentation"><a href="#advancedcoverage" aria-controls="advancedcoverage" role="tab" data-toggle="tab">Advanced coverage info</a></li>
-                                </ul>
-                            </div>
-                            <div class="tab-content" style="margin-top:5px">
-                                <div role="tabpanel" class="tab-pane active" id="skinpreview">
-                                    <div class="center-block" style="width:350px;height:350px;">
-                                        <img class="dummyDragon" style="z-index:1;position:absolute;display:none;" />
-                                        <img class="preview" style="z-index:2;position:absolute;display:none;" />
-                                    </div>
+                                    <br/>
+                                    <small class="text-center"><a href="@(Url.RouteUrl("SnippetsHome"))#skin_coverage">Looking for the new advanced coverage checker? It's a code snippet now!</a></small>
                                 </div>
-                                <div role="tabpanel" class="tab-pane" id="advancedcoverage">
-                                    <div id="imagecontainer" class="center-block" style="width:350px;height:350px;background-color:black">
-                                        <img class="dummyDragon" style="z-index:1;position:absolute;display:none;opacity:@((CurrentUser?.ProfileSettings.DefaultAdvancedCoverageDummyOpacity ?? 40) / 100d)" />
-                                        <img class="preview" style="z-index:2;position:absolute;opacity:@((CurrentUser?.ProfileSettings.DefaultAdvancedCoverageSkinOpacity ?? 40) / 100d)" />
-                                        <canvas id="overlay" style="z-index:2;position:absolute;" width="350" height="350" />
-                                    </div>
-                                    <div id="options" class="panel" style="margin-bottom:0">
-                                        <div class="panel-body" style="padding-bottom:0">
-                                            <hr />
-                                            <div class="form-horizontal">
-                                                <div class="form-group">
-                                                    <span class="col-xs-4">Dummy transparency</span>
-                                                    <div class="col-xs-8">
-                                                        <input style="margin-top:3px" oninput="$('#advancedcoverage .dummyDragon').css('opacity', this.value / 100);" type="range" min="1" max="100" value="@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageDummyOpacity ?? 40)">
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <span class="col-xs-4">Skin transparency</span>
-                                                    <div class="col-xs-8">
-                                                        <input style="margin-top:3px" oninput="$('#advancedcoverage .preview').css('opacity', this.value / 100);" type="range" min="1" max="100" value="@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageSkinOpacity ?? 40)">
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <span class="col-xs-4">Background color</span>
-                                                    <div class="col-xs-8">
-                                                        <input type="color" onchange="$('#advancedcoverage #imagecontainer').css('background-color', this.value);" value="@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageBackgroundColor ?? "#000000")" style="width:100%;">
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <span class="col-xs-4">Outside pixel overlay color</span>
-                                                    <div class="col-xs-8">
-                                                        <input type="color" id="overlayColorPicker" onchange="updateCoverage();" value="@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageOverlayColor ?? "#FF0000")" style="width:100%;">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                            </div>
+                            <div id="skinpreview" style="margin-top:5px">
+                                <div class="center-block" style="width:350px;height:350px;">
+                                    <img class="dummyDragon" style="z-index:1;position:absolute;display:none;" />
+                                    <img class="preview" style="z-index:2;position:absolute;display:none;" />
                                 </div>
                             </div>
                         </div>
@@ -223,9 +181,6 @@
         dragonContext.clearRect(0, 0, 350, 350);
         dragonContext.drawImage(dragonImage, 0, 0, 350, 350, 0, 0, 350, 350);
 
-        var overlayContext = $('#overlay')[0].getContext('2d');
-        var overlayImageData = overlayContext.createImageData(350, 350);
-
         var skinContext = $('#skin')[0].getContext('2d');
         skinContext.clearRect(0, 0, 350, 350);
         skinContext.drawImage(skinImage, 0, 0, 350, 350);
@@ -238,13 +193,6 @@
         var skinImageData = skinContext.getImageData(0, 0, 350, 350).data;
         var dragonImageData = dragonContext.getImageData(0, 0, 350, 350).data;
 
-        var overlayColorR, overlayColorG, overlayColorB;
-
-        var overlayColor = $('#overlayColorPicker').val();
-        overlayColorR = parseInt('0x' + overlayColor.substr(1, 2));
-        overlayColorG = parseInt('0x' + overlayColor.substr(3, 2));
-        overlayColorB = parseInt('0x' + overlayColor.substr(5, 2));
-
         for (var i = 0; i < skinImageData.length; i += 4) {
             if (dragonImageData[i + 3] > 95) {
                 coveringAlphaSum += skinImageData[i + 3];
@@ -254,18 +202,9 @@
                 if (dragonImageData[i + 3] == 0) {
                     outsideAlphaSum += skinImageData[i + 3];
                     outsidePixelCount++;
-
-                    if (skinImageData[i + 3] != 0) {
-                        overlayImageData.data[i] = overlayColorR;
-                        overlayImageData.data[i + 1] = overlayColorG;
-                        overlayImageData.data[i + 2] = overlayColorB;
-                        overlayImageData.data[i + 3] = 255;
-                    }
                 }
             }
         }
-
-        overlayContext.putImageData(overlayImageData, 0, 0);
 
         var coverage = (coveringAlphaSum / coveringPixelCount / 255 * 100).toFixed(2);
         var outside = (outsideAlphaSum / outsidePixelCount / 255 * 100).toFixed(2);

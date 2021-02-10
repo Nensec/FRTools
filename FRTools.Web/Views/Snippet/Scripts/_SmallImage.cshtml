@@ -36,15 +36,12 @@
 
 <script type="text/javascript">
     snippetInitializations.push(function () {
-        console.log('test');
         $('#SmallImageScriptInput').on('input', $.debounce(500, SmallImageScript));
     });
 
 
     SmallImageScript = function () {
         $('#SmallImageResult, #SmallImageError').hide();
-        //https://www1.flightrising.com/rendern/portraits/263949/26394868p.png
-        //https://www1.flightrising.com/rendern/350/1/16_350.png?mtime=ZAAAAAAAAAA
 
         var input = $('#SmallImageScriptInput').val();
 

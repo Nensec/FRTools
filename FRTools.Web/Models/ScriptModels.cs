@@ -30,4 +30,11 @@
         public override string Description => "Generates the smaller version of a dragon image.";
         public override string IconBase64 => null;
     }
+
+    public class SkinCoverageScriptModel : BaseScriptModel
+    {
+        public override string Name => "Skin coverage";
+        public override string Description => "Calculates and shows you the coverage of your skin, and what's outside.";
+        public override string IconBase64 => null;
+    }
 }

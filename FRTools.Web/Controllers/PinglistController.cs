@@ -100,7 +100,7 @@ namespace FRTools.Web.Controllers
         }
 
         [Route("list/{listId}", Name = "PinglistDirect")]
-        public async Task<ActionResult> List(string listId, string secretKey = null)
+        public ActionResult List(string listId, string secretKey = null)
         {
             var list = PinglistHelpers.GetPinglist(listId, true, DataContext);
 
@@ -281,7 +281,7 @@ namespace FRTools.Web.Controllers
             }
             catch
             {
-                AddErrorNotification($"Could not validate the existence of user '{currentUser.FRUser.FRId.ToString()}.'");
+                AddErrorNotification($"Could not validate the existence of user '{currentUser.FRUser.FRId}.'");
             }
             DataContext.SaveChanges();
 
@@ -422,7 +422,6 @@ namespace FRTools.Web.Controllers
         [HttpPost]
         public ActionResult ImportPinglist(ImportPingsViewModel model)
         {
-            int listId;
             var list = PinglistHelpers.GetPinglist(model.ListId, false, DataContext);
 
             if (list == null)
@@ -436,9 +435,6 @@ namespace FRTools.Web.Controllers
                 AddErrorNotification("You do not have access to this pinglist. Make sure you are logged in or provide the correct secret key.");
                 return RedirectToRoute("Pinglist");
             }
-
-            listId = list.Id;
-
 
             if (!string.IsNullOrWhiteSpace(model.CSV))
             {

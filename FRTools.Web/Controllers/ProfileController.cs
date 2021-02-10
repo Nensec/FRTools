@@ -16,7 +16,7 @@ namespace FRTools.Web.Controllers
     public class ProfileController : BaseController
     {
         [Route(Name = "SelfProfile")]
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
             var vm = new ViewProfileViewModel
             {
@@ -31,7 +31,7 @@ namespace FRTools.Web.Controllers
 
         [Route("{*username}", Name = "Profile")]
         [AllowAnonymous]
-        public async Task<ActionResult> Index(string username)
+        public ActionResult Index(string username)
         {
             var user = DataContext.Users.Include(x => x.FRUser).Include(x => x.Previews.Select(p => p.Skin)).FirstOrDefault(x => x.UserName.ToLower() == username.ToLower());
             if (user == null)
@@ -76,7 +76,8 @@ namespace FRTools.Web.Controllers
                 DefaultAdvancedCoverageSkinOpacity = LoggedInUser.ProfileSettings.DefaultAdvancedCoverageSkinOpacity,
                 DefaultAdvancedCoverageOverlayColor = LoggedInUser.ProfileSettings.DefaultAdvancedCoverageOverlayColor,
                 DefaultAdvancedCoverageBackgroundColor = LoggedInUser.ProfileSettings.DefaultAdvancedCoverageBackgroundColor,
-                DefaultAdvancedCoverageDummyOpacity = LoggedInUser.ProfileSettings.DefaultAdvancedCoverageDummyOpacity
+                DefaultAdvancedCoverageDummyOpacity = LoggedInUser.ProfileSettings.DefaultAdvancedCoverageDummyOpacity,
+                DefaultAdvancedCoveragePercentagePrecision = LoggedInUser.ProfileSettings.DefaultAdvancedCoveragePercentagePrecision
             };
             return View(vm);
         }
@@ -103,6 +104,7 @@ namespace FRTools.Web.Controllers
                 LoggedInUser.ProfileSettings.DefaultAdvancedCoverageDummyOpacity = model.DefaultAdvancedCoverageDummyOpacity;
                 LoggedInUser.ProfileSettings.DefaultAdvancedCoverageOverlayColor = model.DefaultAdvancedCoverageOverlayColor;
                 LoggedInUser.ProfileSettings.DefaultAdvancedCoverageSkinOpacity = model.DefaultAdvancedCoverageSkinOpacity;
+                LoggedInUser.ProfileSettings.DefaultAdvancedCoveragePercentagePrecision = model.DefaultAdvancedCoveragePercentagePrecision;
                 DataContext.SaveChanges();
                 AddSuccessNotification("Your profile has been updated!");
             }

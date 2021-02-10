@@ -128,6 +128,13 @@
                                     @Html.ValidationMessageFor(model => model.DefaultAdvancedCoverageOverlayColor)
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label class="col-md-6">Default percentage precision</label>
+                                <div class="col-md-6">
+                                    <input style="margin-top:3px" type="range" min="0" max="10" value="@Model.DefaultAdvancedCoveragePercentagePrecision" id="@Html.IdFor(model => model.DefaultAdvancedCoveragePercentagePrecision)" name="@Html.NameFor(model => model.DefaultAdvancedCoveragePercentagePrecision)">
+                                    @Html.ValidationMessageFor(model => model.DefaultAdvancedCoveragePercentagePrecision)
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="panel panel-default">

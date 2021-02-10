@@ -441,6 +441,7 @@
     <Content Include="Views\Snippet\Scripts\_AvatarImage.cshtml" />
     <Content Include="Views\Snippet\Scripts\_ColiImage.cshtml" />
     <Content Include="Views\Snippet\Scripts\_SmallImage.cshtml" />
+    <Content Include="Views\Snippet\Scripts\_CoverageCheck.cshtml" />
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
