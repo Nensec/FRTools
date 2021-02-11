@@ -1,7 +1,12 @@
 ﻿@model ColiImageScriptModel
 
 <div>
-    <input id="ColiImageScriptInput" class="form-control" type="text" placeholder="Paste your dragon image URL" />
+    <div class="form-group">
+        <input maxlength="10" oninput="this.value = this.value.slice(0, this.maxLength); $('#ColiImageScriptInput').val(`https://www1.flightrising.com/rendern/350/${Math.floor((this.value / 100) + 1)}/${this.value}_350.png`)" class="form-control" type="number" placeholder="Paste your dragon ID number" />
+    </div>
+    <div class="form-group">
+        <input id="ColiImageScriptInput" class="form-control" type="text" placeholder="Paste your dragon image URL" />
+    </div>
     <div id="ColiImageResult" style="display:none;">
         <hr />
         <div class="form-horizontal">
@@ -39,7 +44,6 @@
         $('#ColiImageScriptInput').on('input', $.debounce(500, ColiImageScript));
     });
 
-
     ColiImageScript = function () {
         $('#ColiImageResult, #ColiImageError').hide();
 
@@ -48,11 +52,9 @@
         if (input.length == 0)
             return;
 
-        var validUrlRegex = new RegExp('(http[s]?://www1.flightrising.com/rendern/350/1/16_350.png)(\\?mtime=[a-zA-Z]*)?');
-
         var match = input.match(validUrlRegex);
 
-        if (match) {
+        if (match && match[2]) {
             var ColiUrl = match[1].replace('_350', '').replace('350', 'coliseum/portraits');
             $('#ColiImageResultImage').attr('src', ColiUrl);
             $('#plainColi').val(ColiUrl);
