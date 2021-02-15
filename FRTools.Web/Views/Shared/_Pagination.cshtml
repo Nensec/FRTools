@@ -5,61 +5,68 @@
     var visiblePages = Enumerable.Range(1, (int)Math.Ceiling((double)Model.TotalItems / (double)(Model.PageSize))).ToList();
     <nav class="text-center">
         <ul class="pagination">
+            @{ var lastPage = (int)Math.Ceiling((double)Model.TotalItems / (double)Model.PageSize); }
             @if (Model.Page != 1)
             {
-                @CreatePaginationItem(1, @class: "glyphicon glyphicon-backward");
-                @CreatePaginationItem(Model.Page - 1, @class: "glyphicon glyphicon-triangle-left");
+                @CreatePaginationItem(1, "First page", @class: "glyphicon glyphicon-backward");
+                @CreatePaginationItem(Model.Page - 1, "Previous page", @class: "glyphicon glyphicon-triangle-left");
             }
             else
             {
-                @CreatePaginationItem(1, true, "glyphicon glyphicon-backward");
-                @CreatePaginationItem(Model.Page - 1, true, "glyphicon glyphicon-triangle-left");
+                @CreatePaginationItem(1, "First page", true, "glyphicon glyphicon-backward");
+                @CreatePaginationItem(Model.Page - 1, "Previous Page", true, "glyphicon glyphicon-triangle-left");
             }
             @if (visiblePages.Count > 6)
             {
                 foreach (var page in visiblePages.Take(3))
                 {
-                    @CreatePaginationItem(page);
+                    @CreatePaginationItem(page, $"Go to page {page}");
                 }
-                <li><span style="margin-top: -1px;" class="glyphicon glyphicon-option-horizontal"></span></li>
+                if (Model.Page > 3 && Model.Page < lastPage - 2)
+                {
+                    @CreatePaginationItem(Model.Page, "Current page", true);
+                }
+                else
+                {
+                    @CreatePaginationItem(1, $"{lastPage - 4} page(s) not shown", true, "glyphicon glyphicon-option-horizontal");
+                }
                 foreach (var page in visiblePages.Skip(visiblePages.Count - 3).Take(3))
                 {
-                    @CreatePaginationItem(page);
+                    @CreatePaginationItem(page, $"Go to page {page}");
                 }
             }
             else
             {
                 foreach (var page in visiblePages)
                 {
-                    @CreatePaginationItem(page);
+                    @CreatePaginationItem(page, $"Go to page {page}");
                 }
             }
 
-            @{ var lastPage = (int)Math.Ceiling((double)Model.TotalItems / (double)Model.PageSize); }
             @if (Model.Page != lastPage)
             {
-                @CreatePaginationItem(Model.Page + 1, @class: "glyphicon glyphicon-triangle-right");
-                @CreatePaginationItem(lastPage, @class: "glyphicon glyphicon-forward");
+                @CreatePaginationItem(Model.Page + 1, "Next page", @class: "glyphicon glyphicon-triangle-right");
+                @CreatePaginationItem(lastPage, "Last page", @class: "glyphicon glyphicon-forward");
             }
             else
             {
-                @CreatePaginationItem(Model.Page + 1, true, "glyphicon glyphicon-triangle-right");
-                @CreatePaginationItem(lastPage, true, "glyphicon glyphicon-forward");
+                @CreatePaginationItem(Model.Page + 1, "Next page", true, "glyphicon glyphicon-triangle-right");
+                @CreatePaginationItem(lastPage, "Last page", true, "glyphicon glyphicon-forward");
             }
         </ul>
     </nav>
 }
-@helper CreatePaginationItem(int page, bool disabled = false, string @class = null)
+@helper CreatePaginationItem(int page, string tooltip, bool disabled = false, string @class = null)
 {
     if (disabled)
     {
-        <li class="disabled">@(Html.Raw(@class == null ? page.ToString() : $"<span style=\"margin-top: -1px;\" class=\"{@class}\"></span>"))</li>
+        <li class="disabled">@(Html.Raw(@class == null ? $"<span data-toggle=\"tooltip\" title=\"{tooltip}\">{page}</span>" : $"<span data-toggle=\"tooltip\" title=\"{tooltip}\" style=\"margin-top: -1px;\" class=\"{@class}\"></span>"))</li>
     }
     else
     {
         // This can probably be done simpler
         var queryStringValues = Request.QueryString.AllKeys.Select(x => (x, Request.QueryString[x])).ToDictionary(x => x.Item1, x => x.Item2);
         queryStringValues["page"] = page.ToString();
-        <li><a href="@(Url.RouteUrl(Model.RouteUrlName) + "?" + string.Join("&", queryStringValues.Select(x => $"{x.Key}={x.Value}")))">@(Html.Raw(@class == null ? page.ToString() : $"<span class=\"{@class}\"></span>"))</a></li>
+        <li><a data-toggle="tooltip" title="@tooltip" href="@(Url.RouteUrl(Model.RouteUrlName) + "?" + string.Join("&", queryStringValues.Select(x => $"{x.Key}={x.Value}")))">@(Html.Raw(@class == null ? page.ToString() : $"<span class=\"{@class}\"></span>"))</a></li>
     }
 }
