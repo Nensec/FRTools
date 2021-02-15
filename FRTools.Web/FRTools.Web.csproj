@@ -317,6 +317,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\CommaSeparatedValueModelBinder.cs" />
     <Compile Include="Infrastructure\Helpers\CopyBoxHelpers.cs" />
     <Compile Include="Infrastructure\Managers\UserStore.cs" />
     <Compile Include="Infrastructure\MustHaveLoginProviderAttribute.cs" />
@@ -329,6 +330,7 @@
     <Compile Include="Models\ProfileModels.cs" />
     <Compile Include="Models\ScriptModels.cs" />
     <Compile Include="Models\ScryerModels.cs" />
+    <Compile Include="Models\SharedModels.cs" />
     <Compile Include="Models\SkinModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\Shared\FRToolsBasePage.cs" />
@@ -442,6 +444,7 @@
     <Content Include="Views\Snippet\Scripts\_ColiImage.cshtml" />
     <Content Include="Views\Snippet\Scripts\_SmallImage.cshtml" />
     <Content Include="Views\Snippet\Scripts\_CoverageCheck.cshtml" />
+    <Content Include="Views\Shared\_Pagination.cshtml" />
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

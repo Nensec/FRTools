@@ -144,8 +144,8 @@ namespace FRTools.Web.Models
     public class BrowseViewModel
     {
         public List<PreviewModelViewModel> Results { get; set; } = new List<PreviewModelViewModel>();
-        public int TotalResults { get; set; }
         public BrowseFilterModel Filter { get; set; } = new BrowseFilterModel();
+        public PaginationModel Pagination { get; set; } = new PaginationModel();
     }
 
     public class BrowseFilterModel
@@ -156,12 +156,9 @@ namespace FRTools.Web.Models
             Skin
         }
 
-        private readonly List<int> _validPageAmounts = new List<int> { 5, 10, 25, 50 };
-        private int _pageAmount = 10;
         private List<DragonType> _dragonTypes = Enum.GetValues(typeof(DragonType)).Cast<DragonType>().ToList();
         private List<Gender> _genders = Enum.GetValues(typeof(Gender)).Cast<Gender>().ToList();
         private List<SkinType> _skinTypes = Enum.GetValues(typeof(SkinType)).Cast<SkinType>().ToList();
-        private int _page = 1;
 
         [Display(Name = "Name")]
         public string Name { get; set; } = "";
@@ -171,14 +168,6 @@ namespace FRTools.Web.Models
         public List<Gender> Genders { get => _genders; set => _genders = value.Distinct().ToList(); }
         [Display(Name = "Skin type")]
         public List<SkinType> SkinTypes { get => _skinTypes; set => _skinTypes = value.Distinct().ToList(); }
-
-        public int Page { get => _page; set => _page = value > 1 ? value : 1; }
-        [Display(Name = "Page size")]
-        public int PageAmount
-        {
-            get => _pageAmount;
-            set => _pageAmount = _validPageAmounts.Aggregate((x, y) => Math.Abs(x - value) < Math.Abs(y - value) ? x : y);
-        }
     }
 
     public class UpdateSkinPost

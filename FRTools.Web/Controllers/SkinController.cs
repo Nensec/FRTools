@@ -16,6 +16,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 
 namespace FRTools.Web.Controllers
 {
@@ -437,10 +438,11 @@ namespace FRTools.Web.Controllers
         }
 
         [Route("browse", Name = "Browse")]
-        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
-        public async Task<ActionResult> Browse(BrowseFilterModel filter)
+        public async Task<ActionResult> Browse(PaginationModel pagination, [ModelBinder(typeof(CommaSeparatedValueModelBinder))] BrowseFilterModel filter)
         {
             var model = new BrowseViewModel { Filter = filter };
+            model.Pagination = new PaginationModel("Browse", filter, pagination.Page, pagination.PageSize);
+
             var query = DataContext.Skins
                 .Where(x => x.Visibility == SkinVisiblity.Visible)
                 .Where(x => filter.DragonTypes.Contains((DragonType)x.DragonType))
@@ -450,9 +452,9 @@ namespace FRTools.Web.Controllers
             if (!string.IsNullOrEmpty(filter.Name))
                 query = query.Where(x => x.Title.Contains(filter.Name));
 
-            model.TotalResults = query.Count();
+            model.Pagination.TotalItems= query.Count();
 
-            query = query.OrderByDescending(x => x.Id).Skip(filter.PageAmount * (filter.Page - 1)).Take(filter.PageAmount);
+            query = query.OrderByDescending(x => x.Id).Skip(pagination.PageSize * (pagination.Page - 1)).Take(pagination.PageSize);
 
             model.Results = query.Select(x => new PreviewModelViewModel
             {
