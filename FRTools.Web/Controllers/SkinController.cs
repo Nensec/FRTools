@@ -441,7 +441,7 @@ namespace FRTools.Web.Controllers
         public async Task<ActionResult> Browse(PaginationModel pagination, [ModelBinder(typeof(CommaSeparatedValueModelBinder))] BrowseFilterModel filter)
         {
             var model = new BrowseViewModel { Filter = filter };
-            model.Pagination = new PaginationModel("Browse", filter, pagination.Page, pagination.PageSize);
+            model.Pagination = new PaginationModel("Browse", pagination.Page, pagination.PageSize);
 
             var query = DataContext.Skins
                 .Where(x => x.Visibility == SkinVisiblity.Visible)

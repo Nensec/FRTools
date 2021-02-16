@@ -22,7 +22,7 @@ namespace FRTools.Web.Models
         {
         }
 
-        public PaginationModel(string routeUrlBase, object routeValues, int? page = null, int? pageSize = null)
+        public PaginationModel(string routeUrlBase, int? page = null, int? pageSize = null)
         {
             RouteUrlName = routeUrlBase;
             Page = page ?? 1;
