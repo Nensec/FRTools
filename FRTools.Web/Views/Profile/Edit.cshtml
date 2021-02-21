@@ -143,7 +143,7 @@
                         </div>
                         <div class="panel-body">
                             <div class="form-group">
-                                <label class="col-md-6">Enable or disable ads on the site <span class="glyphicon glyphicon-info-sign" title="Ads are something coming in the near future, you can enable them to support the site or disable them if you don't want to see them. Disabling ads does not remove any features from the site for you." data-toggle="tooltip"></span></label>
+                                <label class="col-md-6">Enable or disable ads on the site <span class="glyphicon glyphicon-info-sign" title="You can enable them to support the site or disable them if you don't want to see them. Disabling ads does not remove any features from the site for you" data-toggle="tooltip"></span></label>
                                 <div class="col-md-6">
                                     @Html.CheckBoxFor(model => model.ShowAds, new { data_toggle = "toggle", data_on = "Enabled", data_off = "Disabled", data_width = "100" })
                                     @Html.ValidationMessageFor(model => model.ShowAds)
