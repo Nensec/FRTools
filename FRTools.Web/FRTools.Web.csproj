@@ -353,6 +353,7 @@
     <Content Include="Content\frtools_embed.png" />
     <Content Include="Content\mgglass.png" />
     <Content Include="Content\nodata.png" />
+    <Content Include="Content\patreon_banner.png" />
     <Content Include="favicon-16x16.png" />
     <Content Include="favicon-32x32.png" />
     <Content Include="Content\social_icons.css" />

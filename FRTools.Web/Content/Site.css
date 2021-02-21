@@ -219,11 +219,12 @@ input[type=file] {
 }
 
 #ad {
-    width: 120px;
-    height: 600px;
+    width: 122px;
+    height: 602px;
     position: absolute;
     top: 0;
     right: -120px;
+    border: 1px solid #ddd;
 }
 
 .nav > li > a {
