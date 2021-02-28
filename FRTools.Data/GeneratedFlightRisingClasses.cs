@@ -916,6 +916,8 @@ namespace FRTools.Data
 		Keel = 53,
 		[Description("Glowtail")]
 		Glowtail = 54,
+		[Description("Koi")]
+		Koi = 73,
 	}
 	
 	public enum VeilspunTertGene
