@@ -94,6 +94,7 @@
     <Compile Include="DataModels\DiscordModels\DiscordUser.cs" />
     <Compile Include="DataModels\FlightRisingModels\DragonCache.cs" />
     <Compile Include="DataModels\FlightRisingModels\FRDominance.cs" />
+    <Compile Include="DataModels\FlightRisingModels\FRItem.cs" />
     <Compile Include="DataModels\FlightRisingModels\FRUser.cs" />
     <Compile Include="DataModels\Job.cs" />
     <Compile Include="DataModels\PinglistModels\Pinglist.cs" />
@@ -242,6 +243,10 @@
     <Compile Include="Migrations\202102102141380_Add percentage precision setting.designer.cs">
       <DependentUpon>202102102141380_Add percentage precision setting.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202102262253238_FRItem table.cs" />
+    <Compile Include="Migrations\202102262253238_FRItem table.designer.cs">
+      <DependentUpon>202102262253238_FRItem table.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -344,6 +349,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102102141380_Add percentage precision setting.resx">
       <DependentUpon>202102102141380_Add percentage precision setting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102262253238_FRItem table.resx">
+      <DependentUpon>202102262253238_FRItem table.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

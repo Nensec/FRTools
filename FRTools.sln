@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools.Discord.Metadata", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools.Common", "FRTools.Common\FRTools.Common.csproj", "{46FF50D2-FBAB-421E-BAC4-41533AF80A95}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools.MS.ItemFetcher", "FRTools.MS.ItemFetcher\FRTools.MS.ItemFetcher.csproj", "{98B50B6A-3DE3-4406-B64E-1E628BF40C19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,12 +67,17 @@ Global
 		{46FF50D2-FBAB-421E-BAC4-41533AF80A95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46FF50D2-FBAB-421E-BAC4-41533AF80A95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46FF50D2-FBAB-421E-BAC4-41533AF80A95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98B50B6A-3DE3-4406-B64E-1E628BF40C19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98B50B6A-3DE3-4406-B64E-1E628BF40C19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98B50B6A-3DE3-4406-B64E-1E628BF40C19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98B50B6A-3DE3-4406-B64E-1E628BF40C19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{3B044F6D-41CE-4B14-8031-193D03B16E83} = {6FF57E80-6712-4E3A-812A-4BE1D09285EB}
+		{98B50B6A-3DE3-4406-B64E-1E628BF40C19} = {6FF57E80-6712-4E3A-812A-4BE1D09285EB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {394695AE-5734-4F1A-96A2-774FEB7DF305}
