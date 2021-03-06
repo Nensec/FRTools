@@ -160,6 +160,7 @@
     <Compile Include="PinglistHelpers.cs" />
     <Compile Include="PreviewResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SiteHelpers.cs" />
     <Compile Include="SkinTester.cs" />
   </ItemGroup>
   <ItemGroup>

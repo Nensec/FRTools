@@ -31,12 +31,13 @@ namespace FRTools.MS.ItemFetcher
                         _noItemFoundCounter++;
                     await Task.Delay(50);
                 }
+
                 Console.WriteLine($"Done for now, saving {ctx.ChangeTracker.Entries().Count()} items.");
                 await ctx.SaveChangesAsync();
             }
         }
 
-        static FRItem FetchItem(int itemId, string category = "skins")
+        static FRItem FetchItem(int itemId, string category = "food")
         {
             _requestsMade++;
 
@@ -77,6 +78,7 @@ namespace FRTools.MS.ItemFetcher
                 switch (item.ItemCategory)
                 {
                     case FRItemCategory.Food:
+                        item.TreasureValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText);
                         item.FoodValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[4]").InnerText);
                         item.FoodType = (FRFoodType)Enum.Parse(typeof(FRFoodType), item.ItemType, true);
                         break;

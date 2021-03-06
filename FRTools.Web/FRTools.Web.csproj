@@ -308,6 +308,7 @@
     <Compile Include="Controllers\NewsController.cs" />
     <Compile Include="Controllers\PinglistController.cs" />
     <Compile Include="Controllers\ProfileController.cs" />
+    <Compile Include="Controllers\ProxyController.cs" />
     <Compile Include="Controllers\SnippetController.cs" />
     <Compile Include="Controllers\ScryerController.cs" />
     <Compile Include="Infrastructure\BitlyHelper.cs" />

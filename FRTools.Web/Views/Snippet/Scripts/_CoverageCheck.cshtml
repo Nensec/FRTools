@@ -89,7 +89,7 @@
         var dragonType = $('#DragonType').val();
         var gender = $('#Gender').val();
 
-        $('.dummyDragon').show().attr('src', `@Url.Action("GetDummyDragon", "Skin")?dragonType=${dragonType}&gender=${gender}`);
+        $('.dummyDragon').show().attr('src', `@Url.RouteUrl("GetDummyDragonQueryString")?dragonType=${dragonType}&gender=${gender}`);
         var dragonImage = new Image();
         dragonImage.onload = function () {
             updateCoverage(undefined, dragonImage);

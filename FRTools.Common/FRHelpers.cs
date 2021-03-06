@@ -21,10 +21,13 @@ namespace FRTools.Common
         public const string DragonProfileUrlNoScenic = "https://www1.flightrising.com/dragon/{0}?view=default";
         public const string DressingRoomDragonApparalUrl = "https://www1.flightrising.com/dgen/dressing-room/dragon?did={0}&apparel={1}";
         public const string DressingRoomDummyApparalUrl = "https://www1.flightrising.com/dgen/dressing-room/dummy?breed={0}&gender={1}&apparel={2}";
+        public const string DressingRoomDummySkinUrl = "https://www1.flightrising.com/hoard/preview-image?gender={1}&breed={0}&item={2}";
         public const string ItemFetchUrl = "https://flightrising.com/includes/itemajax.php?id={0}&tab={1}";
         public const string FamiliarArtUrl = "https://flightrising.com/static/cms/familiar/art/{0}.png";
         public const string VistaArtUrl = "https://flightrising.com/static/cms/fvista/{0}.png";
         public const string SceneArtUrl = "https://flightrising.com/static/cms/scene/{0}.png";
+        public const string UserProfileUrl = "https://www1.flightrising.com/clan-profile/{0}";
+        public const string GameDatabaseUrl = "https://www1.flightrising.com/game-database/item/{0}";
 
         public static string GetRenderUrl(int dragonId) => $"https://www1.flightrising.com/rendern/350/{(Math.Floor(dragonId / 100d) + 1)}/{dragonId}_350.png";
 
@@ -40,7 +43,7 @@ namespace FRTools.Common
 
             var dressingRoomUrl = string.Format(DressingRoomDummyUrl, (int)dragon.DragonType, (int)dragon.Gender) + $"&apparel={string.Join(",", apparelIds)}";
 
-            var azureUrl = $@"dragoncache\{dragon.ToString()}_invisible.png";
+            var azureUrl = $@"dragoncache\{dragon}_invisible.png";
             using (var client = new WebClient())
             {
                 var invisibleDragonBytesTask = client.DownloadDataTaskAsync(dressingRoomUrl);

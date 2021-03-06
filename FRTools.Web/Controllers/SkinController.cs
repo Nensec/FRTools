@@ -420,22 +420,6 @@ namespace FRTools.Web.Controllers
             return View();
         }
 
-        private static readonly Dictionary<(int, int), byte[]> _dummyCache = new Dictionary<(int, int), byte[]>();
-
-        public async Task<ActionResult> GetDummyDragon(int dragonType, int gender)
-        {
-            if (!_dummyCache.TryGetValue((dragonType, gender), out var bytes))
-            {
-                var dummyDragon = await FRHelpers.GetDragonBaseImage(string.Format(FRHelpers.DressingRoomDummyUrl, dragonType, gender));
-                using (var memStream = new MemoryStream())
-                {
-                    dummyDragon.Save(memStream, ImageFormat.Png);
-                    _dummyCache[(dragonType, gender)] = bytes = memStream.ToArray();
-                }
-            }
-
-            return File(bytes, "image/png");
-        }
 
         [Route("browse", Name = "Browse")]
         public async Task<ActionResult> Browse(PaginationModel pagination, [ModelBinder(typeof(CommaSeparatedValueModelBinder))] BrowseFilterModel filter)

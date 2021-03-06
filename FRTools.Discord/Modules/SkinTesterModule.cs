@@ -8,6 +8,7 @@ using FRTools.Discord.Preconditions;
 using System;
 using System.Data.Entity;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -127,6 +128,19 @@ namespace FRTools.Discord.Modules
 
             private Embed GeneratedPreviewEmbed(PreviewResult previewResult, bool showApparel = false)
             {
+                var botAssembly = Assembly.GetAssembly(typeof(BaseModule));
+                var modules = botAssembly.DefinedTypes.Where(x =>
+                {
+                    try
+                    {
+                        return !x.IsNested && x.BaseType == typeof(BaseModule);
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                });
+
                 var embed = new EmbedBuilder();
                 embed.WithDescription($"Here is your preview on **{previewResult.Skin.Title ?? previewResult.Skin.GeneratedId}**");
                 if (!showApparel && previewResult.Urls.Length > 1)
