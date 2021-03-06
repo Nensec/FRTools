@@ -20,10 +20,10 @@
                         Rarity = c.Int(),
                         AssetUrl = c.String(),
                         TreasureValue = c.Int(),
-                        GemValue = c.Int(),
                         ItemType = c.String(),
                         FoodType = c.Int(),
                         FoodValue = c.Int(),
+                        RequiredLevel = c.Int(),
                     })
                 .PrimaryKey(t => t.Id);
             

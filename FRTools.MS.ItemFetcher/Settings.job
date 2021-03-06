@@ -1,0 +1,4 @@
+{
+    // Every minute
+    "schedule": "0 1/4 * * *"
+}
