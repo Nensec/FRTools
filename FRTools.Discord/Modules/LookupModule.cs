@@ -246,7 +246,7 @@ namespace FRTools.Discord.Modules
                                     if (frUser.User != null && frUser.User.ProfileSettings.PublicProfile)
                                         x.Value = $"[FR: {frUser.Username}]({string.Format(FRHelpers.UserProfileUrl, frUser.FRId)}) | [FRTools: {frUser.User.UserName}]({string.Format(SiteHelpers.ProfilePageUrl, frUser.User.UserName)})";
                                     else
-                                        x.Value = $"[FR: {frUser.Username}]({string.Format(FRHelpers.UserProfileUrl, frUser.FRId)})";
+                                        x.Value = $"[{frUser.Username}]({string.Format(FRHelpers.UserProfileUrl, frUser.FRId)})";
                                 });
                             }
                         }
