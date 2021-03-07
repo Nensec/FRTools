@@ -211,10 +211,10 @@ namespace FRTools.Discord.Modules
                     files.Add(new KeyValuePair<string, Stream>($"icon_{item.FRId}.png", client.OpenRead(string.Format(SiteHelpers.IconProxyUrl, item.FRId))));
 
                 if (item.TreasureValue > 0)
-                    embed.AddField(x => x.WithName("Treasure value").WithValue((externalEmojis ? "<:treasure:703609171492339795> " : "") + $"{item.TreasureValue}").WithIsInline(true));
+                    embed.AddField(x => x.WithName("Treasure value").WithValue((externalEmojis ? $"{DiscordEmoji.Treasure} " : "") + $"{item.TreasureValue}").WithIsInline(true));
 
                 if(item.FoodValue > 0)
-                    embed.AddField(x => x.WithName("Food value").WithValue((externalEmojis ? "<:food:703609171865763941> " : "") + $"{item.FoodValue}").WithIsInline(true));
+                    embed.AddField(x => x.WithName("Food value").WithValue((externalEmojis ? $"{DiscordEmoji.Food} " : "") + $"{item.FoodValue}").WithIsInline(true));
 
 
                 if (item.AssetUrl != null)

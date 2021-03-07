@@ -16,6 +16,7 @@ namespace FRTools.MS.ItemFetcher
 
         static async Task Main()
         {
+            var random = new Random();
             using (var ctx = new DataContext())
             {
                 var highestItemId = ctx.FRItems.Any() ? ctx.FRItems.Max(x => x.FRId) : 0;
@@ -29,7 +30,7 @@ namespace FRTools.MS.ItemFetcher
                         ctx.FRItems.Add(item);
                     else
                         _noItemFoundCounter++;
-                    await Task.Delay(50);
+                    await Task.Delay(random.Next(75, 500));
                 }
 
                 Console.WriteLine($"Done for now, saving {ctx.ChangeTracker.Entries().Count()} items.");
@@ -37,7 +38,7 @@ namespace FRTools.MS.ItemFetcher
             }
         }
 
-        static FRItem FetchItem(int itemId, string category = "food")
+        static FRItem FetchItem(int itemId, string category = "skins")
         {
             _requestsMade++;
 
