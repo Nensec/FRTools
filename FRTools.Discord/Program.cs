@@ -113,19 +113,21 @@ namespace FRTools.Discord
             var genericMessage = JsonConvert.DeserializeObject<GenericMessage>(Encoding.UTF8.GetString(msg.Body));
             if (genericMessage.MessageType != nameof(GenericMessage))
             {
-                var customMessage = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(msg.Body), Assembly.GetAssembly(typeof(GenericMessage)).GetType(nameof(genericMessage.MessageType)));
+                var customMessage = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(msg.Body), Assembly.GetAssembly(typeof(GenericMessage)).GetType(nameof(genericMessage.MessageType))) as GenericMessage;
                 foreach (var handler in _handlers.Values)
                 {
                     // Handle custom message
+                    if (customMessage is NewItemMessage newItemMessage)
+                        await handler.HandleNewItemUpdate(newItemMessage);
                 }
             }
             else
             {
                 foreach (var handler in _handlers.Values)
                 {
-                    if (genericMessage.Category == MessageCategory.DominanceTracker)
+                    if (genericMessage.Source == MessageCategory.DominanceTracker)
                         await handler.HandleDominanceUpdate(genericMessage);
-                    if (genericMessage.Category == MessageCategory.SettingUpdated && (long)handler.Guild.Id == genericMessage.DiscordServer)
+                    if (genericMessage.Source == MessageCategory.SettingUpdated && (long)handler.Guild.Id == genericMessage.DiscordServer)
                         await handler.HandleSettingUpdate(genericMessage);
                 }
             }

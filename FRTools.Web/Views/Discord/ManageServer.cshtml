@@ -22,10 +22,10 @@
             </div>
             <div class="panel-body">
                 <div class="form-horizontal">
-                    @foreach (var setting in Model.BotSettings)
+                    @foreach (var setting in Model.BotSettings.Where(x => x.Category == null))
                     {
                         <div class="form-group">
-                            <label class="col-sm-3 control-label" style="text-align:left"><span class="glyphicon glyphicon-info-sign" title="@(setting.Description)"></span> @(setting.SettingName)</label>
+                            <label class="col-sm-3 control-label" style="text-align:left"><span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="left" title="@(setting.Description)"></span> @(setting.SettingName)</label>
                             <div class="col-sm-9">
                                 @Html.EditorFor(model => setting)
                             </div>
@@ -34,6 +34,27 @@
                 </div>
             </div>
         </div>
+        @foreach (var category in Model.BotSettingCategories)
+        {
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    @(category.Description)
+                </div>
+                <div class="panel-body">
+                    <div class="form-horizontal">
+                        @foreach (var setting in Model.BotSettings.Where(x => x.Category == category))
+                        {
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" style="text-align:left"><span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="left" title="@(setting.Description)"></span> @(setting.SettingName)</label>
+                                <div class="col-sm-9">
+                                    @Html.EditorFor(model => setting)
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
 
         <div class="panel panel-default">
             <div class="panel-heading">

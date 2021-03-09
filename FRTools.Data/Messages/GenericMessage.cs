@@ -2,15 +2,15 @@
 {
     public class GenericMessage
     {
-        public GenericMessage(MessageCategory category, string message)
+        public GenericMessage(MessageCategory source, string message)
         {
-            Category = category;
+            Source = source;
             Message = message;
         }
 
-        public MessageCategory Category { get; set; }
-        public string Message { get; set; }
-        public long? DiscordServer { get; set; }
-        public string MessageType { get; private set; } = nameof(GenericMessage);
+        public virtual MessageCategory Source { get; set; }
+        public virtual string Message { get; set; }
+        public virtual long? DiscordServer { get; set; }
+        public virtual string MessageType { get; } = nameof(GenericMessage);
     }
 }

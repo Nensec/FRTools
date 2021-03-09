@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using FRTools.Data;
 using FRTools.Data.DataModels.DiscordModels;
+using FRTools.Data.DataModels.FlightRisingModels;
 using FRTools.Data.Messages;
 using FRTools.Discord.Infrastructure;
 using System;
@@ -14,8 +15,13 @@ using System.Threading.Tasks;
 
 namespace FRTools.Discord.Handlers
 {
+    [DiscordSettingCategory("ITEMDB", "Item database")]
     [DiscordSetting("GUILDCONFIG_PREFIX", typeof(string), "Command prefix", "The prefix used by the bot to listen to commands")]
     [DiscordSetting("GUILDCONFIG_ANN_CHANNEL", typeof(ITextChannel), "Announcement channel", "The channel the bot will post announcement messages")]
+    [DiscordSetting("GUILDCONFIG_ITEMDB_ANNNEWITEM", typeof(bool), "Announce new items", "Should the bot announce new items added to Flight Rising?", Category = "ITEMDB")]
+    [DiscordSetting("GUILDCONFIG_ITEMDB_NEWITEMTYPES", typeof(FRItemCategory[]), "New item types", "Which item types should be announced", Category = "ITEMDB", Order = 2)]
+    [DiscordSetting("GUILDCONFIG_ITEMDB_USEANNCHANNEL", typeof(bool), "Use announcement channel", "Use the bot's overall announcement channel, or set up an alternative", Category = "ITEMDB", Order = 2)]
+    [DiscordSetting("GUILDCONFIG_ITEMDB_ANN_CHANNEL", typeof(ITextChannel), "Alternative announcement channel", "If $<GUILD:GUILDCONFIG_ITEMDB_USEANNCHANNEL> is set to false, this channel will be used to announce new items", Category = "ITEMDB", Order = 3)]
     public class GuildHandler
     {
         private readonly DiscordSocketClient _client;
@@ -227,6 +233,17 @@ namespace FRTools.Discord.Handlers
                     Trace.WriteLine(ex.Message);
                 }
             }
+        }
+
+        internal async Task HandleNewItemUpdate(NewItemMessage newItemMessage)
+        {
+            ITextChannel annChannel = null;
+            var annNewItemChannelId = _settingManager.GetSettingValue("GUILDCONFIG_ANN_NEWITEM_CHANNEL", Guild);
+
+            var annChannelId = _settingManager.GetSettingValue("GUILDCONFIG_ANN_CHANNEL", Guild);
+            if (annChannelId != null)
+                annChannel = (ITextChannel)Guild.GetChannel(ulong.Parse(annChannelId));
+
         }
 
         internal async Task HandleSettingUpdate(GenericMessage settingUpdate)

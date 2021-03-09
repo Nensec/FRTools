@@ -10,6 +10,8 @@ namespace FRTools.Discord.Infrastructure
         public string Name { get; }
         public string Description { get; }
         public string[] ExtraArgs { get; }
+        public string Category { get; set; }
+        public int Order { get; set; } = 1;
 
         public DiscordSettingAttribute(string key, Type type, string name, string description, params string[] extraArgs)
         {

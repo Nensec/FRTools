@@ -306,7 +306,16 @@ namespace FRTools.Discord {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This module allows you to quickly look up FR related things, without having to leave Discord to check them. Currently there&apos;s only one command available..
+        ///   Looks up a localized string similar to With this command you can search, or directly view, any item currently available in Flight Rising. You can either supply (part of) the item&apos;s name or description, or it&apos;s item id. The data you receive is not as detailed as the in-game database, as such every result will have a link to the in-game database..
+        /// </summary>
+        internal static string LookupItemInfoDetailed {
+            get {
+                return ResourceManager.GetString("LookupItemInfoDetailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This module allows you to quickly look up FR related things, without having to leave Discord to check them..
         /// </summary>
         internal static string LookupModuleDetailed {
             get {

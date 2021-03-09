@@ -203,7 +203,7 @@
     @RenderSection("scripts", required: false)
     <script>
         $(function () {
-            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-toggle="tooltip"]').tooltip({ html: true });
         })
 
         copyOrGenerateUrl = (e, b, t, id) => {

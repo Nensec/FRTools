@@ -1,9 +1,14 @@
 ﻿using FRTools.Common;
 using FRTools.Data;
 using FRTools.Data.DataModels.FlightRisingModels;
+using FRTools.Data.Messages;
 using HtmlAgilityPack;
+using Microsoft.Azure.ServiceBus;
+using Newtonsoft.Json;
 using System;
+using System.Configuration;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -11,11 +16,15 @@ namespace FRTools.MS.ItemFetcher
 {
     class Program
     {
-        static int _requestsMade = 0;
-        static int _noItemFoundCounter = 0;
+        private static IQueueClient _serviceBus;
+        private static int _requestsMade = 0;
+        private static int _noItemFoundCounter = 0;
 
         static async Task Main()
         {
+            _serviceBus = new QueueClient(ConfigurationManager.AppSettings["AzureSBConnString"], ConfigurationManager.AppSettings["AzureSBQueueName"]);
+            await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new GenericMessage(MessageCategory.ItemFetcher, "Started")))));
+
             var random = new Random();
             using (var ctx = new DataContext())
             {
@@ -27,7 +36,10 @@ namespace FRTools.MS.ItemFetcher
                     Console.WriteLine($"Fetching item: {highestItemId}. Request count: {_requestsMade}.");
                     var item = FetchItem(highestItemId);
                     if (item != null)
+                    {
                         ctx.FRItems.Add(item);
+                        await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NewItemMessage(MessageCategory.ItemFetcher, item)))));
+                    }
                     else
                         _noItemFoundCounter++;
                     await Task.Delay(random.Next(75, 500));
@@ -36,6 +48,7 @@ namespace FRTools.MS.ItemFetcher
                 Console.WriteLine($"Done for now, saving {ctx.ChangeTracker.Entries().Count()} items.");
                 await ctx.SaveChangesAsync();
             }
+            await _serviceBus.CloseAsync();
         }
 
         static FRItem FetchItem(int itemId, string category = "skins")
