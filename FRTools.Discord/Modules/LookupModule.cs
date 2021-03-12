@@ -282,7 +282,7 @@ namespace FRTools.Discord.Modules
                         if (cats.Count() > 1)
                         {
                             foreach (var cat in searchResult.GroupBy(x => x.ItemCategory))
-                                sb.AppendLine($"   - {cat.Count()} in the category `{cat.Key}`");
+                                sb.AppendLine($"- {cat.Count()} in the category `{cat.Key}`");
                             sb.AppendLine();
                             sb.AppendLine($"Please refine your search, perhaps use a category filter such as `{SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}lookup {cats.FirstOrDefault().Key.ToString().ToLower()} {searchTerm}`");
                         }
@@ -296,7 +296,7 @@ namespace FRTools.Discord.Modules
                     {
                         var embed = new EmbedBuilder()
                             .WithDescription($"Found {searchResult.Count} items that match your query. Please look at the items below and use `{SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}lookup item <frid>` to view it's details.")
-                            .WithFields(searchResult.Select(x => new EmbedFieldBuilder().WithValue(x.FRId).WithName(x.Name).WithIsInline(true)));
+                            .WithFields(searchResult.Select(x => new EmbedFieldBuilder().WithValue($"{x.FRId} ({x.ItemCategory.ToString().ToLower()})").WithName(x.Name).WithIsInline(true)));
                         await ReplyAsync("", embed: embed.Build());
                     }
                 }
