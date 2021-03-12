@@ -5,6 +5,7 @@ namespace FRTools.Web.Models
 {
     public class DiscordMetadata
     {
+        public List<DiscordSettingCategory> BotSettingCategories { get; set; } = new List<DiscordSettingCategory>();
         public List<DiscordSetting> BotSettings { get; set; } = new List<DiscordSetting>();
         public List<DiscordModule> Modules { get; set; } = new List<DiscordModule>();
     }
@@ -16,6 +17,14 @@ namespace FRTools.Web.Models
         public string Type { get; set; }
         public string Key { get; set; }
         public string[] ExtraArgs { get; set; }
+        public DiscordSettingCategory Category { get; set; }
+        public int Order { get; set; }
+    }
+
+    public class DiscordSettingCategory
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
     }
 
     public class DiscordModule
@@ -24,6 +33,7 @@ namespace FRTools.Web.Models
         public string Description { get; set; }
         public string[] Aliases { get; set; }
         public List<DiscordCommand> Commands { get; set; } = new List<DiscordCommand>();
+        public List<DiscordSettingCategory> BotSettingCategories { get; set; } = new List<DiscordSettingCategory>();
         public List<DiscordSetting> Settings { get; set; } = new List<DiscordSetting>();
         public DiscordHelp Help { get; set; }
         public bool RequireOwner { get; set; }
@@ -83,6 +93,7 @@ namespace FRTools.Web.Models
         public int UserCount { get; set; }
         public List<DiscordRoleViewModel> Roles { get; set; }
         public List<DiscordChannelViewModel> Channels { get; set; }
+        public List<DiscordSettingCategory> BotSettingCategories { get; set; }
         public List<DiscordSettingViewModel> BotSettings { get; set; }
         public List<DiscordModule> Modules { get; set; }
     }
@@ -112,6 +123,8 @@ namespace FRTools.Web.Models
         public string Description { get; set; }
         public string Module { get; set; }
         public string[] ExtraArgs { get; set; }
+        public DiscordSettingCategory Category { get; set; }
+        public int Order { get; set; }
     }
 
     public class DiscordModuleViewModel

@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using FRTools.Data;
 using FRTools.Data.DataModels.DiscordModels;
+using FRTools.Data.DataModels.FlightRisingModels;
 using FRTools.Data.Messages;
 using FRTools.Discord.Infrastructure;
 using System;
@@ -14,8 +15,13 @@ using System.Threading.Tasks;
 
 namespace FRTools.Discord.Handlers
 {
+    [DiscordSettingCategory("ITEMDB", "Item database")]
     [DiscordSetting("GUILDCONFIG_PREFIX", typeof(string), "Command prefix", "The prefix used by the bot to listen to commands")]
     [DiscordSetting("GUILDCONFIG_ANN_CHANNEL", typeof(ITextChannel), "Announcement channel", "The channel the bot will post announcement messages")]
+    [DiscordSetting("GUILDCONFIG_ITEMDB_ANNNEWITEM", typeof(bool), "Announce new items", "Should the bot announce new items added to Flight Rising?", Category = "ITEMDB")]
+    [DiscordSetting("GUILDCONFIG_ITEMDB_NEWITEMTYPES", typeof(FRItemCategory[]), "New item types", "Which item types should be announced", Category = "ITEMDB", Order = 2)]
+    [DiscordSetting("GUILDCONFIG_ITEMDB_USEANNCHANNEL", typeof(bool), "Use announcement channel", "Use the bot's overall announcement channel, or set up an alternative", Category = "ITEMDB", Order = 2)]
+    [DiscordSetting("GUILDCONFIG_ITEMDB_ANN_CHANNEL", typeof(ITextChannel), "Alternative announcement channel", "If $<GUILD:GUILDCONFIG_ITEMDB_USEANNCHANNEL> is set to false, this channel will be used to announce new items", Category = "ITEMDB", Order = 3)]
     public class GuildHandler
     {
         private readonly DiscordSocketClient _client;
@@ -219,12 +225,46 @@ namespace FRTools.Discord.Handlers
             {
                 try
                 {
-                    await DominanceHandler.UpdateGuild(_settingManager, Guild, Guild.GetUser(_client.CurrentUser.Id)) ;
+                    await DominanceHandler.UpdateGuild(_settingManager, Guild, Guild.GetUser(_client.CurrentUser.Id));
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Trace.WriteLine($"Could not update dominance for server '{Guild.Id}' ({Guild.Name})");
                     Trace.WriteLine(ex.Message);
+                }
+            }
+        }
+
+        internal async Task HandleNewItemUpdate(NewItemMessage newItemMessage)
+        {
+            // Check if setting is turned on
+            if (bool.TryParse(_settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_ANNNEWITEM", Guild), out var shouldAnnounce) && shouldAnnounce)
+            {
+                // Check if item is in list of announceables
+                var itemTypesToAnnounce = (_settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_NEWITEMTYPES", Guild) ?? "").Split(',').Select(x => (FRItemCategory)int.Parse(x)).ToList();
+                if (itemTypesToAnnounce.Contains(newItemMessage.Item.ItemCategory))
+                {
+                    // Get the channel to announce item in
+                    ISocketMessageChannel annChannel = null;
+                    if (bool.TryParse(_settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_USEANNCHANNEL", Guild), out var useGeneralAnnChannel) && useGeneralAnnChannel)
+                    {
+                        var annChannelId = _settingManager.GetSettingValue("GUILDCONFIG_ANN_CHANNEL", Guild);
+                        if (annChannelId != null)
+                            annChannel = Guild.GetChannel(ulong.Parse(annChannelId)) as ISocketMessageChannel;
+                    }
+                    else
+                    {
+                        var annNewItemChannelId = _settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_ANN_CHANNEL", Guild);
+                        if (annNewItemChannelId != null)
+                            annChannel = Guild.GetChannel(ulong.Parse(annNewItemChannelId)) as ISocketMessageChannel;
+                    }
+
+                    if (annChannel != null)
+                    {
+                        var embed = await ItemHandler.CreateItemEmbed(newItemMessage.Item, Guild);
+                        embed.Embed.Title = "New item found! - " + embed.Embed.Title;
+                        await annChannel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
+                    }
                 }
             }
         }

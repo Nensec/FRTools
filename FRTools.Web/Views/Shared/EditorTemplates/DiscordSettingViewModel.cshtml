@@ -4,69 +4,105 @@
     var name = Html.Name(Model.Key);
 }
 <div class="input-group">
-    <span id="@(Html.Id(Model.Key))_status" class="input-group-addon @(Model.SettingType == nameof(Boolean) ? "input-group-addon-close":"")"><span style="display:block; width:75px">Unchanged</span></span>
-
-    @{var channels = Model.ParentServer.Channels.AsEnumerable(); }
-    @switch (Model.SettingType)
+    @{
+        var channels = Model.ParentServer.Channels.AsEnumerable();
+        var settingType = Type.GetType(Model.SettingType);
+        var fallBack = Model.SettingType.Split(',')[0];
+        if (fallBack.Contains("."))
+        {
+            fallBack = fallBack.Split('.')[1];
+        }
+    }
+    <span id="@(Html.Id(Model.Key))_status" class="input-group-addon @(settingType == typeof(bool) ? "input-group-addon-close" : "")"><span style="display:block; width:75px">Unchanged</span></span>
+    @if (!(settingType?.IsArray == true))
     {
-        case "ITextChannel":
-            channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Text);
-            goto case "IChannel";
-        case "IVoiceChannel":
-            channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Voice);
-            goto case "IChannel";
-        case "ICategoryChannel":
-            channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Category);
-            goto case "IChannel";
-        case "IChannel":
-            <select id="@(id)" name="@(name)" configKey="@(Model.Key)" class="form-control" onchange="saveSetting('@(Model.Key)', this.value)">
-                <option></option>
-                @{ var channelGroups = channels.GroupBy(x => x.DiscordChannelType); }
-                @foreach (var channelGroup in channelGroups)
-                {
-                    <option disabled readonly>- @(channelGroup.Key) -</option>
-                    foreach (var channel in channelGroup)
+        switch (settingType?.Name ?? fallBack)
+        {
+            case "ITextChannel":
+                channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Text);
+                goto case "IChannel";
+            case "IVoiceChannel":
+                channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Voice);
+                goto case "IChannel";
+            case "ICategoryChannel":
+                channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Category);
+                goto case "IChannel";
+            case "IChannel":
+                <select id="@(id)" name="@(name)" configKey="@(Model.Key)" class="form-control" onchange="saveSetting('@(Model.Key)', this.value)">
+                    <option></option>
+                    @{ var channelGroups = channels.GroupBy(x => x.DiscordChannelType); }
+                    @foreach (var channelGroup in channelGroups)
                     {
-                        <option @(channel.ChannelId.ToString() == Model.Value ? "selected" : "") value="@(channel.ChannelId)">@(channel.ChannelName)</option>
+                        <option disabled readonly>- @(channelGroup.Key) -</option>
+                        foreach (var channel in channelGroup)
+                        {
+                            <option @(channel.ChannelId.ToString() == Model.Value ? "selected" : "") value="@(channel.ChannelId)">@(channel.ChannelName)</option>
+                        }
                     }
-                }
-            </select>
-            break;
-        case "IRole":
-            <select id="@(id)" name="@(name)" configKey="@(Model.Key)" class="form-control" onchange="saveSetting('@(Model.Key)', this.value)">
-                <option></option>
-                @foreach (var role in Model.ParentServer.Roles)
+                </select>
+                break;
+            case "IRole":
+                <select id="@(id)" name="@(name)" configKey="@(Model.Key)" class="form-control" onchange="saveSetting('@(Model.Key)', this.value)">
+                    <option></option>
+                    @foreach (var role in Model.ParentServer.Roles)
+                    {
+                        <option @(role.RoleId.ToString() == Model.Value ? "selected" : "") value="@(role.RoleId)">@(role.RoleName)</option>
+                    }
+                </select>
+                break;
+            case nameof(Boolean):
+                string enabled = "True", disabled = "False";
+                if (Model.ExtraArgs?.Length == 2)
                 {
-                    <option @(role.RoleId.ToString() == Model.Value ? "selected" : "") value="@(role.RoleId)">@(role.RoleName)</option>
+                    enabled = Model.ExtraArgs[0];
+                    disabled = Model.ExtraArgs[1];
                 }
-            </select>
-            break;
-        case nameof(Boolean):
-            string enabled = "True", disabled = "False";
-            if (Model.ExtraArgs?.Length == 2)
+                <div style="padding-left:12px">
+                    <input type="checkbox" id="@(id)" name="@(name)" @(bool.TryParse(Model.Value, out var r) && r ? "checked" : "") data-on="@(enabled)" data-off="@(disabled)" data-toggle="toggle" data-height="32" data-width="100" onchange="saveSetting('@(Model.Key)', this.checked)" />
+                </div>
+                break;
+            case nameof(Int32):
+                <input id="@(id)" name="@(name)" type="number" value="@(Model.Value)" class="form-control" />
+                <script>
+                $(document).ready(function () { $('#@(id)').on('input', $.debounce(500, save_@(Model.Key))); });
+                save_@(Model.Key) = function (event) { saveSetting('@(Model.Key)', this.value); }
+                </script>
+                break;
+            case nameof(String):
+            default:
+                <input id="@(id)" name="@(name)" type="text" value="@(Model.Value)" class="form-control" />
+                <script>
+                $(document).ready(function () { $('#@(id)').on('input', $.debounce(500, save_@(Model.Key))); });
+                save_@(Model.Key) = function (event) { saveSetting('@(Model.Key)', this.value); }
+                </script>
+                break;
+        }
+    }
+    else
+    {
+        // array
+        var currentValue = Model.Value?.Split(',') ?? new string[] { };
+        var arrayType = settingType.GetElementType();
+        <select id="@(id)" name="@(name)" configKey="@(Model.Key)" multiple class="form-control" title="Hold CTRL to select multiple" data-toggle="tooltip">
+            @if (arrayType.IsEnum)
             {
-                enabled = Model.ExtraArgs[0];
-                disabled = Model.ExtraArgs[1];
+                foreach (var option in Enum.GetValues(arrayType))
+                {
+                    <option @(currentValue.Contains(((int)option).ToString()) ? "selected" : "") value="@((int)option)">@option.ToString()</option>
+                }
             }
-            <div style="padding-left:12px">
-                <input type="checkbox" id="@(id)" name="@(name)" @(bool.TryParse(Model.Value, out var r) && r ? "checked" : "") data-on="@(enabled)" data-off="@(disabled)" data-toggle="toggle" data-height="32" data-width="100" onchange="saveSetting('@(Model.Key)', this.checked)" />
-            </div>
-            break;
-        case nameof(Int32):
-            <input id="@(id)" name="@(name)" type="number" value="@(Model.Value)" class="form-control" />
-            <script>
-                $(document).ready(function () { $('#@(id)').on('input', $.debounce(500, save_@(Model.Key))); });
-                save_@(Model.Key) = function (event) { saveSetting('@(Model.Key)', this.value); }
-            </script>
-            break;
-        case nameof(String):
-        default:
-            <input id="@(id)" name="@(name)" type="text" value="@(Model.Value)" class="form-control" />
-            <script>
-                $(document).ready(function () { $('#@(id)').on('input', $.debounce(500, save_@(Model.Key))); });
-                save_@(Model.Key) = function (event) { saveSetting('@(Model.Key)', this.value); }
-            </script>
-            break;
+            else
+            {
+                foreach (var option in Model.ExtraArgs)
+                {
+                    <option @(currentValue.Contains(option) ? "selected" : "") value="@option">@option</option>
+                }
+            }
+        </select>
+        <script>
+            $(document).ready(function () { $('#@(id)').on('change', $.debounce(500, save_@(Model.Key))); });
+            save_@(Model.Key) = function (event) { saveSetting('@(Model.Key)', $('#@(id)').val().join(',')); }
+        </script>
     }
 </div>
 
@@ -87,6 +123,6 @@
                 }
             }).done(function (data) { statusElm.toggleClass('warning').toggleClass('success').find($('span')).html('Saved!'); })
                 .fail(function (data) { statusElm.toggleClass('warning').toggleClass('danger').find($('span')).html('Error!'); });
-        }
+                            }
     </script>
 }

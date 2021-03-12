@@ -16,6 +16,15 @@ var modules = botAssembly.GetTypes().Where(x => !x.IsNested && x.BaseType == typ
 var guildHandler = botAssembly.GetTypes().First(x => x.Name == "GuildHandler");
 var output = new DiscordMetadata();
 
+var botSettingCategoriesAttributes = guildHandler.GetCustomAttributes().Where(x => x.GetType().Name == "DiscordSettingCategoryAttribute");
+foreach(var botSettingCategoriesAttribute in botSettingCategoriesAttributes)
+{
+	var categoryTemplate = new SettingCategoryTemplate();
+	categoryTemplate.Name = (string)botSettingCategoriesAttribute.GetType().GetProperty("Name").GetValue(botSettingCategoriesAttribute);
+	categoryTemplate.Description = (string)botSettingCategoriesAttribute.GetType().GetProperty("Description").GetValue(botSettingCategoriesAttribute);
+	output.BotSettingCategories.Add(categoryTemplate);
+}
+
 var botSettingsAttributes = guildHandler.GetCustomAttributes().Where(x => x.GetType().Name == "DiscordSettingAttribute");
 foreach(var botSettingAttribute in botSettingsAttributes)
 {
@@ -23,8 +32,12 @@ foreach(var botSettingAttribute in botSettingsAttributes)
 	settingTemplate.Name = (string)botSettingAttribute.GetType().GetProperty("Name").GetValue(botSettingAttribute);
 	settingTemplate.Description = (string)botSettingAttribute.GetType().GetProperty("Description").GetValue(botSettingAttribute);
 	settingTemplate.Key = (string)botSettingAttribute.GetType().GetProperty("Key").GetValue(botSettingAttribute);
-	settingTemplate.Type = ((Type)botSettingAttribute.GetType().GetProperty("Type").GetValue(botSettingAttribute)).Name;
+	settingTemplate.Type = ((Type)botSettingAttribute.GetType().GetProperty("Type").GetValue(botSettingAttribute)).AssemblyQualifiedName;
 	settingTemplate.ExtraArgs = (string[])botSettingAttribute.GetType().GetProperty("ExtraArgs").GetValue(botSettingAttribute);
+	settingTemplate.Order = (int)botSettingAttribute.GetType().GetProperty("Order").GetValue(botSettingAttribute);
+	var category = (string)botSettingAttribute.GetType().GetProperty("Category").GetValue(botSettingAttribute);
+	if(category != null)
+		settingTemplate.Category = output.BotSettingCategories.FirstOrDefault(x => x.Name == category);
 	output.BotSettings.Add(settingTemplate);
 }
 
@@ -44,8 +57,12 @@ foreach(var module in modules)
 		settingTemplate.Name = (string)settingAttribute.GetType().GetProperty("Name").GetValue(settingAttribute);
 		settingTemplate.Description = (string)settingAttribute.GetType().GetProperty("Description").GetValue(settingAttribute);
 		settingTemplate.Key = (string)settingAttribute.GetType().GetProperty("Key").GetValue(settingAttribute);
-		settingTemplate.Type = ((Type)settingAttribute.GetType().GetProperty("Type").GetValue(settingAttribute)).Name;
+		settingTemplate.Type = ((Type)settingAttribute.GetType().GetProperty("Type").GetValue(settingAttribute)).AssemblyQualifiedName;
 		settingTemplate.ExtraArgs = (string[])settingAttribute.GetType().GetProperty("ExtraArgs").GetValue(settingAttribute);
+		settingTemplate.Order = (int)settingAttribute.GetType().GetProperty("Order").GetValue(settingAttribute);
+		var category = (string)settingAttribute.GetType().GetProperty("Category").GetValue(settingAttribute);
+		if(category != null)
+			settingTemplate.Category = output.BotSettingCategories.FirstOrDefault(x => x.Name == category);
 		moduleTemplate.Settings.Add(settingTemplate);
 	}
 
@@ -255,6 +272,7 @@ var json = JsonConvert.SerializeObject(output, new JsonSerializerSettings { Null
 <#+
 	class DiscordMetadata
 	{
+		public List<SettingCategoryTemplate> BotSettingCategories { get; set; } = new List<SettingCategoryTemplate>();
 		public List<SettingTemplate> BotSettings { get; set; } = new List<SettingTemplate>();
 		public List<ModuleTemplate> Modules { get; set; } = new List<ModuleTemplate>();
 	}
@@ -266,6 +284,7 @@ var json = JsonConvert.SerializeObject(output, new JsonSerializerSettings { Null
 		public string[] Aliases { get; set; }
 		public bool RequireOwner { get; set; }
 		public List<CommandTemplate> Commands { get; set; } = new List<CommandTemplate>();
+		public List<SettingCategoryTemplate> SettingCategories { get; set; } = new List<SettingCategoryTemplate>();
 		public List<SettingTemplate> Settings { get; set; } = new List<SettingTemplate>();
 		public HelpTemplate Help { get; set; }
 
@@ -329,11 +348,19 @@ var json = JsonConvert.SerializeObject(output, new JsonSerializerSettings { Null
 		public string Type { get; set; }
 		public string Key { get; set; }
 		public string[] ExtraArgs { get; set; }
+		public SettingCategoryTemplate Category { get; set; }
+		public int Order { get; set; }
 
 		public bool ShouldSerializeExtraArgs()
 		{
 			return ExtraArgs.Any();
 		}
+	}
+
+	class SettingCategoryTemplate
+	{
+		public string Name { get; set; }
+		public string Description { get; set; }
 	}
 
 	class HelpTemplate

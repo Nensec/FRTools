@@ -60,7 +60,7 @@ namespace FRTools.MS.DominanceChecker
                             await ctx.SaveChangesAsync();
 
                             var (JobId, StartTime, Task) = JobManager.StartNewJob(new SendUpdateDominanceMessage());
-                            while (!Task.IsCompleted)
+                            while (Task == null || !Task.IsCompleted)
                                 await Task.Delay(100);
                             break;
                         }
@@ -78,6 +78,7 @@ namespace FRTools.MS.DominanceChecker
                 Console.WriteLine("Waiting 30 seconds to try again..");
                 await Task.Delay(30000);
             }
+            await _serviceBus.CloseAsync();
         }
     }
 }

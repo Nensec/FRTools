@@ -10,8 +10,8 @@ using FRTools.Discord.Infrastructure;
 namespace FRTools.Discord.Modules
 {
     [Name("Dominance"), Group("dominance"), Alias("dom"), Summary("Dominance related commands")]
-    [DiscordSetting("GUILDCONFIG_DOMINANCE", typeof(bool), "Automatic dominance", "Enables or disables automatically assigning the dominance role to the current week's dominance winner. This can also be turned on and off with a discord bot command.", "Enabled", "Disabled")]
-    [DiscordSetting("GUILDCONFIG_DOMINANCE_ANNOUNCE", typeof(bool), "Dominance announcements", "Enables or disables the announcement of the current week's standings when the bot fetches the update. Requires $<GUILD:GUILDCONFIG_ANN_CHANNEL> to be set.", "Enabled", "Disabled")]
+    [DiscordSetting("GUILDCONFIG_DOMINANCE", typeof(bool), "Automatic dominance", "Enables or disables automatically assigning the dominance role to the current week's dominance winner. This can also be turned on and off with a discord bot command.", "Enabled", "Disabled", Order = 0)]
+    [DiscordSetting("GUILDCONFIG_DOMINANCE_ANNOUNCE", typeof(bool), "Dominance announcements", "Enables or disables the announcement of the current week's standings when the bot fetches the update. Requires $<GUILD:GUILDCONFIG_ANN_CHANNEL> to be set.", "Enabled", "Disabled", Order = 0)]
     [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE", typeof(IRole), "Dominance role", null)]
     [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_0", typeof(IRole), "Earth role", null)]
     [DiscordSetting("GUILDCONFIG_DOMINANCE_ROLE_1", typeof(IRole), "Plague role", null)]

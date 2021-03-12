@@ -120,7 +120,7 @@
         var dragonType = $('#@(Html.IdFor(model => model.DragonType))').val();
         var gender = $('#@(Html.IdFor(model => model.Gender))').val();
 
-        $('.dummyDragon').show().attr('src', `@Url.Action("GetDummyDragon")?dragonType=${dragonType}&gender=${gender}`);
+        $('.dummyDragon').show().attr('src', `@Url.RouteUrl("GetDummyDragonQueryString")?dragonType=${dragonType}&gender=${gender}`);
         var dragonImage = new Image();
         dragonImage.onload = function () {
             updateCoverage(undefined, dragonImage);

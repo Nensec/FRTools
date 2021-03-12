@@ -1,4 +1,4 @@
 {
-  // Runs at 8:00 AM every sunday
-  "schedule": "0 0 8 * * 0"
+    // Runs at 8:00 AM every sunday
+    "schedule": "0 0 8 * * 0"
 }

@@ -9,6 +9,7 @@ namespace FRTools.Data.Messages
     public enum MessageCategory
     {
         DominanceTracker,
-        SettingUpdated
+        SettingUpdated,
+        ItemFetcher
     }
 }

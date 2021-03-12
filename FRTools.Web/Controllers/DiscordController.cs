@@ -125,7 +125,8 @@ namespace FRTools.Web.Controllers
             };
             serverModel.Channels = server.Channels.Select(x => new DiscordChannelViewModel { ChannelId = x.ChannelId, ChannelName = x.Name, ParentServer = serverModel, DiscordChannelType = x.ChannelType }).ToList();
             serverModel.Roles = server.Roles.Where(x => x.Name != "@everyone").Select(x => new DiscordRoleViewModel { RoleId = x.RoleId, RoleName = x.Name, ParentServer = serverModel }).ToList();
-            var botSettings = DiscordMetadata.BotSettings.OrderBy(x => x.Type).Select(x => new DiscordSettingViewModel
+            var botSettingCategories = DiscordMetadata.BotSettingCategories.OrderBy(x => x.Name).ToList();
+            var botSettings = DiscordMetadata.BotSettings.OrderBy(x => x.Order).ThenBy(x => x.Type).Select(x => new DiscordSettingViewModel
             {
                 Key = x.Key,
                 ParentServer = serverModel,
@@ -133,8 +134,10 @@ namespace FRTools.Web.Controllers
                 SettingType = x.Type,
                 SettingName = x.Name,
                 Description = ParseDescription(x),
-                ExtraArgs = x.ExtraArgs
+                ExtraArgs = x.ExtraArgs,
+                Category = x.Category
             }).ToList();
+            serverModel.BotSettingCategories = botSettingCategories;
             serverModel.BotSettings = botSettings;
             return serverModel;
         }
@@ -170,7 +173,7 @@ namespace FRTools.Web.Controllers
                         ParentServer = serverModel,
                         SelectedModule = DiscordMetadata.Modules.First(x => x.Name.ToLower() == module.ToLower())
                     };
-                    var moduleSettings = model.SelectedModule.Settings.OrderBy(x => x.Type).Select(x => new DiscordSettingViewModel
+                    var moduleSettings = model.SelectedModule.Settings.OrderBy(x => x.Order).ThenBy(x => x.Type).Select(x => new DiscordSettingViewModel
                     {
                         Key = x.Key,
                         SettingName = x.Name,
@@ -204,7 +207,7 @@ namespace FRTools.Web.Controllers
                 foreach (var match in matches.Cast<Match>().Where(x => x.Success))
                 {
                     var refSetting = GetRefSetting(match.Groups[1].Value, match.Groups[2].Value);
-                    description = description.Replace(match.Groups[0].Value, $"'{refSetting.Name}'");
+                    description = description.Replace(match.Groups[0].Value, $"<span class=\"text-warning\"><b>{refSetting.Name}</b> ({(match.Groups[1].Value == "GUILD" ? "Server" : match.Groups[2].Value)} settings)</span>");
                 }
             }
             return description;

@@ -48,6 +48,7 @@ namespace FRTools.Data
         public DbSet<DragonCache> DragonCache { get; set; }
         public DbSet<FRUser> FRUsers { get; set; }
         public DbSet<FRDominance> FRDominances { get; set; }
+        public DbSet<FRItem> FRItems { get; set; }
 
         // Discord tables
         public DbSet<DiscordLog> DiscordLogs { get; set; }
