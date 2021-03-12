@@ -11,6 +11,6 @@
         public virtual MessageCategory Source { get; set; }
         public virtual string Message { get; set; }
         public virtual long? DiscordServer { get; set; }
-        public virtual string MessageType { get; } = nameof(GenericMessage);
+        public virtual string MessageType { get; set; } = nameof(GenericMessage);
     }
 }

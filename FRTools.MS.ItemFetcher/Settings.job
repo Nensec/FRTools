@@ -1,4 +1,4 @@
 {
-    // Every minute
-    "schedule": "0 1/4 * * *"
+    // Every 15 minutes
+    "schedule": "1/15 * * * *"
 }

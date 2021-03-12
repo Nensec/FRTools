@@ -20,7 +20,7 @@ namespace FRTools.Discord.Handlers
                     ITextChannel annChannel = null;
                     var annChannelId = settingManager.GetSettingValue("GUILDCONFIG_ANN_CHANNEL", guild);
                     if (annChannelId != null)
-                        annChannel = (ITextChannel)guild.GetChannel(ulong.Parse(annChannelId));
+                        annChannel = guild.GetChannel(ulong.Parse(annChannelId)) as ITextChannel;
                     if (selfUser.Roles.Any(x => x.Position > dominanceRole.Position))
                     {
                         foreach (var user in dominanceRole.Members.ToList())

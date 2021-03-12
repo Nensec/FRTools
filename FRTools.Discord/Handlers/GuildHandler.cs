@@ -225,9 +225,9 @@ namespace FRTools.Discord.Handlers
             {
                 try
                 {
-                    await DominanceHandler.UpdateGuild(_settingManager, Guild, Guild.GetUser(_client.CurrentUser.Id)) ;
+                    await DominanceHandler.UpdateGuild(_settingManager, Guild, Guild.GetUser(_client.CurrentUser.Id));
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Trace.WriteLine($"Could not update dominance for server '{Guild.Id}' ({Guild.Name})");
                     Trace.WriteLine(ex.Message);
@@ -237,13 +237,36 @@ namespace FRTools.Discord.Handlers
 
         internal async Task HandleNewItemUpdate(NewItemMessage newItemMessage)
         {
-            ITextChannel annChannel = null;
-            var annNewItemChannelId = _settingManager.GetSettingValue("GUILDCONFIG_ANN_NEWITEM_CHANNEL", Guild);
+            // Check if setting is turned on
+            if (bool.TryParse(_settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_ANNNEWITEM", Guild), out var shouldAnnounce) && shouldAnnounce)
+            {
+                // Check if item is in list of announceables
+                var itemTypesToAnnounce = (_settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_NEWITEMTYPES", Guild) ?? "").Split(',').Select(x => (FRItemCategory)int.Parse(x)).ToList();
+                if (itemTypesToAnnounce.Contains(newItemMessage.Item.ItemCategory))
+                {
+                    // Get the channel to announce item in
+                    ISocketMessageChannel annChannel = null;
+                    if (bool.TryParse(_settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_USEANNCHANNEL", Guild), out var useGeneralAnnChannel) && useGeneralAnnChannel)
+                    {
+                        var annChannelId = _settingManager.GetSettingValue("GUILDCONFIG_ANN_CHANNEL", Guild);
+                        if (annChannelId != null)
+                            annChannel = Guild.GetChannel(ulong.Parse(annChannelId)) as ISocketMessageChannel;
+                    }
+                    else
+                    {
+                        var annNewItemChannelId = _settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_ANN_CHANNEL", Guild);
+                        if (annNewItemChannelId != null)
+                            annChannel = Guild.GetChannel(ulong.Parse(annNewItemChannelId)) as ISocketMessageChannel;
+                    }
 
-            var annChannelId = _settingManager.GetSettingValue("GUILDCONFIG_ANN_CHANNEL", Guild);
-            if (annChannelId != null)
-                annChannel = (ITextChannel)Guild.GetChannel(ulong.Parse(annChannelId));
-
+                    if (annChannel != null)
+                    {
+                        var embed = await ItemHandler.CreateItemEmbed(newItemMessage.Item, Guild);
+                        embed.Embed.Title = "New item found! - " + embed.Embed.Title;
+                        await annChannel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
+                    }
+                }
+            }
         }
 
         internal async Task HandleSettingUpdate(GenericMessage settingUpdate)

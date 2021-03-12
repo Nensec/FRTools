@@ -4,7 +4,7 @@ namespace FRTools.Data.Messages
 {
     public class NewItemMessage : GenericMessage
     {
-        public override string MessageType { get; } = nameof(NewItemMessage);
+        public override string MessageType { get; set; } = nameof(NewItemMessage);
 
         public NewItemMessage(MessageCategory source, FRItem item) : base(source, "New item")
         {

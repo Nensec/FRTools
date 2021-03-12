@@ -4,8 +4,6 @@
     var name = Html.Name(Model.Key);
 }
 <div class="input-group">
-    <span id="@(Html.Id(Model.Key))_status" class="input-group-addon @(Model.SettingType == nameof(Boolean) ? "input-group-addon-close":"")"><span style="display:block; width:75px">Unchanged</span></span>
-
     @{
         var channels = Model.ParentServer.Channels.AsEnumerable();
         var settingType = Type.GetType(Model.SettingType);
@@ -15,6 +13,7 @@
             fallBack = fallBack.Split('.')[1];
         }
     }
+    <span id="@(Html.Id(Model.Key))_status" class="input-group-addon @(settingType == typeof(bool) ? "input-group-addon-close" : "")"><span style="display:block; width:75px">Unchanged</span></span>
     @if (!(settingType?.IsArray == true))
     {
         switch (settingType?.Name ?? fallBack)

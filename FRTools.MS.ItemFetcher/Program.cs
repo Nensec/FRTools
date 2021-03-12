@@ -17,7 +17,6 @@ namespace FRTools.MS.ItemFetcher
     class Program
     {
         private static IQueueClient _serviceBus;
-        private static int _requestsMade = 0;
         private static int _noItemFoundCounter = 0;
 
         static async Task Main()
@@ -30,10 +29,10 @@ namespace FRTools.MS.ItemFetcher
             {
                 var highestItemId = ctx.FRItems.Any() ? ctx.FRItems.Max(x => x.FRId) : 0;
 
-                while (_requestsMade <= 1000 && _noItemFoundCounter < 10)
+                while (_noItemFoundCounter <= 2)
                 {
                     ++highestItemId;
-                    Console.WriteLine($"Fetching item: {highestItemId}. Request count: {_requestsMade}.");
+                    Console.WriteLine($"Fetching item: {highestItemId}");
                     var item = FetchItem(highestItemId);
                     if (item != null)
                     {
@@ -53,8 +52,6 @@ namespace FRTools.MS.ItemFetcher
 
         static FRItem FetchItem(int itemId, string category = "skins")
         {
-            _requestsMade++;
-
             var client = new HtmlWeb();
             var itemDoc = client.Load(string.Format(FRHelpers.ItemFetchUrl, itemId, category));
             var iconUrl = itemDoc.DocumentNode.SelectSingleNode("/div/div[1]/img[2]").GetAttributeValue("src", "/images/cms//.png");

@@ -2,12 +2,9 @@
 using Discord.Commands;
 using FRTools.Common;
 using FRTools.Data;
-using FRTools.Data.DataModels.FlightRisingModels;
+using FRTools.Discord.Handlers;
 using FRTools.Discord.Infrastructure;
 using HtmlAgilityPack;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -166,7 +163,7 @@ namespace FRTools.Discord.Modules
                     await ReplyAsync($"Found no items that match `{search}`, I might not know about any item that match that or they don't exist.");
                 else if (searchResult.Count == 1)
                 {
-                    var embed = await CreateItemEmbed(searchResult[0]);
+                    var embed = await ItemHandler.CreateItemEmbed(searchResult[0], Context.Guild);
                     await Context.Channel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
                 }
                 else
@@ -189,78 +186,11 @@ namespace FRTools.Discord.Modules
                 var item = DbContext.FRItems.FirstOrDefault(x => x.FRId == frItemId);
                 if (item != null)
                 {
-                    var embed = await CreateItemEmbed(item);
+                    var embed = await ItemHandler.CreateItemEmbed(item, Context.Guild);
                     await Context.Channel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
                 }
                 else
                     await ReplyAsync($"Can't find item `{frItemId}`, I might not know about it yet or it does not exist.");
-            }
-
-            private async Task<(EmbedBuilder Embed, IEnumerable<KeyValuePair<string, Stream>> Files)> CreateItemEmbed(FRItem item)
-            {
-                var files = new List<KeyValuePair<string, Stream>>();
-                var externalEmojis = Context.Guild.CurrentUser.GuildPermissions.UseExternalEmojis;
-
-                var embed = new EmbedBuilder()
-                    .WithTitle(item.Name)
-                    .WithDescription(item.Description)
-                    .WithThumbnailUrl($"attachment://icon_{item.FRId}.png")
-                    .WithFields(new EmbedFieldBuilder().WithName("Game database").WithValue($"[#{item.FRId}]({string.Format(FRHelpers.GameDatabaseUrl, item.FRId)})"));
-
-                using (var client = new WebClient())
-                    files.Add(new KeyValuePair<string, Stream>($"icon_{item.FRId}.png", client.OpenRead(string.Format(SiteHelpers.IconProxyUrl, item.FRId))));
-
-                if (item.TreasureValue > 0)
-                    embed.AddField(x => x.WithName("Treasure value").WithValue((externalEmojis ? $"{DiscordEmoji.Treasure} " : "") + $"{item.TreasureValue}").WithIsInline(true));
-
-                if(item.FoodValue > 0)
-                    embed.AddField(x => x.WithName("Food value").WithValue((externalEmojis ? $"{DiscordEmoji.Food} " : "") + $"{item.FoodValue}").WithIsInline(true));
-
-
-                if (item.AssetUrl != null)
-                {
-                    if (item.ItemCategory == FRItemCategory.Equipment)
-                    {
-                        var random = new Random();
-                        var modernBreeds = GeneratedFRHelpers.GetModernBreeds();
-                        using (var client = new WebClient())
-                            files.Add(new KeyValuePair<string, Stream>($"asset_{item.FRId}.png", client.OpenRead(string.Format(SiteHelpers.DummyDragonApparelProxyUrl, (int)modernBreeds[random.Next(1, modernBreeds.Length)], random.Next(0, 2), $"{item.FRId}"))));
-                    }
-                    else if (item.ItemCategory == FRItemCategory.Skins)
-                    {
-                        var skinType = item.ItemType.Split(' ');
-                        var dragonType = (DragonType)Enum.Parse(typeof(DragonType), skinType[0]);
-                        var gender = (Gender)Enum.Parse(typeof(Gender), skinType[1]);
-                        using (var client = new WebClient())
-                            files.Add(new KeyValuePair<string, Stream>($"asset_{item.FRId}.png", client.OpenRead(string.Format(SiteHelpers.DummyDragonSkinProxyUrl, (int)dragonType, (int)gender, $"{item.FRId}"))));
-
-                        var username = Regex.Match(item.Description, @"Designed by (.+)[\.|\)]");
-                        if (username.Success)
-                        {
-                            var frUser = await FRHelpers.GetOrUpdateFRUser(username.Groups[1].Value, DbContext);
-                            if (frUser != null)
-                            {
-                                embed.AddField(x =>
-                                {
-                                    x.Name = "Created by";
-                                    if (frUser.User != null && frUser.User.ProfileSettings.PublicProfile)
-                                        x.Value = $"[FR: {frUser.Username}]({string.Format(FRHelpers.UserProfileUrl, frUser.FRId)}) | [FRTools: {frUser.User.UserName}]({string.Format(SiteHelpers.ProfilePageUrl, frUser.User.UserName)})";
-                                    else
-                                        x.Value = $"[{frUser.Username}]({string.Format(FRHelpers.UserProfileUrl, frUser.FRId)})";
-                                });
-                            }
-                        }
-
-                    }
-                    else
-                    {
-                        using (var client = new WebClient())
-                            files.Add(new KeyValuePair<string, Stream>($"asset_{item.FRId}.png", client.OpenRead($"https://flightrising.com{item.AssetUrl}")));
-                    }
-                    embed.WithImageUrl($"attachment://asset_{item.FRId}.png");
-                }
-
-                return (embed, files);
             }
         }
     }
