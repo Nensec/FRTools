@@ -11,7 +11,7 @@ using Color = Discord.Color;
 
 namespace FRTools.Discord.Modules
 {
-    public class BaseModule : InteractiveBase
+    public abstract class BaseModule : InteractiveBase
     {
         protected DataContext DbContext { get; }
         protected SettingManager SettingManager { get; }

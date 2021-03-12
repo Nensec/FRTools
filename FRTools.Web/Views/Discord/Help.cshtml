@@ -68,7 +68,7 @@
                         @foreach (var command in module.Commands)
                         {
                             <div class="panel panel-default" style="margin-bottom:0; margin-top:5px;">
-                                <div class="panel-heading" style="cursor:pointer" data-toggle="collapse" data-target=".panel-body[command=@(command.Name.ToLower())]">
+                                <div class="panel-heading" style="cursor:pointer" data-toggle="collapse" data-target=".panel-body[command='@(command.Name.ToLower())']">
                                     @(command.Name)
                                     @if ((command.Help.RequiresGuildPermission & 8) != 0)
                                     {

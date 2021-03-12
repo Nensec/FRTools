@@ -121,9 +121,10 @@ namespace FRTools.MS.ItemFetcher
 
                 return item;
             }
-            catch
+            catch (Exception ex)
             {
                 Console.WriteLine($"Item {itemId} threw error, possible deleted?");
+                Console.WriteLine(ex.ToString());
                 return null;
             }
             finally

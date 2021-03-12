@@ -12,7 +12,7 @@
 <#@ output extension=".json" #>
 <#
 var botAssembly = Assembly.GetAssembly(typeof(BaseModule));
-var modules = botAssembly.GetTypes().Where(x => !x.IsNested && x.BaseType == typeof(BaseModule));
+var modules = botAssembly.GetTypes().Where(x => !x.IsNested && !x.IsAbstract && x.BaseType == typeof(BaseModule));
 var guildHandler = botAssembly.GetTypes().First(x => x.Name == "GuildHandler");
 var output = new DiscordMetadata();
 
@@ -182,7 +182,7 @@ foreach(var module in modules)
 		moduleTemplate.Commands.Add(commandTemplate);
 	}
 
-	var groupCommands = module.GetNestedTypes().Where(x => x.BaseType?.Name == "BaseModule");
+	var groupCommands = module.GetNestedTypes().Where(x => typeof(BaseModule).IsAssignableFrom(x));
 	foreach(var groupCommand in groupCommands)
 	{
 		var commandTemplate = new CommandTemplate { ParentModule = moduleTemplate };

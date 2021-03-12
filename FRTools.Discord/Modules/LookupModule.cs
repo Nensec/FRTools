@@ -150,7 +150,7 @@ namespace FRTools.Discord.Modules
             await lookingUpMessage.DeleteAsync();
         }
 
-        [Group("item"), Name("ItemInfo"), Alias("i")]
+        [Group("item"), Name("Item"), Alias("i")]
         [DiscordHelp("LookupItemInfo")]
         public class LookupItemInfo : LookupItemBase
         {
@@ -165,7 +165,7 @@ namespace FRTools.Discord.Modules
             public Task ItemLookup(int frItemId) => ItemLookup(x => x.FRId == frItemId, frItemId);
         }
 
-        [Group("skin"), Name("SkinInfo"), Alias("accent", "s", "a")]
+        [Group("skin"), Name("Skin"), Alias("accent", "s", "a")]
         [DiscordHelp("LookupSkinInfo")]
         public class LookupSkinInfo : LookupItemBase
         {
@@ -180,7 +180,7 @@ namespace FRTools.Discord.Modules
             public Task ItemLookup(int frItemId) => ItemLookup(x => x.ItemCategory == FRItemCategory.Skins && x.FRId == frItemId, frItemId);
         }
 
-        [Group("food"), Name("FoodInfo"), Alias("f")]
+        [Group("food"), Name("Food"), Alias("f")]
         [DiscordHelp("LookupFoodInfo")]
         public class LookupFoodInfo : LookupItemBase
         {
@@ -195,7 +195,7 @@ namespace FRTools.Discord.Modules
             public Task ItemLookup(int frItemId) => ItemLookup(x => x.ItemCategory == FRItemCategory.Food && x.FRId == frItemId, frItemId);
         }
 
-        [Group("trinket"), Name("TrinketInfo"), Alias("t", "material", "mat", "m", "chest", "c", "bundle", "vista", "scene", "egg")]
+        [Group("trinket"), Name("Trinket"), Alias("t", "material", "mat", "m", "chest", "c", "bundle", "vista", "scene", "egg")]
         [DiscordHelp("LookupTrinketInfo")]
         public class LookupTrinketInfo : LookupItemBase
         {
@@ -210,7 +210,7 @@ namespace FRTools.Discord.Modules
             public Task ItemLookup(int frItemId) => ItemLookup(x => x.ItemCategory == FRItemCategory.Trinket && x.FRId == frItemId, frItemId);
         }
 
-        [Group("equipment"), Name("EquipmentInfo"), Alias("equip", "e", "apparel", "apparal", "a")]
+        [Group("equipment"), Name("Equipment"), Alias("equip", "e", "apparel", "apparal", "a")]
         [DiscordHelp("LookupEquipmentInfo")]
         public class LookupEquipmentInfo : LookupItemBase
         {
@@ -225,7 +225,7 @@ namespace FRTools.Discord.Modules
             public Task ItemLookup(int frItemId) => ItemLookup(x => x.ItemCategory == FRItemCategory.Equipment && x.FRId == frItemId, frItemId);
         }
 
-        [Group("battle_item"), Name("BattleItemInfo"), Alias("battle", "augment", "ability", "energy", "accesory")]
+        [Group("battle_item"), Name("Battle Item"), Alias("battle", "augment", "ability", "energy", "accesory")]
         [DiscordHelp("LookupBattleItemInfo")]
         public class LookupBattleItemInfo : LookupItemBase
         {
@@ -240,7 +240,7 @@ namespace FRTools.Discord.Modules
             public Task ItemLookup(int frItemId) => ItemLookup(x => x.ItemCategory == FRItemCategory.Battle_Items && x.FRId == frItemId, frItemId);
         }
 
-        [Group("familiar"), Name("FamiliarInfo"), Alias("fam")]
+        [Group("familiar"), Name("Familiar"), Alias("fam")]
         [DiscordHelp("LookupFamiliarInfo")]
         public class LookupFamiliarInfo : LookupItemBase
         {
@@ -255,15 +255,16 @@ namespace FRTools.Discord.Modules
             public Task ItemLookup(int frItemId) => ItemLookup(x => x.ItemCategory == FRItemCategory.Familiar && x.FRId == frItemId, frItemId);
         }
 
-        public class LookupItemBase : BaseModule
+        public abstract class LookupItemBase : BaseModule
         {
             public LookupItemBase(DataContext dbContext, SettingManager settingManager) : base(dbContext, settingManager)
             {
             }
 
-            protected async Task ItemLookup(Expression<Func<FRItem, bool>> query, string searchTerm)
+            protected async Task ItemLookup(Func<FRItem, bool> query, string searchTerm)
             {
                 var searchResult = DbContext.FRItems.Where(query).ToList();
+                searchResult = DbContext.FRItems.SqlQuery("SELECT * FROM [dbo].[FRItems] WHERE [dbo].[Name]").Where(query).ToList();
 
                 if (searchResult.Count == 0)
                     await ReplyAsync($"Found no items that match `{searchTerm}`, I might not know about any item that match that or they don't exist.");
