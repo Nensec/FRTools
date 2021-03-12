@@ -263,16 +263,17 @@ namespace FRTools.Discord.Modules
 
             protected async Task ItemLookup(Expression<Func<FRItem, bool>> query, string searchTerm)
             {
+                var plsWait = await Context.Channel.SendMessageAsync("Searching for your item, this takes a moment (I promise to speed it up in the future!)..");
+
                 var searchResult = DbContext.FRItems.Where(query).ToList();
 
                 if (searchResult.Count == 0)
                     await ReplyAsync($"Found no items that match `{searchTerm}`, I might not know about any item that match that or they don't exist.");
                 else if (searchResult.Count == 1)
                 {
-                    var plsWait = await Context.Channel.SendMessageAsync("I found your item! Please give me a moment while I fetch the data..");
+                    await plsWait.ModifyAsync(x => x.Content = "I found your item! Please give me a moment while I fetch the data..");
                     var embed = await ItemHandler.CreateItemEmbed(searchResult[0], Context.Guild);
                     await Context.Channel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
-                    await plsWait.DeleteAsync();
                 }
                 else
                 {
@@ -302,6 +303,7 @@ namespace FRTools.Discord.Modules
                         await ReplyAsync("", embed: embed.Build());
                     }
                 }
+                await plsWait.DeleteAsync();
             }
 
             protected async Task ItemLookup(Expression<Func<FRItem, bool>> query, int frItemId)
