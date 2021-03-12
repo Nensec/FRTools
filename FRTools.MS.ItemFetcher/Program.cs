@@ -29,7 +29,7 @@ namespace FRTools.MS.ItemFetcher
             {
                 var highestItemId = ctx.FRItems.Any() ? ctx.FRItems.Max(x => x.FRId) : 0;
 
-                while (_noItemFoundCounter <= 2)
+                while (_noItemFoundCounter < 2)
                 {
                     ++highestItemId;
                     Console.WriteLine($"Fetching item: {highestItemId}");
@@ -37,7 +37,7 @@ namespace FRTools.MS.ItemFetcher
                     if (item != null)
                     {
                         ctx.FRItems.Add(item);
-                        await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NewItemMessage(MessageCategory.ItemFetcher, item)))));
+                        //await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NewItemMessage(MessageCategory.ItemFetcher, item)))));
                     }
                     else
                         _noItemFoundCounter++;
