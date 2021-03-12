@@ -261,10 +261,9 @@ namespace FRTools.Discord.Modules
             {
             }
 
-            protected async Task ItemLookup(Func<FRItem, bool> query, string searchTerm)
+            protected async Task ItemLookup(Expression<Func<FRItem, bool>> query, string searchTerm)
             {
                 var searchResult = DbContext.FRItems.Where(query).ToList();
-                searchResult = DbContext.FRItems.SqlQuery("SELECT * FROM [dbo].[FRItems] WHERE [dbo].[Name]").Where(query).ToList();
 
                 if (searchResult.Count == 0)
                     await ReplyAsync($"Found no items that match `{searchTerm}`, I might not know about any item that match that or they don't exist.");
