@@ -37,7 +37,7 @@ namespace FRTools.MS.ItemFetcher
                     if (item != null)
                     {
                         ctx.FRItems.Add(item);
-                        //await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NewItemMessage(MessageCategory.ItemFetcher, item)))));
+                        await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NewItemMessage(MessageCategory.ItemFetcher, item)))));
                     }
                     else
                         _noItemFoundCounter++;
