@@ -269,8 +269,10 @@ namespace FRTools.Discord.Modules
                     await ReplyAsync($"Found no items that match `{searchTerm}`, I might not know about any item that match that or they don't exist.");
                 else if (searchResult.Count == 1)
                 {
+                    var plsWait = await Context.Channel.SendMessageAsync("I found your item! Please give me a moment while I fetch the data..");
                     var embed = await ItemHandler.CreateItemEmbed(searchResult[0], Context.Guild);
                     await Context.Channel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
+                    await plsWait.DeleteAsync();
                 }
                 else
                 {
@@ -307,8 +309,10 @@ namespace FRTools.Discord.Modules
                 var item = DbContext.FRItems.FirstOrDefault(query);
                 if (item != null)
                 {
+                    var plsWait = await Context.Channel.SendMessageAsync("I found your item! Please give me a moment while I fetch the data..");
                     var embed = await ItemHandler.CreateItemEmbed(item, Context.Guild);
                     await Context.Channel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
+                    await plsWait.DeleteAsync();
                 }
                 else
                     await ReplyAsync($"Can't find item `{frItemId}`, I might not know about it yet or it does not exist.");
