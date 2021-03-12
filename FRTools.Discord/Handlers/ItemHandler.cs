@@ -26,10 +26,10 @@ namespace FRTools.Discord.Handlers
                 .WithFields(new EmbedFieldBuilder().WithName("Game database").WithValue($"[#{item.FRId}]({string.Format(FRHelpers.GameDatabaseUrl, item.FRId)})").WithIsInline(true));
 
             if (item.TreasureValue > 0)
-                embed.AddField(x => x.WithName("Treasure value").WithValue((externalEmojis ? $"{DiscordEmoji.Treasure} " : "") + $"{item.TreasureValue}").WithIsInline(true));
+                embed.AddField(x => x.WithName("Treasure value").WithValue((externalEmojis ? $"{DiscordHelpers.DiscordEmojis[DiscordEmoji.Treasure]} " : "") + $"{item.TreasureValue}").WithIsInline(true));
 
             if (item.FoodValue > 0)
-                embed.AddField(x => x.WithName("Food value").WithValue((externalEmojis ? $"{DiscordEmoji.Food} " : "") + $"{item.FoodValue}").WithIsInline(true));
+                embed.AddField(x => x.WithName("Food value").WithValue((externalEmojis ? $"{DiscordHelpers.DiscordEmojis[DiscordEmoji.Food]} " : "") + $"{item.FoodValue}").WithIsInline(true));
 
 
             if (item.AssetUrl != null)

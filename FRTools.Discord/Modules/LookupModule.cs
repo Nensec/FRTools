@@ -2,11 +2,15 @@
 using Discord.Commands;
 using FRTools.Common;
 using FRTools.Data;
+using FRTools.Data.DataModels.FlightRisingModels;
 using FRTools.Discord.Handlers;
 using FRTools.Discord.Infrastructure;
 using HtmlAgilityPack;
+using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -148,19 +152,121 @@ namespace FRTools.Discord.Modules
 
         [Group("item"), Name("ItemInfo"), Alias("i")]
         [DiscordHelp("LookupItemInfo")]
-        public class LookupItemInfo : BaseModule
+        public class LookupItemInfo : LookupItemBase
         {
             public LookupItemInfo(DataContext dbContext, SettingManager settingManager) : base(dbContext, settingManager)
             {
             }
 
             [Command]
-            public async Task ItemLookup([Remainder] string search)
+            public Task ItemLookup([Remainder] string search) => ItemLookup(x => x.Name.Contains(search) || x.Description.Contains(search), search);
+
+            [Command]
+            public Task ItemLookup(int frItemId) => ItemLookup(x => x.FRId == frItemId, frItemId);
+        }
+
+        [Group("skin"), Name("SkinInfo"), Alias("accent", "s", "a")]
+        [DiscordHelp("LookupSkinInfo")]
+        public class LookupSkinInfo : LookupItemBase
+        {
+            public LookupSkinInfo(DataContext dbContext, SettingManager settingManager) : base(dbContext, settingManager)
             {
-                var searchResult = DbContext.FRItems.Where(x => x.Name.Contains(search) || x.Description.Contains(search)).ToList();
+            }
+
+            [Command]
+            public Task ItemLookup([Remainder] string search) => ItemLookup(x => x.ItemCategory == FRItemCategory.Skins && (x.Name.Contains(search) || x.Description.Contains(search)), search);
+
+            [Command]
+            public Task ItemLookup(int frItemId) => ItemLookup(x => x.ItemCategory == FRItemCategory.Skins && x.FRId == frItemId, frItemId);
+        }
+
+        [Group("food"), Name("FoodInfo"), Alias("f")]
+        [DiscordHelp("LookupFoodInfo")]
+        public class LookupFoodInfo : LookupItemBase
+        {
+            public LookupFoodInfo(DataContext dbContext, SettingManager settingManager) : base(dbContext, settingManager)
+            {
+            }
+
+            [Command]
+            public Task ItemLookup([Remainder] string search) => ItemLookup(x => x.ItemCategory == FRItemCategory.Food && (x.Name.Contains(search) || x.Description.Contains(search)), search);
+
+            [Command]
+            public Task ItemLookup(int frItemId) => ItemLookup(x => x.ItemCategory == FRItemCategory.Food && x.FRId == frItemId, frItemId);
+        }
+
+        [Group("trinket"), Name("TrinketInfo"), Alias("t", "material", "mat", "m", "chest", "c", "bundle", "vista", "scene", "egg")]
+        [DiscordHelp("LookupTrinketInfo")]
+        public class LookupTrinketInfo : LookupItemBase
+        {
+            public LookupTrinketInfo(DataContext dbContext, SettingManager settingManager) : base(dbContext, settingManager)
+            {
+            }
+
+            [Command]
+            public Task ItemLookup([Remainder] string search) => ItemLookup(x => x.ItemCategory == FRItemCategory.Trinket && (x.Name.Contains(search) || x.Description.Contains(search)), search);
+
+            [Command]
+            public Task ItemLookup(int frItemId) => ItemLookup(x => x.ItemCategory == FRItemCategory.Trinket && x.FRId == frItemId, frItemId);
+        }
+
+        [Group("equipment"), Name("EquipmentInfo"), Alias("equip", "e", "apparel", "apparal", "a")]
+        [DiscordHelp("LookupEquipmentInfo")]
+        public class LookupEquipmentInfo : LookupItemBase
+        {
+            public LookupEquipmentInfo(DataContext dbContext, SettingManager settingManager) : base(dbContext, settingManager)
+            {
+            }
+
+            [Command]
+            public Task ItemLookup([Remainder] string search) => ItemLookup(x => x.ItemCategory == FRItemCategory.Equipment && (x.Name.Contains(search) || x.Description.Contains(search)), search);
+
+            [Command]
+            public Task ItemLookup(int frItemId) => ItemLookup(x => x.ItemCategory == FRItemCategory.Equipment && x.FRId == frItemId, frItemId);
+        }
+
+        [Group("battle_item"), Name("BattleItemInfo"), Alias("battle", "augment", "ability", "energy", "accesory")]
+        [DiscordHelp("LookupBattleItemInfo")]
+        public class LookupBattleItemInfo : LookupItemBase
+        {
+            public LookupBattleItemInfo(DataContext dbContext, SettingManager settingManager) : base(dbContext, settingManager)
+            {
+            }
+
+            [Command]
+            public Task ItemLookup([Remainder] string search) => ItemLookup(x => x.ItemCategory == FRItemCategory.Battle_Items && (x.Name.Contains(search) || x.Description.Contains(search)), search);
+
+            [Command]
+            public Task ItemLookup(int frItemId) => ItemLookup(x => x.ItemCategory == FRItemCategory.Battle_Items && x.FRId == frItemId, frItemId);
+        }
+
+        [Group("familiar"), Name("FamiliarInfo"), Alias("fam")]
+        [DiscordHelp("LookupFamiliarInfo")]
+        public class LookupFamiliarInfo : LookupItemBase
+        {
+            public LookupFamiliarInfo(DataContext dbContext, SettingManager settingManager) : base(dbContext, settingManager)
+            {
+            }
+
+            [Command]
+            public Task ItemLookup([Remainder] string search) => ItemLookup(x => x.ItemCategory == FRItemCategory.Familiar && (x.Name.Contains(search) || x.Description.Contains(search)), search);
+
+            [Command]
+            public Task ItemLookup(int frItemId) => ItemLookup(x => x.ItemCategory == FRItemCategory.Familiar && x.FRId == frItemId, frItemId);
+        }
+
+        public class LookupItemBase : BaseModule
+        {
+            public LookupItemBase(DataContext dbContext, SettingManager settingManager) : base(dbContext, settingManager)
+            {
+            }
+
+            protected async Task ItemLookup(Expression<Func<FRItem, bool>> query, string searchTerm)
+            {
+                var searchResult = DbContext.FRItems.Where(query).ToList();
 
                 if (searchResult.Count == 0)
-                    await ReplyAsync($"Found no items that match `{search}`, I might not know about any item that match that or they don't exist.");
+                    await ReplyAsync($"Found no items that match `{searchTerm}`, I might not know about any item that match that or they don't exist.");
                 else if (searchResult.Count == 1)
                 {
                     var embed = await ItemHandler.CreateItemEmbed(searchResult[0], Context.Guild);
@@ -168,22 +274,37 @@ namespace FRTools.Discord.Modules
                 }
                 else
                 {
-                    if (searchResult.Count > 5)
-                        await ReplyAsync($"Found {searchResult.Count} items that match `{search}`, please refine your search.");
+                    if (searchResult.Count > 25)
+                    {
+                        var sb = new StringBuilder();
+                        sb.AppendLine($"Found {searchResult.Count} items that match `{searchTerm}`, but I can only display a preview of 25 items.");
+                        var cats = searchResult.GroupBy(x => x.ItemCategory);
+                        if (cats.Count() > 1)
+                        {
+                            foreach (var cat in searchResult.GroupBy(x => x.ItemCategory))
+                                sb.AppendLine($"   - {cat.Count()} in the category `{cat.Key}`");
+                            sb.AppendLine();
+                            sb.AppendLine($"Please refine your search, perhaps use a category filter such as `{SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}lookup {cats.FirstOrDefault().Key.ToString().ToLower()} {searchTerm}`");
+                        }
+                        else
+                            sb.AppendLine("Please refine your search.");
+                        var embed = new EmbedBuilder()
+                            .WithDescription(sb.ToString());
+                        await ReplyAsync(embed: embed.Build());
+                    }
                     else
                     {
                         var embed = new EmbedBuilder()
-                            .WithDescription($"Found {searchResult.Count} items that match your query. Please look at the items below and use `{SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}lookup item <frid>`")
+                            .WithDescription($"Found {searchResult.Count} items that match your query. Please look at the items below and use `{SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}lookup item <frid>` to view it's details.")
                             .WithFields(searchResult.Select(x => new EmbedFieldBuilder().WithValue(x.FRId).WithName(x.Name).WithIsInline(true)));
                         await ReplyAsync("", embed: embed.Build());
                     }
                 }
             }
 
-            [Command]
-            public async Task ItemLookup(int frItemId)
+            protected async Task ItemLookup(Expression<Func<FRItem, bool>> query, int frItemId)
             {
-                var item = DbContext.FRItems.FirstOrDefault(x => x.FRId == frItemId);
+                var item = DbContext.FRItems.FirstOrDefault(query);
                 if (item != null)
                 {
                     var embed = await ItemHandler.CreateItemEmbed(item, Context.Guild);
