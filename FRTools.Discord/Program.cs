@@ -108,34 +108,32 @@ namespace FRTools.Discord
 
         private static Task ServiceBusExceptionHandler(ExceptionReceivedEventArgs ex) => Task.Run(() => Console.WriteLine(ex.Exception.ToString()));
 
-        private async static Task ServiceBusMessageHandler(Message msg, CancellationToken cancellationToken)
+        private static async Task ServiceBusMessageHandler(Message msg, CancellationToken cancellationToken)
         {
-            _ = Task.Run(async () =>
+            Console.WriteLine($"SB message received: {msg.MessageId}");
+            var genericMessage = JsonConvert.DeserializeObject<GenericMessage>(Encoding.UTF8.GetString(msg.Body));
+            if (genericMessage.MessageType != nameof(GenericMessage))
             {
-                var genericMessage = JsonConvert.DeserializeObject<GenericMessage>(Encoding.UTF8.GetString(msg.Body));
-                if (genericMessage.MessageType != nameof(GenericMessage))
+                var customMessage = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(msg.Body), Assembly.GetAssembly(typeof(GenericMessage)).DefinedTypes.FirstOrDefault(x => x.Name == genericMessage.MessageType));
+                foreach (var handler in _handlers.Values)
                 {
-                    var customMessage = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(msg.Body), Assembly.GetAssembly(typeof(GenericMessage)).DefinedTypes.FirstOrDefault(x => x.Name == genericMessage.MessageType));
-                    foreach (var handler in _handlers.Values)
-                    {
-                        // Handle custom message
-                        if (customMessage is NewItemMessage newItemMessage)
-                            await handler.HandleNewItemUpdate(newItemMessage);
-                    }
+                    // Handle custom message
+                    if (customMessage is NewItemMessage newItemMessage)
+                        await handler.HandleNewItemUpdate(newItemMessage);
                 }
-                else
+            }
+            else
+            {
+                foreach (var handler in _handlers.Values)
                 {
-                    foreach (var handler in _handlers.Values)
-                    {
-                        if (genericMessage.Source == MessageCategory.DominanceTracker)
-                            await handler.HandleDominanceUpdate(genericMessage);
-                        if (genericMessage.Source == MessageCategory.SettingUpdated && (long)handler.Guild.Id == genericMessage.DiscordServer)
-                            await handler.HandleSettingUpdate(genericMessage);
-                    }
+                    if (genericMessage.Source == MessageCategory.DominanceTracker)
+                        await handler.HandleDominanceUpdate(genericMessage);
+                    if (genericMessage.Source == MessageCategory.SettingUpdated && (long)handler.Guild.Id == genericMessage.DiscordServer)
+                        await handler.HandleSettingUpdate(genericMessage);
                 }
+            }
 
-                await _serviceBus.CompleteAsync(msg.SystemProperties.LockToken);
-            });
+            await _serviceBus.CompleteAsync(msg.SystemProperties.LockToken);
         }
 
         private static Task Client_Log(LogMessage msg)

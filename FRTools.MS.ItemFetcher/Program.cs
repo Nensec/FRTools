@@ -29,7 +29,7 @@ namespace FRTools.MS.ItemFetcher
             {
                 var highestItemId = ctx.FRItems.Any() ? ctx.FRItems.Max(x => x.FRId) : 0;
 
-                while (_noItemFoundCounter < 2)
+                while (_noItemFoundCounter < 5)
                 {
                     ++highestItemId;
                     Console.WriteLine($"Fetching item: {highestItemId}");
