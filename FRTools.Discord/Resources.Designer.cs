@@ -61,6 +61,26 @@ namespace FRTools.Discord {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to https://i.imgur.com/gCgsBjr.png.
+        /// </summary>
+        internal static string DominanceCurrent_0 {
+            get {
+                return ResourceManager.GetString("DominanceCurrent_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Posts the current state of dominance into the chat. This data is cached with a 5 minute lifespan.
+        ///&lt;br&gt;&lt;br&gt;
+        ///{0}.
+        /// </summary>
+        internal static string DominanceCurrentDetailed {
+            get {
+                return ResourceManager.GetString("DominanceCurrentDetailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to https://i.imgur.com/WZYZvob.png.
         /// </summary>
         internal static string DominanceDisable_0 {

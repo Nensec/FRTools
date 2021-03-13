@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using FRTools.Data;
+using System;
+using System.Collections.Generic;
 
 namespace FRTools.Common
 {
@@ -23,6 +25,8 @@ namespace FRTools.Common
             { DiscordEmoji.Treasure, "<:treasure:703609171492339795>" },
             { DiscordEmoji.Food, "<:food:703609171865763941>" }
         };
+
+        public static string GetEmojiForFlight(this Flight flight) => DiscordEmojis[(DiscordEmoji)Enum.Parse(typeof(DiscordEmoji), flight.ToString(), true)];
     }
 
     public enum DiscordEmoji

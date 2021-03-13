@@ -17,7 +17,7 @@
             <div class="panel-body">
                 @foreach (var module in Model.Modules)
                 {
-                    <a href="#" onclick="selectModule('@(module.Name.ToLower())')" class="module">
+                    <a href="#@(module.Name.ToLower())" onclick="selectModule('@(module.Name.ToLower())')" class="module">
                         <div class="panel panel-default panel-transparent" style="margin-bottom:0">
                             <div class="panel-body">
                                 <div class="moduleIcon">
@@ -81,7 +81,6 @@
                                     </div>
                                 </div>
                             </div>
-
                         }
                     </div>
                 }
@@ -155,6 +154,18 @@
                     });
                 }
             });
+
+            if (window.location.hash.length) {
+                console.log(window.location.hash);
+                selectModule(window.location.hash.substr(1));
+            }
+
+            window.onhashchange = function () {
+                var hash = window.location.hash.substr(1);
+                if (activeModule !== hash) {
+                    selectModule(hash);
+                }
+            }
         });
 
         selectModule = function (module) {

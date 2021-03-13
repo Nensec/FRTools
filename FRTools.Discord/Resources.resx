@@ -117,6 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DominanceCurrentDetailed" xml:space="preserve">
+    <value>Posts the current state of dominance into the chat. This data is cached with a 5 minute lifespan.
+&lt;br&gt;&lt;br&gt;
+{0}</value>
+  </data>
+  <data name="DominanceCurrent_0" xml:space="preserve">
+    <value>https://i.imgur.com/gCgsBjr.png</value>
+  </data>
   <data name="DominanceDisableDetailed" xml:space="preserve">
     <value>This command turns the automatic role assignment off. You'll need to use the &lt;kbd&gt;dom enable&lt;/kbd&gt; command to manually turn it back on.
 &lt;br&gt;&lt;br&gt;

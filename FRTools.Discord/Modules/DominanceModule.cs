@@ -1,11 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Discord;
+﻿using Discord;
 using Discord.Commands;
+using FRTools.Common;
 using FRTools.Data;
 using FRTools.Discord.Handlers;
 using FRTools.Discord.Infrastructure;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace FRTools.Discord.Modules
 {
@@ -167,7 +170,7 @@ namespace FRTools.Discord.Modules
         public async Task Disable()
         {
             SettingManager.SetSettingValue("GUILDCONFIG_DOMINANCE", "false", Context.Guild);
-            await ReplyAsync(embed: new EmbedBuilder().WithDescription( "Automatic dominance role has been disabled.").Build());
+            await ReplyAsync(embed: new EmbedBuilder().WithDescription("Automatic dominance role has been disabled.").Build());
         }
 
         [RequireUserPermission(GuildPermission.Administrator)]
@@ -237,6 +240,38 @@ namespace FRTools.Discord.Modules
             SettingManager.SetSettingValue($"GUILDCONFIG_DOMINANCE_USER_{Context.User.Id}", "false", Context.Guild);
             await ReplyAsync(embed: new EmbedBuilder().WithDescription("You will now no longer receive the dominance role.").Build());
             await (Context.User as IGuildUser).RemoveRoleAsync(Context.Guild.GetRole(ulong.Parse(dominanceRole)));
+        }
+
+        private (DateTime Timestamp, List<Flight> Flights) _lastDominance = default;
+        private static object _syncLock = new object();
+        [Name("Current"), Command("current")]
+        [DiscordHelp("DominanceCurrent")]
+        public async Task Current()
+        {
+            lock (_syncLock)
+            {
+                if (_lastDominance == default || DateTime.UtcNow > _lastDominance.Timestamp.AddMinutes(5))
+                {
+                    var client = new HtmlAgilityPack.HtmlWeb();
+                    var htmlDoc = client.Load("https://flightrising.com/main.php?p=dominance");
+                    var imgList = htmlDoc.DocumentNode.SelectNodes("/html/body/div[1]/div[2]/div[2]/div/div[5]/span[1]/img");
+
+                    var flights = imgList.Select(x => Regex.Match(x.GetAttributeValue("src", ""), "/images/layout/dominanceduex/(firstplace|secondplace)_(.+).png"))
+                        .Select(x => (Flight)Enum.Parse(typeof(Flight), x.Groups[2].Value, true))
+                        .ToList();
+
+                    _lastDominance = (DateTime.UtcNow, flights);
+                }
+            }
+
+            var externalEmojis = Context.Guild.CurrentUser.GuildPermissions.UseExternalEmojis;
+
+            var embed = new EmbedBuilder()
+                .WithTitle("The current state of dominance")
+                .WithFields(_lastDominance.Flights.Select((flight, index) => new EmbedFieldBuilder().WithName($"#{index + 1}").WithValue($"{(externalEmojis ? flight.GetEmojiForFlight() : "")} {(index < 3 ? $"**{flight}**" : $"{flight}")}").WithIsInline(index > 2)))
+                .WithTimestamp(_lastDominance.Timestamp);
+
+            await ReplyAsync(embed: embed.Build());
         }
 
         [Command("manage")]
