@@ -68,15 +68,17 @@
                         @foreach (var command in module.Commands)
                         {
                             <div class="panel panel-default" style="margin-bottom:0; margin-top:5px;">
-                                <div class="panel-heading" style="cursor:pointer" data-toggle="collapse" data-target=".panel-body[command='@(command.Name.ToLower())']">
+                                <div class="panel-heading" style="cursor:pointer" data-toggle="collapse" data-target=".collapse[command='@(command.Name.ToLower())']">
                                     @(command.Name)
                                     @if ((command.Help.RequiresGuildPermission & 8) != 0)
                                     {
-                                        <span class="glyphicon glyphicon-exclamation-sign text-warning pull-right" style="font-size:16px;" title="This command requires Administrator rights to execute"></span>
+                                        <span class="glyphicon glyphicon-exclamation-sign text-warning pull-right" style="font-size:16px;" title="This command requires Administrator rights to execute" data-toggle="tooltip"></span>
                                     }
                                 </div>
-                                <div command="@(command.Name.ToLower())" class="panel-body collapse">
-                                    <p>Loading..</p>
+                                <div class="panel-body" style="padding:0;">
+                                    <div command="@(command.Name.ToLower())" class="collapse">
+                                        <p>Loading..</p>
+                                    </div>
                                 </div>
                             </div>
 

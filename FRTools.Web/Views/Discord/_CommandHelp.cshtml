@@ -1,48 +1,50 @@
 ﻿@model FRTools.Web.Models.DiscordCommand
 
-<p>
-    <b>Command usage:</b>
-    @if (Model.SubCommands?.Any() == true)
-    {
-        foreach (var subCommand in Model.SubCommands)
+<div style="padding:15px">
+    <p>
+        <b>Command usage:</b>
+        @if (Model.SubCommands?.Any() == true)
         {
-            <span style="display: list-item; margin-left:3em;">
-                @if (subCommand.Parameters?.Any() == true)
-                {
-                    <kbd><b>@(Model.ParentModule.Aliases[0]) @(Model.Aliases[0])</b></kbd>
-                    @Html.Raw(string.Join(" ", subCommand.Parameters.Select(x => $"<kbd>{(x.IsOptional ? $"[{x.MustMatchValue ?? x.Name}]" : x.MustMatchValue ?? x.Name)}</kbd>")))
-                }
-                else
-                {
-                    <kbd><b>@(Model.ParentModule.Aliases[0]) @(Model.Aliases[0])</b></kbd>
-                }
-            </span>
-        }
-    }
-    else
-    {
-        if (Model.Parameters?.Any() == true)
-        {
-            <kbd><b>@(Model.ParentModule.Aliases[0]) @(Model.Aliases[0])</b></kbd>
-            @Html.Raw(string.Join(" ", Model.Parameters.Select(x => $"<kbd>{(x.IsOptional ? $"[{x.MustMatchValue ?? x.Name}]" : x.MustMatchValue ?? x.Name)}</kbd>")))
+            foreach (var subCommand in Model.SubCommands)
+            {
+                <span style="display: list-item; margin-left:3em;">
+                    @if (subCommand.Parameters?.Any() == true)
+                    {
+                        <kbd><b>@(Model.ParentModule.Aliases[0]) @(Model.Aliases[0])</b></kbd>
+                        @Html.Raw(string.Join(" ", subCommand.Parameters.Select(x => $"<kbd>{(x.IsOptional ? $"[{x.MustMatchValue ?? x.Name}]" : x.MustMatchValue ?? x.Name)}</kbd>")))
+                    }
+                    else
+                    {
+                        <kbd><b>@(Model.ParentModule.Aliases[0]) @(Model.Aliases[0])</b></kbd>
+                    }
+                </span>
+            }
         }
         else
         {
-            <kbd><b>@(Model.ParentModule.Aliases[0]) @(Model.Aliases[0])</b></kbd>
-        }
-    }
-</p>
-@if (Model.Aliases.Length > 1)
-{
-    <p>
-
-        <b>Aliases:</b>
-        @foreach (var alias in Model.Aliases.Skip(1))
-        {
-            <kbd><b>@(Model.ParentModule.Aliases[0]) @(alias)</b></kbd>
+            if (Model.Parameters?.Any() == true)
+            {
+                <kbd><b>@(Model.ParentModule.Aliases[0]) @(Model.Aliases[0])</b></kbd>
+                @Html.Raw(string.Join(" ", Model.Parameters.Select(x => $"<kbd>{(x.IsOptional ? $"[{x.MustMatchValue ?? x.Name}]" : x.MustMatchValue ?? x.Name)}</kbd>")))
+            }
+            else
+            {
+                <kbd><b>@(Model.ParentModule.Aliases[0]) @(Model.Aliases[0])</b></kbd>
+            }
         }
     </p>
+    @if (Model.Aliases.Length > 1)
+    {
+        <p>
 
-}
+            <b>Aliases:</b>
+            @foreach (var alias in Model.Aliases.Skip(1))
+            {
+                <kbd><b>@(Model.ParentModule.Aliases[0]) @(alias)</b></kbd>
+            }
+        </p>
 
-@Html.Partial("_Help", Model.Help)
+    }
+
+    @Html.Partial("_Help", Model.Help)
+</div>
