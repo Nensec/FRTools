@@ -83,7 +83,10 @@ namespace FRTools.Common
                 Skin skin;
                 var skins = ctx.Skins.Where(x => x.GeneratedId == skinId);
                 if (version == null)
+                {
                     skin = skins.OrderByDescending(x => x.Version).FirstOrDefault();
+                    version = skin.Version;
+                }
                 else
                     skin = skins.FirstOrDefault(x => x.Version == version);
 
