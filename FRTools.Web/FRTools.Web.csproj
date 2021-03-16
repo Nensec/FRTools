@@ -455,6 +455,7 @@
     <Content Include="Views\Snippet\Scripts\_SmallImage.cshtml" />
     <Content Include="Views\Snippet\Scripts\_CoverageCheck.cshtml" />
     <Content Include="Views\Shared\_Pagination.cshtml" />
+    <Content Include="Views\Snippet\Scripts\_ColorWheel.cshtml" />
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

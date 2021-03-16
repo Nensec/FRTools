@@ -1,0 +1,23 @@
+﻿@model ColorWheelScriptModel
+
+<div>
+    @foreach (var color in Enum.GetValues(typeof(Color)).Cast<Color>().Skip(1).OrderByDescending(x => System.Drawing.Color.FromArgb(Convert.ToInt32(x.GetHex().Substring(1), 16)).GetBrightness()))
+    {
+        var hex = color.GetHex();
+        <div style="padding:5px; width:25%; float:left;">
+            <div style="background-color:@hex; width:100%; height:20px; border:1px solid black; margin-bottom:1px"></div>
+            @color.ToString() @hex
+            <button onclick="CopyHex('@hex')" title="Copy HEX" data-toggle="tooltip" type="button" class="btn btn-success btn-xs pull-right"><span class="glyphicon glyphicon-copy"></span></button>
+        </div>
+    }
+</div>
+
+<script type="text/javascript">
+    snippetInitializations.push(function () {
+
+    });
+
+    CopyHex = function (hex, btn) {
+        navigator.clipboard.writeText(hex);
+    }
+</script>

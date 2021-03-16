@@ -37,4 +37,11 @@
         public override string Description => "Calculates and shows you the coverage of your skin, and what's outside.";
         public override string IconBase64 => null;
     }
+
+    public class ColorWheelScriptModel : BaseScriptModel
+    {
+        public override string Name => "Color wheel";
+        public override string Description => "A way to easily visualze the different colors and their HEX codes.";
+        public override string IconBase64 => null;
+    }
 }
