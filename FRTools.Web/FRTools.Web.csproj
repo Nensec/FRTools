@@ -426,7 +426,7 @@
     <Content Include="Views\Skin\PreviewHome.cshtml" />
     <Content Include="Views\Skin\Browse.cshtml" />
     <Content Include="Views\Skin\_UpdateSkin.cshtml" />
-    <Content Include="Views\Home\NotFound.cshtml" />
+    <Content Include="Views\Shared\NotFound.cshtml" />
     <Content Include="Views\News\Index.cshtml" />
     <Content Include="Views\News\Read.cshtml" />
     <Content Include="Views\Skin\Index.cshtml" />

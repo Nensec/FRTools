@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System.Net;
+using System.Web.Mvc;
 
 namespace FRTools.Web.Controllers
 {
@@ -7,8 +8,21 @@ namespace FRTools.Web.Controllers
         [Route(Name = "Home")]
         public ActionResult Index() => View();
 
-        [Route("404", Name = "NotFound")]
-        public ActionResult NotFound() => View();
+        [Route("notfound", Name = "NotFound")]
+        public ActionResult NotFound()
+        {
+            Response.StatusCode = (int)HttpStatusCode.NotFound;
+            Response.TrySkipIisCustomErrors = true;
+            return View();
+        }
+
+        [Route("error", Name = "Error")]
+        public ActionResult Error()
+        {
+            Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            Response.TrySkipIisCustomErrors = true;
+            return View();
+        }
 
         [Route("privacy", Name = "Privacy")]
         public ActionResult Privacy() => View();

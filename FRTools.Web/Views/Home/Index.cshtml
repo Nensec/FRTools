@@ -1,5 +1,5 @@
 ﻿@{
-    Layout = "~/Views/Shared/_LayoutV2.cshtml";
+    Layout = V2Layout;
     ViewBag.Title = "Home Page";
 }
 
@@ -30,20 +30,14 @@
 
 @section scripts {
     <script>
-        $(document).ready(function () {
-            $.ajax({
-                type: "GET",
-                url: "https://api.tumblr.com/v2/blog/frtools.tumblr.com/posts?api_key=@(System.Configuration.ConfigurationManager.AppSettings["TumblrClientId"])&limit=1&filter=raw&tag=fr+tools+news",
-                dataType: "JSON",
-                success: function (blog) {
-                    post = blog.response.posts[0];
-                    if (post)
-                        $('#blogPost').html($(`<h4>${post.title}${post.title ? ' - ': ''}${post.date}</h4>${post.body_abstract ? post.body_abstract : post.caption ? post.caption : post.body}<a href="${post.post_url}">Read full post</a>`));
-                    else
-                        $('#blogPost').html('<p>No post yet!</p>');
-                }
-            });
-        });
+        $($.ajax({
+            type: "GET",
+            url: "https://api.tumblr.com/v2/blog/frtools.tumblr.com/posts?api_key=@(System.Configuration.ConfigurationManager.AppSettings["TumblrClientId"])&limit=1&filter=raw&tag=fr+tools+news",
+            dataType: "JSON",
+            success: b => {
+                p = b.response.posts[0];
+                $('#blogPost').html($(`<h4>${p.title}${p.title ? ' - ' : ''}${p.date}</h4>${p.body_abstract || p.caption || p.body}<a href="${p.post_url}">Read full post</a>`));
+            }}));
     </script>
 }
 

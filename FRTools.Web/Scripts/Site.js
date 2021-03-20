@@ -1,4 +1,8 @@
-﻿copyOrGenerateUrl = (e, b, t, id) => {
+﻿$(() => {
+    $('[data-toggle="tooltip"]').tooltip({ html: true });
+})
+
+copyOrGenerateUrl = (e, b, t, id) => {
     if (e.value != '') {
         e.select();
         document.execCommand('copy');

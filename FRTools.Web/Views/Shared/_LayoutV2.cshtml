@@ -146,39 +146,42 @@
     </nav>
     <div class="container-wrapper d-flex flex-column">
         <div class="container-fluid flex-grow-1">
-            <div class="body-content">
-                @if (TempData["Error"] != null)
-                {
-                    <div class="alert alert-danger alert-dismissible" role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        @Html.Raw(TempData["Error"])
-                    </div>
-                }
-                @if (TempData["Warning"] != null)
-                {
-                    <div class="alert alert-warning alert-dismissible" role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        @Html.Raw(TempData["Warning"])
-                    </div>
-                }
-                @if (TempData["Success"] != null)
-                {
-                    <div class="alert alert-success alert-dismissible" role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        @Html.Raw(TempData["Success"])
-                    </div>
-                }
-                @if (TempData["Info"] != null)
-                {
-                    <div class="alert alert-info alert-dismissible" role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        @Html.Raw(TempData["Info"])
-                    </div>
-                }
-            </div>
             <div class="row justify-content-center">
                 <div class="col-lg-2"></div>
                 <div class="col">
+                    @if (HasMessage)
+                    {
+                        <div class="mt-3">
+                            @if (TempData["Error"] != null)
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    @Html.Raw(TempData["Error"])
+                                </div>
+                            }
+                            @if (TempData["Warning"] != null)
+                            {
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    @Html.Raw(TempData["Warning"])
+                                </div>
+                            }
+                            @if (TempData["Success"] != null)
+                            {
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    @Html.Raw(TempData["Success"])
+                                </div>
+                            }
+                            @if (TempData["Info"] != null)
+                            {
+                                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    @Html.Raw(TempData["Info"])
+                                </div>
+                            }
+                        </div>
+                    }
                     @RenderBody()
                 </div>
                 <div class="col-lg-2">
@@ -209,11 +212,6 @@
 
     @RenderSection("scripts", required: false)
     <script src="~/Scripts/dark-mode-switch.min.js"></script>
-    <script>
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip({ html: true });
-        })
-    </script>
     <script src="~/Scripts/Site.js"></script>
 </body>
 </html>

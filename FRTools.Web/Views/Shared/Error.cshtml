@@ -1,13 +1,19 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Error</title>
-</head>
-<body>
-    <hgroup>
-        <h1>Error.</h1>
-        <h2>An error occurred while processing your request.</h2>
-    </hgroup>
-</body>
-</html>
+﻿@{
+    ViewBag.Title = "500 - Internal Server Error";
+    Layout = V2Layout;
+}
+
+<div class="card text-secondary border-danger mt-3">
+    <div class="card-header">
+        <h1 class="text-danger">500</h1>
+    </div>
+    <div class="card-body">
+        <p>
+            Something went terribly wrong and your request could not be processed.<br />
+            If you encounter this more than once, please let me know on <a href="https://github.com/nensec/FRTools">GitHub</a> or <a href="https://discord.gg/tc4c5tk">Discord</a>.
+        </p>
+        <p>
+            You could try <a href="javascript:window.history.back();">going back</a> and retry, or go to the <a href="@Url.RouteUrl("Home")">site's index</a>.
+        </p>
+    </div>
+</div>
