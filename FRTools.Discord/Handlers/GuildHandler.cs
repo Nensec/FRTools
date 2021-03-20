@@ -292,14 +292,14 @@ namespace FRTools.Discord.Handlers
             await Task.Run(() => _settingManager.ForceUpdate(Guild, settingUpdate.Message));
         }
 
-        private static object SyncLock = new object();
+        private static object _syncLock = new object();
         internal Task Available()
         {
             _ = Task.Run(() =>
            {
-               lock (SyncLock)
+               lock (_syncLock)
                {                   
-                   UserHandler.SyncServer(Guild);
+                   _ = UserHandler.SyncServer(Guild);
                }
            });
 
