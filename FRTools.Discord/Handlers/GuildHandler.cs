@@ -61,8 +61,8 @@ namespace FRTools.Discord.Handlers
         {
             using (var ctx = new DataContext())
             {
-                var dbRole = ctx.DiscordRoles.SingleOrDefault(x => x.RoleId == (long)role.Id);
-                ctx.DiscordRoles.Remove(dbRole);
+                var roles = ctx.DiscordRoles.Where(x => x.RoleId == (long)role.Id);
+                ctx.DiscordRoles.RemoveRange(roles);
                 await ctx.SaveChangesAsync();
             }
         }
@@ -71,12 +71,21 @@ namespace FRTools.Discord.Handlers
         {
             using (var ctx = new DataContext())
             {
-                var dbRole = ctx.DiscordRoles.SingleOrDefault(x => x.RoleId == (long)roleNew.Id);
-                if (dbRole != null)
+                DiscordRole role = null;
+                var roles = ctx.DiscordRoles.Where(x => x.RoleId == (long)roleNew.Id).ToList();
+                if (roles.Count > 1)
                 {
-                    dbRole.Name = roleNew.Name;
-                    dbRole.Color = roleNew.Color.RawValue.ToString();
-                    dbRole.DiscordPermissions = (long)roleNew.Permissions.RawValue;
+                    role = roles[0];
+                    ctx.DiscordRoles.RemoveRange(roles.Skip(1));
+                }
+                else
+                    role = roles.FirstOrDefault();
+
+                if (role != null)
+                {
+                    role.Name = roleNew.Name;
+                    role.Color = roleNew.Color.RawValue.ToString();
+                    role.DiscordPermissions = (long)roleNew.Permissions.RawValue;
                     await ctx.SaveChangesAsync();
                 }
             }
@@ -131,8 +140,8 @@ namespace FRTools.Discord.Handlers
         {
             using (var ctx = new DataContext())
             {
-                var channel = ctx.DiscordChannels.SingleOrDefault(x => x.ChannelId == (long)guildChannel.Id);
-                ctx.DiscordChannels.Remove(channel);
+                var channels = ctx.DiscordChannels.Where(x => x.ChannelId == (long)guildChannel.Id);
+                ctx.DiscordChannels.RemoveRange(channels);
                 await ctx.SaveChangesAsync();
             }
         }
@@ -141,7 +150,16 @@ namespace FRTools.Discord.Handlers
         {
             using (var ctx = new DataContext())
             {
-                var channel = ctx.DiscordChannels.SingleOrDefault(x => x.ChannelId == (long)guildChannelNew.Id);
+                DiscordChannel channel = null;
+                var channels = ctx.DiscordChannels.Where(x => x.ChannelId == (long)guildChannelNew.Id).ToList();
+                if (channels.Count > 1)
+                {
+                    channel = channels[0];
+                    ctx.DiscordChannels.RemoveRange(channels.Skip(1));
+                }
+                else
+                    channel = channels.FirstOrDefault();
+
                 if (channel != null)
                 {
                     channel.Name = guildChannelNew.Name;
@@ -280,103 +298,8 @@ namespace FRTools.Discord.Handlers
             _ = Task.Run(() =>
            {
                lock (SyncLock)
-               {
-                   using (var ctx = new DataContext())
-                   {
-                       var dbServer = ctx.DiscordServers.FirstOrDefault(x => x.ServerId == (long)Guild.Id);
-                       if (dbServer == null)
-                       {
-                           ctx.DiscordServers.Add(dbServer = new DiscordServer());
-                           dbServer.ServerId = (long)Guild.Id;
-                       }
-                       dbServer.Name = Guild.Name;
-
-                       if (Guild.IconUrl != null)
-                       {
-                           using (var client = new WebClient())
-                           {
-                               var iconData = client.DownloadData(Guild.IconUrl);
-                               dbServer.IconBase64 = Convert.ToBase64String(iconData);
-                           }
-                       }
-                       ctx.SaveChanges();
-                   }
-
-                   using (var ctx = new DataContext())
-                   {
-                       var dbServer = ctx.DiscordServers.Include(x => x.Roles).FirstOrDefault(x => x.ServerId == (long)Guild.Id);
-
-                       foreach (var existingRole in dbServer.Roles.ToList())
-                       {
-                           if (!Guild.Roles.Any(x => (long)x.Id == existingRole.RoleId))
-                               ctx.DiscordRoles.Remove(existingRole);
-                       }
-
-                       foreach (var role in Guild.Roles)
-                       {
-                           var dbRole = dbServer.Roles.FirstOrDefault(x => x.RoleId == (long)role.Id);
-                           if (dbRole == null)
-                           {
-                               dbServer.Roles.Add(dbRole = new DiscordRole());
-                               dbRole.RoleId = (long)role.Id;
-                           }
-                           dbRole.Name = role.Name;
-                           dbRole.Color = role.Color.RawValue.ToString();
-                           dbRole.DiscordPermissions = (long)role.Permissions.RawValue;
-                       }
-
-                       ctx.SaveChanges();
-                   }
-
-                   using (var ctx = new DataContext())
-                   {
-                       var dbServer = ctx.DiscordServers.Include(x => x.Channels).FirstOrDefault(x => x.ServerId == (long)Guild.Id);
-
-                       foreach (var existingChannel in dbServer.Channels.ToList())
-                       {
-                           if (!Guild.Channels.Any(x => (long)x.Id == existingChannel.ChannelId))
-                               ctx.DiscordChannels.Remove(existingChannel);
-                       }
-
-                       foreach (var channel in Guild.Channels)
-                       {
-                           var dbChannel = dbServer.Channels.FirstOrDefault(x => x.ChannelId == (long)channel.Id);
-                           if (dbChannel == null)
-                           {
-                               dbServer.Channels.Add(dbChannel = new DiscordChannel());
-                               dbChannel.ChannelId = (long)channel.Id;
-                           }
-                           dbChannel.ChannelType = channel is ITextChannel ? DiscordChannelType.Text : channel is IVoiceChannel ? DiscordChannelType.Voice : channel is ICategoryChannel ? DiscordChannelType.Category : DiscordChannelType.Other;
-                           dbChannel.Name = channel.Name;
-                       }
-
-                       ctx.SaveChanges();
-                   }
-
-                   using (var ctx = new DataContext())
-                   {
-                       var dbServer = ctx.DiscordServers.Include(x => x.Users).FirstOrDefault(x => x.ServerId == (long)Guild.Id);
-
-                       foreach (var user in Guild.Users)
-                       {
-                           var dbServerUser = dbServer.Users.FirstOrDefault(x => x.User.UserId == (long)user.Id);
-                           if (dbServerUser == null)
-                           {
-                               var dbUser = ctx.DiscordUsers.FirstOrDefault(x => x.UserId == (long)user.Id);
-                               if (dbUser == null)
-                                   ctx.DiscordUsers.Add(dbUser = new DiscordUser { UserId = (long)user.Id });
-                               dbServer.Users.Add(dbServerUser = new DiscordServerUser { User = dbUser });
-                           }
-                           dbServerUser.Nickname = user.Nickname;
-                           dbServerUser.Roles.Clear();
-                           dbServerUser.Roles = dbServer.Roles.Where(x => user.Roles.Any(r => (long)r.Id == x.RoleId)).ToList();
-                           dbServerUser.User.Username = user.Username;
-                           dbServerUser.User.Discriminator = user.DiscriminatorValue;
-                           dbServerUser.IsOwner = Guild.OwnerId == user.Id;
-                       }
-
-                       ctx.SaveChanges();
-                   }
+               {                   
+                   UserHandler.SyncServer(Guild);
                }
            });
 
