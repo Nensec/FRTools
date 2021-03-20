@@ -33,8 +33,9 @@ namespace FRTools.Discord.Modules
                 if (skinId.All(char.IsDigit))
                 {
                     try
-                    {
-                        var realItemSearch = DbContext.FRItems.FirstOrDefault(x => x.FRId == int.Parse(skinId) && x.ItemCategory == FRItemCategory.Skins);
+                    { 
+                        var intSkinId = int.Parse(skinId);
+                        var realItemSearch = DbContext.FRItems.FirstOrDefault(x => x.FRId == intSkinId && x.ItemCategory == FRItemCategory.Skins);
                         if (realItemSearch != null)
                         {
                             await ReplyAsync(embed: ErrorEmbed($"Skin not found, however there is a Flight Rising skin with that ID: `{realItemSearch.Name}`.\nIf you meant to search for a real skin please use the following command instead: `{SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}lookup skin {realItemSearch.FRId}`").Build());
