@@ -343,6 +343,10 @@
     <Content Include="Content\bootstrap-toggle.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\bootstrap\bootstrap.min.css" />
+    <Content Include="Content\dark-mode.css" />
+    <Content Include="Content\v2.css" />
+    <Content Include="Scripts\bootstrap\bootstrap.bundle.min.js" />
     <Content Include="Content\frskintester.png" />
     <Content Include="Content\frskintester.svg" />
     <Content Include="Content\frskintester_embed.png" />
@@ -385,6 +389,7 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\Chart.bundle.min.js" />
     <Content Include="Scripts\chartjs-plugin-colorschemes.min.js" />
+    <Content Include="Scripts\dark-mode-switch.min.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
@@ -397,6 +402,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\Site.js" />
     <Content Include="Web.config" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
@@ -456,6 +462,7 @@
     <Content Include="Views\Snippet\Scripts\_CoverageCheck.cshtml" />
     <Content Include="Views\Shared\_Pagination.cshtml" />
     <Content Include="Views\Snippet\Scripts\_ColorWheel.cshtml" />
+    <Content Include="Views\Shared\_LayoutV2.cshtml" />
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -503,6 +510,8 @@
           <DevelopmentServerPort>50659</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:50164/</IISUrl>
+          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
+          <IISAppRootUrl>http://localhost:50164/</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

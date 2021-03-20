@@ -1,4 +1,5 @@
 ﻿@{
+    Layout = "~/Views/Shared/_LayoutV2.cshtml";
     ViewBag.Title = "Home Page";
 }
 
@@ -9,25 +10,21 @@
     <meta property="og:description" content="This site will host various tools aimed at making your Flight Rising experience better!" />
 }
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                <h4>Latest blog post</h4>
-            </div>
-            <div id="blogPost" class="panel-body">
-            </div>
-        </div>
+<div class="card mt-3">
+    <div class="card-header">
+        <h5 class="text-muted">Latest blog post</h5>
     </div>
-    <div class="col-md-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4>Contact info</h4>
-            </div>
-            <div class="panel-body">
-                @Html.Partial("_Contact")
-            </div>
-        </div>
+    <div class="card-body">
+        <div id="blogPost"></div>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h5 class="text-muted">Contact</h5>
+    </div>
+    <div class="card-body">
+        @Html.Partial("_Contact")
     </div>
 </div>
 
@@ -51,7 +48,7 @@
 }
 
 <style>
-    .tmblr-full img {
+    #blogPost img {
         max-width: 100%;
         box-shadow: 3px 3px 3px grey;
         margin-bottom: 10px;

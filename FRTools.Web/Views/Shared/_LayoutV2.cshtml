@@ -1,0 +1,219 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    @RenderSection("meta", false)
+    <title>@ViewBag.Title - FR Tools</title>
+    <link rel="stylesheet" href="~/Content/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Content/v2.css" />
+    <link rel="stylesheet" href="~/Content/dark-mode.css" />
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    <script src="~/Scripts/bootstrap/bootstrap.bundle.min.js"></script>
+    @RenderSection("head", false)
+    <script type="text/javascript">
+        var appInsights=window.appInsights||function(a){
+          function b(a){c[a]=function(){var b=arguments;c.queue.push(function(){c[a].apply(c,b)})}}var c={config:a},d=document,e=window;setTimeout(function(){var b=d.createElement("script");b.src=a.url||"https://az416426.vo.msecnd.net/scripts/a/ai.0.js",d.getElementsByTagName("script")[0].parentNode.appendChild(b)});try{c.cookie=d.cookie}catch(a){}c.queue=[];for(var f=["Event","Exception","Metric","PageView","Trace","Dependency"];f.length;)b("track"+f.pop());if(b("setAuthenticatedUserContext"),b("clearAuthenticatedUserContext"),b("startTrackEvent"),b("stopTrackEvent"),b("startTrackPage"),b("stopTrackPage"),b("flush"),!a.disableExceptionTracking){f="onerror",b("_"+f);var g=e[f];e[f]=function(a,b,d,e,h){var i=g&&g(a,b,d,e,h);return!0!==i&&c["_"+f](a,b,d,e,h),i}}return c
+          }({
+              instrumentationKey: '@(System.Configuration.ConfigurationManager.AppSettings["APPINSIGHTS_INSTRUMENTATIONKEY"])'
+          });
+
+        window.appInsights=appInsights,appInsights.queue&&0===appInsights.queue.length&&appInsights.trackPageView();
+    </script>
+</head>
+<body class="text-dark">
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+        <a href="@Url.RouteUrl("Home")" class="navbar-brand pt-0">
+            <img style="height:30px;" src="@(ViewBag.Logo ?? "/Content/frtools.svg")" onerror="this.src='@(ViewBag.PngLogo ?? "/Content/frtools.png")'" />
+        </a>
+        <div>
+            @if (!Request.IsAuthenticated || (ViewContext.Controller as FRTools.Web.Controllers.BaseController).LoggedInUser?.ProfileSettings.ShowAds == true)
+            {
+                <a class="d-lg-none pr-3" href='https://ko-fi.com/X8X6RLCS' target='_blank'><img style="border:0px;height:34px;vertical-align:top;" src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+            }
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Skin tester
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        @Html.RouteLink("Skin tester info", "SkinTesterHome", null, new { @class = "dropdown-item" })
+                        <div class="dropdown-divider"></div>
+                        @Html.RouteLink("Browse skins", "Browse", null, new { @class = "dropdown-item", data_toggle = "tooltip", data_placement = "left", title = "Browse skins that are uploaded to the tool" })
+                        @Html.RouteLink("Upload skin", "Upload", null, new { @class = "dropdown-item" })
+                        @Html.RouteLink("Preview skin", "PreviewHome", null, new { @class = "dropdown-item" })
+                        @if (Request.IsAuthenticated)
+                        {
+                            <div class="dropdown-divider"></div>
+                            @Html.RouteLink("Link skin", "LinkExisting", null, new { @class = "dropdown-item", data_toggle = "tooltip", data_placement = "left", title = "Link existing skin to your account" })
+                            @Html.RouteLink("Manage your skins", "ManageSkins", null, new { @class = "dropdown-item", data_toggle = "tooltip", data_placement = "left", title = "Manage your skins" })
+                        }
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Pinglist manager
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        @Html.RouteLink("Pinglist info", "PinglistInfo", null, new { @class = "dropdown-item", data_toggle = "tooltip", data_placement = "left", title = "Info about how the pinglist manager works" })
+                        <div class="dropdown-divider"></div>
+                        @Html.RouteLink("Create pinglist", "PinglistCreate", null, new { @class = "dropdown-item", data_toggle = "tooltip", data_placement = "left", title = "Create a new pinglist" })
+                        @Html.RouteLink("View pinglists", "Pinglist", null, new { @class = "dropdown-item", data_toggle = "tooltip", data_placement = "left", title = "View the pinglist with a given ID" })
+                        @if (Request.IsAuthenticated)
+                        {
+                            <div class="dropdown-divider"></div>
+                            @Html.RouteLink("Link list", "PinglistLink", null, new { @class = "dropdown-item", data_toggle = "tooltip", data_placement = "left", title = "Link an existing ping list to your account" })
+                        }
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Snippets
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        @Html.RouteLink("Code snippets", "SnippetsHome", null, new { @class = "dropdown-item", data_toggle = "tooltip", data_placement = "left", title = "An assortment of small scripts to help you out with your every day Flight Rising needs" })
+                        <div class="dropdown-divider"></div>
+                        @foreach (var snippet in FRTools.Web.Controllers.SnippetController.Scripts)
+                        {
+                            <a class="dropdown-item" href="@(Url.RouteUrl("SnippetsHome"))#@(snippet.Value.SanitizedName)" data-toggle="tooltip" data-placement="left" title="@(snippet.Value.Description)">@(snippet.Value.Name)</a>
+                        }
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Other tools
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        @Html.RouteLink("Dress up a scry", "ScryerDresser", null, new { @class = "dropdown-item", data_toggle = "tooltip", data_placement = "left", title = "Use the dressing room to dress up a scry" })
+                        @Html.RouteLink("Unredacted FR Newsreader", "NewsReader", null, new { @class = "dropdown-item", data_toggle = "tooltip", data_placement = "left", title = "Go through the Flight Rising news posts and see what staff is deleting" })
+                    </div>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-link">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="darkSwitch">
+                        <label class="custom-control-label" for="darkSwitch">Spoopy mode</label>
+                    </div>
+                </li>
+                @if (Request.IsAuthenticated)
+                {
+                    using (Html.BeginRouteForm("Logout", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <li>
+                            @Html.RouteLink($"Hello {User.Identity.Name}!", "SelfProfile", null, new { title = "View your profile", @class = "nav-link" })
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Skin tester
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                @Html.RouteLink($"Account details", "ManageAccount", null, new { title = "Manage your account", @class = "nav-link" })
+                                @Html.RouteLink($"Logins", "ManageLogins", null, new { title = "Manage logins to your account", @class = "nav-link" })
+                                <div class="dropdown-divider"></div>
+                                <a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()"><span class="glyphicon glyphicon-off"></span> Log out</a>
+                            </div>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li>
+                        @Html.RouteLink("Login", "Login", null, new { @class = "nav-link" })
+                    </li>
+                }
+                <li class="nav-item">
+                    <a class="nav-link" href="@Url.RouteUrl("Contact")">Contact</a>
+                </li>
+            </ul>
+            @if (!Request.IsAuthenticated || (ViewContext.Controller as FRTools.Web.Controllers.BaseController).LoggedInUser?.ProfileSettings.ShowAds == true)
+            {
+                <a class="d-none d-lg-block pl-3" href='https://ko-fi.com/X8X6RLCS' target='_blank'><img style="border:0px;height:34px;vertical-align:top;" src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+            }
+        </div>
+    </nav>
+    <div class="container-wrapper d-flex flex-column">
+        <div class="container-fluid flex-grow-1">
+            <div class="body-content">
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        @Html.Raw(TempData["Error"])
+                    </div>
+                }
+                @if (TempData["Warning"] != null)
+                {
+                    <div class="alert alert-warning alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        @Html.Raw(TempData["Warning"])
+                    </div>
+                }
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        @Html.Raw(TempData["Success"])
+                    </div>
+                }
+                @if (TempData["Info"] != null)
+                {
+                    <div class="alert alert-info alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        @Html.Raw(TempData["Info"])
+                    </div>
+                }
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-2"></div>
+                <div class="col">
+                    @RenderBody()
+                </div>
+                <div class="col-lg-2">
+                    @if (!Request.IsAuthenticated || (ViewContext.Controller as FRTools.Web.Controllers.BaseController).LoggedInUser?.ProfileSettings.ShowAds == true)
+                    {
+                        <div id="ad" class="d-none d-lg-block mt-3">
+                            <a target="_blank" href="https://www.patreon.com/frtools">
+                                <img src="~/Content/patreon_banner.png" />
+                            </a>
+                            <a class="d-flex justify-content-center text-muted" title="It's just an option in your profile, no hidden premium stuff or anything!" data-placement="bottom" data-toggle="tooltip" href="@(Url.RouteUrl("EditProfile"))"><small>- disable ads -</small></a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <footer class="pb-3">
+            <hr />
+            <div class="px-3 text-center">
+                <p class="m-0 d-none d-lg-block">Dragons &copy; - Stormlight Workshop LLC <span class="px-2">|</span> Skins &copy; - respective owners <span class="px-2">|</span> Code and idea &copy; @DateTime.Now.Year - Perry van Velzen</p>
+                <div class="d-lg-none">
+                    <p class="m-0">Dragons &copy; - Stormlight Workshop LLC <span class="px-2">|</span> Skins &copy; - respective owners</p>
+                    <p class="m-0">Code and idea &copy; @DateTime.Now.Year - Perry van Velzen</p>
+                </div>
+                <p class="m-0"><a href="@Url.RouteUrl("Privacy")">View privacy policy</a></p>
+            </div>
+        </footer>
+    </div>
+
+    @RenderSection("scripts", required: false)
+    <script src="~/Scripts/dark-mode-switch.min.js"></script>
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip({ html: true });
+        })
+    </script>
+    <script src="~/Scripts/Site.js"></script>
+</body>
+</html>

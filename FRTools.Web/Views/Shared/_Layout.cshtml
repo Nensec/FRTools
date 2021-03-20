@@ -9,10 +9,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @RenderSection("meta", false)
     <title>@ViewBag.Title - FR Tools</title>
-    @Styles.Render("~/Content/css")
+    <link rel="stylesheet" href="~/Content/bootstrap.css" />
+    <link rel="stylesheet" href="~/Content/bootstrap-toggle.css" />
+    <link rel="stylesheet" href="~/Content/Site.css" />
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/bootstrap-toggle.min.js"></script>
+    <script src="~/Scripts/Site.js"></script>
     @RenderSection("head", false)
     <script type="text/javascript">
         var appInsights=window.appInsights||function(a){
@@ -205,28 +209,7 @@
         $(function () {
             $('[data-toggle="tooltip"]').tooltip({ html: true });
         })
-
-        copyOrGenerateUrl = (e, b, t, id) => {
-            if (e.value != '') {
-                e.select();
-                document.execCommand('copy');
-                b.innerHTML = 'Copied!';
-            }
-            else {
-                b.innerHTML = 'Fetching..';
-                $.get({
-                    url: '@Url.RouteUrl("GetShareUrl")',
-                    data: { type: t, id: id },
-                    success: d => { e.value = d; copyText(e, b); }
-                }).fail(() => b.innerHTML = 'Error!');
-            }
-        }
-
-        copyText = (e, b) => {
-            e.select();
-            document.execCommand('copy');
-            b.innerHTML = 'Copied!';
-        }
     </script>
+    <script src="~/Scripts/Site.js"></script>
 </body>
 </html>

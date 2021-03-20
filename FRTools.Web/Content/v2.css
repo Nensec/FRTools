@@ -1,0 +1,66 @@
+﻿html {
+    font-size: 0.878rem;
+}
+
+.container-wrapper {
+    position: absolute;
+    top: 3.5rem;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow-y: auto;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+.tooltip-inner {
+    text-align: center;
+    background-color: #505050;
+    width: 200px;
+}
+
+.bs-tooltip-top .arrow::before {
+    border-top-color: #505050;
+}
+
+.bs-tooltip-right .arrow::before {
+    border-right-color: #505050;
+}
+
+.bs-tooltip-left .arrow::before {
+    border-left-color: #505050;
+}
+
+.bs-tooltip-bottom .arrow::before {
+    border-bottom-color: #505050;
+}
+
+.card-header .h1, .card-header .h2, .card-header .h3, .card-header .h4, .card-header .h5, .card-header .h6, .card-header h1, .card-header h2, .card-header h3, .card-header h4, .card-header h5, .card-header h6 {
+    margin:0;
+}
+
+#ad {
+    position: absolute;
+    top: 0;
+    width: 122px;
+    height: 602px;
+    border: 1px solid #ddd;
+}
