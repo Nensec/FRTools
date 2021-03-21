@@ -62,13 +62,21 @@ namespace FRTools.Common
             else if (dragonUrl.Contains("dgen/preview/dragon"))
             {
                 // Scry image link
-                result = new PreviewResult(PreviewSource.Scry) { Forced = force };
+                result = new PreviewResult(PreviewSource.ScryImage) { Forced = force };
 
                 var dragon = FRHelpers.ParseUrlForDragon(dragonUrl);
                 result = await GenerateOrFetchPreview(result, skinId, version, dragon, false, false, force);
             }
+            else if (dragonUrl.Contains("scrying/predict"))
+            {
+                // Scry predict link
+                result = new PreviewResult(PreviewSource.ScryLink) { Forced = force };
+                var dragon = FRHelpers.ParseUrlForDragon(GeneratedFRHelpers.GenerateDragonImageUrl(FRHelpers.ParseUrlForDragon(dragonUrl, forced: true)));
+
+                result = await GenerateOrFetchPreview(result, skinId, version, dragon, false, false, force);
+            }
             else
-                return result.WithErrorMessage("The URL provided is not valid.");
+                return new PreviewResult(PreviewSource.Unknown).WithErrorMessage("The URL provided is not valid.");
 
             result.DragonUrl = dragonUrl;
             return result;
@@ -121,7 +129,7 @@ namespace FRTools.Common
 
             Bitmap dragonImage = null;
 
-            var azureImagePreviewPath = $@"previews\{skinId}\{(version == 1 ? "" : $@"{version}\")}{dragon.FRDragonId?.ToString() ?? dragon.ToString()}_{dragon.Gender}.png";
+            var azureImagePreviewPath = $@"previews\{skinId}\{(version == 1 ? "" : $@"{version}\")}{dragon.GetFileName()}.png";
             dragon.PreviewUrls.TryGetValue((skinId, version ?? 1), out var previewUrl);
 
             if (force || (previewUrl == null && !new AzureImageService().Exists(azureImagePreviewPath, out previewUrl)))
@@ -319,7 +327,7 @@ namespace FRTools.Common
                 skinImage.Dispose();
                 return clone;
             }
-            return skinImage;
+            return null;
         }
     }
 }

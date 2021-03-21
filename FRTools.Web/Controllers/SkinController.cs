@@ -286,7 +286,7 @@ namespace FRTools.Web.Controllers
                 if (skin.GenderType != (int)model.Gender || skin.DragonType != (int)model.DragonType)
                 {
                     var azureImageService = new AzureImageService();
-                    await azureImageService.DeleteImage($@"previews\{model.SkinId}\preview.png");
+                    await azureImageService.DeleteImage($@"previews\{model.SkinId}\{(skin.Version == 1 ? "" : $@"{skin.Version}\")}preview.png");
                 }
 
                 skin.Title = model.Title;

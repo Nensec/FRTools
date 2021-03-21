@@ -73,7 +73,7 @@ namespace FRTools.Common
             return await GetInvisibleDressingRoomDragon(ParseUrlForDragon(dressingRoomUrl));
         }
 
-        public static DragonCache ParseUrlForDragon(string dragonUrl, string skinId = null, int? version = null)
+        public static DragonCache ParseUrlForDragon(string dragonUrl, string skinId = null, int? version = null, bool forced = false)
         {
             var dragon = new DragonCache();
             Match regexParse;
@@ -104,7 +104,7 @@ namespace FRTools.Common
                 }
             }
 
-            if (!Cache.TryGetValue(dragon.SHA1Hash, out var cachedDragon))
+            if (forced || !Cache.TryGetValue(dragon.SHA1Hash, out var cachedDragon))
             {
                 using (var ctx = new DataContext())
                 {
@@ -113,7 +113,7 @@ namespace FRTools.Common
                         dragon = dbDragon;
                     else
                         ctx.DragonCache.Add(dragon);
-                    Cache.Add(dragon.SHA1Hash, dragon);
+                    Cache[dragon.SHA1Hash] = dragon;
 
                     if ((regexParse = Regex.Match(dragonUrl, @"element=([\d]*)")).Success)
                         dragon.Element = (Element)int.Parse(regexParse.Groups[1].Value);

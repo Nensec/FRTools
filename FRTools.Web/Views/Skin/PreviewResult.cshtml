@@ -57,7 +57,8 @@
                     case FRTools.Common.PreviewSource.DragonId:
                         @Html.Hidden("DragonId", Model.Result.Dragon.FRDragonId)
                         break;
-                    case FRTools.Common.PreviewSource.Scry:
+                    case FRTools.Common.PreviewSource.ScryImage:
+                    case FRTools.Common.PreviewSource.ScryLink:
                         @Html.Hidden("ScryerUrl", Model.Result.DragonUrl)
                         break;
                     case FRTools.Common.PreviewSource.DressingRoom:
