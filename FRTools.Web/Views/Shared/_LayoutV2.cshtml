@@ -27,14 +27,14 @@
     </script>
 </head>
 <body class="text-dark">
-    <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-xl fixed-top navbar-dark bg-dark">
         <a href="@Url.RouteUrl("Home")" class="navbar-brand pt-0">
             <img style="height:30px;" src="@(ViewBag.Logo ?? "/Content/frtools.svg")" onerror="this.src='@(ViewBag.PngLogo ?? "/Content/frtools.png")'" />
         </a>
         <div>
             @if (!Request.IsAuthenticated || (ViewContext.Controller as FRTools.Web.Controllers.BaseController).LoggedInUser?.ProfileSettings.ShowAds == true)
             {
-                <a class="d-lg-none pr-3" href='https://ko-fi.com/X8X6RLCS' target='_blank'><img style="border:0px;height:34px;vertical-align:top;" src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+                <a class="d-xl-none pr-3" href='https://ko-fi.com/X8X6RLCS' target='_blank'><img style="border:0px;height:34px;vertical-align:top;" src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
             }
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -43,6 +43,20 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Discord bot
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        @Html.RouteLink("Bot info", "DiscordHome", null, new { @class = "dropdown-item" })
+                        @Html.RouteLink("Help", "DiscordHelp", null, new { @class = "dropdown-item" })
+                        @if (Request.IsAuthenticated)
+                        {
+                            <div class="dropdown-divider"></div>
+                            @Html.RouteLink("Manage your bot", "DiscordManage", null, new { @class = "dropdown-item" })
+                        }
+                    </div>
+                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Skin tester
@@ -109,24 +123,23 @@
                 </li>
                 @if (Request.IsAuthenticated)
                 {
-                    using (Html.BeginRouteForm("Logout", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <li>
-                            @Html.RouteLink($"Hello {User.Identity.Name}!", "SelfProfile", null, new { title = "View your profile", @class = "nav-link" })
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Skin tester
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                @Html.RouteLink($"Account details", "ManageAccount", null, new { title = "Manage your account", @class = "nav-link" })
-                                @Html.RouteLink($"Logins", "ManageLogins", null, new { title = "Manage logins to your account", @class = "nav-link" })
-                                <div class="dropdown-divider"></div>
-                                <a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()"><span class="glyphicon glyphicon-off"></span> Log out</a>
-                            </div>
-                        </li>
-                    }
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Manage
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            @Html.RouteLink($"Your profile", "SelfProfile", null, new { @class = "dropdown-item", data_toggle = "tooltip", data_placement = "left", title = "View your profile" })
+                            <div class="dropdown-divider"></div>
+                            @Html.RouteLink($"Account details", "ManageAccount", null, new { @class = "dropdown-item", data_toggle = "tooltip", data_placement = "left", title = "Manage your account" })
+                            @Html.RouteLink($"Logins", "ManageLogins", null, new { @class = "dropdown-item", data_toggle = "tooltip", data_placement = "left", title = "Manage logins to your account" })
+                            <div class="dropdown-divider"></div>
+                            @using (Html.BeginRouteForm("Logout", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()"><span class="glyphicon glyphicon-off"></span> Log out</a>
+                            }
+                        </div>
+                    </li>
                 }
                 else
                 {
@@ -140,7 +153,7 @@
             </ul>
             @if (!Request.IsAuthenticated || (ViewContext.Controller as FRTools.Web.Controllers.BaseController).LoggedInUser?.ProfileSettings.ShowAds == true)
             {
-                <a class="d-none d-lg-block pl-3" href='https://ko-fi.com/X8X6RLCS' target='_blank'><img style="border:0px;height:34px;vertical-align:top;" src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+                <a class="d-none d-xl-block pl-3" href='https://ko-fi.com/X8X6RLCS' target='_blank'><img style="border:0px;height:34px;vertical-align:top;" src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
             }
         </div>
     </nav>
