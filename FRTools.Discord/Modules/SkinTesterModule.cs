@@ -3,6 +3,7 @@ using Discord.Commands;
 using FRTools.Common;
 using FRTools.Data;
 using FRTools.Data.DataModels;
+using FRTools.Data.DataModels.FlightRisingModels;
 using FRTools.Discord.Infrastructure;
 using FRTools.Discord.Preconditions;
 using System;
@@ -28,7 +29,24 @@ namespace FRTools.Discord.Modules
         {
             var skin = DbContext.Skins.Include(x => x.Creator.FRUser).FirstOrDefault(x => x.GeneratedId == skinId);
             if (skin == null)
+            {
+                if (skinId.All(char.IsDigit))
+                {
+                    try
+                    { 
+                        var intSkinId = int.Parse(skinId);
+                        var realItemSearch = DbContext.FRItems.FirstOrDefault(x => x.FRId == intSkinId && x.ItemCategory == FRItemCategory.Skins);
+                        if (realItemSearch != null)
+                        {
+                            await ReplyAsync(embed: ErrorEmbed($"Skin not found, however there is a Flight Rising skin with that ID: `{realItemSearch.Name}`.\nIf you meant to search for a real skin please use the following command instead: `{SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}lookup skin {realItemSearch.FRId}`").Build());
+                            return;
+                        }
+                    }
+                    catch { }
+                }
+                
                 await ReplyAsync(embed: ErrorEmbed("Skin not found.").Build());
+            }
             else
             {
                 var previewUrl = (await SkinTester.GenerateOrFetchDummyPreview(skin.GeneratedId, skin.Version)).Urls[0];

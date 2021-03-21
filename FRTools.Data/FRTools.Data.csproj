@@ -248,6 +248,10 @@
     <Compile Include="Migrations\202102262253238_FRItem table.designer.cs">
       <DependentUpon>202102262253238_FRItem table.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202103202121441_Logs fix.cs" />
+    <Compile Include="Migrations\202103202121441_Logs fix.designer.cs">
+      <DependentUpon>202103202121441_Logs fix.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -353,6 +357,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202102262253238_FRItem table.resx">
       <DependentUpon>202102262253238_FRItem table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103202121441_Logs fix.resx">
+      <DependentUpon>202103202121441_Logs fix.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

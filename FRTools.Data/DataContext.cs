@@ -71,6 +71,8 @@ namespace FRTools.Data
 
             modelBuilder.Entity<User>().HasOptional(x => x.FRUser).WithOptionalDependent(x => x.User);
             modelBuilder.Entity<User>().HasOptional(x => x.ProfileSettings).WithOptionalPrincipal(x => x.User);
+
+            modelBuilder.Entity<DiscordChannel>().HasMany(x => x.Logs).WithRequired(x => x.Channel).WillCascadeOnDelete(true);
         }
     }
 }
