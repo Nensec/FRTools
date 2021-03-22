@@ -40,6 +40,28 @@
                         }
                     }
                 </select>
+                if (channels.Any(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Text))
+                {
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default" data-toggle="tooltip" title="Check the permissions for this channel by sending a test to it" onclick="sendTestMessage('@(Model.Key)')">Send test message</button>
+                    </div>
+                    if (!Context.Items.Contains("SendTestMessageScript"))
+                    {
+                        Context.Items.Add("SendTestMessageScript", true);
+                        <script>
+                        sendTestMessage = key => {
+                            $.post({
+                                url: '@Url.RouteUrl("DiscordSendTestMessage")',
+                                data: {
+                                    discordServer: '@(Model.ParentServer.ServerId)',
+                                    module: @(Model.Module == null ? "undefined" : $"`{Model.Module}`"),
+                                    key: key
+                                }
+                            })
+                        }
+                        </script>
+                    }
+                }
                 break;
             case "IRole":
                 <select id="@(id)" name="@(name)" configKey="@(Model.Key)" class="form-control" onchange="saveSetting('@(Model.Key)', this.value)">

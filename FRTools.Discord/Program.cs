@@ -139,6 +139,8 @@ namespace FRTools.Discord
                             await handler.HandleDominanceUpdate(genericMessage).ConfigureAwait(false);
                         if (genericMessage.Source == MessageCategory.SettingUpdated && (long)handler.Guild.Id == genericMessage.DiscordServer)
                             await handler.HandleSettingUpdate(genericMessage).ConfigureAwait(false);
+                        if (genericMessage.Source == MessageCategory.DiscordTestMessage && (long)handler.Guild.Id == genericMessage.DiscordServer)
+                            await handler.HandleTestMessage(genericMessage).ConfigureAwait(false);
                     }
                     catch(Exception ex)
                     {
