@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -11,8 +12,9 @@ using FRTools.Discord.Infrastructure;
 namespace FRTools.Discord.Modules
 {
     [RequireOwner]
-    [Name("admin")]
+    [Name("Admin")]
     [NoLog]
+    [Group("admin")]
     public class AdminModule : BaseModule
     {
         public AdminModule(DataContext dbContext, SettingManager settingManager) : base(dbContext, settingManager)
@@ -37,7 +39,7 @@ namespace FRTools.Discord.Modules
         }
 
         [Name("Sync server"), Command("syncserver")]
-        public async Task SyncServer(ulong? serverId)
+        public async Task SyncServer(ulong? serverId = null)
         {
             SocketGuild guild = null;
             if (serverId != null)
@@ -64,6 +66,41 @@ namespace FRTools.Discord.Modules
                 {
                     await ReplyAsync($"Error: {ex}");
                 }
+            }
+        }
+
+        [Name("Servers"), Command("servers")]
+        public async Task Servers(ulong? serverId = null)
+        {
+            var guilds = Context.Client.Guilds;
+            var sb = new StringBuilder();
+            sb.AppendLine("I an im the following servers:");
+            sb.AppendLine("```");
+            foreach (var guild in guilds.Select((x, i) => (x, i)))
+                sb.AppendLine($"{guild.i + 1} - ({guild.x.Id}) {guild.x.Name} ");
+            sb.AppendLine("```");
+            await ReplyAsync(sb.ToString());
+        }
+
+        [Name("Bot permissions"), Command("perms")]
+        public async Task BotPermissions(ulong? serverId = null)
+        {
+            SocketGuild guild = null;
+            if (serverId != null)
+            {
+                var g = Context.Client.Guilds.FirstOrDefault(x => x.Id == serverId);
+                if (g == null)
+                {
+                    await ReplyAsync($"I am not in server `{serverId}`");
+                }
+                else
+                    guild = g;
+            }
+            else
+                guild = Context.Guild;
+            if (guild != null)
+            {
+                await ReplyAsync($"In server `{guild.Name}` I have these permissions: {string.Join(", ", guild.CurrentUser.GuildPermissions.ToList().Select(x => $"`{x}`"))}");
             }
         }
     }
