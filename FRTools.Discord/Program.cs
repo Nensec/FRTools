@@ -125,7 +125,7 @@ namespace FRTools.Discord
                     }
                     catch(Exception ex)
                     {
-                        Console.WriteLine($"Failed to handle {genericMessage.MessageType} event: {ex}");
+                        Console.WriteLine($"Failed to handle {genericMessage.MessageType} for server {handler.Guild.Id} event: {ex}");
                     }
                 }
             }
@@ -142,7 +142,7 @@ namespace FRTools.Discord
                     }
                     catch(Exception ex)
                     {
-                        Console.WriteLine($"Failed to handle {genericMessage.MessageType} event: {ex}");
+                        Console.WriteLine($"Failed to handle {genericMessage.MessageType} for server {handler.Guild.Id} event: {ex}");
                     }
                 }
             }
