@@ -2,6 +2,7 @@
 using FRTools.Data;
 using FRTools.Data.DataModels;
 using FRTools.Data.DataModels.FlightRisingModels;
+using FRTools.Tools.SkinTester;
 using FRTools.Web.Infrastructure;
 using System;
 using System.Collections.Generic;

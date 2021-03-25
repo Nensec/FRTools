@@ -47,6 +47,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Discord.Net.WebSocket", "Di
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools.MS.FlashTracker", "FRTools.MS.FlashTracker\FRTools.MS.FlashTracker.csproj", "{3A36E78F-4324-4BDE-A313-4FDF6C071E70}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools.Tools.SkinTester", "FRTools.Tools.SkinTester\FRTools.Tools.SkinTester.csproj", "{57402622-763D-4A12-BF00-6EAC9770BF5C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{F902D080-6C26-4417-AE77-4F056352511A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -109,6 +113,10 @@ Global
 		{3A36E78F-4324-4BDE-A313-4FDF6C071E70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A36E78F-4324-4BDE-A313-4FDF6C071E70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A36E78F-4324-4BDE-A313-4FDF6C071E70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57402622-763D-4A12-BF00-6EAC9770BF5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57402622-763D-4A12-BF00-6EAC9770BF5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57402622-763D-4A12-BF00-6EAC9770BF5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57402622-763D-4A12-BF00-6EAC9770BF5C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -122,6 +130,7 @@ Global
 		{CE15A54A-B3F9-40CD-A6C2-6694FF3AF466} = {15A16B8E-A528-4DEB-8F05-14AA0870C9E1}
 		{FA78F6CA-9A40-4803-AF1E-87CA8330E6AE} = {15A16B8E-A528-4DEB-8F05-14AA0870C9E1}
 		{3A36E78F-4324-4BDE-A313-4FDF6C071E70} = {6FF57E80-6712-4E3A-812A-4BE1D09285EB}
+		{57402622-763D-4A12-BF00-6EAC9770BF5C} = {F902D080-6C26-4417-AE77-4F056352511A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {394695AE-5734-4F1A-96A2-774FEB7DF305}

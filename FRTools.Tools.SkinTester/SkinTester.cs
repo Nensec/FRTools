@@ -1,4 +1,5 @@
-﻿using FRTools.Data;
+﻿using FRTools.Common;
+using FRTools.Data;
 using FRTools.Data.DataModels;
 using FRTools.Data.DataModels.FlightRisingModels;
 using System;
@@ -10,7 +11,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace FRTools.Common
+namespace FRTools.Tools.SkinTester
 {
     public static class SkinTester
     {

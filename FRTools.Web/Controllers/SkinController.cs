@@ -1,6 +1,7 @@
 ﻿using FRTools.Common;
 using FRTools.Data;
 using FRTools.Data.DataModels;
+using FRTools.Tools.SkinTester;
 using FRTools.Web.Infrastructure;
 using FRTools.Web.Models;
 using Microsoft.AspNet.Identity;

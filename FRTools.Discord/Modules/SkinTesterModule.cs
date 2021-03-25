@@ -6,6 +6,7 @@ using FRTools.Data.DataModels;
 using FRTools.Data.DataModels.FlightRisingModels;
 using FRTools.Discord.Infrastructure;
 using FRTools.Discord.Preconditions;
+using FRTools.Tools.SkinTester;
 using System;
 using System.Data.Entity;
 using System.Linq;
@@ -33,7 +34,7 @@ namespace FRTools.Discord.Modules
                 if (skinId.All(char.IsDigit))
                 {
                     try
-                    { 
+                    {
                         var intSkinId = int.Parse(skinId);
                         var realItemSearch = DbContext.FRItems.FirstOrDefault(x => x.FRId == intSkinId && x.ItemCategory == FRItemCategory.Skins);
                         if (realItemSearch != null)
@@ -44,7 +45,7 @@ namespace FRTools.Discord.Modules
                     }
                     catch { }
                 }
-                
+
                 await ReplyAsync(embed: ErrorEmbed("Skin not found.").Build());
             }
             else
