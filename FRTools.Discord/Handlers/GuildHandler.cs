@@ -19,7 +19,7 @@ namespace FRTools.Discord.Handlers
     [DiscordSettingCategory("FLASHSALE", "Flash sale announce")]
     [DiscordSetting("GUILDCONFIG_PREFIX", typeof(string), "Command prefix", "The prefix used by the bot to listen to commands")]
     [DiscordSetting("GUILDCONFIG_ANN_CHANNEL", typeof(ITextChannel), "Announcement channel", "The channel the bot will post announcement messages")]
-    [DiscordSetting("GUILDCONFIG_FLASHSALE_ANNNEWITEM", typeof(bool), "Announce new items", "Should the bot announce new items added to Flight Rising?", Category = "FLASHSALE")]
+    [DiscordSetting("GUILDCONFIG_FLASHSALE_ANNNEWITEM", typeof(bool), "Announce new items", "Should the bot announce new flash sales added to the market place on Flight Rising? These announcements are posted in $<GUILD:GUILDCONFIG_ANN_CHANNEL>", Category = "FLASHSALE")]
     [DiscordSetting("GUILDCONFIG_ITEMDB_ANNNEWITEM", typeof(bool), "Announce new items", "Should the bot announce new items added to Flight Rising?", Category = "ITEMDB")]
     [DiscordSetting("GUILDCONFIG_ITEMDB_NEWITEMTYPES", typeof(FRItemCategory[]), "New item types", "Which item types should be announced", Category = "ITEMDB", Order = 2)]
     [DiscordSetting("GUILDCONFIG_ITEMDB_USEANNCHANNEL", typeof(bool), "Use announcement channel", "Use the bot's overall announcement channel, or set up an alternative", Category = "ITEMDB", Order = 2)]
