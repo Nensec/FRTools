@@ -95,6 +95,14 @@ namespace FRTools.App_Start
                 activeJobs.ForEach(x => x.Status = JobStatus.Cancelled);
                 ctx.SaveChanges();
             }
+
+            using (var ctx = new DataContext())
+            {
+                var roles = ctx.Roles.ToList();
+                if (!roles.Any(x => x.Name == "Admin"))
+                    roles.Add(new Role { Name = "Admin" });
+                ctx.SaveChanges();
+            }
         }
     }
 }

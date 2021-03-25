@@ -1,4 +1,4 @@
 {
-    // Every 3 hours, 1 minute past the hour
-    "schedule": "0 1 0/3 * * *"
+    // Every 7:31 and 19:31
+    "schedule": "0 31 7,19 * * *"
 }

@@ -302,6 +302,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\DiscordController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -324,6 +325,7 @@
     <Compile Include="Infrastructure\MustHaveLoginProviderAttribute.cs" />
     <Compile Include="Infrastructure\SmartRequiredAttribute.cs" />
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\AdminModels.cs" />
     <Compile Include="Models\DiscordModels.cs" />
     <Compile Include="Models\ManageModels.cs" />
     <Compile Include="Models\NewsModels.cs" />
@@ -456,6 +458,7 @@
     <Content Include="Views\Snippet\Scripts\_CoverageCheck.cshtml" />
     <Content Include="Views\Shared\_Pagination.cshtml" />
     <Content Include="Views\Snippet\Scripts\_ColorWheel.cshtml" />
+    <Content Include="Views\Admin\Users.cshtml" />
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

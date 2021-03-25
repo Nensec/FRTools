@@ -1,0 +1,55 @@
+﻿@model AdminUsersViewModel
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>Registered FRTools users</h4>
+    </div>
+    <div class="panel-body">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Login providers</th>
+                    <th>Skins owned</th>
+                    <th>Previews made</th>
+                    <th>Pinglists owned</th>
+                    <th>Login</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.Users)
+                {
+                    <tr>
+                        <td>
+                            @(user.Id)
+                        </td>
+                        <td>
+                            <a href="@Url.RouteUrl("Profile", new { username = user.UserName })">@(user.UserName)</a>
+                        </td>
+                        <td>
+                            <ul>
+                                @foreach (var login in user.Logins)
+                                {
+                                    <li>@(login.LoginProvider)</li>
+                                }
+                            </ul>
+                        </td>
+                        <td>
+                            @(user.Skins.Count)
+                        </td>
+                        <td>
+                            @(user.Previews.Count)
+                        </td>
+                        <td>
+                            @(user.Pinglists.Count)
+                        </td>
+                        <td>
+                            <a class="btn btn-primary" href="@Url.RouteUrl("AdminImpersonate", new { userId = user.Id })">Impersonate</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
