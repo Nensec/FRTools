@@ -104,7 +104,7 @@ namespace FRTools.Web.Controllers
                 TempData["Warning"] = "The bot has not encountered you at all yet in any servers, are you in a mutual server with the bot?";
             return View(new ServersViewModel
             {
-                Servers = currentUser?.Servers.Where(x => x.IsOwner || x.Roles.Any(r => (r.DiscordPermissions & 8) != 0)).Select(x => new ServerViewModel
+                Servers = currentUser?.Servers.Where(x => x.Server != null && (x.IsOwner || x.Roles.Any(r => (r.DiscordPermissions & 8) != 0))).Select(x => new ServerViewModel
                 {
                     ServerId = x.Server.ServerId,
                     UserCount = x.Server.Users.Count,
@@ -117,7 +117,7 @@ namespace FRTools.Web.Controllers
 
         private ServerViewModel GetServerViewModel(DataContext DataContext, DiscordUser currentUser, long discordServer)
         {
-            var server = currentUser.Servers.First(x => x.Server.ServerId == discordServer).Server;
+            var server = currentUser.Servers.First(x => x.Server?.ServerId == discordServer).Server;
             var serverModel = new ServerViewModel
             {
                 ServerId = discordServer,
@@ -332,7 +332,7 @@ namespace FRTools.Web.Controllers
 
         private bool CheckMutualServer(long discordServer, DiscordUser currentUser)
         {
-            if (currentUser.Servers.Where(x => x.IsOwner || x.Roles.Any(r => (r.DiscordPermissions & 8) != 0)).Select(x => x.Server).Any(x => x.ServerId == discordServer))
+            if (currentUser.Servers.Where(x => x.Server != null && (x.IsOwner || x.Roles.Any(r => (r.DiscordPermissions & 8) != 0))).Select(x => x.Server).Any(x => x.ServerId == discordServer))
                 return true;
             else
             {
