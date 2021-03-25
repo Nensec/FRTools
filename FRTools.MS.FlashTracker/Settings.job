@@ -1,0 +1,4 @@
+{
+    // Every 3 hours, 1 minute past the hour
+    "schedule": "0 1 0/3 * * *"
+}

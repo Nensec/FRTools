@@ -11,6 +11,7 @@ namespace FRTools.Data.Messages
         DominanceTracker,
         SettingUpdated,
         ItemFetcher,
-        DiscordTestMessage
+        DiscordTestMessage,
+        FlashTracker
     }
 }

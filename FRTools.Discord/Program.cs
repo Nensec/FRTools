@@ -122,6 +122,8 @@ namespace FRTools.Discord
                         // Handle custom message
                         if (customMessage is NewItemMessage newItemMessage)
                             await handler.HandleNewItemUpdate(newItemMessage).ConfigureAwait(false);
+                        if (customMessage is FlashSaleMessage flashSaleMessage)
+                            await handler.HandleFlashSaleUpdate(flashSaleMessage).ConfigureAwait(false);
                     }
                     catch(Exception ex)
                     {

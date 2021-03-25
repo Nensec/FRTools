@@ -14,7 +14,7 @@ namespace FRTools.Discord.Handlers
 {
     public static class ItemHandler
     {
-        public static async Task<(EmbedBuilder Embed, IEnumerable<KeyValuePair<string, Stream>> Files)> CreateItemEmbed(FRItem item, SocketGuild guild)
+        public static async Task<(EmbedBuilder Embed, IEnumerable<KeyValuePair<string, Stream>> Files)> CreateItemEmbed(FRItem item, SocketGuild guild, bool flashSale = false)
         {
             var files = new List<KeyValuePair<string, Stream>>();
             var externalEmojis = guild.CurrentUser.GuildPermissions.UseExternalEmojis;
@@ -26,7 +26,7 @@ namespace FRTools.Discord.Handlers
                 .WithFields(new EmbedFieldBuilder().WithName("Game database").WithValue($"[#{item.FRId}]({string.Format(FRHelpers.GameDatabaseUrl, item.FRId)})").WithIsInline(true));
 
             if (item.TreasureValue > 0)
-                embed.AddField(x => x.WithName("Treasure value").WithValue((externalEmojis ? $"{DiscordHelpers.DiscordEmojis[DiscordEmoji.Treasure]} " : "") + $"{item.TreasureValue}").WithIsInline(true));
+                embed.AddField(x => x.WithName("Treasure value").WithValue((externalEmojis ? $"{DiscordHelpers.DiscordEmojis[DiscordEmoji.Treasure]} " : "") + $"{(flashSale ? $"~~{item.TreasureValue * 10}~~ ***{item.TreasureValue * .8 * 10}***" : $"{item.TreasureValue}")}").WithIsInline(true));
 
             if (item.FoodValue > 0)
                 embed.AddField(x => x.WithName("Food value").WithValue((externalEmojis ? $"{DiscordHelpers.DiscordEmojis[DiscordEmoji.Food]} " : "") + $"{item.FoodValue}").WithIsInline(true));

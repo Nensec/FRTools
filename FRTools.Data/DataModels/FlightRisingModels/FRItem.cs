@@ -1,4 +1,6 @@
-﻿namespace FRTools.Data.DataModels.FlightRisingModels
+﻿using System.Collections.Generic;
+
+namespace FRTools.Data.DataModels.FlightRisingModels
 {
     public class FRItem
     {
@@ -16,6 +18,8 @@
         public FRFoodType? FoodType { get; set; }
         public int? FoodValue { get; set; }
         public int? RequiredLevel { get; set; }
+
+        public virtual ICollection<FRItemFlashSale> FlashSales { get; set; } = new HashSet<FRItemFlashSale>();
     }
 
     public enum FRItemCategory

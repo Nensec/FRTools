@@ -95,6 +95,7 @@
     <Compile Include="DataModels\FlightRisingModels\DragonCache.cs" />
     <Compile Include="DataModels\FlightRisingModels\FRDominance.cs" />
     <Compile Include="DataModels\FlightRisingModels\FRItem.cs" />
+    <Compile Include="DataModels\FlightRisingModels\FRItemFlashSale.cs" />
     <Compile Include="DataModels\FlightRisingModels\FRUser.cs" />
     <Compile Include="DataModels\Job.cs" />
     <Compile Include="DataModels\PinglistModels\Pinglist.cs" />
@@ -109,6 +110,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>GeneratedFlightRisingClasses.tt</DependentUpon>
     </Compile>
+    <Compile Include="Messages\FlashSaleMessage.cs" />
     <Compile Include="Messages\GenericMessage.cs" />
     <Compile Include="Messages\MessageCategory.cs" />
     <Compile Include="Messages\NewItemMessage.cs" />
@@ -252,6 +254,10 @@
     <Compile Include="Migrations\202103202121441_Logs fix.designer.cs">
       <DependentUpon>202103202121441_Logs fix.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202103251044067_flash sale tracker.cs" />
+    <Compile Include="Migrations\202103251044067_flash sale tracker.designer.cs">
+      <DependentUpon>202103251044067_flash sale tracker.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -360,6 +366,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202103202121441_Logs fix.resx">
       <DependentUpon>202103202121441_Logs fix.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202103251044067_flash sale tracker.resx">
+      <DependentUpon>202103251044067_flash sale tracker.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

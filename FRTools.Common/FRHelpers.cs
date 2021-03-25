@@ -28,6 +28,8 @@ namespace FRTools.Common
         public const string SceneArtUrl = "https://flightrising.com/static/cms/scene/{0}.png";
         public const string UserProfileUrl = "https://www1.flightrising.com/clan-profile/{0}";
         public const string GameDatabaseUrl = "https://www1.flightrising.com/game-database/item/{0}";
+        public const string MarketplaceUrl = "https://www1.flightrising.com/market/treasure/";
+        public const string MarketplaceFetchUrl = "https://www1.flightrising.com/market/ajax/get-items?mode=treasure&tab={0}";
 
         public static string GetRenderUrl(int dragonId) => $"https://www1.flightrising.com/rendern/350/{(Math.Floor(dragonId / 100d) + 1)}/{dragonId}_350.png";
 
