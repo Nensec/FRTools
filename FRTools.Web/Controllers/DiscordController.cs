@@ -230,7 +230,7 @@ namespace FRTools.Web.Controllers
         {
             var discordServerId = long.Parse(discordServer);
             ActionResult ErrorResult() => new HttpUnauthorizedResult("User does not have required permission");
-            var currentUser = DataContext.DiscordUsers.FirstOrDefault(x => x.UserId == _currentUserId)?.Servers.FirstOrDefault(x => x.Server.ServerId == discordServerId);
+            var currentUser = DataContext.DiscordUsers.FirstOrDefault(x => x.UserId == _currentUserId)?.Servers.FirstOrDefault(x => x.Server?.ServerId == discordServerId);
             if (currentUser == null)
                 return ErrorResult();
 
@@ -283,7 +283,7 @@ namespace FRTools.Web.Controllers
         {
             var discordServerId = long.Parse(discordServer);
             ActionResult ErrorResult() => new HttpUnauthorizedResult("User does not have required permission");
-            var currentUser = DataContext.DiscordUsers.FirstOrDefault(x => x.UserId == _currentUserId)?.Servers.FirstOrDefault(x => x.Server.ServerId == discordServerId);
+            var currentUser = DataContext.DiscordUsers.FirstOrDefault(x => x.UserId == _currentUserId)?.Servers.FirstOrDefault(x => x.Server?.ServerId == discordServerId);
             if (currentUser == null)
                 return ErrorResult();
 
