@@ -23,7 +23,7 @@ namespace FRTools.Common
         public const string DressingRoomDummyApparalUrl = "https://www1.flightrising.com/dgen/dressing-room/dummy?breed={0}&gender={1}&apparel={2}";
         public const string DressingRoomDummySkinUrl = "https://www1.flightrising.com/hoard/preview-image?gender={1}&breed={0}&item={2}";
         public const string ItemFetchUrl = "https://flightrising.com/includes/itemajax.php?id={0}&tab={1}";
-        public const string FamiliarArtUrl = "https://flightrising.com/static/cms/familiar/art/{0}.png";
+        public const string FamiliarArtUrl = "https://www1.flightrising.com/static/cms/familiar/art/{0}.png";
         public const string VistaArtUrl = "https://flightrising.com/static/cms/fvista/{0}.png";
         public const string SceneArtUrl = "https://flightrising.com/static/cms/scene/{0}.png";
         public const string UserProfileUrl = "https://www1.flightrising.com/clan-profile/{0}";

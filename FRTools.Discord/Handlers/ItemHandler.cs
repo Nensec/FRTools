@@ -34,53 +34,71 @@ namespace FRTools.Discord.Handlers
 
             if (item.AssetUrl != null)
             {
-                if (item.ItemCategory == FRItemCategory.Equipment)
+                switch (item.ItemCategory)
                 {
-                    var random = new Random();
-                    var modernBreeds = GeneratedFRHelpers.GetModernBreeds();
-                    using (var client = new WebClient())
-                    {
-                        var assetStream = await client.OpenReadTaskAsync(string.Format(SiteHelpers.DummyDragonApparelProxyUrl, (int)modernBreeds[random.Next(1, modernBreeds.Length)], random.Next(0, 2), $"{item.FRId}"));
-                        files.Add(new KeyValuePair<string, Stream>($"asset_{item.FRId}.png", assetStream));
-                    }
-                }
-                else if (item.ItemCategory == FRItemCategory.Skins)
-                {
-                    var skinType = item.ItemType.Split(' ');
-                    var dragonType = (DragonType)Enum.Parse(typeof(DragonType), skinType[0]);
-                    var gender = (Gender)Enum.Parse(typeof(Gender), skinType[1]);
-                    using (var client = new WebClient())
-                    {
-                        var assetStream = await client.OpenReadTaskAsync(string.Format(SiteHelpers.DummyDragonSkinProxyUrl, (int)dragonType, (int)gender, $"{item.FRId}"));
-                        files.Add(new KeyValuePair<string, Stream>($"asset_{item.FRId}.png", assetStream));
-                    }
-
-                    var username = Regex.Match(item.Description, @"Designed by ([^.]+)[.|\)]");
-                    if (username.Success)
-                    {
-                        var frUser = await FRHelpers.GetOrUpdateFRUser(username.Groups[1].Value);
-                        if (frUser != null)
+                    case FRItemCategory.Equipment:
                         {
-                            embed.AddField(x =>
+                            var random = new Random();
+                            var modernBreeds = GeneratedFRHelpers.GetModernBreeds();
+                            using (var client = new WebClient())
                             {
-                                x.Name = "Created by";
-                                x.IsInline = true;
-                                if (frUser.User != null && frUser.User.ProfileSettings.PublicProfile)
-                                    x.Value = $"[FR: {frUser.Username}]({string.Format(FRHelpers.UserProfileUrl, frUser.FRId)}) | [FRTools: {frUser.User.UserName}]({string.Format(SiteHelpers.ProfilePageUrl, frUser.User.UserName)})";
-                                else
-                                    x.Value = $"[{frUser.Username}]({string.Format(FRHelpers.UserProfileUrl, frUser.FRId)})";
-                            });
-                        }
-                    }
+                                var assetStream = await client.OpenReadTaskAsync(string.Format(SiteHelpers.DummyDragonApparelProxyUrl, (int)modernBreeds[random.Next(1, modernBreeds.Length)], random.Next(0, 2), $"{item.FRId}"));
+                                files.Add(new KeyValuePair<string, Stream>($"asset_{item.FRId}.png", assetStream));
+                            }
 
-                }
-                else
-                {
-                    using (var client = new WebClient())
-                    {
-                        var assetStream = await client.OpenReadTaskAsync($"https://flightrising.com{item.AssetUrl}");
-                        files.Add(new KeyValuePair<string, Stream>($"asset_{item.FRId}.png", assetStream));
-                    }
+                            break;
+                        }
+                    case FRItemCategory.Skins:
+                        {
+                            var skinType = item.ItemType.Split(' ');
+                            var dragonType = (DragonType)Enum.Parse(typeof(DragonType), skinType[0]);
+                            var gender = (Gender)Enum.Parse(typeof(Gender), skinType[1]);
+                            using (var client = new WebClient())
+                            {
+                                var assetStream = await client.OpenReadTaskAsync(string.Format(SiteHelpers.DummyDragonSkinProxyUrl, (int)dragonType, (int)gender, $"{item.FRId}"));
+                                files.Add(new KeyValuePair<string, Stream>($"asset_{item.FRId}.png", assetStream));
+                            }
+
+                            var username = Regex.Match(item.Description, @"Designed by ([^.]+)[.|\)]");
+                            if (username.Success)
+                            {
+                                var frUser = await FRHelpers.GetOrUpdateFRUser(username.Groups[1].Value);
+                                if (frUser != null)
+                                {
+                                    embed.AddField(x =>
+                                    {
+                                        x.Name = "Created by";
+                                        x.IsInline = true;
+                                        if (frUser.User != null && frUser.User.ProfileSettings.PublicProfile)
+                                            x.Value = $"[FR: {frUser.Username}]({string.Format(FRHelpers.UserProfileUrl, frUser.FRId)}) | [FRTools: {frUser.User.UserName}]({string.Format(SiteHelpers.ProfilePageUrl, frUser.User.UserName)})";
+                                        else
+                                            x.Value = $"[{frUser.Username}]({string.Format(FRHelpers.UserProfileUrl, frUser.FRId)})";
+                                    });
+                                }
+                            }
+
+                            break;
+                        }
+                    case FRItemCategory.Familiar:
+                        {
+                            using (var client = new WebClient())
+                            {
+                                var assetStream = await client.OpenReadTaskAsync(string.Format(FRHelpers.FamiliarArtUrl, item.FRId));
+                                files.Add(new KeyValuePair<string, Stream>($"asset_{item.FRId}.png", assetStream));
+                            }
+
+                            break;
+                        }
+                    default:
+                        {
+                            using (var client = new WebClient())
+                            {
+                                var assetStream = await client.OpenReadTaskAsync($"https://flightrising.com{item.AssetUrl}");
+                                files.Add(new KeyValuePair<string, Stream>($"asset_{item.FRId}.png", assetStream));
+                            }
+
+                            break;
+                        }
                 }
                 embed.WithImageUrl($"attachment://asset_{item.FRId}.png");
             }

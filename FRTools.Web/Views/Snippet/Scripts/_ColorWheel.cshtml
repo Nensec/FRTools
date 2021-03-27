@@ -6,15 +6,15 @@
 }
 
 <div class="row">
-    <div class="form-group col-sm-6" style="padding-right:5px;">
+    <div class="form-group col-sm-6">
         <select class="form-control" onchange="$('.grid-item').removeClass('col-xs-12 col-xs-6 col-xs-4 col-xs-3').addClass(`col-xs-${this.value}`); $('.grid').masonry()">
             <option value="3" selected>4 columns</option>
             <option value="4">3 columns</option>
             <option value="6">2 columns</option>
-            <option value="12">1 columns</option>
+            <option value="12">1 column</option>
         </select>
     </div>
-    <div class="form-group col-sm-6" style="padding-left:5px">
+    <div class="form-group col-sm-6">
         <select class="form-control" onchange="Sort(this.value)">
             <option value="fr">Flight Rising sorting</option>
             <option value="brightness">Brightness sorting</option>
@@ -23,7 +23,7 @@
     <div class="clearfix"></div>
 </div>
 <div class="grid" style="margin:0 -5px">
-    <div class="grid-sizer col-xs-1"></div>
+    <div class="grid-sizer" style="width: 4.166666%"></div>
     @foreach (var color in frSort)
     {
         var hex = color.GetHex();
@@ -59,7 +59,7 @@
         var sorted = [];
         var elements = $('.grid .grid-item');
         grid.masonry('remove', elements); // Remove elements from masonry
-        elements.clone().each((i, e) => { 
+        elements.clone().each((i, e) => {
             sorted[parseInt(e.dataset[`${sort}`], 10)] = e; // insert items into array based on their sort value
             $('button', e).attr('title', $('button', e).attr('data-original-title')).removeAttr('data-original-title'); // Get tooltip data back
         }).appendTo(grid); // Append them all back to the grid

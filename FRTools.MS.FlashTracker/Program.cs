@@ -35,10 +35,9 @@ namespace FRTools.MS.FlashTracker
                 var item = ctx.FRItems.First(x => x.FRId == itemId);
                 if (item.FlashSales.All(x => x.RemovedAt != null))
                 {
-                    await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new FlashSaleMessage(MessageCategory.FlashTracker, item)))));
+                    await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new FlashSaleMessage(MessageCategory.FlashTracker, item), new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }))));
                     item.FlashSales.Add(new FRItemFlashSale
                     {
-                        Item = ctx.FRItems.First(x => x.FRId == itemId),
                         DiscoveredAt = DateTime.UtcNow
                     });
                     ctx.FRItemFlashSales.Where(x => x.Item.FRId != itemId && x.RemovedAt == null).ToList().ForEach(x => x.RemovedAt = DateTime.UtcNow);
