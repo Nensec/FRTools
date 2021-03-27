@@ -80,18 +80,25 @@
 <canvas width="350" height="350" id="dragon" style="display:none;"></canvas>
 
 <script type="text/javascript">
-    snippetInitializations.push(function () {
+    snippetActivation['@Model.SanitizedName'] = () => {
         dragonImg = new Image();
         setDummySource();
-    });
+    };
 
-    setDummySource = function () {
+    snippetDeactivation['@Model.SanitizedName'] = () => {
+        dragonImg = null;
+        skinImg = null;
+        coverage = null;
+        outside = null;
+    };
+
+    setDummySource = () => {
         var dragonType = $('#DragonType').val();
         var gender = $('#Gender').val();
 
         $('.dummyDragon').show().attr('src', `@Url.RouteUrl("GetDummyDragonQueryString")?dragonType=${dragonType}&gender=${gender}`);
         var dragonImage = new Image();
-        dragonImage.onload = function () {
+        dragonImage.onload = () => {
             updateCoverage(undefined, dragonImage);
         };
         dragonImage.src = $('.dummyDragon').attr('src');
@@ -99,17 +106,17 @@
 
     $('#DragonType, #Gender').change(setDummySource);
 
-    $('#Skin').change(function () {
+    $('#Skin').change(function() {
         var t = $(this).val();
         var labelText = 'File : ' + t.substr(12, t.length);
         $(this).prev('label').text(labelText);
         var file = this.files[0];
         var reader = new FileReader();
 
-        reader.onload = function (e) {
+        reader.onload = e => {
             if (file && file.type === 'image/png') {
                 var skinImage = new Image();
-                skinImage.onload = function () {
+                skinImage.onload = () => {
                     $('.preview').show().attr('src', e.target.result);
                     updateCoverage(skinImage);
                 };
@@ -126,7 +133,7 @@
     var skinImg, dragonImg;
     var coverage, outside;
 
-    updateCoverage = function (skinImage, dragonImage) {
+    updateCoverage = (skinImage, dragonImage) => {
         if (dragonImage === undefined) {
             dragonImage = dragonImg;
         } else {
@@ -196,7 +203,7 @@
         setPercentageValues();
     };
 
-    setPercentageValues = function () {
+    setPercentageValues = () => {
         if (coverage && outside) {
             var precision = $('#precision').val();
             $('#Coverage').html(coverage.toFixed(precision));

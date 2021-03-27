@@ -128,361 +128,361 @@ namespace FRTools.Data
 
 	public enum Color
 	{
-		[Color("#ffffff1a")]
+		[Color("#ffffff1a", -1)]
 		Unknown = 0,
-		[Color("#FFFDEA")]
+		[Color("#FFFDEA", 0)]
 		Maize = 1,
-		[Color("#FFFFFF")]
+		[Color("#FFFFFF", 3)]
 		White = 2,
-		[Color("#EBEFFF")]
+		[Color("#EBEFFF", 5)]
 		Ice = 3,
-		[Color("#C8BECE")]
+		[Color("#C8BECE", 7)]
 		Platinum = 4,
-		[Color("#BBBABF")]
+		[Color("#BBBABF", 8)]
 		Silver = 5,
-		[Color("#808080")]
+		[Color("#808080", 10)]
 		Grey = 6,
-		[Color("#545454")]
+		[Color("#545454", 16)]
 		Charcoal = 7,
-		[Color("#4B4946")]
+		[Color("#4B4946", 17)]
 		Coal = 8,
-		[Color("#333333")]
+		[Color("#333333", 19)]
 		Black = 9,
-		[Color("#1D2224")]
+		[Color("#1D2224", 20)]
 		Obsidian = 10,
-		[Color("#252735")]
+		[Color("#252735", 22)]
 		Midnight = 11,
-		[Color("#3A2E44")]
+		[Color("#3A2E44", 23)]
 		Shadow = 12,
-		[Color("#6E235D")]
+		[Color("#6E235D", 25)]
 		Mulberry = 13,
-		[Color("#8F7C8B")]
+		[Color("#8F7C8B", 28)]
 		Thistle = 14,
-		[Color("#CCA4E0")]
+		[Color("#CCA4E0", 31)]
 		Lavender = 15,
-		[Color("#A261CF")]
+		[Color("#A261CF", 33)]
 		Purple = 16,
-		[Color("#643F9C")]
+		[Color("#643F9C", 37)]
 		Violet = 17,
-		[Color("#4D2C89")]
+		[Color("#4D2C89", 39)]
 		Royal = 18,
-		[Color("#757ADB")]
+		[Color("#757ADB", 42)]
 		Storm = 19,
-		[Color("#212B5F")]
+		[Color("#212B5F", 46)]
 		Navy = 20,
-		[Color("#324BA9")]
+		[Color("#324BA9", 49)]
 		Blue = 21,
-		[Color("#6392DF")]
+		[Color("#6392DF", 52)]
 		Splash = 22,
-		[Color("#AEC8FF")]
+		[Color("#AEC8FF", 54)]
 		Sky = 23,
-		[Color("#7895C1")]
+		[Color("#7895C1", 55)]
 		Stonewash = 24,
-		[Color("#556979")]
+		[Color("#556979", 57)]
 		Steel = 25,
-		[Color("#2F4557")]
+		[Color("#2F4557", 58)]
 		Denim = 26,
-		[Color("#0A3D67")]
+		[Color("#0A3D67", 61)]
 		Azure = 27,
-		[Color("#0086CE")]
+		[Color("#0086CE", 62)]
 		Caribbean = 28,
-		[Color("#2B768F")]
+		[Color("#2B768F", 63)]
 		Teal = 29,
-		[Color("#72C4C4")]
+		[Color("#72C4C4", 67)]
 		Aqua = 30,
-		[Color("#B2E2BD")]
+		[Color("#B2E2BD", 71)]
 		Seafoam = 31,
-		[Color("#61AB89")]
+		[Color("#61AB89", 73)]
 		Jade = 32,
-		[Color("#20603F")]
+		[Color("#20603F", 77)]
 		Emerald = 33,
-		[Color("#1E361A")]
+		[Color("#1E361A", 79)]
 		Jungle = 34,
-		[Color("#425035")]
+		[Color("#425035", 81)]
 		Forest = 35,
-		[Color("#687F67")]
+		[Color("#687F67", 84)]
 		Swamp = 36,
-		[Color("#567C34")]
+		[Color("#567C34", 85)]
 		Avocado = 37,
-		[Color("#629C3F")]
+		[Color("#629C3F", 86)]
 		Green = 38,
-		[Color("#A5E32D")]
+		[Color("#A5E32D", 90)]
 		Leaf = 39,
-		[Color("#A9A832")]
+		[Color("#A9A832", 95)]
 		Spring = 40,
-		[Color("#BEA55D")]
+		[Color("#BEA55D", 100)]
 		Goldenrod = 41,
-		[Color("#FFE63B")]
+		[Color("#FFE63B", 103)]
 		Lemon = 42,
-		[Color("#FFEC80")]
+		[Color("#FFEC80", 106)]
 		Banana = 43,
-		[Color("#FFD297")]
+		[Color("#FFD297", 109)]
 		Ivory = 44,
-		[Color("#E8AF49")]
+		[Color("#E8AF49", 111)]
 		Gold = 45,
-		[Color("#FA912B")]
+		[Color("#FA912B", 114)]
 		Sunshine = 46,
-		[Color("#D5602B")]
+		[Color("#D5602B", 119)]
 		Orange = 47,
-		[Color("#EF5C23")]
+		[Color("#EF5C23", 123)]
 		Fire = 48,
-		[Color("#FF7360")]
+		[Color("#FF7360", 125)]
 		Tangerine = 49,
-		[Color("#B27749")]
+		[Color("#B27749", 128)]
 		Sand = 50,
-		[Color("#CABBA2")]
+		[Color("#CABBA2", 130)]
 		Beige = 51,
-		[Color("#827A64")]
+		[Color("#827A64", 131)]
 		Stone = 52,
-		[Color("#564D48")]
+		[Color("#564D48", 133)]
 		Slate = 53,
-		[Color("#5A4534")]
+		[Color("#5A4534", 140)]
 		Soil = 54,
-		[Color("#8E5B3F")]
+		[Color("#8E5B3F", 144)]
 		Brown = 55,
-		[Color("#563012")]
+		[Color("#563012", 145)]
 		Chocolate = 56,
-		[Color("#8B3220")]
+		[Color("#8B3220", 148)]
 		Rust = 57,
-		[Color("#BA311C")]
+		[Color("#BA311C", 149)]
 		Tomato = 58,
-		[Color("#850012")]
+		[Color("#850012", 153)]
 		Crimson = 59,
-		[Color("#451717")]
+		[Color("#451717", 156)]
 		Blood = 60,
-		[Color("#652127")]
+		[Color("#652127", 157)]
 		Maroon = 61,
-		[Color("#C1272D")]
+		[Color("#C1272D", 159)]
 		Red = 62,
-		[Color("#B13A3A")]
+		[Color("#B13A3A", 162)]
 		Carmine = 63,
-		[Color("#CC6F6F")]
+		[Color("#CC6F6F", 164)]
 		Coral = 64,
-		[Color("#E934AA")]
+		[Color("#E934AA", 168)]
 		Magenta = 65,
-		[Color("#E77FBF")]
+		[Color("#E77FBF", 173)]
 		Pink = 66,
-		[Color("#FFD6F6")]
+		[Color("#FFD6F6", 175)]
 		Rose = 67,
-		[Color("#9777BD")]
+		[Color("#9777BD", 32)]
 		Heather = 68,
-		[Color("#D950FF")]
+		[Color("#D950FF", 34)]
 		Orchid = 69,
-		[Color("#342B25")]
+		[Color("#342B25", 18)]
 		Oilslick = 70,
-		[Color("#0D095B")]
+		[Color("#0D095B", 45)]
 		Sapphire = 71,
-		[Color("#4D0F28")]
+		[Color("#4D0F28", 171)]
 		Wine = 72,
-		[Color("#9C4875")]
+		[Color("#9C4875", 172)]
 		Mauve = 73,
-		[Color("#D8D7D8")]
+		[Color("#D8D7D8", 4)]
 		Moon = 74,
-		[Color("#FFB43B")]
+		[Color("#FFB43B", 113)]
 		Marigold = 75,
-		[Color("#C49A70")]
+		[Color("#C49A70", 129)]
 		Tan = 76,
-		[Color("#C05A39")]
+		[Color("#C05A39", 126)]
 		Cinnamon = 77,
-		[Color("#148E67")]
+		[Color("#148E67", 74)]
 		Spearmint = 78,
-		[Color("#99FF9C")]
+		[Color("#99FF9C", 88)]
 		Mantis = 79,
-		[Color("#236925")]
+		[Color("#236925", 78)]
 		Shamrock = 80,
-		[Color("#1D2715")]
+		[Color("#1D2715", 80)]
 		Hunter = 81,
-		[Color("#535195")]
+		[Color("#535195", 41)]
 		Iris = 82,
-		[Color("#B2560D")]
+		[Color("#B2560D", 120)]
 		Bronze = 83,
-		[Color("#FF8400")]
+		[Color("#FF8400", 115)]
 		Saffron = 84,
-		[Color("#FBE9F8")]
+		[Color("#FBE9F8", 176)]
 		Pearl = 85,
-		[Color("#CD000E")]
+		[Color("#CD000E", 151)]
 		Ruby = 86,
-		[Color("#8B272C")]
+		[Color("#8B272C", 158)]
 		Berry = 87,
-		[Color("#725639")]
+		[Color("#725639", 141)]
 		Hickory = 88,
-		[Color("#00FFF0")]
+		[Color("#00FFF0", 65)]
 		Cyan = 89,
-		[Color("#1C51E7")]
+		[Color("#1C51E7", 48)]
 		Ultramarine = 90,
-		[Color("#9494A9")]
+		[Color("#9494A9", 11)]
 		Smoke = 91,
-		[Color("#853390")]
+		[Color("#853390", 26)]
 		Plum = 92,
-		[Color("#D1B300")]
+		[Color("#D1B300", 102)]
 		Honey = 93,
-		[Color("#A44B28")]
+		[Color("#A44B28", 147)]
 		Copper = 94,
-		[Color("#6D665A")]
+		[Color("#6D665A", 132)]
 		Taupe = 95,
-		[Color("#0D1E24")]
+		[Color("#0D1E24", 59)]
 		Abyss = 96,
-		[Color("#D8D6CD")]
+		[Color("#D8D6CD", 2)]
 		Antique = 97,
-		[Color("#535264")]
+		[Color("#535264", 12)]
 		Gloom = 98,
-		[Color("#9AEAEF")]
+		[Color("#9AEAEF", 66)]
 		Robin = 99,
-		[Color("#8BBBB2")]
+		[Color("#8BBBB2", 69)]
 		Spruce = 100,
-		[Color("#8ECD55")]
+		[Color("#8ECD55", 89)]
 		Pear = 101,
-		[Color("#D0E672")]
+		[Color("#D0E672", 92)]
 		Honeydew = 102,
-		[Color("#C18E1B")]
+		[Color("#C18E1B", 101)]
 		Amber = 103,
-		[Color("#F9E255")]
+		[Color("#F9E255", 104)]
 		Yellow = 104,
-		[Color("#FFB576")]
+		[Color("#FFB576", 117)]
 		Peach = 105,
-		[Color("#603F3D")]
+		[Color("#603F3D", 137)]
 		Clay = 106,
-		[Color("#9A534D")]
+		[Color("#9A534D", 163)]
 		Brick = 107,
-		[Color("#B23B07")]
+		[Color("#B23B07", 121)]
 		Terracotta = 108,
-		[Color("#EAA9FF")]
+		[Color("#EAA9FF", 174)]
 		Bubblegum = 109,
-		[Color("#EBE7AE")]
+		[Color("#EBE7AE", 107)]
 		Sanddollar = 110,
-		[Color("#332B65")]
+		[Color("#332B65", 40)]
 		Eggplant = 111,
-		[Color("#2D237A")]
+		[Color("#2D237A", 44)]
 		Indigo = 112,
-		[Color("#7ECE73")]
+		[Color("#7ECE73", 87)]
 		Fern = 113,
-		[Color("#993BD0")]
+		[Color("#993BD0", 35)]
 		Amethyst = 114,
-		[Color("#7E7745")]
+		[Color("#7E7745", 99)]
 		Moss = 115,
-		[Color("#AA0024")]
+		[Color("#AA0024", 152)]
 		Cherry = 116,
-		[Color("#00B4D6")]
+		[Color("#00B4D6", 64)]
 		Cerulean = 117,
-		[Color("#413C3F")]
+		[Color("#413C3F", 13)]
 		Lead = 118,
-		[Color("#724E7B")]
+		[Color("#724E7B", 27)]
 		Wisteria = 119,
-		[Color("#DB518D")]
+		[Color("#DB518D", 167)]
 		Watermelon = 120,
-		[Color("#2E0002")]
+		[Color("#2E0002", 155)]
 		Sanguine = 121,
-		[Color("#90532B")]
+		[Color("#90532B", 143)]
 		Ginger = 122,
-		[Color("#697135")]
+		[Color("#697135", 97)]
 		Olive = 123,
-		[Color("#855C32")]
+		[Color("#855C32", 142)]
 		Tarnish = 124,
-		[Color("#E2FFE6")]
+		[Color("#E2FFE6", 70)]
 		Pistachio = 125,
-		[Color("#444F69")]
+		[Color("#444F69", 56)]
 		Overcast = 126,
-		[Color("#4B294F")]
+		[Color("#4B294F", 24)]
 		Blackberry = 127,
-		[Color("#F7FF6F")]
+		[Color("#F7FF6F", 105)]
 		Grapefruit = 128,
-		[Color("#626268")]
+		[Color("#626268", 15)]
 		Flint = 129,
-		[Color("#C6FF00")]
+		[Color("#C6FF00", 91)]
 		Radioactive = 130,
-		[Color("#E0DFFF")]
+		[Color("#E0DFFF", 6)]
 		Orca = 131,
-		[Color("#A22929")]
+		[Color("#A22929", 161)]
 		Cerise = 132,
-		[Color("#FF5500")]
+		[Color("#FF5500", 122)]
 		Carrot = 133,
-		[Color("#1F4739")]
+		[Color("#1F4739", 76)]
 		Peacock = 134,
-		[Color("#4866D5")]
+		[Color("#4866D5", 50)]
 		Periwinkle = 135,
-		[Color("#003484")]
+		[Color("#003484", 47)]
 		Cobalt = 136,
-		[Color("#A593B0")]
+		[Color("#A593B0", 29)]
 		Fog = 137,
-		[Color("#57372C")]
+		[Color("#57372C", 138)]
 		Sable = 138,
-		[Color("#FDE9AE")]
+		[Color("#FDE9AE", 108)]
 		Flaxen = 139,
-		[Color("#D1B046")]
+		[Color("#D1B046", 112)]
 		Metals = 140,
-		[Color("#005E48")]
+		[Color("#005E48", 75)]
 		Thicket = 141,
-		[Color("#4B4420")]
+		[Color("#4B4420", 98)]
 		Murk = 142,
-		[Color("#977B6C")]
+		[Color("#977B6C", 135)]
 		Latte = 143,
-		[Color("#E8FFB5")]
+		[Color("#E8FFB5", 93)]
 		Peridot = 144,
-		[Color("#75A8FF")]
+		[Color("#75A8FF", 53)]
 		Cornflower = 145,
-		[Color("#9C9C9E")]
+		[Color("#9C9C9E", 9)]
 		Dust = 146,
-		[Color("#570FC0")]
+		[Color("#570FC0", 38)]
 		Grape = 147,
-		[Color("#2B84FF")]
+		[Color("#2B84FF", 51)]
 		Lapis = 148,
-		[Color("#3AA0A1")]
+		[Color("#3AA0A1", 68)]
 		Turquoise = 149,
-		[Color("#E1CEFF")]
+		[Color("#E1CEFF", 30)]
 		Mist = 150,
-		[Color("#0B2D46")]
+		[Color("#0B2D46", 60)]
 		Phthalo = 151,
-		[Color("#9AFFC7")]
+		[Color("#9AFFC7", 72)]
 		Mint = 152,
-		[Color("#97AF8B")]
+		[Color("#97AF8B", 83)]
 		Algae = 153,
-		[Color("#51684C")]
+		[Color("#51684C", 82)]
 		Camo = 154,
-		[Color("#B4CD3C")]
+		[Color("#B4CD3C", 94)]
 		Chartreuse = 155,
-		[Color("#C67047")]
+		[Color("#C67047", 127)]
 		Caramel = 156,
-		[Color("#2F1E1A")]
+		[Color("#2F1E1A", 139)]
 		Umber = 157,
-		[Color("#FF6840")]
+		[Color("#FF6840", 124)]
 		Pumpkin = 158,
-		[Color("#FFA2A2")]
+		[Color("#FFA2A2", 165)]
 		Blush = 159,
-		[Color("#8A0249")]
+		[Color("#8A0249", 170)]
 		Raspberry = 160,
-		[Color("#5B0F14")]
+		[Color("#5B0F14", 154)]
 		Garnet = 161,
-		[Color("#76483F")]
+		[Color("#76483F", 136)]
 		Dirt = 162,
-		[Color("#FFEFDC")]
+		[Color("#FFEFDC", 1)]
 		Cream = 163,
-		[Color("#EB7997")]
+		[Color("#EB7997", 166)]
 		Cottoncandy = 164,
-		[Color("#766359")]
+		[Color("#766359", 134)]
 		Driftwood = 165,
-		[Color("#7B3C1D")]
+		[Color("#7B3C1D", 146)]
 		Auburn = 166,
-		[Color("#F6BF6B")]
+		[Color("#F6BF6B", 110)]
 		Buttercup = 167,
-		[Color("#DE3235")]
+		[Color("#DE3235", 160)]
 		Strawberry = 168,
-		[Color("#E22D17")]
+		[Color("#E22D17", 150)]
 		Vermilion = 169,
-		[Color("#EC0089")]
+		[Color("#EC0089", 169)]
 		Fuchsia = 170,
-		[Color("#FF984F")]
+		[Color("#FF984F", 118)]
 		Cantaloupe = 171,
-		[Color("#FFA248")]
+		[Color("#FFA248", 116)]
 		Sunset = 172,
-		[Color("#828335")]
+		[Color("#828335", 96)]
 		Crocodile = 173,
-		[Color("#474AA0")]
+		[Color("#474AA0", 43)]
 		Twilight = 174,
-		[Color("#782EB2")]
+		[Color("#782EB2", 36)]
 		Nightshade = 175,
-		[Color("#252A25")]
+		[Color("#252A25", 21)]
 		Eldritch = 176,
-		[Color("#4D4850")]
+		[Color("#4D4850", 14)]
 		Shale = 177,
 	}
 
