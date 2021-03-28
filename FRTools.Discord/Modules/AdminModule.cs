@@ -112,6 +112,12 @@ namespace FRTools.Discord.Modules
         [Name("Fetch item"), Command("fetchitem")]
         public async Task FetchItem(int frId)
         {
+            if (DbContext.FRItems.FirstOrDefault(x => x.FRId == frId) != null)
+            {
+                await ReplyAsync("Item already in database");
+                return;
+            }
+
             await ReplyAsync($"Fetching item: {frId}");
 
             var item = FRHelpers.FetchItem(frId);
