@@ -1,13 +1,18 @@
-﻿using System;
+﻿using Discord;
+using Discord.Commands;
+using Discord.WebSocket;
+using FRTools.Common;
+using FRTools.Data;
+using FRTools.Data.Messages;
+using FRTools.Discord.Handlers;
+using FRTools.Discord.Infrastructure;
+using Microsoft.Azure.ServiceBus;
+using Newtonsoft.Json;
+using System;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Discord;
-using Discord.Commands;
-using Discord.WebSocket;
-using FRTools.Data;
-using FRTools.Discord.Handlers;
-using FRTools.Discord.Infrastructure;
 
 namespace FRTools.Discord.Modules
 {
@@ -102,6 +107,25 @@ namespace FRTools.Discord.Modules
             {
                 await ReplyAsync($"In server `{guild.Name}` I have these permissions: {string.Join(", ", guild.CurrentUser.GuildPermissions.ToList().Select(x => $"`{x}`"))}");
             }
+        }
+
+        [Name("Fetch item"), Command("fetchitem")]
+        public async Task FetchItem(int frId)
+        {
+            await ReplyAsync($"Fetching item: {frId}");
+
+            var item = FRHelpers.FetchItem(frId);
+            if (item != null)
+            {
+                await ReplyAsync($"Found item, adding: {item.Name}");
+                DbContext.FRItems.Add(item);
+                await DbContext.SaveChangesAsync();
+                var _serviceBus = new QueueClient(ConfigurationManager.AppSettings["AzureSBConnString"], ConfigurationManager.AppSettings["AzureSBQueueName"]);
+                await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NewItemMessage(MessageCategory.ItemFetcher, item)))));
+                await _serviceBus.CloseAsync();
+            }
+            else
+                await ReplyAsync("Item not found");
         }
     }
 }
