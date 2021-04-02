@@ -1,4 +1,6 @@
-﻿namespace FRTools.Data.DataModels
+﻿using System;
+
+namespace FRTools.Data.DataModels
 {
     public class ProfileSettings
     {
@@ -22,5 +24,11 @@
         public int DefaultAdvancedCoveragePercentagePrecision { get; set; } = 2;
 
         public virtual User User { get; set; }
+
+        public object this[string key]
+        {
+            get => GetType().GetProperty(key)?.GetValue(this);
+            set => GetType().GetProperty(key)?.SetValue(this, Convert.ChangeType(value, GetType().GetProperty(key).PropertyType));
+        }
     }
 }

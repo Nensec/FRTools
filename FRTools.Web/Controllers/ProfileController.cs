@@ -1,12 +1,10 @@
-﻿using FRTools.Common;
-using FRTools.Data;
+﻿using FRTools.Data;
 using FRTools.Data.DataModels;
 using FRTools.Web.Models;
 using System;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace FRTools.Web.Controllers
@@ -121,6 +119,15 @@ namespace FRTools.Web.Controllers
                 return View();
             }
             return RedirectToRoute("SelfProfile");
+        }
+
+        [HttpPost]
+        [Route("savesetting", Name = "SaveProfileSetting")]
+        public ActionResult SaveSetting(string key, string value)
+        {
+            LoggedInUser.ProfileSettings[key] = value;
+            DataContext.SaveChanges();
+            return Json(new { success = true });
         }
     }
 }

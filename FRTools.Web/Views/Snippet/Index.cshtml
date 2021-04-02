@@ -151,5 +151,20 @@
                 }
             });
         }
+
+        saveProfileSetting = (key, value) => {
+            var statusElm = $(`#${key}_status`);
+            statusElm.removeClass('success danger').toggleClass('warning').html('Saving..');
+            $.post({
+                url: '@Url.RouteUrl("SaveProfileSetting")',
+                data: {
+                    key: key,
+                    value: value
+                }
+            }).done(function (data) { statusElm.toggleClass('warning').toggleClass('success').html('Saved!'); })
+                .fail(function (data) { statusElm.toggleClass('warning').toggleClass('danger').html('Error!'); });
+        }
+
+        resetSaveButton = key => $(`#${key}_status`).removeClass('warning danger success').toggleClass('success').html('Save');
     </script>
 }

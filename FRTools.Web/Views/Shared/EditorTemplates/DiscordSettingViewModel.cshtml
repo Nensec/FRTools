@@ -28,7 +28,7 @@
                 channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Category);
                 goto case "IChannel";
             case "IChannel":
-                <select id="@(id)" name="@(name)" configKey="@(Model.Key)" class="form-control" onchange="saveSetting('@(Model.Key)', this.value)">
+                <select id="@(id)" name="@(name)" configKey="@(Model.Key)" class="form-control" onchange="saveDiscordSetting('@(Model.Key)', this.value)">
                     <option></option>
                     @{ var channelGroups = channels.GroupBy(x => x.DiscordChannelType); }
                     @foreach (var channelGroup in channelGroups)
@@ -64,7 +64,7 @@
                 }
                 break;
             case "IRole":
-                <select id="@(id)" name="@(name)" configKey="@(Model.Key)" class="form-control" onchange="saveSetting('@(Model.Key)', this.value)">
+                <select id="@(id)" name="@(name)" configKey="@(Model.Key)" class="form-control" onchange="saveDiscordSetting('@(Model.Key)', this.value)">
                     <option></option>
                     @foreach (var role in Model.ParentServer.Roles)
                     {
@@ -80,14 +80,14 @@
                     disabled = Model.ExtraArgs[1];
                 }
                 <div style="padding-left:12px">
-                    <input type="checkbox" id="@(id)" name="@(name)" @(bool.TryParse(Model.Value, out var r) && r ? "checked" : "") data-on="@(enabled)" data-off="@(disabled)" data-toggle="toggle" data-height="32" data-width="100" onchange="saveSetting('@(Model.Key)', this.checked)" />
+                    <input type="checkbox" id="@(id)" name="@(name)" @(bool.TryParse(Model.Value, out var r) && r ? "checked" : "") data-on="@(enabled)" data-off="@(disabled)" data-toggle="toggle" data-height="32" data-width="100" onchange="saveDiscordSetting('@(Model.Key)', this.checked)" />
                 </div>
                 break;
             case nameof(Int32):
                 <input id="@(id)" name="@(name)" type="number" value="@(Model.Value)" class="form-control" />
                 <script>
                 $(document).ready(function () { $('#@(id)').on('input', $.debounce(500, save_@(Model.Key))); });
-                save_@(Model.Key) = function (event) { saveSetting('@(Model.Key)', this.value); }
+                save_@(Model.Key) = function (event) { saveDiscordSetting('@(Model.Key)', this.value); }
                 </script>
                 break;
             case nameof(String):
@@ -95,7 +95,7 @@
                 <input id="@(id)" name="@(name)" type="text" value="@(Model.Value)" class="form-control" />
                 <script>
                 $(document).ready(function () { $('#@(id)').on('input', $.debounce(500, save_@(Model.Key))); });
-                save_@(Model.Key) = function (event) { saveSetting('@(Model.Key)', this.value); }
+                save_@(Model.Key) = function (event) { saveDiscordSetting('@(Model.Key)', this.value); }
                 </script>
                 break;
         }
@@ -123,20 +123,20 @@
         </select>
         <script>
             $(document).ready(function () { $('#@(id)').on('change', $.debounce(500, save_@(Model.Key))); });
-            save_@(Model.Key) = function (event) { saveSetting('@(Model.Key)', $('#@(id)').val().join(',')); }
+            save_@(Model.Key) = function (event) { saveDiscordSetting('@(Model.Key)', $('#@(id)').val().join(',')); }
         </script>
     }
 </div>
 
-@if (!Context.Items.Contains("SaveSettingScript"))
+@if (!Context.Items.Contains("saveDiscordSettingScript"))
 {
-    Context.Items.Add("SaveSettingScript", true);
+    Context.Items.Add("saveDiscordSettingScript", true);
     <script>
-        saveSetting = function (key, value) {
+        saveDiscordSetting = function (key, value) {
             var statusElm = $(`#@Html.IdForModel()_${key}_status`);
             statusElm.removeClass('success danger').toggleClass('warning').find($('span')).html('Saving..');
             $.post({
-                url: '@Url.RouteUrl("DiscordSaveSetting")',
+                url: '@Url.RouteUrl("DiscordsaveDiscordSetting")',
                 data: {
                     discordServer: '@(Model.ParentServer.ServerId)',
                     module: @(Model.Module == null ? "undefined" : $"`{Model.Module}`"),
@@ -145,6 +145,6 @@
                 }
             }).done(function (data) { statusElm.toggleClass('warning').toggleClass('success').find($('span')).html('Saved!'); })
                 .fail(function (data) { statusElm.toggleClass('warning').toggleClass('danger').find($('span')).html('Error!'); });
-                            }
+        }
     </script>
 }
