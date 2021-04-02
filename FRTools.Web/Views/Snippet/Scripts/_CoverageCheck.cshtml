@@ -204,7 +204,7 @@
     };
 
     setPercentageValues = () => {
-        if (coverage && outside) {
+        if (coverage !== undefined && outside !== undefined) {
             var precision = $('#precision').val();
             $('#Coverage').html(coverage.toFixed(precision));
             $('#Outside').html(outside.toFixed(precision));
