@@ -136,7 +136,7 @@
             var statusElm = $(`#@Html.IdForModel()_${key}_status`);
             statusElm.removeClass('success danger').toggleClass('warning').find($('span')).html('Saving..');
             $.post({
-                url: '@Url.RouteUrl("DiscordsaveDiscordSetting")',
+                url: '@Url.RouteUrl("DiscordSaveSetting")',
                 data: {
                     discordServer: '@(Model.ParentServer.ServerId)',
                     module: @(Model.Module == null ? "undefined" : $"`{Model.Module}`"),
