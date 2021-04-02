@@ -211,14 +211,14 @@ namespace FRTools.Data
 
 	public enum Color
 	{
-		[Color("#ffffff1a")]
+		[Color("#ffffff1a", -1)]
 		Unknown = 0,
 	<#
-	foreach(var color in page.Colors.OrderBy(x => x.Value)) 
+	foreach(var color in page.Colors.Select((x, i) => (x, i)).OrderBy(x => x.x.Value)) 
 	{
 	#>
-	[Color("#<#= color.HexColor #>")]
-		<#= color.Name #> = <#= color.Value #>,
+	[Color("#<#= color.x.HexColor #>", <#= color.i #>)]
+		<#= color.x.Name #> = <#= color.x.Value #>,
 	<#
 	}
 	#>

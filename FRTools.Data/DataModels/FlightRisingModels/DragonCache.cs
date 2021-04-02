@@ -94,5 +94,7 @@ namespace FRTools.Data.DataModels.FlightRisingModels
         {
             return (Enum)Enum.Parse(DragonType.TertiaryGeneType(), TertiaryGene.ToString());
         }
+
+        public string GetFileName() => SHA1Hash.StartsWith("DUMMY") ? "preview" : $"{FRDragonId?.ToString() ?? ToString()}_{Gender}";
     }
 }

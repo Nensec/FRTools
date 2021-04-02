@@ -9,15 +9,17 @@ using FRTools.Discord.Infrastructure;
 using System;
 using System.Data.Entity;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace FRTools.Discord.Handlers
 {
-    [DiscordSettingCategory("ITEMDB", "Item database")]
+    [DiscordSettingCategory("ITEMDB", "Item database")] 
+    [DiscordSettingCategory("FLASHSALE", "Flash sale announce")]
     [DiscordSetting("GUILDCONFIG_PREFIX", typeof(string), "Command prefix", "The prefix used by the bot to listen to commands")]
     [DiscordSetting("GUILDCONFIG_ANN_CHANNEL", typeof(ITextChannel), "Announcement channel", "The channel the bot will post announcement messages")]
+    [DiscordSetting("GUILDCONFIG_FLASHSALE_ANNNEWITEM", typeof(bool), "Announce new items", "Should the bot announce new flash sales added to the market place on Flight Rising? These announcements are posted in $<GUILD:GUILDCONFIG_ANN_CHANNEL>", Category = "FLASHSALE")]
     [DiscordSetting("GUILDCONFIG_ITEMDB_ANNNEWITEM", typeof(bool), "Announce new items", "Should the bot announce new items added to Flight Rising?", Category = "ITEMDB")]
     [DiscordSetting("GUILDCONFIG_ITEMDB_NEWITEMTYPES", typeof(FRItemCategory[]), "New item types", "Which item types should be announced", Category = "ITEMDB", Order = 2)]
     [DiscordSetting("GUILDCONFIG_ITEMDB_USEANNCHANNEL", typeof(bool), "Use announcement channel", "Use the bot's overall announcement channel, or set up an alternative", Category = "ITEMDB", Order = 2)]
@@ -223,6 +225,27 @@ namespace FRTools.Discord.Handlers
             }
         }
 
+        internal async Task HandleFlashSaleUpdate(FlashSaleMessage flashSaleMessage)
+        {
+            // Check if setting is turned on
+            if (bool.TryParse(_settingManager.GetSettingValue("GUILDCONFIG_FLASHSALE_ANNNEWITEM", Guild), out var shouldAnnounce) && shouldAnnounce)
+            {
+                // Get the channel to announce item in
+                ISocketMessageChannel annChannel = null;
+                var annChannelId = _settingManager.GetSettingValue("GUILDCONFIG_ANN_CHANNEL", Guild);
+                if (annChannelId != null)
+                    annChannel = Guild.GetChannel(ulong.Parse(annChannelId)) as ISocketMessageChannel;
+
+                if (annChannel != null)
+                {
+                    var embed = await ItemHandler.CreateItemEmbed(flashSaleMessage.Item, Guild, true);
+                    embed.Embed.Title = "New flash sale found! - " + embed.Embed.Title;
+                    embed.Embed.Color = new global::Discord.Color(243, 181, 144);
+                    await annChannel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
+                }
+            }
+        }
+
         internal async Task HandleUserLeave(SocketGuildUser user)
         {
             using (var ctx = new DataContext())
@@ -234,6 +257,50 @@ namespace FRTools.Discord.Handlers
 
                 ctx.DiscordServerUsers.Remove(dbServerUser);
                 await ctx.SaveChangesAsync();
+            }
+        }
+
+        internal async Task HandleTestMessage(GenericMessage testMessage)
+        {
+            var channelId = _settingManager.GetSettingValue(testMessage.Message, Guild);
+            if (channelId != null)
+            {
+                var channel = Guild.GetChannel(ulong.Parse(channelId)) as ISocketMessageChannel;
+                if (channel != null)
+                {
+                    try
+                    {
+                        await channel.SendMessageAsync("This is a test message");
+                        try
+                        {
+                            await channel.SendMessageAsync(embed: new EmbedBuilder().WithDescription("This is an embed test message").Build());
+                        }
+                        catch (Exception ex)
+                        {
+                            await channel.SendMessageAsync($"Embed test failed: {ex}");
+                        }
+                        try
+                        {
+                            using (var stream = new MemoryStream())
+                            {
+                                using (var writer = new StreamWriter(stream, System.Text.Encoding.UTF8, 1024, true))
+                                {
+                                    writer.WriteLine("This is generated test content");
+                                }
+                                stream.Position = 0;
+                                await channel.SendFileAsync(stream, "test.txt", "This is a file test");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            await channel.SendMessageAsync($"File attachment test failed: {ex}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Bot has no permission at all to send a message to {channel.Name} ({channel.Id}): {ex}");
+                    }
+                }
             }
         }
 
@@ -298,7 +365,7 @@ namespace FRTools.Discord.Handlers
             _ = Task.Run(() =>
            {
                lock (_syncLock)
-               {                   
+               {
                    _ = UserHandler.SyncServer(Guild);
                }
            });

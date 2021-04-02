@@ -117,19 +117,37 @@ namespace FRTools.Discord
                 var customMessage = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(msg.Body), Assembly.GetAssembly(typeof(GenericMessage)).DefinedTypes.FirstOrDefault(x => x.Name == genericMessage.MessageType));
                 foreach (var handler in _handlers.Values)
                 {
-                    // Handle custom message
-                    if (customMessage is NewItemMessage newItemMessage)
-                        await handler.HandleNewItemUpdate(newItemMessage);
+                    try
+                    {
+                        // Handle custom message
+                        if (customMessage is NewItemMessage newItemMessage)
+                            await handler.HandleNewItemUpdate(newItemMessage).ConfigureAwait(false);
+                        if (customMessage is FlashSaleMessage flashSaleMessage)
+                            await handler.HandleFlashSaleUpdate(flashSaleMessage).ConfigureAwait(false);
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine($"Failed to handle {genericMessage.MessageType} for server {handler.Guild.Id} event: {ex}");
+                    }
                 }
             }
             else
             {
                 foreach (var handler in _handlers.Values)
                 {
-                    if (genericMessage.Source == MessageCategory.DominanceTracker)
-                        await handler.HandleDominanceUpdate(genericMessage);
-                    if (genericMessage.Source == MessageCategory.SettingUpdated && (long)handler.Guild.Id == genericMessage.DiscordServer)
-                        await handler.HandleSettingUpdate(genericMessage);
+                    try
+                    {
+                        if (genericMessage.Source == MessageCategory.DominanceTracker)
+                            await handler.HandleDominanceUpdate(genericMessage).ConfigureAwait(false);
+                        if (genericMessage.Source == MessageCategory.SettingUpdated && (long)handler.Guild.Id == genericMessage.DiscordServer)
+                            await handler.HandleSettingUpdate(genericMessage).ConfigureAwait(false);
+                        if (genericMessage.Source == MessageCategory.DiscordTestMessage && (long)handler.Guild.Id == genericMessage.DiscordServer)
+                            await handler.HandleTestMessage(genericMessage).ConfigureAwait(false);
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine($"Failed to handle {genericMessage.MessageType} for server {handler.Guild.Id} event: {ex}");
+                    }
                 }
             }
 

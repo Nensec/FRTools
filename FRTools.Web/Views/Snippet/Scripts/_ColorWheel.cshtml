@@ -1,23 +1,69 @@
 ﻿@model ColorWheelScriptModel
+@{
+    var colors = Enum.GetValues(typeof(Color)).Cast<Color>().Skip(1).ToList(); // Value sorting
+    var frSort = colors.OrderBy(x => x.FROrder()).ToList(); // FR Sorting
+    var brightnessSort = colors.OrderByDescending(x => System.Drawing.Color.FromArgb(Convert.ToInt32(x.GetHex().Substring(1), 16)).GetBrightness()).ToList(); // Brightness sorting
+}
 
-<div>
-    @foreach (var color in Enum.GetValues(typeof(Color)).Cast<Color>().Skip(1).OrderByDescending(x => System.Drawing.Color.FromArgb(Convert.ToInt32(x.GetHex().Substring(1), 16)).GetBrightness()))
+<div class="row">
+    <div class="form-group col-sm-6">
+        <select class="form-control" onchange="$('.grid-item').removeClass('col-xs-12 col-xs-6 col-xs-4 col-xs-3').addClass(`col-xs-${this.value}`); $('.grid').masonry()">
+            <option value="3" selected>4 columns</option>
+            <option value="4">3 columns</option>
+            <option value="6">2 columns</option>
+            <option value="12">1 column</option>
+        </select>
+    </div>
+    <div class="form-group col-sm-6">
+        <select class="form-control" onchange="Sort(this.value)">
+            <option value="fr">Flight Rising sorting</option>
+            <option value="brightness">Brightness sorting</option>
+        </select>
+    </div>
+    <div class="clearfix"></div>
+</div>
+<div class="grid" style="margin:0 -5px">
+    <div class="grid-sizer" style="width: 4.166666%"></div>
+    @foreach (var color in frSort)
     {
         var hex = color.GetHex();
-        <div style="padding:5px; width:25%; float:left;">
+        <div class="grid-item col-xs-3" style="padding:5px" data-fr="@frSort.IndexOf(color)" data-brightness="@brightnessSort.IndexOf(color)">
             <div style="background-color:@hex; width:100%; height:20px; border:1px solid black; margin-bottom:1px"></div>
             @color.ToString() @hex
-            <button onclick="CopyHex('@hex')" title="Copy HEX" data-toggle="tooltip" type="button" class="btn btn-success btn-xs pull-right"><span class="glyphicon glyphicon-copy"></span></button>
+            <button onclick="CopyHex('@hex')" title="Copy HEX" type="button" class="btn btn-success btn-xs pull-right"><span class="glyphicon glyphicon-copy"></span></button>
         </div>
     }
 </div>
 
+<script src="~/Scripts/masonry.pkgd.min.js"></script>
 <script type="text/javascript">
-    snippetInitializations.push(function () {
+    snippetActivation['@Model.SanitizedName'] = () => {
+        $('.grid').masonry({
+            itemSelector: '.grid-item',
+            columnWidth: '.grid-sizer',
+            percentPosition: true
+        });
+        $('.grid-item button').tooltip();
+    };
 
-    });
+    snippetDeactivation['@Model.SanitizedName'] = () => {
+        $('.grid').masonry('destroy');
+    }
 
-    CopyHex = function (hex, btn) {
+    CopyHex = hex => {
         navigator.clipboard.writeText(hex);
+    }
+
+    Sort = sort => {
+        var grid = $('.grid');
+        var sorted = [];
+        var elements = $('.grid .grid-item');
+        grid.masonry('remove', elements); // Remove elements from masonry
+        elements.clone().each((i, e) => {
+            sorted[parseInt(e.dataset[`${sort}`], 10)] = e; // insert items into array based on their sort value
+            $('button', e).attr('title', $('button', e).attr('data-original-title')).removeAttr('data-original-title'); // Get tooltip data back
+        }).appendTo(grid); // Append them all back to the grid
+        grid.masonry('appended', sorted).masonry(); // Tell masonry that shit changed
+        $('.grid-item button').tooltip(); // Restore tooltips
     }
 </script>

@@ -8,6 +8,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
+using System;
 using System.Configuration;
 using System.Linq;
 using System.Text;
@@ -103,7 +104,7 @@ namespace FRTools.Web.Controllers
                 TempData["Warning"] = "The bot has not encountered you at all yet in any servers, are you in a mutual server with the bot?";
             return View(new ServersViewModel
             {
-                Servers = currentUser?.Servers.Where(x => x.IsOwner || x.Roles.Any(r => (r.DiscordPermissions & 8) != 0)).Select(x => new ServerViewModel
+                Servers = currentUser?.Servers.Where(x => x.Server != null && (x.IsOwner || x.Roles.Any(r => (r.DiscordPermissions & 8) != 0))).Select(x => new ServerViewModel
                 {
                     ServerId = x.Server.ServerId,
                     UserCount = x.Server.Users.Count,
@@ -116,7 +117,7 @@ namespace FRTools.Web.Controllers
 
         private ServerViewModel GetServerViewModel(DataContext DataContext, DiscordUser currentUser, long discordServer)
         {
-            var server = currentUser.Servers.First(x => x.Server.ServerId == discordServer).Server;
+            var server = currentUser.Servers.First(x => x.Server?.ServerId == discordServer).Server;
             var serverModel = new ServerViewModel
             {
                 ServerId = discordServer,
@@ -229,7 +230,7 @@ namespace FRTools.Web.Controllers
         {
             var discordServerId = long.Parse(discordServer);
             ActionResult ErrorResult() => new HttpUnauthorizedResult("User does not have required permission");
-            var currentUser = DataContext.DiscordUsers.FirstOrDefault(x => x.UserId == _currentUserId)?.Servers.FirstOrDefault(x => x.Server.ServerId == discordServerId);
+            var currentUser = DataContext.DiscordUsers.FirstOrDefault(x => x.UserId == _currentUserId)?.Servers.FirstOrDefault(x => x.Server?.ServerId == discordServerId);
             if (currentUser == null)
                 return ErrorResult();
 
@@ -274,9 +275,64 @@ namespace FRTools.Web.Controllers
             return Json(JsonConvert.SerializeObject(new { result = 1, setting.Key, setting.Value }));
         }
 
+        [Route("test", Name = "DiscordSendTestMessage")]
+        [Authorize]
+        [MustHaveLoginProvider("discord", "DiscordHome")]
+        [HttpPost]
+        public async Task<ActionResult> SendTestMessage(string discordServer, string module, string key)
+        {
+            var discordServerId = long.Parse(discordServer);
+            ActionResult ErrorResult() => new HttpUnauthorizedResult("User does not have required permission");
+            var currentUser = DataContext.DiscordUsers.FirstOrDefault(x => x.UserId == _currentUserId)?.Servers.FirstOrDefault(x => x.Server?.ServerId == discordServerId);
+            if (currentUser == null)
+                return ErrorResult();
+
+            bool IsChannelType(string settingType)
+            {
+                var type = Type.GetType(settingType);
+                var fallBack = settingType.Split(',')[0];
+                if (fallBack.Contains("."))
+                {
+                    fallBack = fallBack.Split('.')[1];
+                }
+                return (type?.Name ?? fallBack) == "ITextChannel";
+            }
+
+            Data.DataModels.DiscordModels.DiscordSetting setting = null;
+            if (module == null)
+            {
+                var botSetting = DiscordMetadata.BotSettings.FirstOrDefault(x => x.Key.ToLower() == key.ToLower());
+                if (botSetting == null)
+                    return ErrorResult();
+
+                if (IsChannelType(botSetting.Type) && (currentUser.IsOwner || currentUser.Roles.Any(x => (x.DiscordPermissions & 8) != 0)))
+                    setting = DataContext.DiscordSettings.FirstOrDefault(x => x.Server.ServerId == currentUser.Server.ServerId && x.Key == botSetting.Key);
+            }
+            else
+            {
+                var discordModule = DiscordMetadata.Modules.FirstOrDefault(x => x.Name.ToLower() == module.ToLower());
+                if (discordModule == null)
+                    return ErrorResult();
+
+                var moduleSetting = discordModule.Settings.FirstOrDefault(x => x.Key.ToLower() == key.ToLower());
+                if (moduleSetting == null)
+                    return ErrorResult();
+
+                if (IsChannelType(moduleSetting.Type) && (currentUser.IsOwner || currentUser.Roles.Any(x => (x.DiscordPermissions & 8) != 0)))
+                    setting = DataContext.DiscordSettings.FirstOrDefault(x => x.Server.ServerId == currentUser.Server.ServerId && x.Key == moduleSetting.Key);
+            }
+
+            DataContext.SaveChanges();
+            var _serviceBus = new QueueClient(ConfigurationManager.AppSettings["AzureSBConnString"], ConfigurationManager.AppSettings["AzureSBQueueName"]);
+            await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new GenericMessage(MessageCategory.DiscordTestMessage, setting.Key) { DiscordServer = discordServerId }))));
+
+            return Json(JsonConvert.SerializeObject(new { result = 1, setting.Key, setting.Value }));
+
+        }
+
         private bool CheckMutualServer(long discordServer, DiscordUser currentUser)
         {
-            if (currentUser.Servers.Where(x => x.IsOwner || x.Roles.Any(r => (r.DiscordPermissions & 8) != 0)).Select(x => x.Server).Any(x => x.ServerId == discordServer))
+            if (currentUser.Servers.Where(x => x.Server != null && (x.IsOwner || x.Roles.Any(r => (r.DiscordPermissions & 8) != 0))).Select(x => x.Server).Any(x => x.ServerId == discordServer))
                 return true;
             else
             {

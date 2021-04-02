@@ -2,6 +2,7 @@
 using FRTools.Data;
 using FRTools.Data.DataModels;
 using FRTools.Data.DataModels.FlightRisingModels;
+using FRTools.Tools.SkinTester;
 using FRTools.Web.Infrastructure;
 using System;
 using System.Collections.Generic;
@@ -80,7 +81,7 @@ namespace FRTools.Web.Models
         [Display(Name = "Dragon ID")]
         public int? DragonId { get; set; }
         public bool SwapSilhouette { get; set; } = false;
-        [Display(Name = "Scry image URL")]
+        [Display(Name = "Scry image/link URL")]
         public string ScryerUrl { get; set; }
         [Display(Name = "Dressing image URL")]
         public string DressingRoomUrl { get; set; }

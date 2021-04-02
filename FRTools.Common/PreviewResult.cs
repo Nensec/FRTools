@@ -6,10 +6,12 @@ namespace FRTools.Common
 {
     public enum PreviewSource
     {
+        Unknown = -1,
         DragonId,
-        Scry,
+        ScryImage,
         DressingRoom,
-        Dummy
+        Dummy,
+        ScryLink
     }
 
     public class PreviewResult

@@ -1,18 +1,25 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Discord;
+﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using FRTools.Common;
 using FRTools.Data;
+using FRTools.Data.Messages;
 using FRTools.Discord.Handlers;
 using FRTools.Discord.Infrastructure;
+using Microsoft.Azure.ServiceBus;
+using Newtonsoft.Json;
+using System;
+using System.Configuration;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace FRTools.Discord.Modules
 {
     [RequireOwner]
-    [Name("admin")]
+    [Name("Admin")]
     [NoLog]
+    [Group("admin")]
     public class AdminModule : BaseModule
     {
         public AdminModule(DataContext dbContext, SettingManager settingManager) : base(dbContext, settingManager)
@@ -37,7 +44,7 @@ namespace FRTools.Discord.Modules
         }
 
         [Name("Sync server"), Command("syncserver")]
-        public async Task SyncServer(ulong? serverId)
+        public async Task SyncServer(ulong? serverId = null)
         {
             SocketGuild guild = null;
             if (serverId != null)
@@ -65,6 +72,66 @@ namespace FRTools.Discord.Modules
                     await ReplyAsync($"Error: {ex}");
                 }
             }
+        }
+
+        [Name("Servers"), Command("servers")]
+        public async Task Servers(ulong? serverId = null)
+        {
+            var guilds = Context.Client.Guilds;
+            var sb = new StringBuilder();
+            sb.AppendLine("I an im the following servers:");
+            sb.AppendLine("```");
+            foreach (var guild in guilds.Select((x, i) => (x, i)))
+                sb.AppendLine($"{guild.i + 1} - ({guild.x.Id}) {guild.x.Name} ");
+            sb.AppendLine("```");
+            await ReplyAsync(sb.ToString());
+        }
+
+        [Name("Bot permissions"), Command("perms")]
+        public async Task BotPermissions(ulong? serverId = null)
+        {
+            SocketGuild guild = null;
+            if (serverId != null)
+            {
+                var g = Context.Client.Guilds.FirstOrDefault(x => x.Id == serverId);
+                if (g == null)
+                {
+                    await ReplyAsync($"I am not in server `{serverId}`");
+                }
+                else
+                    guild = g;
+            }
+            else
+                guild = Context.Guild;
+            if (guild != null)
+            {
+                await ReplyAsync($"In server `{guild.Name}` I have these permissions: {string.Join(", ", guild.CurrentUser.GuildPermissions.ToList().Select(x => $"`{x}`"))}");
+            }
+        }
+
+        [Name("Fetch item"), Command("fetchitem")]
+        public async Task FetchItem(int frId)
+        {
+            if (DbContext.FRItems.FirstOrDefault(x => x.FRId == frId) != null)
+            {
+                await ReplyAsync("Item already in database");
+                return;
+            }
+
+            await ReplyAsync($"Fetching item: {frId}");
+
+            var item = FRHelpers.FetchItem(frId);
+            if (item != null)
+            {
+                await ReplyAsync($"Found item, adding: {item.Name}");
+                DbContext.FRItems.Add(item);
+                await DbContext.SaveChangesAsync();
+                var _serviceBus = new QueueClient(ConfigurationManager.AppSettings["AzureSBConnString"], ConfigurationManager.AppSettings["AzureSBQueueName"]);
+                await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NewItemMessage(MessageCategory.ItemFetcher, item)))));
+                await _serviceBus.CloseAsync();
+            }
+            else
+                await ReplyAsync("Item not found");
         }
     }
 }

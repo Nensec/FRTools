@@ -1,15 +1,14 @@
 ﻿using FRTools.Common;
 using FRTools.Data;
 using FRTools.Data.DataModels;
+using FRTools.Tools.SkinTester;
 using FRTools.Web.Infrastructure;
 using FRTools.Web.Models;
 using Microsoft.AspNet.Identity;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -165,7 +164,9 @@ namespace FRTools.Web.Controllers
             }
             try
             {
-                skinImage = SkinTester.FixPixelFormat(skinImage);
+                var fixPixelFormat = SkinTester.FixPixelFormat(skinImage);
+                if (fixPixelFormat != null)
+                    skinImage = fixPixelFormat;
 
                 model.Skin.InputStream.Position = 0;
                 var url = await azureImageService.WriteImage($@"skins\{randomizedId}.png", model.Skin.InputStream);
@@ -286,7 +287,7 @@ namespace FRTools.Web.Controllers
                 if (skin.GenderType != (int)model.Gender || skin.DragonType != (int)model.DragonType)
                 {
                     var azureImageService = new AzureImageService();
-                    await azureImageService.DeleteImage($@"previews\{model.SkinId}\preview.png");
+                    await azureImageService.DeleteImage($@"previews\{model.SkinId}\{(skin.Version == 1 ? "" : $@"{skin.Version}\")}preview.png");
                 }
 
                 skin.Title = model.Title;
@@ -436,7 +437,7 @@ namespace FRTools.Web.Controllers
             if (!string.IsNullOrEmpty(filter.Name))
                 query = query.Where(x => x.Title.Contains(filter.Name));
 
-            model.Pagination.TotalItems= query.Count();
+            model.Pagination.TotalItems = query.Count();
 
             query = query.OrderByDescending(x => x.Id).Skip(pagination.PageSize * (pagination.Page - 1)).Take(pagination.PageSize);
 

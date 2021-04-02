@@ -13,7 +13,7 @@
             <div class="panel-body">
                 @foreach (var script in Model.Values)
                 {
-                    <a href="#@(script.SanitizedName)" onclick="selectModule('@(script.SanitizedName)')" class="module">
+                    <a href="#@(script.SanitizedName)" class="module">
                         <div class="panel panel-default panel-transparent" style="margin-bottom:0">
                             <div class="panel-body">
                                 <div class="moduleIcon">
@@ -106,19 +106,21 @@
 
 @section head {
     <script>
-        var snippetInitializations = new Array();
-        var validUrlRegex = new RegExp(/(http[s]?:\/\/www1.flightrising.com\/rendern\/350\/\d*\/(\d)*_350.png)(\\?mtime=[a-zA-Z]*)?/);
+        const snippetInitializations = new Array();
+        const snippetActivation = {};
+        const snippetDeactivation = {};
+        const validUrlRegex = new RegExp(/(http[s]?:\/\/www1.flightrising.com\/rendern\/350\/\d*\/(\d)*_350.png)(\\?mtime=[a-zA-Z]*)?/);
     </script>
 }
 
 @section scripts {
     <script>
-        var activeModule;
+        let activeModule;
 
-        $(document).ready(function () {
-            $('.module').on('mouseover', function () {
+        $(() => {
+            $('.module').on('mouseover', () => {
                 $('.moduleIcon', this).css('border-radius', 20);
-            }).on('mouseout', function () {
+            }).on('mouseout', () => {
                 $('.moduleIcon', this).css('border-radius', 32);
             });
 
@@ -127,21 +129,42 @@
                 selectModule(window.location.hash.substr(1));
             }
 
-            window.onhashchange = function () {
-                var hash = window.location.hash.substr(1);
+            window.onhashchange = () => {
+                let hash = window.location.hash.substr(1);
                 if (activeModule !== hash) {
                     selectModule(hash);
                 }
             }
 
-            snippetInitializations.forEach(function (v) { v(); });
+            snippetInitializations.forEach(v => v());
+            $('.moduleHelp').on()
         });
 
-        selectModule = function (module) {
-            $('.moduleHelp, .selectModuleHelp').hide();
-            $(`.moduleHelp[module="${module}"]`).show();
-
-            activeModule = module;
+        selectModule = module => {
+            $('.moduleHelp, .selectModuleHelp').filter(':visible').hide({
+                complete: () => activeModule && snippetDeactivation[activeModule]?.()
+            });
+            $(`.moduleHelp[module="${module}"]`).show({
+                complete: () => {
+                    snippetActivation[`${module}`]?.();
+                    activeModule = module;
+                }
+            });
         }
+
+        saveProfileSetting = (key, value) => {
+            var statusElm = $(`#${key}_status`);
+            statusElm.removeClass('success danger').toggleClass('warning').html('Saving..');
+            $.post({
+                url: '@Url.RouteUrl("SaveProfileSetting")',
+                data: {
+                    key: key,
+                    value: value
+                }
+            }).done(function (data) { statusElm.toggleClass('warning').toggleClass('success').html('Saved!'); })
+                .fail(function (data) { statusElm.toggleClass('warning').toggleClass('danger').html('Error!'); });
+        }
+
+        resetSaveButton = key => $(`#${key}_status`).removeClass('warning danger success').toggleClass('success').html('Save');
     </script>
 }

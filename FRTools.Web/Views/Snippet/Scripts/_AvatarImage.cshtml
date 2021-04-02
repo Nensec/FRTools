@@ -40,11 +40,11 @@
 </div>
 
 <script type="text/javascript">
-    snippetInitializations.push(function () {
+    snippetInitializations.push(() => {
         $('#AvatarImageScriptInput').on('input', $.debounce(500, AvatarImageScript));
     });
 
-    AvatarImageScript = function () {
+    AvatarImageScript = () => {
         $('#AvatarImageResult, #AvatarImageError').hide();
 
         var input = $('#AvatarImageScriptInput').val();

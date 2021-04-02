@@ -345,6 +345,10 @@
       <Project>{79570267-a759-4be0-a466-17b3baa67c03}</Project>
       <Name>FRTools.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FRTools.Tools.SkinTester\FRTools.Tools.SkinTester.csproj">
+      <Project>{57402622-763d-4a12-bf00-6eac9770bf5c}</Project>
+      <Name>FRTools.Tools.SkinTester</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
