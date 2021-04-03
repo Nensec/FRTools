@@ -51,8 +51,7 @@ namespace FRTools.Discord.Modules
             if (showImages)
             {
                 embed.WithThumbnailUrl($"attachment://{id}_350.png")
-                    .WithImageUrl($"attachment://{id}_350.png")
-                    .WithFooter(x => x.Text = "Click the image to view a larger version");
+                    .WithImageUrl($"attachment://{id}_350.png");
             }
 
             if (isExalted)
@@ -152,6 +151,10 @@ namespace FRTools.Discord.Modules
                     embed.AddField(siblingsField);
                 }
             }
+
+            if (Context.AutomatedCommand)
+                embed.WithFooter("This command was executed automatically. Don't want this? Have an administrator change the settings.");
+
             if (!showImages)
             {
                 embed.AddField("Image", FRHelpers.GetRenderUrl(id));
