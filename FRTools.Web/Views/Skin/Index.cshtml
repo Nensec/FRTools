@@ -1,5 +1,6 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    Layout = V2Layout;
+    ViewBag.Title = "Skintester info";
 }
 
 @section meta{
@@ -10,12 +11,12 @@
 }
 
 <div class="row">
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4>Flight Rising skin tester</h4>
+    <div class="col">
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5>Flight Rising skin tester</h5>
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 <p>
                     This tool is made for artists to help shill their designs by making it easier to give people previews on their dragons.<br />
                     Originally made for my GF so she didn't have to constantly juggle with applications to toss her creations over other people's dragons.<br />
@@ -26,12 +27,12 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4>So how does this work, what does it even do?</h4>
+    <div class="col">
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5>So how does this work, what does it even do?</h5>
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 <p>
                     When you upload your skin to this tool it's put into a private storage space. Nothing and no one but the website itself can access them from there.<br />
                     When someone uses your preview link to show your skin on their dragon, the website generates the image by fetching the dragon image from Flight Rising and overlays your skin on top of it.<br />
@@ -41,44 +42,4 @@
             </div>
         </div>
     </div>
-    <div class="col-md-12">
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                <h4>Latest blog post</h4>
-            </div>
-            <div id="blogPost" class="panel-body">
-            </div>
-        </div>
-    </div>
 </div>
-
-@section scripts {
-    <script>
-        $(document).ready(function () {
-            $.ajax({
-                type: "GET",
-                url: "https://api.tumblr.com/v2/blog/frtools.tumblr.com/posts?api_key=@(System.Configuration.ConfigurationManager.AppSettings["TumblrClientId"])&limit=1&filter=raw&tag=fr+skin+tester+news",
-                dataType: "JSON",
-                success: function (blog) {
-                    post = blog.response.posts[0];
-                    if (post)
-                        $('#blogPost').html($(`<h4>${post.title}${post.title ? ' - ': ''}${post.date}</h4>${post.body_abstract ? post.body_abstract : post.caption ? post.caption : post.body}<a href="${post.post_url}">Read full post</a>`));
-                    else
-                        $('#blogPost').html('<p>No post yet!</p>');
-                }
-            });
-        });
-    </script>
-}
-
-<style>
-    .tmblr-full img {
-        max-width: 100%;
-        box-shadow: 3px 3px 3px grey;
-        margin-bottom: 10px;
-    }
-
-    .tmblr-full {
-        text-align: center;
-    }
-</style>
