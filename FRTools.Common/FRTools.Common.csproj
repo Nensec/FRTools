@@ -168,6 +168,7 @@
     <Compile Include="AzureImageService.cs" />
     <Compile Include="CodeHelpers.cs" />
     <Compile Include="DiscordHelpers.cs" />
+    <Compile Include="DiscordModels.cs" />
     <Compile Include="FRHelpers.cs" />
     <Compile Include="JobManager.cs" />
     <Compile Include="Jobs\BaseJob.cs" />

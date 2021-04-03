@@ -291,6 +291,7 @@
     <Compile Include="Infrastructure\DiscordHelpAttribute.cs" />
     <Compile Include="Infrastructure\DiscordSettingAttribute.cs" />
     <Compile Include="Infrastructure\DiscordSettingCategoryAttribute.cs" />
+    <Compile Include="Infrastructure\FRToolsSocketCommandContext.cs" />
     <Compile Include="Preconditions\ExactValuePreconditionAttribute.cs" />
     <Compile Include="Infrastructure\NoLogAttribute.cs" />
     <Compile Include="Infrastructure\SettingManager.cs" />

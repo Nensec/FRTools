@@ -1,9 +1,10 @@
 ﻿using Discord;
+using FRTools.Common;
 using FRTools.Data;
-using FRTools.Data.DataModels.DiscordModels;
-using System;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
+using DiscordSetting = FRTools.Data.DataModels.DiscordModels.DiscordSetting;
 
 namespace FRTools.Discord.Infrastructure
 {
@@ -11,10 +12,18 @@ namespace FRTools.Discord.Infrastructure
     {
         private Dictionary<(IGuild, string), string> _settingCache = new Dictionary<(IGuild, string), string>();
 
+        private DiscordMetadata DiscordMetadata { get; }
+
+        public SettingManager()
+        {
+            var json = System.IO.File.ReadAllText("DiscordMetadata.json");
+            DiscordMetadata = JsonConvert.DeserializeObject<DiscordMetadata>(json);
+        }
+
         public string GetSettingValue(string key, IGuild guild = null)
         {
-            if(!_settingCache.TryGetValue((guild, key), out var val))
-            { 
+            if (!_settingCache.TryGetValue((guild, key), out var val))
+            {
                 if (guild != null && !_settingCache.TryGetValue((null, key), out val))
                 {
                     using (var ctx = new DataContext())
@@ -25,7 +34,7 @@ namespace FRTools.Discord.Infrastructure
                     }
                 }
 
-                if(val == null)
+                if (val == null)
                 {
                     using (var ctx = new DataContext())
                     {
@@ -34,6 +43,9 @@ namespace FRTools.Discord.Infrastructure
                             val = _settingCache[(null, key)] = dbSetting.Value;
                     }
                 }
+
+                if (val == null)
+                    val = DiscordMetadata.AllSettings.FirstOrDefault(x => x.Key == key)?.DefaultValue;
             }
 
             return val;

@@ -1,4 +1,4 @@
-﻿@model FRTools.Web.Models.DiscordModuleViewModel
+﻿@model FRTools.Common.DiscordModuleViewModel
 
 @{
     ViewBag.Title = "ManageModule";
@@ -17,28 +17,74 @@
     </div>
     <div class="panel-body">
         <div class="form-horizontal">
-            @if (Model.ModuleSettings.Any())
+            @if (!Model.Settings.Any())
             {
-                foreach (var setting in Model.ModuleSettings)
+                <div>
+                    This module has no settings
+                </div>
+            }
+            @foreach (var setting in Model.Settings.Where(x => x.Category == null))
+            {
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" style="text-align:left"><span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="left" title="@(setting.Description)"></span> @(setting.SettingName)</label>
+                    <div class="col-sm-9">
+                        @Html.EditorFor(model => setting)
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+@foreach (var category in Model.Categories)
+{
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            @(category.Description)
+        </div>
+        <div class="panel-body">
+            <div class="form-horizontal">
+                @foreach (var setting in Model.Settings.Where(x => x.Category == category))
                 {
                     <div class="form-group">
-                        <label class="col-sm-3 control-label" style="text-align:left">
-                            @if (setting.Description != null)
-                            {
-                                <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="left" title="@(setting.Description)"></span>
-                            }
-                            @(setting.SettingName)
-                        </label>
+                        <label class="col-sm-3 control-label" style="text-align:left"><span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="left" title="@(setting.Description)"></span> @(setting.SettingName)</label>
                         <div class="col-sm-9">
                             @Html.EditorFor(model => setting)
                         </div>
                     </div>
                 }
-            }
-            else
+            </div>
+        </div>
+    </div>
+}
+@if (Model.Commands.Any(x => x.Settings.Any()))
+{
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Command settings
+        </div>
+        <div class="panel-body">
+
+            @foreach (var command in Model.Commands.Where(x => x.Settings.Any()))
             {
-                <p><b><i>There are no settings for this module</i></b></p>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Settings for: @command.SelectedCommand.Name
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-horizontal">
+                            @foreach (var setting in command.Settings)
+                            {
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" style="text-align:left"><span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="left" title="@(setting.Description)"></span> @(setting.SettingName)</label>
+                                    <div class="col-sm-9">
+                                        @Html.EditorFor(model => setting)
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
             }
         </div>
     </div>
-</div>
+}

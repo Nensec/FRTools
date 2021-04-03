@@ -273,8 +273,5 @@ namespace FRTools.Discord.Modules
 
             await ReplyAsync(embed: embed.Build());
         }
-
-        [Command("manage")]
-        public override Task ManageModule() => base.ManageModule();
     }
 }

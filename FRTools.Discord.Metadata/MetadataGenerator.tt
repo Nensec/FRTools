@@ -28,16 +28,7 @@ foreach(var botSettingCategoriesAttribute in botSettingCategoriesAttributes)
 var botSettingsAttributes = guildHandler.GetCustomAttributes().Where(x => x.GetType().Name == "DiscordSettingAttribute");
 foreach(var botSettingAttribute in botSettingsAttributes)
 {
-	var settingTemplate = new SettingTemplate();
-	settingTemplate.Name = (string)botSettingAttribute.GetType().GetProperty("Name").GetValue(botSettingAttribute);
-	settingTemplate.Description = (string)botSettingAttribute.GetType().GetProperty("Description").GetValue(botSettingAttribute);
-	settingTemplate.Key = (string)botSettingAttribute.GetType().GetProperty("Key").GetValue(botSettingAttribute);
-	settingTemplate.Type = ((Type)botSettingAttribute.GetType().GetProperty("Type").GetValue(botSettingAttribute)).AssemblyQualifiedName;
-	settingTemplate.ExtraArgs = (string[])botSettingAttribute.GetType().GetProperty("ExtraArgs").GetValue(botSettingAttribute);
-	settingTemplate.Order = (int)botSettingAttribute.GetType().GetProperty("Order").GetValue(botSettingAttribute);
-	var category = (string)botSettingAttribute.GetType().GetProperty("Category").GetValue(botSettingAttribute);
-	if(category != null)
-		settingTemplate.Category = output.BotSettingCategories.FirstOrDefault(x => x.Name == category);
+	var settingTemplate = ParseSettingAttribute(botSettingAttribute, output.BotSettingCategories);
 	output.BotSettings.Add(settingTemplate);
 }
 
@@ -53,16 +44,7 @@ foreach(var module in modules)
 	var settingAttributes = moduleAttributes.Where(x => x.GetType().Name == "DiscordSettingAttribute");
 	foreach(var settingAttribute in settingAttributes)
 	{
-		var settingTemplate = new SettingTemplate();
-		settingTemplate.Name = (string)settingAttribute.GetType().GetProperty("Name").GetValue(settingAttribute);
-		settingTemplate.Description = (string)settingAttribute.GetType().GetProperty("Description").GetValue(settingAttribute);
-		settingTemplate.Key = (string)settingAttribute.GetType().GetProperty("Key").GetValue(settingAttribute);
-		settingTemplate.Type = ((Type)settingAttribute.GetType().GetProperty("Type").GetValue(settingAttribute)).AssemblyQualifiedName;
-		settingTemplate.ExtraArgs = (string[])settingAttribute.GetType().GetProperty("ExtraArgs").GetValue(settingAttribute);
-		settingTemplate.Order = (int)settingAttribute.GetType().GetProperty("Order").GetValue(settingAttribute);
-		var category = (string)settingAttribute.GetType().GetProperty("Category").GetValue(settingAttribute);
-		if(category != null)
-			settingTemplate.Category = output.BotSettingCategories.FirstOrDefault(x => x.Name == category);
+		var settingTemplate = ParseSettingAttribute(settingAttribute, moduleTemplate.SettingCategories);
 		moduleTemplate.Settings.Add(settingTemplate);
 	}
 
@@ -164,6 +146,13 @@ foreach(var module in modules)
 		commandTemplate.RequireGuildPermission = cmdGuildPermRequired;
 		commandTemplate.RequireChannelPermission = cmdChannelPermRequired;
 
+		var cmdSettingAttributes = methodAttributes.Where(x => x.GetType().Name == "DiscordSettingAttribute");
+		foreach(var cmdSetting in cmdSettingAttributes)
+		{
+			var settingTemplate = ParseSettingAttribute(cmdSetting);
+			commandTemplate.Settings.Add(settingTemplate);
+		}
+
 		foreach(var parameter in command.GetParameters())
 		{
 			var parameterTemplate = new CommandParameterTemplate
@@ -224,6 +213,13 @@ foreach(var module in modules)
 
 		commandTemplate.RequireOwner = reqOwnerAttribute != null || subCommandAttributes.Any(x => x.GetType().Name == "RequireOwnerAttribute");
 
+		var cmdSettingAttributes = subCommandAttributes.Where(x => x.GetType().Name == "DiscordSettingAttribute");
+		foreach(var cmdSetting in cmdSettingAttributes)
+		{
+			var settingTemplate = ParseSettingAttribute(cmdSetting);
+			commandTemplate.Settings.Add(settingTemplate);
+		}
+
 		var cmdReqPermAttributes = subCommandAttributes.Where(x => x.GetType().Name == "RequireUserPermissionAttribute");
 		long cmdGuildPermRequired = guildPermRequired, cmdChannelPermRequired = channelPermRequired;
 		if(cmdReqPermAttributes.Any())
@@ -270,6 +266,22 @@ var json = JsonConvert.SerializeObject(output, new JsonSerializerSettings { Null
 #>
 <#= json #>
 <#+
+	SettingTemplate ParseSettingAttribute(Attribute settingAttribute, List<SettingCategoryTemplate> settingCategories = null)
+	{
+		var settingTemplate = new SettingTemplate();
+		settingTemplate.Name = (string)settingAttribute.GetType().GetProperty("Name").GetValue(settingAttribute);
+		settingTemplate.Description = (string)settingAttribute.GetType().GetProperty("Description").GetValue(settingAttribute);
+		settingTemplate.Key = (string)settingAttribute.GetType().GetProperty("Key").GetValue(settingAttribute);
+		settingTemplate.Type = ((Type)settingAttribute.GetType().GetProperty("Type").GetValue(settingAttribute)).AssemblyQualifiedName;
+		settingTemplate.ExtraArgs = (string[])settingAttribute.GetType().GetProperty("ExtraArgs").GetValue(settingAttribute);
+		settingTemplate.Order = (int)settingAttribute.GetType().GetProperty("Order").GetValue(settingAttribute);
+		settingTemplate.DefaultValue = (string)settingAttribute.GetType().GetProperty("DefaultValue").GetValue(settingAttribute);
+		var category = (string)settingAttribute.GetType().GetProperty("Category").GetValue(settingAttribute);
+		if(category != null)
+			settingTemplate.Category = settingCategories?.FirstOrDefault(x => x.Name == category);
+		return settingTemplate;
+	}
+
 	class DiscordMetadata
 	{
 		public List<SettingCategoryTemplate> BotSettingCategories { get; set; } = new List<SettingCategoryTemplate>();
@@ -311,6 +323,7 @@ var json = JsonConvert.SerializeObject(output, new JsonSerializerSettings { Null
 		public ModuleTemplate ParentModule { get; set; }
 		public List<CommandParameterTemplate> Parameters { get; set; } = new List<CommandParameterTemplate>();
 		public List<SubCommandTemplate> SubCommands { get; set; } = new List<SubCommandTemplate>();
+		public List<SettingTemplate> Settings { get; set; } = new List<SettingTemplate>();
 
 		public bool ShouldSerializeSubCommands()
 		{
@@ -350,6 +363,7 @@ var json = JsonConvert.SerializeObject(output, new JsonSerializerSettings { Null
 		public string[] ExtraArgs { get; set; }
 		public SettingCategoryTemplate Category { get; set; }
 		public int Order { get; set; }
+		public string DefaultValue { get; set; }
 
 		public bool ShouldSerializeExtraArgs()
 		{

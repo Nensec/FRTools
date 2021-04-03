@@ -1,9 +1,9 @@
-﻿using FRTools.Data;
+﻿using FRTools.Common;
+using FRTools.Data;
 using FRTools.Data.DataModels;
 using FRTools.Data.DataModels.DiscordModels;
 using FRTools.Data.Messages;
 using FRTools.Web.Infrastructure;
-using FRTools.Web.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Azure.ServiceBus;
@@ -131,7 +131,7 @@ namespace FRTools.Web.Controllers
             {
                 Key = x.Key,
                 ParentServer = serverModel,
-                Value = DataContext.DiscordSettings.FirstOrDefault(s => s.Server.ServerId == discordServer && s.Key == x.Key)?.Value,
+                Value = DataContext.DiscordSettings.FirstOrDefault(s => s.Server.ServerId == discordServer && s.Key == x.Key)?.Value ?? x.DefaultValue,
                 SettingType = x.Type,
                 SettingName = x.Name,
                 Description = ParseDescription(x),
@@ -181,11 +181,30 @@ namespace FRTools.Web.Controllers
                         Description = ParseDescription(x),
                         ParentServer = serverModel,
                         SettingType = x.Type,
-                        Value = DataContext.DiscordSettings.FirstOrDefault(s => s.Server.ServerId == discordServer && s.Key == x.Key)?.Value,
+                        Value = DataContext.DiscordSettings.FirstOrDefault(s => s.Server.ServerId == discordServer && s.Key == x.Key)?.Value ?? x.DefaultValue,
                         ExtraArgs = x.ExtraArgs,
                         Module = module
                     }).ToList();
-                    model.ModuleSettings = moduleSettings;
+                    model.Settings = moduleSettings;
+                    model.Categories = model.SelectedModule.SettingCategories;
+                    model.Commands = model.SelectedModule.Commands.Select(x => new DiscordCommandViewModel
+                    {
+                        ParentServer = serverModel,
+                        SelectedModule = model.SelectedModule,
+                        SelectedCommand = x,
+                        Settings = x.Settings.OrderBy(s => s.Order).ThenBy(s => s.Type).Select(s => new DiscordSettingViewModel
+                        {
+                            Key = s.Key,
+                            SettingName = s.Name,
+                            Description = ParseDescription(s),
+                            ParentServer = serverModel,
+                            SettingType = s.Type,
+                            Value = DataContext.DiscordSettings.FirstOrDefault(cs => cs.Server.ServerId == discordServer && cs.Key == s.Key)?.Value ?? s.DefaultValue,
+                            ExtraArgs = s.ExtraArgs,
+                            Module = module,
+                            Command = x.Name
+                        }).ToList()
+                    }).ToList();
                     return View(model);
                 }
                 else
@@ -199,7 +218,7 @@ namespace FRTools.Web.Controllers
 
         }
 
-        private string ParseDescription(Models.DiscordSetting setting)
+        private string ParseDescription(Common.DiscordSetting setting)
         {
             var description = setting.Description;
             if (description != null)
@@ -214,7 +233,7 @@ namespace FRTools.Web.Controllers
             return description;
         }
 
-        private static Models.DiscordSetting GetRefSetting(string module, string key)
+        private static Common.DiscordSetting GetRefSetting(string module, string key)
         {
             var settings = module == "GUILD"
                 ? DiscordMetadata.BotSettings
@@ -229,7 +248,7 @@ namespace FRTools.Web.Controllers
         public async Task<ActionResult> SaveSetting(string discordServer, string module, string key, string value)
         {
             var discordServerId = long.Parse(discordServer);
-            ActionResult ErrorResult() => new HttpUnauthorizedResult("User does not have required permission");
+            ActionResult ErrorResult() => new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest, "User does not have required permission");
             var currentUser = DataContext.DiscordUsers.FirstOrDefault(x => x.UserId == _currentUserId)?.Servers.FirstOrDefault(x => x.Server?.ServerId == discordServerId);
             if (currentUser == null)
                 return ErrorResult();
@@ -255,7 +274,7 @@ namespace FRTools.Web.Controllers
                 if (discordModule == null)
                     return ErrorResult();
 
-                var moduleSetting = discordModule.Settings.FirstOrDefault(x => x.Key.ToLower() == key.ToLower());
+                var moduleSetting = discordModule.Settings.Concat(discordModule.Commands.SelectMany(x => x.Settings)).FirstOrDefault(x => x.Key.ToLower() == key.ToLower());
                 if (moduleSetting == null)
                     return ErrorResult();
 
@@ -282,7 +301,7 @@ namespace FRTools.Web.Controllers
         public async Task<ActionResult> SendTestMessage(string discordServer, string module, string key)
         {
             var discordServerId = long.Parse(discordServer);
-            ActionResult ErrorResult() => new HttpUnauthorizedResult("User does not have required permission");
+            ActionResult ErrorResult() => new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest, "User does not have required permission");
             var currentUser = DataContext.DiscordUsers.FirstOrDefault(x => x.UserId == _currentUserId)?.Servers.FirstOrDefault(x => x.Server?.ServerId == discordServerId);
             if (currentUser == null)
                 return ErrorResult();
@@ -314,7 +333,7 @@ namespace FRTools.Web.Controllers
                 if (discordModule == null)
                     return ErrorResult();
 
-                var moduleSetting = discordModule.Settings.FirstOrDefault(x => x.Key.ToLower() == key.ToLower());
+                var moduleSetting = discordModule.Settings.Concat(discordModule.Commands.SelectMany(x => x.Settings)).FirstOrDefault(x => x.Key.ToLower() == key.ToLower());
                 if (moduleSetting == null)
                     return ErrorResult();
 
@@ -322,7 +341,6 @@ namespace FRTools.Web.Controllers
                     setting = DataContext.DiscordSettings.FirstOrDefault(x => x.Server.ServerId == currentUser.Server.ServerId && x.Key == moduleSetting.Key);
             }
 
-            DataContext.SaveChanges();
             var _serviceBus = new QueueClient(ConfigurationManager.AppSettings["AzureSBConnString"], ConfigurationManager.AppSettings["AzureSBQueueName"]);
             await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new GenericMessage(MessageCategory.DiscordTestMessage, setting.Key) { DiscordServer = discordServerId }))));
 

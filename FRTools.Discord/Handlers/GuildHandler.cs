@@ -7,15 +7,17 @@ using FRTools.Data.DataModels.FlightRisingModels;
 using FRTools.Data.Messages;
 using FRTools.Discord.Infrastructure;
 using System;
+using System.Configuration;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace FRTools.Discord.Handlers
 {
-    [DiscordSettingCategory("ITEMDB", "Item database")] 
+    [DiscordSettingCategory("ITEMDB", "Item database")]
     [DiscordSettingCategory("FLASHSALE", "Flash sale announce")]
     [DiscordSetting("GUILDCONFIG_PREFIX", typeof(string), "Command prefix", "The prefix used by the bot to listen to commands")]
     [DiscordSetting("GUILDCONFIG_ANN_CHANNEL", typeof(ITextChannel), "Announcement channel", "The channel the bot will post announcement messages")]
@@ -183,10 +185,15 @@ namespace FRTools.Discord.Handlers
 
             if (msg is IUserMessage message && !message.Author.IsBot && message.Author.Id != _client.CurrentUser.Id)
             {
-                var context = new SocketCommandContext(_client, msg as SocketUserMessage);
+                var context = new FRToolsSocketCommandContext(_client, msg as SocketUserMessage);
 
                 if (message.HasStringPrefix(prefix, ref argPos) && !char.IsNumber(message.Content[argPos]) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))
                 {
+                    if (message.Content.Substring(argPos) == "help")
+                    {
+                        await context.Channel.SendMessageAsync(embed: new EmbedBuilder().WithDescription($"Please see the following link for help. [click here]({ConfigurationManager.AppSettings["WebsiteBaseURL"]}/discord/help)").Build());
+                        return;
+                    }
                     var result = await _globalCommandService.ExecuteAsync(context, argPos, _serviceProvider);
                     if (!result.IsSuccess)
                     {
@@ -198,6 +205,27 @@ namespace FRTools.Discord.Handlers
                         else
                         {
                             await msg.Channel.SendMessageAsync($"```{result.ErrorReason}```").ContinueWith(x => x.Result.DelayedDelete(TimeSpan.FromSeconds(10)));
+                        }
+                    }
+                }
+                else if (message.Content.StartsWith("https://www1.flightrising.com/"))
+                {
+                    // Handle FR links as commands
+                    if (bool.TryParse(_settingManager.GetSettingValue("LOOKUP_AUTO_LINK", Guild), out var dragonAutoLink) && dragonAutoLink)
+                    {
+                        context.AutomatedCommand = true;
+                        var dragonLink = Regex.Match(message.Content, @".+/dragon/(\d+)");
+                        if (dragonLink.Success)
+                        {
+                            await _globalCommandService.ExecuteAsync(context, $"lookup dragon {dragonLink.Groups[1].Value}", _serviceProvider);
+                            return;
+                        }
+
+                        var itemLink = Regex.Match(message.Content, @".+/game-database/item/(\d+)");
+                        if (itemLink.Success)
+                        {
+                            await _globalCommandService.ExecuteAsync(context, $"lookup item {itemLink.Groups[1].Value}", _serviceProvider);
+                            return;
                         }
                     }
                 }
@@ -238,7 +266,7 @@ namespace FRTools.Discord.Handlers
 
                 if (annChannel != null)
                 {
-                    var embed = await ItemHandler.CreateItemEmbed(flashSaleMessage.Item, Guild, true);
+                    var embed = await ItemHandler.CreateItemEmbed(flashSaleMessage.Item, Guild, _settingManager, true);
                     embed.Embed.Title = "New flash sale found! - " + embed.Embed.Title;
                     embed.Embed.Color = new global::Discord.Color(243, 181, 144);
                     await annChannel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
@@ -346,7 +374,7 @@ namespace FRTools.Discord.Handlers
 
                     if (annChannel != null)
                     {
-                        var embed = await ItemHandler.CreateItemEmbed(newItemMessage.Item, Guild);
+                        var embed = await ItemHandler.CreateItemEmbed(newItemMessage.Item, Guild, _settingManager);
                         embed.Embed.Title = "New item found! - " + embed.Embed.Title;
                         await annChannel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
                     }
