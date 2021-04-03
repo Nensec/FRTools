@@ -123,11 +123,6 @@ namespace FRTools.Discord.Handlers
                             using (var client = new WebClient())
                                 assetStream = await client.OpenReadTaskAsync(string.Format(FRHelpers.SceneArtUrl, item.FRId));
                         }
-                        else if (item.ItemType == "Forum Vista")
-                        {
-                            using (var client = new WebClient())
-                                assetStream = await client.OpenReadTaskAsync(string.Format(FRHelpers.VistaArtUrl, item.FRId));
-                        }
                         else
                         {
                             Console.WriteLine("Unknown art type, attempting AssetURL");
