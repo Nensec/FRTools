@@ -125,9 +125,12 @@ namespace FRTools.Discord.Handlers
                         }
                         else
                         {
-                            Console.WriteLine("Unknown art type, attempting AssetURL");
-                            using (var client = new WebClient())
-                                assetStream = await client.OpenReadTaskAsync($"https://www1.flightrising.com{item.AssetUrl}");
+                            if (item.AssetUrl != null)
+                            {
+                                Console.WriteLine("Unknown art type, attempting AssetURL");
+                                using (var client = new WebClient())
+                                    assetStream = await client.OpenReadTaskAsync($"https://www1.flightrising.com{item.AssetUrl}");
+                            }
                         }
 
                         break;
