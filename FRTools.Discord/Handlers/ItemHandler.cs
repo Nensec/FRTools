@@ -58,7 +58,7 @@ namespace FRTools.Discord.Handlers
                     }
                 case FRItemCategory.Skins:
                     {
-                        showImages = bool.TryParse(settingManager.GetSettingValue("LOOKUP_SKIN_SHOW_IMAGES", guild), out var showSkinImages) && showSkinImages;
+                        showImages = bool.TryParse(await settingManager.GetSettingValue("LOOKUP_SKIN_SHOW_IMAGES", guild), out var showSkinImages) && showSkinImages;
 
                         var skinType = item.ItemType.Split(' ');
                         var dragonType = (DragonType)Enum.Parse(typeof(DragonType), skinType[0]);
@@ -97,7 +97,7 @@ namespace FRTools.Discord.Handlers
                     }
                 case FRItemCategory.Trinket when item.ItemType == "Specialty Item" && (item.Name.StartsWith("Primary") || item.Name.StartsWith("Secondary") || item.Name.StartsWith("Tertiary")):
                     {
-                        showImages = bool.TryParse(settingManager.GetSettingValue("LOOKUP_GENE_SHOW_IMAGES", guild), out var showSkinImages) && showSkinImages;
+                        showImages = bool.TryParse(await settingManager.GetSettingValue("LOOKUP_GENE_SHOW_IMAGES", guild), out var showSkinImages) && showSkinImages;
 
                         if (showImages)
                         {

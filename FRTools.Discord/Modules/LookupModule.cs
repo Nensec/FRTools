@@ -18,6 +18,7 @@ namespace FRTools.Discord.Modules
 {
 
     [DiscordSetting("LOOKUP_AUTO_LINK", typeof(bool), "Execute on link", "Execute the corresponding command when a Flight Rising link is posted in chat", DefaultValue = "true")]
+    [DiscordSetting("LOOKUP_AUTO_LINK_CHANNELS", typeof(ITextChannel[]), "Allowed channels", "In which channels the bot will auto execute the command when a link is posted", DefaultValue = "ALL", Order = 10)]
     [Name("Lookup"), Group("lookup"), Alias("lu"), Summary("Lookup related commands")]
     [DiscordHelp("LookupModule")]
     public class LookupModule : BaseModule
@@ -43,7 +44,7 @@ namespace FRTools.Discord.Modules
             }
 
             var isExalted = dragonProfileDoc.GetElementbyId("exalted-content") != null;
-            bool.TryParse(SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGES", Context.Guild), out var showImages);
+            bool.TryParse(await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGES", Context.Guild), out var showImages);
 
             var embed = new EmbedBuilder()
                 .WithUrl(string.Format(FRHelpers.DragonProfileUrl, id));
@@ -313,7 +314,7 @@ namespace FRTools.Discord.Modules
                             foreach (var cat in searchResult.GroupBy(x => x.ItemCategory))
                                 sb.AppendLine($"- {cat.Count()} in the category `{cat.Key}`");
                             sb.AppendLine();
-                            sb.AppendLine($"Please refine your search, perhaps use a category filter such as `{SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}lookup {cats.FirstOrDefault().Key.ToString().ToLower()} {searchTerm}`");
+                            sb.AppendLine($"Please refine your search, perhaps use a category filter such as `{await SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}lookup {cats.FirstOrDefault().Key.ToString().ToLower()} {searchTerm}`");
                         }
                         else
                             sb.AppendLine("Please refine your search.");
@@ -324,7 +325,7 @@ namespace FRTools.Discord.Modules
                     else
                     {
                         var embed = new EmbedBuilder()
-                            .WithDescription($"Found {searchResult.Count} items that match your query. Please look at the items below and use `{SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}lookup item <frid>` to view it's details.")
+                            .WithDescription($"Found {searchResult.Count} items that match your query. Please look at the items below and use `{await SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}lookup item <frid>` to view it's details.")
                             .WithFields(searchResult.Select(x => new EmbedFieldBuilder().WithValue($"{x.FRId} ({x.ItemCategory.ToString().ToLower()})").WithName(x.Name).WithIsInline(true)));
                         await ReplyAsync("", embed: embed.Build());
                     }

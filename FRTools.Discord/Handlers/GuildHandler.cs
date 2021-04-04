@@ -19,7 +19,7 @@ namespace FRTools.Discord.Handlers
 {
     [DiscordSettingCategory("ITEMDB", "Item database")]
     [DiscordSettingCategory("FLASHSALE", "Flash sale announce")]
-    [DiscordSetting("GUILDCONFIG_PREFIX", typeof(string), "Command prefix", "The prefix used by the bot to listen to commands")]
+    [DiscordSetting("GUILDCONFIG_PREFIX", typeof(string), "Command prefix", "The prefix used by the bot to listen to commands", DefaultValue = "$")]
     [DiscordSetting("GUILDCONFIG_ANN_CHANNEL", typeof(ITextChannel), "Announcement channel", "The channel the bot will post announcement messages")]
     [DiscordSetting("GUILDCONFIG_FLASHSALE_ANNNEWITEM", typeof(bool), "Announce new items", "Should the bot announce new flash sales added to the market place on Flight Rising? These announcements are posted in $<GUILD:GUILDCONFIG_ANN_CHANNEL>", Category = "FLASHSALE")]
     [DiscordSetting("GUILDCONFIG_ITEMDB_ANNNEWITEM", typeof(bool), "Announce new items", "Should the bot announce new items added to Flight Rising?", Category = "ITEMDB")]
@@ -177,7 +177,7 @@ namespace FRTools.Discord.Handlers
         internal async Task HandleMessage(SocketMessage msg)
         {
             int argPos = 0;
-            var prefix = _settingManager.GetSettingValue("GUILDCONFIG_PREFIX", Guild) ?? "$";
+            var prefix = await _settingManager.GetSettingValue("GUILDCONFIG_PREFIX", Guild);
 
 #if DEBUG
             prefix = "!!!";
@@ -211,8 +211,12 @@ namespace FRTools.Discord.Handlers
                 else if (message.Content.StartsWith("https://www1.flightrising.com/"))
                 {
                     // Handle FR links as commands
-                    if (bool.TryParse(_settingManager.GetSettingValue("LOOKUP_AUTO_LINK", Guild), out var dragonAutoLink) && dragonAutoLink)
+                    if (bool.TryParse(await _settingManager.GetSettingValue("LOOKUP_AUTO_LINK", Guild), out var dragonAutoLink) && dragonAutoLink)
                     {
+                        var allowedChannels = (await _settingManager.GetSettingValue("LOOKUP_AUTO_LINK_CHANNELS", context.Guild)).Split(',').Select(x => ulong.Parse(x));
+                        if (!allowedChannels.Contains(message.Channel.Id))
+                            return;
+
                         context.AutomatedCommand = true;
                         var dragonLink = Regex.Match(message.Content, @".+/dragon/(\d+)");
                         if (dragonLink.Success)
@@ -256,11 +260,11 @@ namespace FRTools.Discord.Handlers
         internal async Task HandleFlashSaleUpdate(FlashSaleMessage flashSaleMessage)
         {
             // Check if setting is turned on
-            if (bool.TryParse(_settingManager.GetSettingValue("GUILDCONFIG_FLASHSALE_ANNNEWITEM", Guild), out var shouldAnnounce) && shouldAnnounce)
+            if (bool.TryParse(await _settingManager.GetSettingValue("GUILDCONFIG_FLASHSALE_ANNNEWITEM", Guild), out var shouldAnnounce) && shouldAnnounce)
             {
                 // Get the channel to announce item in
                 ISocketMessageChannel annChannel = null;
-                var annChannelId = _settingManager.GetSettingValue("GUILDCONFIG_ANN_CHANNEL", Guild);
+                var annChannelId = await _settingManager.GetSettingValue("GUILDCONFIG_ANN_CHANNEL", Guild);
                 if (annChannelId != null)
                     annChannel = Guild.GetChannel(ulong.Parse(annChannelId)) as ISocketMessageChannel;
 
@@ -290,7 +294,7 @@ namespace FRTools.Discord.Handlers
 
         internal async Task HandleTestMessage(GenericMessage testMessage)
         {
-            var channelId = _settingManager.GetSettingValue(testMessage.Message, Guild);
+            var channelId = await _settingManager.GetSettingValue(testMessage.Message, Guild);
             if (channelId != null)
             {
                 var channel = Guild.GetChannel(ulong.Parse(channelId)) as ISocketMessageChannel;
@@ -351,23 +355,23 @@ namespace FRTools.Discord.Handlers
         internal async Task HandleNewItemUpdate(NewItemMessage newItemMessage)
         {
             // Check if setting is turned on
-            if (bool.TryParse(_settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_ANNNEWITEM", Guild), out var shouldAnnounce) && shouldAnnounce)
+            if (bool.TryParse(await _settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_ANNNEWITEM", Guild), out var shouldAnnounce) && shouldAnnounce)
             {
                 // Check if item is in list of announceables
-                var itemTypesToAnnounce = (_settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_NEWITEMTYPES", Guild) ?? "").Split(',').Select(x => (FRItemCategory)int.Parse(x)).ToList();
+                var itemTypesToAnnounce = ((await _settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_NEWITEMTYPES", Guild)) ?? "").Split(',').Select(x => (FRItemCategory)int.Parse(x)).ToList();
                 if (itemTypesToAnnounce.Contains(newItemMessage.Item.ItemCategory))
                 {
                     // Get the channel to announce item in
                     ISocketMessageChannel annChannel = null;
-                    if (bool.TryParse(_settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_USEANNCHANNEL", Guild), out var useGeneralAnnChannel) && useGeneralAnnChannel)
+                    if (bool.TryParse(await _settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_USEANNCHANNEL", Guild), out var useGeneralAnnChannel) && useGeneralAnnChannel)
                     {
-                        var annChannelId = _settingManager.GetSettingValue("GUILDCONFIG_ANN_CHANNEL", Guild);
+                        var annChannelId = await _settingManager.GetSettingValue("GUILDCONFIG_ANN_CHANNEL", Guild);
                         if (annChannelId != null)
                             annChannel = Guild.GetChannel(ulong.Parse(annChannelId)) as ISocketMessageChannel;
                     }
                     else
                     {
-                        var annNewItemChannelId = _settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_ANN_CHANNEL", Guild);
+                        var annNewItemChannelId = await _settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_ANN_CHANNEL", Guild);
                         if (annNewItemChannelId != null)
                             annChannel = Guild.GetChannel(ulong.Parse(annNewItemChannelId)) as ISocketMessageChannel;
                     }

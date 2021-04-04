@@ -14,7 +14,7 @@
         }
     }
     <span id="@(Html.Id(Model.Key))_status" class="input-group-addon @(settingType == typeof(bool) ? "input-group-addon-close" : "")"><span style="display:block; width:75px">Unchanged</span></span>
-    @if (!(settingType?.IsArray == true))
+    @if (!(settingType?.IsArray == true || fallBack.EndsWith("[]")))
     {
         switch (settingType?.Name ?? fallBack)
         {
@@ -103,21 +103,75 @@
     else
     {
         // array
-        var currentValue = Model.Value?.Split(',') ?? new string[] { };
-        var arrayType = settingType.GetElementType();
+        string[] currentValue = new string[] { };
+        var arrayType = settingType?.GetElementType();
         <select id="@(id)" name="@(name)" configKey="@(Model.Key)" multiple class="form-control" title="Hold CTRL to select multiple" data-toggle="tooltip">
-            @if (arrayType.IsEnum)
+            @if (arrayType?.IsEnum == true)
             {
+                if (Model.Value == "ALL")
+                {
+                    currentValue = Enum.GetValues(arrayType).Cast<Enum>().Select(x => x.ToString()).ToArray();
+                }
+                else
+                {
+                    currentValue = Model.Value?.Split(',') ?? new string[] {};
+                }
                 foreach (var option in Enum.GetValues(arrayType))
                 {
-                    <option @(currentValue.Contains(((int)option).ToString()) ? "selected" : "") value="@((int)option)">@option.ToString()</option>
+                    <option @(currentValue?.Contains(((int)option).ToString()) == true ? "selected" : "") value="@((int)option)">@option.ToString()</option>
                 }
             }
             else
             {
-                foreach (var option in Model.ExtraArgs)
+                if (arrayType != null)
                 {
-                    <option @(currentValue.Contains(option) ? "selected" : "") value="@option">@option</option>
+                    if (Model.Value == "ALL")
+                    {
+                        currentValue = Model.ExtraArgs;
+                    }
+                    else
+                    {
+                        currentValue = Model.Value?.Split(',') ?? new string[] { };
+                    }
+                    foreach (var option in Model.ExtraArgs)
+                    {
+                        <option @(currentValue?.Contains(option) == true ? "selected" : "") value="@option">@option</option>
+                    }
+                }
+                else
+                {
+                    var discordType = fallBack.Replace("[]", "");
+                    switch (discordType)
+                    {
+                        case "ITextChannel":
+                            channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Text);
+                            goto case "IChannel";
+                        case "IVoiceChannel":
+                            channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Voice);
+                            goto case "IChannel";
+                        case "ICategoryChannel":
+                            channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Category);
+                            goto case "IChannel";
+                        case "IChannel":
+                            if (Model.Value == "ALL")
+                            {
+                                currentValue = channels.Select(x => x.ChannelId.ToString()).ToArray();
+                            }
+                            else
+                            {
+                                currentValue = Model.Value?.Split(',') ?? new string[] { };
+                            }
+                            var channelGroups = channels.GroupBy(x => x.DiscordChannelType);
+                            foreach (var channelGroup in channelGroups)
+                            {
+                                <option disabled readonly>- @(channelGroup.Key) -</option>
+                                foreach (var channel in channelGroup)
+                                {
+                                    <option @(currentValue.Contains(channel.ChannelId.ToString()) ? "selected" : "") value="@(channel.ChannelId)">@(channel.ChannelName)</option>
+                                }
+                            }
+                            break;
+                    }
                 }
             }
         </select>
