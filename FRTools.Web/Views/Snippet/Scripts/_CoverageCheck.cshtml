@@ -220,7 +220,7 @@
 
     setPercentageValues = () => {
         if (coverage !== undefined && outside !== undefined) {
-            var precision = $('#precision').val();
+            var precision = $('@(nameof(ProfileSettings.DefaultAdvancedCoveragePercentagePrecision))').val();
             $('#Coverage').html(coverage.toFixed(precision));
             $('#Outside').html(outside.toFixed(precision));
         }
