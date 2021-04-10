@@ -49,7 +49,7 @@ namespace FRTools.Web.Controllers
             {
                 vm.Skins = user.Skins.Where(x => x.Visibility == SkinVisiblity.Visible || x.Visibility == SkinVisiblity.HideFromBrowse).ToList();
             }
-            if (user.ProfileSettings.ShowPingListsOnProfile)
+            if (LoggedInUser != null && user.ProfileSettings.ShowPingListsOnProfile)
             {
                 vm.Pinglists = user.Pinglists.Where(x => x.IsPublic || x.Entries.Any(e => e.FRUser.User?.Id == LoggedInUser.Id)).ToList();
             }
