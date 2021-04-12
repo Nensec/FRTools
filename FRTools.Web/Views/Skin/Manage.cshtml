@@ -1,6 +1,7 @@
 ﻿@model ManageModelViewModel
 
 @{
+    Layout = V2Layout;
     ViewBag.Title = "Manage";
     var previews = Model.Skin.Previews.Select((x, i) => (x, i)).ToList();
     var scries = previews.Where(x => x.Item1.DragonId == null).ToList();
@@ -14,16 +15,16 @@
 
 <div class="row">
     <div class="col-md-7">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4>
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5>
                     Manage: @(Model.Skin.Title)
                     <sup>
                         @(Model.Skin.Version != 1 ? $"v{Model.Skin.Version}" : "")
                     </sup>
-                </h4>
+                </h5>
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 <p>
                     Here you can edit your skin's details and view what people have previewed your skin on
                 </p>
@@ -39,103 +40,84 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-md-5">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div class="text-center">
-                    <img class="dragonImage" src="@(Model.CDNBasePath + Model.PreviewImageUrl)" />
-                </div>
-                <div>
-                    <p class="text-center">
-                        Coverage: <b>@(Model.Skin.Coverage)%</b> (@(Model.Skin.Coverage <= 30 ? "Accent" : "Skin"))
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-7">
-        <div class="panel panel-warning">
-            <div class="panel-heading">
+        <div class="card mt-3">
+            <div class="card-header">
                 Your share link
             </div>
-            <div class="panel-body">
-                <div class="form-horizontal">
-                    <div class="form-group">
-                        <label style="padding-top:7px; text-align:left" class="col-md-4 control-label" for="PreviewLink">
-                            Your link <span class="glyphicon glyphicon-alert text-danger" data-toggle="tooltip" title="This link will not work on the Flight Rising forums due to their censorship of off-site tools."></span>
-                        </label>
-                        <div class="col-md-8">
-                            @Html.CopyTextBox(Url.RouteUrl("Preview", new { skinId = Model.Skin.GeneratedId }, "https"), "PreviewLink", "skin", Model.Skin.GeneratedId)
-                        </div>
+            <div class="card-body">
+                <div class="form-group row">
+                    <label style="padding-top:7px; text-align:left" class="col-4" for="PreviewLink">
+                        <span class="fa fa-warning text-danger" data-toggle="tooltip" title="This link will not work on the Flight Rising forums due to their censorship of off-site tools."></span> Your link
+                    </label>
+                    <div class="col-8">
+                        @Html.CopyTextBox(Url.RouteUrl("Preview", new { skinId = Model.Skin.GeneratedId }, "https"), "PreviewLink", "skin", Model.Skin.GeneratedId)
                     </div>
-                    <div class="form-group">
-                        <label style="padding-top:7px; text-align:left" class="col-md-4 control-label" for="PreviewShareLink">
-                            Share link <span class="glyphicon glyphicon-alert text-warning" data-toggle="tooltip" title="Generating a share link allows you to post links on the Flight Rising forums."></span>
-                        </label>
-                        <div class="col-md-8">
-                            @Html.CopyTextBox(Model.ShareUrl, "PreviewShareLink", "skin", Model.Skin.GeneratedId)
-                        </div>
+                </div>
+                <div class="form-group row">
+                    <label style="padding-top:7px; text-align:left" class="col-4 col-form-label" for="PreviewShareLink">
+                        <span class="fa fa-warning text-warning" data-toggle="tooltip" title="Generating a share link allows you to post links on the Flight Rising forums."></span> Share link
+                    </label>
+                    <div class="col-8">
+                        @Html.CopyTextBox(Model.ShareUrl, "PreviewShareLink", "skin", Model.Skin.GeneratedId)
                     </div>
                 </div>
             </div>
         </div>
-        <div class="panel panel-success">
-            <div class="panel-heading">
+        <div class="card mt-3">
+            <div class="card-header">
                 These are the previews people have generated with your skin
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 @if (Model.Skin.Previews.Any())
-                                {
-                    <div class="col-sm-2" style="padding:0;">
-                        <!-- Indicators -->
-                        <ol class="carousel-indicators">
-                            @foreach (var preview in previews)
-                                {
-                                <li data-item="@(preview.Item2)" data-target="#carousel-previews" data-slide-to="@(preview.Item2)" class="@(preview.Item2 == 0 ? "activeIndicator" : "")">
-                                    <div>
-                                    </div>
-                                    <img src="@(Model.CDNBasePath + preview.Item1.PreviewImage)" />
-                                </li>
-                            }
-                        </ol>
-                    </div>
-                    <div class="col-sm-10">
-                        <div id="carousel-previews" class="carousel slide" data-ride="carousel">
-                            <!-- Wrapper for slides -->
-                            <div class="carousel-inner" role="listbox">
+                {
+                    <div class="row">
+                        <div class="col-2 ml-n3 pr-0">
+                            <!-- Indicators -->
+                            <ol class="carousel-minis carousel-indicators">
                                 @foreach (var preview in previews)
-                            {
-                                var dragon = DragonCache.FromString(preview.Item1.DragonData);
-                                    <div class="item @(preview.Item2 == 0 ? "active" : "")" data-item="@(preview.Item2)">
-                                        <div class="row">
-                                            <img id="Preview@(preview.Item2)" class="center-block" src="@(Model.CDNBasePath + preview.Item1.PreviewImage)" data-toggle="popover">
-                                            <div id="Preview@(preview.Item2)_popover" class="hide">
-                                                <ul style="list-style:none; padding:0">
-                                                    <li><b>Colors:</b> @(dragon.BodyColor) / @(dragon.WingColor) / @(dragon.TertiaryColor)</li>
-                                                    <li><b>Genes:</b> @(dragon.GetPrimaryGene()) / @(dragon.GetSecondaryGene()) / @(dragon.GetTertiaryGene())</li>
+                                {
+                                    <li data-item="@(preview.Item2)" data-target="#carousel-previews" data-slide-to="@(preview.Item2)" class="@(preview.Item2 == 0 ? "active" : "")">
+                                        <img src="@(Model.CDNBasePath + preview.Item1.PreviewImage)" />
+                                    </li>
+                                }
+                            </ol>
+                        </div>
+                        <div class="col-10 px-0">
+                            <div id="carousel-previews" class="carousel slide" data-ride="carousel">
+                                <!-- Wrapper for slides -->
+                                <div class="carousel-inner">
+                                    @foreach (var preview in previews)
+                                    {
+                                        var dragon = DragonCache.FromString(preview.Item1.DragonData);
+                                        <div class="carousel-item img-fluid @(preview.Item2 == 0 ? "active" : "")" data-item="@(preview.Item2)">
+                                            <div class="row justify-content-center">
+                                                <img id="Preview@(preview.Item2)" src="@(Model.CDNBasePath + preview.Item1.PreviewImage)" data-toggle="popover">
+                                                <div id="Preview@(preview.Item2)_popover" class="d-none">
+                                                    <ul style="list-style:none; padding:0">
+                                                        <li><b>Colors:</b> @(dragon.BodyColor) / @(dragon.WingColor) / @(dragon.TertiaryColor)</li>
+                                                        <li><b>Genes:</b> @(dragon.GetPrimaryGene()) / @(dragon.GetSecondaryGene()) / @(dragon.GetTertiaryGene())</li>
 
-                                                    <li><b>Element:</b> @(dragon.Element)</li>
-                                                    <li><b>Eyetype:</b> @(dragon.EyeType.GetDescription())</li>
-                                                </ul>
+                                                        <li><b>Element:</b> @(dragon.Element)</li>
+                                                        <li><b>Eyetype:</b> @(dragon.EyeType.GetDescription())</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="text-center">
+                                                @if (preview.Item1.Version != Model.Skin.Version)
+                                                {
+                                                    <p>
+                                                        <i>Older version skin: <b>v@(preview.Item1.Version)</b></i>
+                                                    </p>
+                                                }
+                                                <b>@(preview.Item1.DragonId != null ? "Real dragon" : "Scry dragon")</b>
+                                                @if (preview.Item1.ScryerUrl != null)
+                                                {
+                                                    @: - <a href="@($"https://www1.flightrising.com/scrying/predict?breed={(int)dragon.DragonType}&gender={(int)dragon.Gender}&age={(int)dragon.Age}&bodygene={dragon.BodyGene}&body={(int)dragon.BodyColor}&winggene={dragon.WingGene}&wings={(int)dragon.WingColor}&tertgene={dragon.TertiaryGene}&tert={(int)dragon.TertiaryColor}&element={(int)dragon.Element}&eyetype={(int)dragon.EyeType}")" target="_blank">Visit scrying workshop</a>
+                                                }
                                             </div>
                                         </div>
-                                        <div class="text-center">
-                                            @if (preview.Item1.Version != Model.Skin.Version)
-                            {
-                                                <p>
-                                                    <i>Older version skin: <b>v@(preview.Item1.Version)</b></i>
-                                                </p>
-                                            }
-                                            <b>@(preview.Item1.DragonId != null ? "Real dragon" : "Scry dragon")</b>
-                                            @if (preview.Item1.ScryerUrl != null)
-                            {
-                                                @: - <a href="@($"https://www1.flightrising.com/scrying/predict?breed={(int)dragon.DragonType}&gender={(int)dragon.Gender}&age={(int)dragon.Age}&bodygene={dragon.BodyGene}&body={(int)dragon.BodyColor}&winggene={dragon.WingGene}&wings={(int)dragon.WingColor}&tertgene={dragon.TertiaryGene}&tert={(int)dragon.TertiaryColor}&element={(int)dragon.Element}&eyetype={(int)dragon.EyeType}")" target="_blank">Visit scrying workshop</a>
-                                            }
-                                        </div>
-                                    </div>
-                                }
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -147,13 +129,24 @@
             </div>
         </div>
     </div>
-
     <div class="col-md-5">
-        <div class="panel panel-info">
-            <div class="panel-heading">
+        <div class="card mt-3">
+            <div class="card-body">
+                <div class="text-center">
+                    <img class="img-fluid" src="@(Model.CDNBasePath + Model.PreviewImageUrl)" />
+                </div>
+                <div>
+                    <p class="text-center">
+                        Coverage: <b>@(Model.Skin.Coverage)%</b> (@(Model.Skin.Coverage <= 30 ? "Accent" : "Skin"))
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="card mt-3">
+            <div class="card-header">
                 Fancy graphs and stats
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 @if (previews.Any())
                 {
                     var previewsPerDay = scries.Concat(reals).Where(x => x.Item1.PreviewTime != null).GroupBy(x => x.Item1.PreviewTime.Value.Date).Select(x => (x.Key, x.Count()));
@@ -184,13 +177,12 @@
             </div>
         </div>
     </div>
-
     <div class="col-md-12">
-        <div class="panel panel-warning">
-            <div class="panel-heading">
-                Thar be dangerous stuff  'ere
+        <div class="card mt-3 border-danger">
+            <div class="card-header bg-danger text-light">
+                Thar be dangerous stuff 'ere
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 <div class="form-group">
                     This will permanently delete your skin!&nbsp;
                     <span>
@@ -214,9 +206,14 @@
     $(document).ready(function () {
         $('#carousel-previews').on('slide.bs.carousel', function (event) {
             var item = $(event.relatedTarget).attr('data-item');
-            $('.carousel-indicators li.activeIndicator').removeClass('activeIndicator');
-            $(`.carousel-indicators li[data-item="${item}"]`).addClass('activeIndicator');
+            $('.carousel-indicators li.active').removeClass('active');
+            $(`.carousel-indicators li[data-item="${item}"]`).addClass('active');
         });
+        var chartOptions = {
+            plugins: { colorschemes: { scheme: 'brewer.Set3-12' } },
+            responsive: false,
+            legend: { display: false }
+        };
         new Chart(document.getElementById(`PreviewGraph`).getContext('2d'), {
             type: 'line',
             data: {
@@ -227,6 +224,9 @@
                     borderColor: '#bce8f1',
                     backgroundColor: '#d9edf7'
                 }]
+            },
+            options: {
+                legend: { display: false }
             }
         });
         new Chart(document.getElementById(`PrimaryColorGraph`).getContext('2d'), {
@@ -239,11 +239,7 @@
                     backgroundColor: [@Html.Raw(string.Join(", ", previewColorData.GroupBy(x => x.Item1).Select(x => $"'{x.Key.GetHex()}'")))]
                 }]
             },
-            options: {
-                plugins: { colorschemes: { scheme: 'brewer.Set3-12' } },
-                responsive: false,
-                legend: { display: false }
-            }
+            options: chartOptions
         });
         new Chart(document.getElementById(`SecondaryColorGraph`).getContext('2d'), {
             type: 'pie',
@@ -255,11 +251,7 @@
                     backgroundColor: [@Html.Raw(string.Join(", ", previewColorData.GroupBy(x => x.Item2).Select(x => $"'{x.Key.GetHex()}'")))]
                 }]
             },
-            options: {
-                plugins: { colorschemes: { scheme: 'brewer.Set3-12' } },
-                responsive: false,
-                legend: { display: false }
-            }
+            options: chartOptions
         });
         new Chart(document.getElementById(`TertiaryColorGraph`).getContext('2d'), {
             type: 'pie',
@@ -271,11 +263,7 @@
                     backgroundColor: [@Html.Raw(string.Join(", ", previewColorData.GroupBy(x => x.Item3).Select(x => $"'{x.Key.GetHex()}'")))]
                 }]
             },
-            options: {
-                plugins: { colorschemes: { scheme: 'brewer.Set3-12' } },
-                responsive: false,
-                legend: { display: false }
-            }
+            options: chartOptions
         });
         new Chart(document.getElementById(`PrimaryGeneGraph`).getContext('2d'), {
             type: 'pie',
@@ -286,11 +274,7 @@
                     data: [@string.Join(", ", previewGeneData.GroupBy(x => x.Item1).Select(x => x.Count()))]
                 }]
             },
-            options: {
-                plugins: { colorschemes: { scheme: 'brewer.Set2-8' } },
-                responsive: false,
-                legend: { display: false }
-            }
+            options: chartOptions
         });
         new Chart(document.getElementById(`SecondaryGeneGraph`).getContext('2d'), {
             type: 'pie',
@@ -301,11 +285,7 @@
                     data: [@string.Join(", ", previewGeneData.GroupBy(x => x.Item2).Select(x => x.Count()))]
                 }]
             },
-            options: {
-                plugins: { colorschemes: { scheme: 'brewer.Set2-8' } },
-                responsive: false,
-                legend: { display: false }
-            }
+            options: chartOptions
         });
         new Chart(document.getElementById(`TertiaryGeneGraph`).getContext('2d'), {
             type: 'pie',
@@ -316,11 +296,7 @@
                     data: [@string.Join(", ", previewGeneData.GroupBy(x => x.Item3).Select(x => x.Count()))]
                 }]
             },
-            options: {
-                plugins: { colorschemes: { scheme: 'brewer.Set2-8' } },
-                responsive: false,
-                legend: { display: false }
-            }
+            options: chartOptions
         });
     });
 
@@ -344,18 +320,25 @@
         z-index: 100;
     }
 
-    .carousel-indicators {
+
+    .carousel-minis {
+        display: block;
         position: initial;
-        margin-left: 0;
+        margin-right: 0;
         overflow-y: auto;
         max-height: 370px;
         direction: rtl;
         padding-right: 0;
         width: unset;
         margin-bottom: 0;
+        margin-left: 0;
     }
 
-        .carousel-indicators li {
+        .carousel-minis li:hover {
+            opacity: 1;
+        }
+
+        .carousel-minis li {
             direction: ltr;
             display: block;
             background: unset;
@@ -369,11 +352,11 @@
             padding: 3px;
         }
 
-            .carousel-indicators li.activeIndicator {
+            .carousel-minis li.active {
                 background-color: #d9edf7;
             }
 
-            .carousel-indicators li img {
+            .carousel-minis li img {
                 width: 100%;
                 height: 100%;
             }
