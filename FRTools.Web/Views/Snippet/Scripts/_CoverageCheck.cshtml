@@ -73,7 +73,7 @@
                 <span class="col-xs-4">Outside pixel overlay color</span>
                 <div class="col-xs-8">
                     <div class="@(Request.IsAuthenticated ? "input-group" : "")">
-                        <input id="@(nameof(ProfileSettings.DefaultAdvancedCoverageOverlayColor))" type="color" id="overlayColorPicker" onchange="updateCoverage();@(Request.IsAuthenticated ? $" resetSaveButton('{nameof(ProfileSettings.DefaultAdvancedCoverageOverlayColor)}');" : "")" value="@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageOverlayColor ?? "#FF0000")" style="width:100%;">
+                        <input id="@(nameof(ProfileSettings.DefaultAdvancedCoverageOverlayColor))" type="color" onchange="updateCoverage();@(Request.IsAuthenticated ? $" resetSaveButton('{nameof(ProfileSettings.DefaultAdvancedCoverageOverlayColor)}');" : "")" value="@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageOverlayColor ?? "#FF0000")" style="width:100%;">
                         @SaveButton(nameof(ProfileSettings.DefaultAdvancedCoverageOverlayColor))
                     </div>
                 </div>
@@ -185,7 +185,7 @@
 
         var overlayColorR, overlayColorG, overlayColorB;
 
-        var overlayColor = $('#overlayColorPicker').val();
+        var overlayColor = $('#@(nameof(ProfileSettings.DefaultAdvancedCoverageOverlayColor))').val();
         overlayColorR = parseInt('0x' + overlayColor.substr(1, 2));
         overlayColorG = parseInt('0x' + overlayColor.substr(3, 2));
         overlayColorB = parseInt('0x' + overlayColor.substr(5, 2));
@@ -220,7 +220,7 @@
 
     setPercentageValues = () => {
         if (coverage !== undefined && outside !== undefined) {
-            var precision = $('#precision').val();
+            var precision = $('#@(nameof(ProfileSettings.DefaultAdvancedCoveragePercentagePrecision))').val();
             $('#Coverage').html(coverage.toFixed(precision));
             $('#Outside').html(outside.toFixed(precision));
         }

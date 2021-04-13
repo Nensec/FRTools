@@ -39,7 +39,7 @@ namespace FRTools.Discord.Modules
                         var realItemSearch = DbContext.FRItems.FirstOrDefault(x => x.FRId == intSkinId && x.ItemCategory == FRItemCategory.Skins);
                         if (realItemSearch != null)
                         {
-                            await ReplyAsync(embed: ErrorEmbed($"Skin not found, however there is a Flight Rising skin with that ID: `{realItemSearch.Name}`.\nIf you meant to search for a real skin please use the following command instead: `{SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}lookup skin {realItemSearch.FRId}`").Build());
+                            await ReplyAsync(embed: ErrorEmbed($"Skin not found, however there is a Flight Rising skin with that ID: `{realItemSearch.Name}`.\nIf you meant to search for a real skin please use the following command instead: `{await SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}lookup skin {realItemSearch.FRId}`").Build());
                             return;
                         }
                     }
@@ -178,8 +178,5 @@ namespace FRTools.Discord.Modules
                 return embed.Build();
             }
         }
-
-        [Command("manage")]
-        public override Task ManageModule() => base.ManageModule();
     }
 }

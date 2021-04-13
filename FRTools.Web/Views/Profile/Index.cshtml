@@ -58,7 +58,7 @@
                             {
                                 <div class="col-sm-@(Model.User.ProfileSettings.ShowPreviewsOnProfile || Model.IsOwn ? "4" : "2")">
                                     <a href="@Url.RouteUrl("Preview", new { SkinId = skin.Item1.GeneratedId })">
-                                        <img class="loading w-100 h-100" id="Skin@(skin.Item2)" data-toggle="popover" src="@Url.RouteUrl("DummyPreview", new { skinId = skin.Item1.GeneratedId, version = skin.Item1.Version })" />
+                                        <img onload="$(this).removeClass('loading');" class="loading w-100 h-100" id="Skin@(skin.Item2)" data-toggle="popover" src="@Url.RouteUrl("DummyPreview", new { skinId = skin.Item1.GeneratedId, version = skin.Item1.Version })" />
                                         <div id="Skin@(skin.Item2)_popover" class="d-none">
                                             <ul class="list-unstyled">
                                                 <li><b>Id:</b> @(skin.Item1.GeneratedId)</li>
@@ -66,7 +66,7 @@
                                                 <li><b>Description:</b> @(skin.Item1.Description ?? "No description")</li>
                                                 <li><b>Coverage:</b> @(skin.Item1.Coverage)% (@(skin.Item1.Coverage < 31 ? "Accent" : "Skin"))</li>
                                                 <li><b>Skin info:</b> @((Gender)skin.Item1.GenderType) @((DragonType)skin.Item1.DragonType)</li>
-                                                <li><img src="@(Model.CDNBasePath + Model.GetDummyPreviewImage(skin.Item1.GeneratedId, skin.Item1.Version))" /></li>
+                                                <li><img src="@Url.RouteUrl("DummyPreview", new { skinId = skin.Item1.GeneratedId, version = skin.Item1.Version })" /></li>
                                             </ul>
                                         </div>
                                     </a>

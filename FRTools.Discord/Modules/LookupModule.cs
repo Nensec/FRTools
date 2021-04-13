@@ -16,6 +16,9 @@ using System.Threading.Tasks;
 
 namespace FRTools.Discord.Modules
 {
+
+    [DiscordSetting("LOOKUP_AUTO_LINK", typeof(bool), "Execute on link", "Execute the corresponding command when a Flight Rising link is posted in chat", DefaultValue = "true")]
+    [DiscordSetting("LOOKUP_AUTO_LINK_CHANNELS", typeof(ITextChannel[]), "Allowed channels", "In which channels the bot will auto execute the command when a link is posted", DefaultValue = "ALL", Order = 10)]
     [Name("Lookup"), Group("lookup"), Alias("lu"), Summary("Lookup related commands")]
     [DiscordHelp("LookupModule")]
     public class LookupModule : BaseModule
@@ -24,6 +27,7 @@ namespace FRTools.Discord.Modules
         {
         }
 
+        [DiscordSetting("LOOKUP_DRAGON_SHOW_IMAGES", typeof(bool), "Show dragon images", "Display images in the lookup embed, set this to hide if your server members get easily triggered", "Show", "Hide", DefaultValue = "true")]
         [Command("dragon"), Name("Dragon"), Alias("d")]
         [DiscordHelp("LookupDragon")]
         public async Task DragonLookup(int id)
@@ -40,11 +44,16 @@ namespace FRTools.Discord.Modules
             }
 
             var isExalted = dragonProfileDoc.GetElementbyId("exalted-content") != null;
+            bool.TryParse(await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGES", Context.Guild), out var showImages);
 
             var embed = new EmbedBuilder()
-                .WithUrl(string.Format(FRHelpers.DragonProfileUrl, id))
-                .WithThumbnailUrl($"attachment://{id}_350.png")
-                .WithFooter(x => x.Text = "Click the image to view a larger version");
+                .WithUrl(string.Format(FRHelpers.DragonProfileUrl, id));
+
+            if (showImages)
+            {
+                embed.WithThumbnailUrl($"attachment://{id}_350.png")
+                    .WithImageUrl($"attachment://{id}_350.png");
+            }
 
             if (isExalted)
             {
@@ -106,7 +115,8 @@ namespace FRTools.Discord.Modules
                 var tertiaryGene = geneticsNode.ChildNodes[5].ChildNodes[1].ChildNodes[3].ChildNodes[3].InnerHtml;
                 var tertiaryColor = geneticsNode.ChildNodes[5].ChildNodes[1].ChildNodes[3].ChildNodes[0].InnerHtml.Replace("\\n", "").Trim();
 
-                embed.AddField(x => x.WithIsInline(true).WithName("\u200B").WithValue("\u200B"));
+                if (!showImages)
+                    embed.AddField(x => x.WithIsInline(true).WithName("\u200B").WithValue("\u200B"));
                 embed.AddField(x => x.WithIsInline(true).WithName("Genetics").WithValue($"**Primary:** {primaryColor} {primaryGene}\n**Secondary:** {secondaryColor} {secondaryGene}\n**Tertiary:** {tertiaryColor} {tertiaryGene}\n"));
 
                 var parentsField = new EmbedFieldBuilder().WithName("Parents").WithIsInline(true);
@@ -137,16 +147,31 @@ namespace FRTools.Discord.Modules
                     }
 
                     embed.AddField(parentsField);
-                    embed.AddField(x => x.WithIsInline(true).WithName("\u200B").WithValue("\u200B"));
+                    if (!showImages)
+                        embed.AddField(x => x.WithIsInline(true).WithName("\u200B").WithValue("\u200B"));
                     embed.AddField(siblingsField);
                 }
             }
 
-            using (var webClient = new WebClient())
+            if (Context.AutomatedCommand)
+                embed.WithFooter("This command was executed automatically. Don't want this? Have an administrator change the settings.");
+
+            if (!showImages)
             {
-                var dragonImage = webClient.OpenRead(FRHelpers.GetRenderUrl(id));
-                await Context.Channel.SendFileAsync(dragonImage, $"{id}_350.png", embed: embed.Build());
+                embed.AddField("Image", FRHelpers.GetRenderUrl(id));
             }
+
+            if (showImages)
+            {
+                using (var webClient = new WebClient())
+                {
+                    var dragonImage = webClient.OpenRead(FRHelpers.GetRenderUrl(id));
+                    await Context.Channel.SendFileAsync(dragonImage, $"{id}_350.png", embed: embed.Build());
+                }
+            }
+            else
+                await Context.Channel.SendMessageAsync(embed: embed.Build());
+
             await lookingUpMessage.DeleteAsync();
         }
 
@@ -165,6 +190,7 @@ namespace FRTools.Discord.Modules
             public Task ItemLookup(int frItemId) => ItemLookup(x => x.FRId == frItemId, frItemId);
         }
 
+        [DiscordSetting("LOOKUP_SKIN_SHOW_IMAGES", typeof(bool), "Show skin images", "Display images in the lookup embed, set this to hide if your server members get easily triggered", "Show", "Hide", DefaultValue = "true")]
         [Group("skin"), Name("Skin"), Alias("accent", "s", "a")]
         [DiscordHelp("LookupSkinInfo")]
         public class LookupSkinInfo : LookupItemBase
@@ -195,6 +221,7 @@ namespace FRTools.Discord.Modules
             public Task ItemLookup(int frItemId) => ItemLookup(x => x.ItemCategory == FRItemCategory.Food && x.FRId == frItemId, frItemId);
         }
 
+        [DiscordSetting("LOOKUP_GENE_SHOW_IMAGES", typeof(bool), "Show gene images", "Display images in the lookup embed, set this to hide if your server members get easily triggered", "Show", "Hide", DefaultValue = "true")]
         [Group("trinket"), Name("Trinket"), Alias("t", "material", "mat", "m", "chest", "c", "bundle", "vista", "scene", "egg")]
         [DiscordHelp("LookupTrinketInfo")]
         public class LookupTrinketInfo : LookupItemBase
@@ -272,7 +299,7 @@ namespace FRTools.Discord.Modules
                 else if (searchResult.Count == 1)
                 {
                     await plsWait.ModifyAsync(x => x.Content = "I found your item! Please give me a moment while I fetch the data..");
-                    var embed = await ItemHandler.CreateItemEmbed(searchResult[0], Context.Guild);
+                    var embed = await ItemHandler.CreateItemEmbed(searchResult[0], Context, SettingManager);
                     await Context.Channel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
                 }
                 else
@@ -287,7 +314,7 @@ namespace FRTools.Discord.Modules
                             foreach (var cat in searchResult.GroupBy(x => x.ItemCategory))
                                 sb.AppendLine($"- {cat.Count()} in the category `{cat.Key}`");
                             sb.AppendLine();
-                            sb.AppendLine($"Please refine your search, perhaps use a category filter such as `{SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}lookup {cats.FirstOrDefault().Key.ToString().ToLower()} {searchTerm}`");
+                            sb.AppendLine($"Please refine your search, perhaps use a category filter such as `{await SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}lookup {cats.FirstOrDefault().Key.ToString().ToLower()} {searchTerm}`");
                         }
                         else
                             sb.AppendLine("Please refine your search.");
@@ -298,7 +325,7 @@ namespace FRTools.Discord.Modules
                     else
                     {
                         var embed = new EmbedBuilder()
-                            .WithDescription($"Found {searchResult.Count} items that match your query. Please look at the items below and use `{SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}lookup item <frid>` to view it's details.")
+                            .WithDescription($"Found {searchResult.Count} items that match your query. Please look at the items below and use `{await SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}lookup item <frid>` to view it's details.")
                             .WithFields(searchResult.Select(x => new EmbedFieldBuilder().WithValue($"{x.FRId} ({x.ItemCategory.ToString().ToLower()})").WithName(x.Name).WithIsInline(true)));
                         await ReplyAsync("", embed: embed.Build());
                     }
@@ -312,7 +339,7 @@ namespace FRTools.Discord.Modules
                 if (item != null)
                 {
                     var plsWait = await Context.Channel.SendMessageAsync("I found your item! Please give me a moment while I fetch the data..");
-                    var embed = await ItemHandler.CreateItemEmbed(item, Context.Guild);
+                    var embed = await ItemHandler.CreateItemEmbed(item, Context, SettingManager);
                     await Context.Channel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
                     await plsWait.DeleteAsync();
                 }

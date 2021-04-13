@@ -3,9 +3,11 @@ using Discord.WebSocket;
 using FRTools.Common;
 using FRTools.Data;
 using FRTools.Data.DataModels.FlightRisingModels;
+using FRTools.Discord.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -14,7 +16,17 @@ namespace FRTools.Discord.Handlers
 {
     public static class ItemHandler
     {
-        public static async Task<(EmbedBuilder Embed, IEnumerable<KeyValuePair<string, Stream>> Files)> CreateItemEmbed(FRItem item, SocketGuild guild, bool flashSale = false)
+        public static async Task<(EmbedBuilder Embed, IEnumerable<KeyValuePair<string, Stream>> Files)> CreateItemEmbed(FRItem item, FRToolsSocketCommandContext context, SettingManager settingManager, bool flashSale = false)
+        {
+            var embedResult = await CreateItemEmbed(item, context.Guild, settingManager, flashSale);
+
+            if (context.AutomatedCommand)
+                embedResult.Embed.WithFooter("This command was executed automatically. Don't want this? Have an administrator change the settings.");
+
+            return embedResult;
+        }
+
+        public static async Task<(EmbedBuilder Embed, IEnumerable<KeyValuePair<string, Stream>> Files)> CreateItemEmbed(FRItem item, SocketGuild guild, SettingManager settingManager, bool flashSale = false)
         {
             var files = new List<KeyValuePair<string, Stream>>();
             var externalEmojis = guild.CurrentUser.GuildPermissions.UseExternalEmojis;
@@ -31,78 +43,101 @@ namespace FRTools.Discord.Handlers
             if (item.FoodValue > 0)
                 embed.AddField(x => x.WithName("Food value").WithValue((externalEmojis ? $"{DiscordHelpers.DiscordEmojis[DiscordEmoji.Food]} " : "") + $"{item.FoodValue}").WithIsInline(true));
 
-
-            if (item.AssetUrl != null)
+            bool showImages = true;
+            Stream assetStream = null;
+            var random = new Random();
+            switch (item.ItemCategory)
             {
-                Stream assetStream;
-                switch (item.ItemCategory)
-                {
-                    case FRItemCategory.Equipment:
-                        {
-                            var random = new Random();
-                            var modernBreeds = GeneratedFRHelpers.GetModernBreeds();
-                            using (var client = new WebClient())
-                                assetStream = await client.OpenReadTaskAsync(string.Format(SiteHelpers.DummyDragonApparelProxyUrl, (int)modernBreeds[random.Next(1, modernBreeds.Length)], random.Next(0, 2), $"{item.FRId}"));
+                case FRItemCategory.Equipment:
+                    {
+                        var modernBreeds = GeneratedFRHelpers.GetModernBreeds();
+                        using (var client = new WebClient())
+                            assetStream = await client.OpenReadTaskAsync(string.Format(SiteHelpers.DummyDragonApparelProxyUrl, (int)modernBreeds[random.Next(1, modernBreeds.Length)], random.Next(0, 2), $"{item.FRId}"));
 
-                            break;
-                        }
-                    case FRItemCategory.Skins:
-                        {
-                            var skinType = item.ItemType.Split(' ');
-                            var dragonType = (DragonType)Enum.Parse(typeof(DragonType), skinType[0]);
-                            var gender = (Gender)Enum.Parse(typeof(Gender), skinType[1]);
+                        break;
+                    }
+                case FRItemCategory.Skins:
+                    {
+                        showImages = bool.TryParse(await settingManager.GetSettingValue("LOOKUP_SKIN_SHOW_IMAGES", guild), out var showSkinImages) && showSkinImages;
+
+                        var skinType = item.ItemType.Split(' ');
+                        var dragonType = (DragonType)Enum.Parse(typeof(DragonType), skinType[0]);
+                        var gender = (Gender)Enum.Parse(typeof(Gender), skinType[1]);
+
+                        if (showImages)
                             using (var client = new WebClient())
                                 assetStream = await client.OpenReadTaskAsync(string.Format(SiteHelpers.DummyDragonSkinProxyUrl, (int)dragonType, (int)gender, $"{item.FRId}"));
 
-                            var username = Regex.Match(item.Description, @"Designed by ([^.]+)[.|\)]");
-                            if (username.Success)
+                        var username = Regex.Match(item.Description, @"Designed by ([^.]+)[.|\)]");
+                        if (username.Success)
+                        {
+                            var frUser = await FRHelpers.GetOrUpdateFRUser(username.Groups[1].Value);
+                            if (frUser != null)
                             {
-                                var frUser = await FRHelpers.GetOrUpdateFRUser(username.Groups[1].Value);
-                                if (frUser != null)
+                                embed.AddField(x =>
                                 {
-                                    embed.AddField(x =>
-                                    {
-                                        x.Name = "Created by";
-                                        x.IsInline = true;
-                                        if (frUser.User != null && frUser.User.ProfileSettings.PublicProfile)
-                                            x.Value = $"[FR: {frUser.Username}]({string.Format(FRHelpers.UserProfileUrl, frUser.FRId)}) | [FRTools: {frUser.User.UserName}]({string.Format(SiteHelpers.ProfilePageUrl, frUser.User.UserName)})";
-                                        else
-                                            x.Value = $"[{frUser.Username}]({string.Format(FRHelpers.UserProfileUrl, frUser.FRId)})";
-                                    });
-                                }
+                                    x.Name = "Created by";
+                                    x.IsInline = true;
+                                    if (frUser.User != null && frUser.User.ProfileSettings.PublicProfile)
+                                        x.Value = $"[FR: {frUser.Username}]({string.Format(FRHelpers.UserProfileUrl, frUser.FRId)}) | [FRTools: {frUser.User.UserName}]({string.Format(SiteHelpers.ProfilePageUrl, frUser.User.UserName)})";
+                                    else
+                                        x.Value = $"[{frUser.Username}]({string.Format(FRHelpers.UserProfileUrl, frUser.FRId)})";
+                                });
                             }
-
-                            break;
                         }
-                    case FRItemCategory.Familiar:
-                        {
-                            using (var client = new WebClient())
-                                assetStream = await client.OpenReadTaskAsync(string.Format(FRHelpers.FamiliarArtUrl, item.FRId));
 
-                            break;
-                        }
-                    default:
+                        break;
+                    }
+                case FRItemCategory.Familiar:
+                    {
+                        using (var client = new WebClient())
+                            assetStream = await client.OpenReadTaskAsync(string.Format(FRHelpers.FamiliarArtUrl, item.FRId));
+
+                        break;
+                    }
+                case FRItemCategory.Trinket when item.ItemType == "Specialty Item" && (item.Name.StartsWith("Primary") || item.Name.StartsWith("Secondary") || item.Name.StartsWith("Tertiary")):
+                    {
+                        showImages = bool.TryParse(await settingManager.GetSettingValue("LOOKUP_GENE_SHOW_IMAGES", guild), out var showSkinImages) && showSkinImages;
+
+                        if (showImages)
                         {
-                            if (item.ItemType == "Scene")
+                            var ancientBreed = GeneratedFRHelpers.GetAncientBreeds().Where(x => item.Name.EndsWith($"({x})"));
+                            if (ancientBreed.Any())
                             {
                                 using (var client = new WebClient())
-                                    assetStream = await client.OpenReadTaskAsync(string.Format(FRHelpers.SceneArtUrl, item.FRId));
-                            }
-                            else if (item.ItemType == "Forum Vista")
-                            {
-                                using (var client = new WebClient())
-                                    assetStream = await client.OpenReadTaskAsync(string.Format(FRHelpers.VistaArtUrl, item.FRId));
+                                    assetStream = await client.OpenReadTaskAsync(string.Format(SiteHelpers.DummyDragonGeneProxyUrl, (int)ancientBreed.First(), random.Next(0, 2), $"{item.FRId}"));
                             }
                             else
+                            {
+                                var modernBreeds = GeneratedFRHelpers.GetModernBreeds();
+                                using (var client = new WebClient())
+                                    assetStream = await client.OpenReadTaskAsync(string.Format(SiteHelpers.DummyDragonGeneProxyUrl, (int)modernBreeds[random.Next(1, modernBreeds.Length)], random.Next(0, 2), $"{item.FRId}"));
+                            }
+                        }
+                        break;
+                    }
+                default:
+                    {
+                        if (item.ItemType == "Scene")
+                        {
+                            using (var client = new WebClient())
+                                assetStream = await client.OpenReadTaskAsync(string.Format(FRHelpers.SceneArtUrl, item.FRId));
+                        }
+                        else
+                        {
+                            if (item.AssetUrl != null)
                             {
                                 Console.WriteLine("Unknown art type, attempting AssetURL");
                                 using (var client = new WebClient())
                                     assetStream = await client.OpenReadTaskAsync($"https://www1.flightrising.com{item.AssetUrl}");
                             }
-
-                            break;
                         }
-                }
+
+                        break;
+                    }
+            }
+            if (showImages && assetStream != null)
+            {
                 files.Add(new KeyValuePair<string, Stream>($"asset_{item.FRId}.png", assetStream));
                 embed.WithImageUrl($"attachment://asset_{item.FRId}.png");
             }

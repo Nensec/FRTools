@@ -25,7 +25,6 @@ namespace FRTools.Common
         public const string DressingRoomDummySkinUrl = "https://www1.flightrising.com/hoard/preview-image?gender={1}&breed={0}&item={2}";
         public const string ItemFetchUrl = "https://flightrising.com/includes/itemajax.php?id={0}&tab={1}";
         public const string FamiliarArtUrl = "https://www1.flightrising.com/static/cms/familiar/art/{0}.png";
-        public const string VistaArtUrl = "https://www1.flightrising.com/static/cms/fvista/{0}.png";
         public const string SceneArtUrl = "https://www1.flightrising.com/static/cms/scene/{0}.png";
         public const string UserProfileUrl = "https://www1.flightrising.com/clan-profile/{0}";
         public const string GameDatabaseUrl = "https://www1.flightrising.com/game-database/item/{0}";
@@ -322,7 +321,7 @@ namespace FRTools.Common
         public static FRItem FetchItem(int itemId, string category = "skins")
         {
             var client = new HtmlWeb();
-            var itemDoc = client.Load(string.Format(FRHelpers.ItemFetchUrl, itemId, category));
+            var itemDoc = client.Load(string.Format(ItemFetchUrl, itemId, category));
             var iconUrl = itemDoc.DocumentNode.SelectSingleNode("/div/div[1]/img[2]").GetAttributeValue("src", "/images/cms//.png");
 
             if (iconUrl == "/images/cms//.png")
@@ -366,11 +365,11 @@ namespace FRTools.Common
                         break;
                     case FRItemCategory.Equipment:
                         item.TreasureValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText);
-                        item.AssetUrl = string.Format(FRHelpers.DressingRoomDummyUrl, (int)DragonType.Fae, (int)Gender.Male) + $"&apparel=22046,{item.FRId}";
+                        item.AssetUrl = string.Format(DressingRoomDummyUrl, (int)DragonType.Fae, (int)Gender.Male) + $"&apparel=22046,{item.FRId}";
                         break;
                     case FRItemCategory.Familiar:
                         item.TreasureValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText);
-                        item.AssetUrl = string.Format(FRHelpers.FamiliarArtUrl, item.FRId);
+                        item.AssetUrl = string.Format(FamiliarArtUrl, item.FRId);
                         break;
                     case FRItemCategory.Battle_Items:
                         item.TreasureValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText);
@@ -379,9 +378,7 @@ namespace FRTools.Common
                     case FRItemCategory.Trinket:
                         item.TreasureValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText);
                         if (item.ItemType == "Scene")
-                            item.AssetUrl = string.Format(FRHelpers.SceneArtUrl, item.FRId);
-                        if (item.ItemType == "Forum Vista")
-                            item.AssetUrl = string.Format(FRHelpers.VistaArtUrl, item.FRId);
+                            item.AssetUrl = string.Format(SceneArtUrl, item.FRId);
                         break;
                 }
 

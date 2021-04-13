@@ -1,13 +1,16 @@
 ﻿using FRTools.Data.DataModels.DiscordModels;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace FRTools.Web.Models
+namespace FRTools.Common
 {
     public class DiscordMetadata
     {
         public List<DiscordSettingCategory> BotSettingCategories { get; set; } = new List<DiscordSettingCategory>();
         public List<DiscordSetting> BotSettings { get; set; } = new List<DiscordSetting>();
         public List<DiscordModule> Modules { get; set; } = new List<DiscordModule>();
+
+        public List<DiscordSetting> AllSettings => BotSettings.Concat(Modules.SelectMany(x => x.Settings)).Concat(Modules.SelectMany(x => x.Commands.SelectMany(c => c.Settings))).ToList();
     }
 
     public class DiscordSetting
@@ -19,6 +22,7 @@ namespace FRTools.Web.Models
         public string[] ExtraArgs { get; set; }
         public DiscordSettingCategory Category { get; set; }
         public int Order { get; set; }
+        public string DefaultValue { get; set; }
     }
 
     public class DiscordSettingCategory
@@ -33,7 +37,7 @@ namespace FRTools.Web.Models
         public string Description { get; set; }
         public string[] Aliases { get; set; }
         public List<DiscordCommand> Commands { get; set; } = new List<DiscordCommand>();
-        public List<DiscordSettingCategory> BotSettingCategories { get; set; } = new List<DiscordSettingCategory>();
+        public List<DiscordSettingCategory> SettingCategories { get; set; } = new List<DiscordSettingCategory>();
         public List<DiscordSetting> Settings { get; set; } = new List<DiscordSetting>();
         public DiscordHelp Help { get; set; }
         public bool RequireOwner { get; set; }
@@ -51,6 +55,7 @@ namespace FRTools.Web.Models
         public DiscordModule ParentModule { get; set; }
         public List<DiscordCommandParameter> Parameters { get; set; }
         public List<DiscordSubCommand> SubCommands { get; set; }
+        public List<DiscordSetting> Settings { get; set; }
     }
 
     public class DiscordSubCommand
@@ -65,7 +70,7 @@ namespace FRTools.Web.Models
         public object MustMatchValue { get; set; }
         public bool IsOptional { get; set; }
     }
-    
+
     public class DiscordHelp
     {
         public string Synopsis { get; set; }
@@ -122,16 +127,20 @@ namespace FRTools.Web.Models
         public string SettingName { get; set; }
         public string Description { get; set; }
         public string Module { get; set; }
+        public string Command { get; set; }
         public string[] ExtraArgs { get; set; }
         public DiscordSettingCategory Category { get; set; }
         public int Order { get; set; }
+        public List<DiscordSettingViewModel> Settings { get; set; }
     }
 
     public class DiscordModuleViewModel
     {
         public ServerViewModel ParentServer { get; set; }
-        public DiscordModule SelectedModule { get; set; }    
-        public List<DiscordSettingViewModel> ModuleSettings { get; set; }
+        public DiscordModule SelectedModule { get; set; }
+        public List<DiscordSettingViewModel> Settings { get; set; }
+        public List<DiscordSettingCategory> Categories { get; set; }
+        public List<DiscordCommandViewModel> Commands { get; set; }
     }
 
     public class DiscordCommandViewModel
@@ -139,6 +148,7 @@ namespace FRTools.Web.Models
         public ServerViewModel ParentServer { get; set; }
         public DiscordModule SelectedModule { get; set; }
         public DiscordCommand SelectedCommand { get; set; }
+        public List<DiscordSettingViewModel> Settings { get; set; }
     }
 
     public class DiscordHelpViewModel

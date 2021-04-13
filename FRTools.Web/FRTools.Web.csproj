@@ -326,7 +326,6 @@
     <Compile Include="Infrastructure\SmartRequiredAttribute.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\AdminModels.cs" />
-    <Compile Include="Models\DiscordModels.cs" />
     <Compile Include="Models\ManageModels.cs" />
     <Compile Include="Models\NewsModels.cs" />
     <Compile Include="Models\PinglistModels.cs" />
@@ -552,7 +551,8 @@
   </PropertyGroup>
   <Import Project="..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets" Condition="Exists('..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets')" />
   <PropertyGroup>
-    <PreBuildEvent>copy "$(SolutionDir)\DiscordMetadata.json" "$(TargetDir)\DiscordMetadata.json"</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <CopyAllFilesToSingleFolderForMSDeployDependsOn>

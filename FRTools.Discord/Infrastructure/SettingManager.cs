@@ -1,9 +1,12 @@
 ﻿using Discord;
+using FRTools.Common;
 using FRTools.Data;
-using FRTools.Data.DataModels.DiscordModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using DiscordSetting = FRTools.Data.DataModels.DiscordModels.DiscordSetting;
 
 namespace FRTools.Discord.Infrastructure
 {
@@ -11,10 +14,18 @@ namespace FRTools.Discord.Infrastructure
     {
         private Dictionary<(IGuild, string), string> _settingCache = new Dictionary<(IGuild, string), string>();
 
-        public string GetSettingValue(string key, IGuild guild = null)
+        private DiscordMetadata DiscordMetadata { get; }
+
+        public SettingManager()
         {
-            if(!_settingCache.TryGetValue((guild, key), out var val))
-            { 
+            var json = System.IO.File.ReadAllText("DiscordMetadata.json");
+            DiscordMetadata = JsonConvert.DeserializeObject<DiscordMetadata>(json);
+        }
+
+        public async Task<string> GetSettingValue(string key, IGuild guild = null)
+        {
+            if (!_settingCache.TryGetValue((guild, key), out var val))
+            {
                 if (guild != null && !_settingCache.TryGetValue((null, key), out val))
                 {
                     using (var ctx = new DataContext())
@@ -25,13 +36,53 @@ namespace FRTools.Discord.Infrastructure
                     }
                 }
 
-                if(val == null)
+                if (val == null)
                 {
                     using (var ctx = new DataContext())
                     {
                         var dbSetting = ctx.DiscordSettings.FirstOrDefault(x => x.Server == null && x.Key == key);
                         if (dbSetting != null)
                             val = _settingCache[(null, key)] = dbSetting.Value;
+                    }
+                }
+
+                if (val == null)
+                {
+                    var setting = DiscordMetadata.AllSettings.FirstOrDefault(x => x.Key == key);
+                    if (setting != null)
+                    {
+                        var type = Type.GetType(setting.Type);
+                        if (type.IsArray)
+                        {
+                            var arrayType = type.GetElementType();
+
+                            if (setting.DefaultValue == "ALL" && guild != null)
+                            {
+                                if (arrayType.IsEnum)                                
+                                    val = string.Join(",", Enum.GetValues(arrayType));                                
+                                else
+                                {
+                                    var channels = (await guild.GetChannelsAsync()).ToList();
+                                    switch (arrayType.Name)
+                                    {
+                                        case "ITextChannel":
+                                            channels = channels.Where(x => x is ITextChannel).ToList();
+                                            goto case "IChannel";
+                                        case "IVoiceChannel":
+                                            channels = channels.Where(x => x is IVoiceChannel).ToList();
+                                            goto case "IChannel";
+                                        case "ICategoryChannel":
+                                            channels = channels.Where(x => x is ICategoryChannel).ToList();
+                                            goto case "IChannel";
+                                        case "IChannel":
+                                            val = string.Join(",", channels.Select(x => x.Id.ToString()));
+                                            break;                                            
+                                    }
+                                }
+                            }
+                        }
+                        else
+                            val = setting.DefaultValue;
                     }
                 }
             }
@@ -64,10 +115,10 @@ namespace FRTools.Discord.Infrastructure
             }
         }
 
-        internal void ForceUpdate(IGuild guild, string key)
+        internal async Task ForceUpdate(IGuild guild, string key)
         {
             _settingCache.Remove((guild, key));
-            GetSettingValue(key, guild);
+            await GetSettingValue(key, guild);
         }
     }
 }

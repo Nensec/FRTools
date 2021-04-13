@@ -54,6 +54,10 @@
     <packagesFolder>$(MSBuildProjectDirectory)\..\packages</packagesFolder>
     <discordBot>$(MSBuildProjectDirectory)\..\FRTools.Discord\bin\$(Configuration)</discordBot>
   </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(SolutionDir)\DiscordMetadata.json" "$(SolutionDir)\FRTools.Discord\bin\$(ConfigurationName)"
+copy "$(SolutionDir)\DiscordMetadata.json" "$(SolutionDir)\FRTools.Web\bin\"</PostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <T4ParameterValues Include="packagesFolder">
       <Value>$(packagesFolder)</Value>
@@ -71,6 +75,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\DiscordMetadata.json">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MetadataGenerator.tt</DependentUpon>
+    </None>
     <None Include="..\DiscordMetadata.json">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

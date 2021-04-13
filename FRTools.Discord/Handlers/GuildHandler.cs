@@ -7,17 +7,19 @@ using FRTools.Data.DataModels.FlightRisingModels;
 using FRTools.Data.Messages;
 using FRTools.Discord.Infrastructure;
 using System;
+using System.Configuration;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace FRTools.Discord.Handlers
 {
-    [DiscordSettingCategory("ITEMDB", "Item database")] 
+    [DiscordSettingCategory("ITEMDB", "Item database")]
     [DiscordSettingCategory("FLASHSALE", "Flash sale announce")]
-    [DiscordSetting("GUILDCONFIG_PREFIX", typeof(string), "Command prefix", "The prefix used by the bot to listen to commands")]
+    [DiscordSetting("GUILDCONFIG_PREFIX", typeof(string), "Command prefix", "The prefix used by the bot to listen to commands", DefaultValue = "$")]
     [DiscordSetting("GUILDCONFIG_ANN_CHANNEL", typeof(ITextChannel), "Announcement channel", "The channel the bot will post announcement messages")]
     [DiscordSetting("GUILDCONFIG_FLASHSALE_ANNNEWITEM", typeof(bool), "Announce new items", "Should the bot announce new flash sales added to the market place on Flight Rising? These announcements are posted in $<GUILD:GUILDCONFIG_ANN_CHANNEL>", Category = "FLASHSALE")]
     [DiscordSetting("GUILDCONFIG_ITEMDB_ANNNEWITEM", typeof(bool), "Announce new items", "Should the bot announce new items added to Flight Rising?", Category = "ITEMDB")]
@@ -175,7 +177,7 @@ namespace FRTools.Discord.Handlers
         internal async Task HandleMessage(SocketMessage msg)
         {
             int argPos = 0;
-            var prefix = _settingManager.GetSettingValue("GUILDCONFIG_PREFIX", Guild) ?? "$";
+            var prefix = await _settingManager.GetSettingValue("GUILDCONFIG_PREFIX", Guild);
 
 #if DEBUG
             prefix = "!!!";
@@ -183,10 +185,15 @@ namespace FRTools.Discord.Handlers
 
             if (msg is IUserMessage message && !message.Author.IsBot && message.Author.Id != _client.CurrentUser.Id)
             {
-                var context = new SocketCommandContext(_client, msg as SocketUserMessage);
+                var context = new FRToolsSocketCommandContext(_client, msg as SocketUserMessage);
 
                 if (message.HasStringPrefix(prefix, ref argPos) && !char.IsNumber(message.Content[argPos]) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))
                 {
+                    if (message.Content.Substring(argPos) == "help")
+                    {
+                        await context.Channel.SendMessageAsync(embed: new EmbedBuilder().WithDescription($"Please see the following link for help. [click here]({ConfigurationManager.AppSettings["WebsiteBaseURL"]}/discord/help)").Build());
+                        return;
+                    }
                     var result = await _globalCommandService.ExecuteAsync(context, argPos, _serviceProvider);
                     if (!result.IsSuccess)
                     {
@@ -198,6 +205,31 @@ namespace FRTools.Discord.Handlers
                         else
                         {
                             await msg.Channel.SendMessageAsync($"```{result.ErrorReason}```").ContinueWith(x => x.Result.DelayedDelete(TimeSpan.FromSeconds(10)));
+                        }
+                    }
+                }
+                else if (message.Content.StartsWith("https://www1.flightrising.com/"))
+                {
+                    // Handle FR links as commands
+                    if (bool.TryParse(await _settingManager.GetSettingValue("LOOKUP_AUTO_LINK", Guild), out var dragonAutoLink) && dragonAutoLink)
+                    {
+                        var allowedChannels = (await _settingManager.GetSettingValue("LOOKUP_AUTO_LINK_CHANNELS", context.Guild)).Split(',').Select(x => ulong.Parse(x));
+                        if (!allowedChannels.Contains(message.Channel.Id))
+                            return;
+
+                        context.AutomatedCommand = true;
+                        var dragonLink = Regex.Match(message.Content, @".+/dragon/(\d+)");
+                        if (dragonLink.Success)
+                        {
+                            await _globalCommandService.ExecuteAsync(context, $"lookup dragon {dragonLink.Groups[1].Value}", _serviceProvider);
+                            return;
+                        }
+
+                        var itemLink = Regex.Match(message.Content, @".+/game-database/item/(\d+)");
+                        if (itemLink.Success)
+                        {
+                            await _globalCommandService.ExecuteAsync(context, $"lookup item {itemLink.Groups[1].Value}", _serviceProvider);
+                            return;
                         }
                     }
                 }
@@ -228,17 +260,17 @@ namespace FRTools.Discord.Handlers
         internal async Task HandleFlashSaleUpdate(FlashSaleMessage flashSaleMessage)
         {
             // Check if setting is turned on
-            if (bool.TryParse(_settingManager.GetSettingValue("GUILDCONFIG_FLASHSALE_ANNNEWITEM", Guild), out var shouldAnnounce) && shouldAnnounce)
+            if (bool.TryParse(await _settingManager.GetSettingValue("GUILDCONFIG_FLASHSALE_ANNNEWITEM", Guild), out var shouldAnnounce) && shouldAnnounce)
             {
                 // Get the channel to announce item in
                 ISocketMessageChannel annChannel = null;
-                var annChannelId = _settingManager.GetSettingValue("GUILDCONFIG_ANN_CHANNEL", Guild);
+                var annChannelId = await _settingManager.GetSettingValue("GUILDCONFIG_ANN_CHANNEL", Guild);
                 if (annChannelId != null)
                     annChannel = Guild.GetChannel(ulong.Parse(annChannelId)) as ISocketMessageChannel;
 
                 if (annChannel != null)
                 {
-                    var embed = await ItemHandler.CreateItemEmbed(flashSaleMessage.Item, Guild, true);
+                    var embed = await ItemHandler.CreateItemEmbed(flashSaleMessage.Item, Guild, _settingManager, true);
                     embed.Embed.Title = "New flash sale found! - " + embed.Embed.Title;
                     embed.Embed.Color = new global::Discord.Color(243, 181, 144);
                     await annChannel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
@@ -262,7 +294,7 @@ namespace FRTools.Discord.Handlers
 
         internal async Task HandleTestMessage(GenericMessage testMessage)
         {
-            var channelId = _settingManager.GetSettingValue(testMessage.Message, Guild);
+            var channelId = await _settingManager.GetSettingValue(testMessage.Message, Guild);
             if (channelId != null)
             {
                 var channel = Guild.GetChannel(ulong.Parse(channelId)) as ISocketMessageChannel;
@@ -323,30 +355,30 @@ namespace FRTools.Discord.Handlers
         internal async Task HandleNewItemUpdate(NewItemMessage newItemMessage)
         {
             // Check if setting is turned on
-            if (bool.TryParse(_settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_ANNNEWITEM", Guild), out var shouldAnnounce) && shouldAnnounce)
+            if (bool.TryParse(await _settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_ANNNEWITEM", Guild), out var shouldAnnounce) && shouldAnnounce)
             {
                 // Check if item is in list of announceables
-                var itemTypesToAnnounce = (_settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_NEWITEMTYPES", Guild) ?? "").Split(',').Select(x => (FRItemCategory)int.Parse(x)).ToList();
+                var itemTypesToAnnounce = ((await _settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_NEWITEMTYPES", Guild)) ?? "").Split(',').Select(x => (FRItemCategory)int.Parse(x)).ToList();
                 if (itemTypesToAnnounce.Contains(newItemMessage.Item.ItemCategory))
                 {
                     // Get the channel to announce item in
                     ISocketMessageChannel annChannel = null;
-                    if (bool.TryParse(_settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_USEANNCHANNEL", Guild), out var useGeneralAnnChannel) && useGeneralAnnChannel)
+                    if (bool.TryParse(await _settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_USEANNCHANNEL", Guild), out var useGeneralAnnChannel) && useGeneralAnnChannel)
                     {
-                        var annChannelId = _settingManager.GetSettingValue("GUILDCONFIG_ANN_CHANNEL", Guild);
+                        var annChannelId = await _settingManager.GetSettingValue("GUILDCONFIG_ANN_CHANNEL", Guild);
                         if (annChannelId != null)
                             annChannel = Guild.GetChannel(ulong.Parse(annChannelId)) as ISocketMessageChannel;
                     }
                     else
                     {
-                        var annNewItemChannelId = _settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_ANN_CHANNEL", Guild);
+                        var annNewItemChannelId = await _settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_ANN_CHANNEL", Guild);
                         if (annNewItemChannelId != null)
                             annChannel = Guild.GetChannel(ulong.Parse(annNewItemChannelId)) as ISocketMessageChannel;
                     }
 
                     if (annChannel != null)
                     {
-                        var embed = await ItemHandler.CreateItemEmbed(newItemMessage.Item, Guild);
+                        var embed = await ItemHandler.CreateItemEmbed(newItemMessage.Item, Guild, _settingManager);
                         embed.Embed.Title = "New item found! - " + embed.Embed.Title;
                         await annChannel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
                     }

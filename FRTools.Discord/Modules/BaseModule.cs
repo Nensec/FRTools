@@ -11,7 +11,7 @@ using Color = Discord.Color;
 
 namespace FRTools.Discord.Modules
 {
-    public abstract class BaseModule : InteractiveBase
+    public abstract class BaseModule : InteractiveBase<FRToolsSocketCommandContext>
     {
         protected DataContext DbContext { get; }
         protected SettingManager SettingManager { get; }
@@ -65,10 +65,12 @@ namespace FRTools.Discord.Modules
             base.AfterExecute(command);
         }
 
-        public virtual Task ManageModule() => ReplyAsync(embed: new EmbedBuilder().WithDescription($"Visit the following page to manage this module: {ConfigurationManager.AppSettings["WebsiteBaseURL"]}/discord/manage/{Context.Guild.Id}/{ModuleName}").Build());
+        [Command("manage")]
+        [RequireBotPermission(GuildPermission.Administrator)]
+        public Task ManageModule() => ReplyAsync(embed: new EmbedBuilder().WithDescription($"Visit the following page to manage this module: {ConfigurationManager.AppSettings["WebsiteBaseURL"]}/discord/manage/{Context.Guild.Id}/{ModuleName}").Build());
 
         [Command("help")]
-        public Task Help() => ReplyAsync(embed: new EmbedBuilder().WithDescription($"Please see the following link for help. [click here]({ConfigurationManager.AppSettings["WebsiteBaseURL"]}/discord/help)").Build());
+        public Task Help() => ReplyAsync(embed: new EmbedBuilder().WithDescription($"Please see the following link for help for this module. [click here]({ConfigurationManager.AppSettings["WebsiteBaseURL"]}/discord/help#{ModuleName})").Build());
 
         protected EmbedBuilder ErrorEmbed(string errorMessage) => new EmbedBuilder().WithColor(Color.Red).WithDescription(errorMessage);
     }

@@ -12,13 +12,13 @@ namespace FRTools.Discord.Handlers
     {
         public static async Task UpdateGuild(SettingManager settingManager, SocketGuild guild, SocketGuildUser selfUser)
         {
-            if (bool.TryParse(settingManager.GetSettingValue("GUILDCONFIG_DOMINANCE", guild), out var result) && result)
+            if (bool.TryParse(await settingManager.GetSettingValue("GUILDCONFIG_DOMINANCE", guild), out var result) && result)
             {
-                if (ulong.TryParse(settingManager.GetSettingValue("GUILDCONFIG_DOMINANCE_ROLE", guild), out var roleId))
+                if (ulong.TryParse(await settingManager.GetSettingValue("GUILDCONFIG_DOMINANCE_ROLE", guild), out var roleId))
                 {
                     var dominanceRole = guild.GetRole(roleId);
                     ITextChannel annChannel = null;
-                    var annChannelId = settingManager.GetSettingValue("GUILDCONFIG_ANN_CHANNEL", guild);
+                    var annChannelId = await settingManager.GetSettingValue("GUILDCONFIG_ANN_CHANNEL", guild);
                     if (annChannelId != null)
                         annChannel = guild.GetChannel(ulong.Parse(annChannelId)) as ITextChannel;
                     if (selfUser.Roles.Any(x => x.Position > dominanceRole.Position))
@@ -33,12 +33,12 @@ namespace FRTools.Discord.Handlers
                             var latestDominance = ctx.FRDominances.OrderByDescending(x => x.Timestamp).First();
                             if ((Flight)latestDominance.First != Flight.Beastclans)
                             {
-                                if (ulong.TryParse(settingManager.GetSettingValue($"GUILDCONFIG_DOMINANCE_ROLE_{latestDominance.First}", guild), out var firstPlaceFlight))
+                                if (ulong.TryParse(await settingManager.GetSettingValue($"GUILDCONFIG_DOMINANCE_ROLE_{latestDominance.First}", guild), out var firstPlaceFlight))
                                 {
                                     var firstPlaceRole = guild.GetRole(firstPlaceFlight);
                                     foreach (var user in firstPlaceRole.Members.ToList())
                                     {
-                                        if (settingManager.GetSettingValue($"GUILDCONFIG_DOMINANCE_USER_{user.Id}", guild) == "true")
+                                        if ((await settingManager.GetSettingValue($"GUILDCONFIG_DOMINANCE_USER_{user.Id}", guild)) == "true")
                                             await user.AddRoleAsync(dominanceRole);
                                     }
                                     if (annChannel != null)

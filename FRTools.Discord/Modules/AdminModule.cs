@@ -133,5 +133,20 @@ namespace FRTools.Discord.Modules
             else
                 await ReplyAsync("Item not found");
         }
+
+        [Name("Update item asseturl"), Command("updateitemass")]
+        public async Task UpdateItemAssetUrl(int frId, string assetUrl)
+        {
+            var item = DbContext.FRItems.FirstOrDefault(x => x.FRId == frId);
+            if (item == null)
+            {
+                await ReplyAsync("Item does not exist");
+                return;
+            }
+
+            item.AssetUrl = assetUrl;
+            DbContext.SaveChanges();
+            await ReplyAsync("Updated item");
+        }
     }
 }
