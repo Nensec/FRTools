@@ -24,6 +24,7 @@ namespace FRTools.Web.Controllers
                 Pinglists = LoggedInUser.Pinglists.ToList(),
                 IsOwn = true,
             };
+            AddInfoNotification($"You are looking at your own profile, you will see everything regardless of settings. To see your profile as others see it visit <a href=\"{Url.RouteUrl("Profile", new { username = vm.User.UserName })}\"><b>this link</b></a>. To edit your profile, go to the edit page <a href=\"{Url.RouteUrl("EditProfile")}\"><b>here</b></a>.");
             return View(vm);
         }
 

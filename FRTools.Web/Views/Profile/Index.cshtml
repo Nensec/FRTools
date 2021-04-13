@@ -1,22 +1,17 @@
 ﻿@model ViewProfileViewModel
 
 @{
+    Layout = V2Layout;
     ViewBag.Title = Model.User.UserName + (Model.User.UserName.EndsWith("s") ? "" : "'s") + " profile";
     var previews = Model.Previews?.Select((x, i) => (x, i)).ToList();
     var skins = Model.Skins?.Select((x, i) => (x, i)).ToList();
 }
 
-@if (Model.IsOwn)
-{
-    <div class="alert alert-info">
-        You are looking at your own profile, you will see everything regardless of settings. To see your profile as others see it visit <a href="@Url.RouteUrl("Profile", new { username = Model.User.UserName })"><b>this link</b></a>. To edit your profile, go to the edit page <a href="@Url.RouteUrl("EditProfile")"><b>here</b></a>.
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>@(ViewBag.Title)</h5>
     </div>
-}
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4>@(ViewBag.Title)</h4>
-    </div>
-    <div class="panel-body">
+    <div class="card-body">
         <p>
             @if (Model.User.FRUser != null)
             {
@@ -48,24 +43,24 @@
     @if (Model.User.ProfileSettings.ShowSkinsOnProfile || Model.IsOwn)
     {
         <div class="col-md-@((Model.User.ProfileSettings.ShowPreviewsOnProfile || Model.IsOwn)? "6" : "12")">
-            <div class="panel panel-success">
-                <div class="panel-heading">
-                    <h4>Skins owned</h4>
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5>Skins owned</h5>
                 </div>
-                <div class="panel-body">
+                <div class="card-body">
                     <p>
                         These are skins that @(Model.User.UserName) has uploaded to the site, click on an image to open its preview page.
                     </p>
                     @if (Model.Skins.Any())
                     {
-                        <div class="well clearfix skin-container">
+                        <div class="skin-container d-flex flex-wrap">
                             @foreach (var skin in skins)
                             {
                                 <div class="col-sm-@(Model.User.ProfileSettings.ShowPreviewsOnProfile || Model.IsOwn ? "4" : "2")">
                                     <a href="@Url.RouteUrl("Preview", new { SkinId = skin.Item1.GeneratedId })">
-                                        <img class="loading" id="Skin@(skin.Item2)" data-toggle="popover" style="max-width:100%; max-height:100%" src="@Url.RouteUrl("DummyPreview", new { skinId = skin.Item1.GeneratedId, version = skin.Item1.Version })" />
-                                        <div id="Skin@(skin.Item2)_popover" class="hide">
-                                            <ul style="list-style:none; padding:0">
+                                        <img class="loading w-100 h-100" id="Skin@(skin.Item2)" data-toggle="popover" src="@Url.RouteUrl("DummyPreview", new { skinId = skin.Item1.GeneratedId, version = skin.Item1.Version })" />
+                                        <div id="Skin@(skin.Item2)_popover" class="d-none">
+                                            <ul class="list-unstyled">
                                                 <li><b>Id:</b> @(skin.Item1.GeneratedId)</li>
                                                 <li><b>Title:</b> @(skin.Item1.Title ?? "No title")</li>
                                                 <li><b>Description:</b> @(skin.Item1.Description ?? "No description")</li>
@@ -112,80 +107,82 @@
             </script>
         }
         <div class="col-md-@((Model.User.ProfileSettings.ShowSkinsOnProfile || Model.IsOwn) ? "6" : "12")">
-            <div class="panel panel-warning" id="PreviewsPanel">
-                <div class="panel-heading">
-                    <h4>Previews generated</h4>
+            <div class="card mt-3" id="PreviewsPanel">
+                <div class="card-header">
+                    <h5>Previews generated</h5>
                 </div>
-                <div class="panel-body">
+                <div class="card-body">
                     <p>
                         These are all the previews that @(Model.User.UserName) has generated on the various skins available on the tool.
                     </p>
                     @if (Model.Previews.Any())
                     {
-                        <div class="col-sm-2 carousel-container">
-                            <ol class="carousel-indicators">
-                                @foreach (var preview in previews)
-                                {
-                                    <li data-id="@(preview.Item1.Id)" data-item="@(preview.Item2)" data-target="#carousel-previews" data-slide-to="@(preview.Item2)" class="@(preview.Item2 == 0 ? "activeIndicator" : "")">
-                                        <img src="@(Model.CDNBasePath + preview.Item1.PreviewImage)" />
-                                    </li>
-                                }
-                            </ol>
-                        </div>
-                        <div class="col-sm-10">
-                            <div id="carousel-previews" class="carousel slide" data-ride="carousel">
-                                <div class="carousel-inner" role="listbox">
+                        <div class="row">
+                            <div class="col-2 ml-n3 pr-0">
+                                <ol class="carousel-minis carousel-indicators">
                                     @foreach (var preview in previews)
                                     {
-                                        <div class="item @(preview.Item2 == 0 ? "active" : "")" data-id="@(preview.Item1.Id)" data-item="@(preview.Item2)">
-                                            <div class="row">
-                                                <img id="Preview@(preview.Item2)" class="center-block" src="@(Model.CDNBasePath + preview.Item1.PreviewImage)" data-toggle="popover">
-                                                <div id="Preview@(preview.Item2)_popover" class="hide">
-                                                    @{ var dragon = DragonCache.FromString(preview.Item1.DragonData); }
-                                                    <ul style="list-style:none; padding:0">
-                                                        <li><b>Colors:</b> @(dragon.BodyColor) / @(dragon.WingColor) / @(dragon.TertiaryColor)</li>
-                                                        <li><b>Genes:</b> @(dragon.BodyGene) / @(dragon.WingGene) / @(dragon.TertiaryGene)</li>
-                                                        <li><b>Element:</b> @(dragon.Element)</li>
-                                                        <li><b>Eyetype:</b> @(dragon.EyeType.GetDescription())</li>
-                                                        @if (preview.Item1.Skin != null)
-                                                        {
-                                                            <li><b>Skin:</b> @Html.Raw(preview.Item1.Skin.Title ?? "<i>No title</i>") <span class="small">(@(preview.Item1.Skin.GeneratedId))</span></li>
-                                                        }
-                                                        else
-                                                        {
-                                                            <li><b>Skin: <i>Skin deleted</i></b></li>
-                                                        }
-                                                    </ul>
+                                        <li data-id="@(preview.Item1.Id)" data-item="@(preview.Item2)" data-target="#carousel-previews" data-slide-to="@(preview.Item2)" class="@(preview.Item2 == 0 ? "activeIndicator" : "")">
+                                            <img src="@(Model.CDNBasePath + preview.Item1.PreviewImage)" />
+                                        </li>
+                                    }
+                                </ol>
+                            </div>
+                            <div class="col-10 px-0">
+                                <div id="carousel-previews" class="carousel slide" data-ride="carousel">
+                                    <div class="carousel-inner" role="listbox">
+                                        @foreach (var preview in previews)
+                                        {
+                                            <div class="carousel-item img-fluid @(preview.Item2 == 0 ? "active" : "")" data-id="@(preview.Item1.Id)" data-item="@(preview.Item2)">
+                                                <div class="row justify-content-center">
+                                                    <img id="Preview@(preview.Item2)" class="center-block" src="@(Model.CDNBasePath + preview.Item1.PreviewImage)" data-toggle="popover">
+                                                    <div id="Preview@(preview.Item2)_popover" class="d-none">
+                                                        @{ var dragon = DragonCache.FromString(preview.Item1.DragonData); }
+                                                        <ul style="list-style:none; padding:0">
+                                                            <li><b>Colors:</b> @(dragon.BodyColor) / @(dragon.WingColor) / @(dragon.TertiaryColor)</li>
+                                                            <li><b>Genes:</b> @(dragon.BodyGene) / @(dragon.WingGene) / @(dragon.TertiaryGene)</li>
+                                                            <li><b>Element:</b> @(dragon.Element)</li>
+                                                            <li><b>Eyetype:</b> @(dragon.EyeType.GetDescription())</li>
+                                                            @if (preview.Item1.Skin != null)
+                                                            {
+                                                                <li><b>Skin:</b> @Html.Raw(preview.Item1.Skin.Title ?? "<i>No title</i>") <span class="small">(@(preview.Item1.Skin.GeneratedId))</span></li>
+                                                            }
+                                                            else
+                                                            {
+                                                                <li><b>Skin: <i>Skin deleted</i></b></li>
+                                                            }
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="text-center">
+                                                    <b>@(preview.Item1.DragonId != null ? "Real dragon" : "Scry dragon")</b>
+                                                    @if (preview.Item1.ScryerUrl != null)
+                                                    {
+                                                        @: - <a href="@($"https://www1.flightrising.com/scrying/predict?breed={(int)dragon.DragonType}&gender={(int)dragon.Gender}&age={(int)dragon.Age}&bodygene={(int)dragon.BodyGene}&body={(int)dragon.BodyColor}&winggene={(int)dragon.WingGene}&wings={(int)dragon.WingColor}&tertgene={(int)dragon.TertiaryGene}&tert={(int)dragon.TertiaryColor}&element={(int)dragon.Element}&eyetype={(int)dragon.EyeType}")" target="_blank">Visit scrying workshop</a>
+                                                    }
+                                                    else if (Model.IsOwn && preview.Item1.DragonId != null)
+                                                    {
+                                                        @: - <a href="@($"https://www1.flightrising.com/main.php?dragon={preview.Item1.DragonId}")" target="_blank">See dragon</a> - <a href="@($"https://www1.flightrising.com/scrying/predict/{preview.Item1.DragonId}")" target="_blank">Visit scrying workshop</a>
+                                                    }
+                                                    <br />
+                                                    @if (preview.Item1.Skin != null)
+                                                    {
+                                                        @Html.RouteLink("Create preview with this skin", "Preview", new { SkinId = preview.Item1.Skin.GeneratedId })
+                                                    }
+                                                    else
+                                                    {
+                                                        <i>Skin deleted</i>
+                                                    }
+                                                    @if (Model.IsOwn)
+                                                    {
+                                                        <p>
+                                                            <a href="#" onclick="removePreview(@preview.Item1.Id)">Remove from profile</a>
+                                                        </p>
+                                                    }
                                                 </div>
                                             </div>
-                                            <div class="text-center">
-                                                <b>@(preview.Item1.DragonId != null ? "Real dragon" : "Scry dragon")</b>
-                                                @if (preview.Item1.ScryerUrl != null)
-                                                {
-                                                    @: - <a href="@($"https://www1.flightrising.com/scrying/predict?breed={(int)dragon.DragonType}&gender={(int)dragon.Gender}&age={(int)dragon.Age}&bodygene={(int)dragon.BodyGene}&body={(int)dragon.BodyColor}&winggene={(int)dragon.WingGene}&wings={(int)dragon.WingColor}&tertgene={(int)dragon.TertiaryGene}&tert={(int)dragon.TertiaryColor}&element={(int)dragon.Element}&eyetype={(int)dragon.EyeType}")" target="_blank">Visit scrying workshop</a>
-                                                }
-                                                else if (Model.IsOwn && preview.Item1.DragonId != null)
-                                                {
-                                                    @: - <a href="@($"https://www1.flightrising.com/main.php?dragon={preview.Item1.DragonId}")" target="_blank">See dragon</a> - <a href="@($"https://www1.flightrising.com/scrying/predict/{preview.Item1.DragonId}")" target="_blank">Visit scrying workshop</a>
-                                                }
-                                                <br />
-                                                @if (preview.Item1.Skin != null)
-                                                {
-                                                    @Html.RouteLink("Create preview with this skin", "Preview", new { SkinId = preview.Item1.Skin.GeneratedId })
-                                                }
-                                                else
-                                                {
-                                                    <i>Skin deleted</i>
-                                                }
-                                                @if (Model.IsOwn)
-                                                {
-                                                    <p>
-                                                        <a href="#" onclick="removePreview(@preview.Item1.Id)">Remove from profile</a>
-                                                    </p>
-                                                }
-                                            </div>
-                                        </div>
-                                    }
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -202,11 +199,11 @@
     @if (Model.User.ProfileSettings.ShowPingListsOnProfile || Model.IsOwn)
     {
         <div class="col-md-12">
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    <h4>Pinglists created</h4>
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5>Pinglists created</h5>
                 </div>
-                <div class="panel-body">
+                <div class="card-body">
                     <p>
                         These are all the pinglists that @(Model.User.UserName) has created.
                     </p>
@@ -214,8 +211,8 @@
                     {
                         foreach (var pinglistCategory in Model.Pinglists.GroupBy(x => x.PinglistCategory).OrderBy(x => x.Key != null))
                         {
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
+                            <div class="card mt-2">
+                                <div class="card-header">
                                     @if (pinglistCategory.Key == null)
                                     {
                                         <i>Uncategorized</i>
@@ -225,16 +222,16 @@
                                         @(pinglistCategory.Key.Name)
                                     }
                                 </div>
-                                <div class="panel-body">
+                                <div class="card-body">
                                     @foreach (var pinglist in pinglistCategory)
                                     {
                                         <div class="col-md-4 col-sm-6 col-xs-12">
                                             <a href="@Url.RouteUrl("PinglistDirect", new { listId = pinglist.GeneratedId })">
-                                                <div class="panel panel-default">
-                                                    <div class="panel-heading">
+                                                <div class="card mt-2">
+                                                    <div class="card-header">
                                                         @(pinglist.Name)
                                                     </div>
-                                                    <div class="panel-body text-muted">
+                                                    <div class="card-body text-muted">
                                                         <div><b>Id:</b> @(pinglist.GeneratedId)</div>
                                                         <div><b>Entries:</b> @(pinglist.Entries.Count)</div>
                                                     </div>
@@ -300,42 +297,51 @@
         direction: rtl;
     }
 
-    .carousel-indicators {
+    .carousel-minis {
+        display: block;
         position: initial;
-        margin-left: 0;
+        margin-right: 0;
+        overflow-y: auto;
+        max-height: 427px;
+        direction: rtl;
         padding-right: 0;
         width: unset;
         margin-bottom: 0;
+        margin-left: 0;
+    }
+
+        .carousel-minis li:hover {
+            opacity: 1;
         }
 
-            .carousel-indicators li {
-                direction: ltr;
-                display: block;
-                background: unset;
-                border: unset;
-                text-indent: 0;
-                margin: 0;
-                @if (Model.User.ProfileSettings.ShowSkinsOnProfile || Model.IsOwn)
-                {
-                    @:width: unset;
-                }
-                else
-                {
-                    @:width: 50%;
-                    @:float: left;
-                }
-                height: unset;
-                transition: all 1s ease-in-out;
-                -moz-transition: all 1s ease-in-out;
-                -webkit-transition: all 1s;
-                padding: 3px;
+        .carousel-minis li {
+            direction: ltr;
+            display: block;
+            background: unset;
+            border: unset;
+            text-indent: 0;
+            margin: 0;
+            @if (Model.User.ProfileSettings.ShowSkinsOnProfile || Model.IsOwn)
+            {
+                @: width: unset;
             }
+            else
+            {
+                @: width: 50%;
+                @: float: left;
+            }
+            height: unset;
+            transition: all 1s ease-in-out;
+            -moz-transition: all 1s ease-in-out;
+            -webkit-transition: all 1s;
+            padding: 3px;
+        }
 
-            .carousel-indicators li.activeIndicator {
+            .carousel-minis li.activeIndicator {
                 background-color: #d9edf7;
             }
 
-            .carousel-indicators li img {
+            .carousel-minis li img {
                 width: 100%;
                 height: 100%;
             }
