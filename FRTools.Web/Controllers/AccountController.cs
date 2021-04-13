@@ -27,7 +27,13 @@ namespace FRTools.Web.Controllers
         public UserManager<User, int> UserManager => _userManager ?? (_userManager = HttpContext.GetOwinContext().GetUserManager<UserManager<User, int>>());
 
         [Route("login", Name = "Login")]
-        public ActionResult Login(string returnUrl = null) => View(new ExternalLoginListViewModel { ReturnUrl = returnUrl });
+        public ActionResult Login(string returnUrl = null)
+        {
+            if (Request.IsAuthenticated)
+                return returnUrl == null ? RedirectToRoute("Home") : RedirectToLocal(returnUrl);
+
+            return View(new ExternalLoginListViewModel { ReturnUrl = returnUrl });
+        }
 
         [Route("logout", Name = "LogOut")]
         public ActionResult LogOut()

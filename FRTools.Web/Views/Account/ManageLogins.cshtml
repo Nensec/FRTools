@@ -6,65 +6,64 @@
 }
 
 @{
+    Layout = V2Layout;
     ViewBag.Title = "Manage logins";
 }
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4>Current linked logins</h4>
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>Current linked logins</h5>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <p>
             There must always be a least one login attached to your account (how else would you log in?), but you can add as many accounts as you wish to access the same account.
         </p>
-        @foreach (var account in Model.CurrentLogins)
-        {
-            if (Model.ShowRemoveButton)
+        <div class="row d-flex flex-wrap">
+            @foreach (var account in Model.CurrentLogins)
             {
-                using (Html.BeginForm("RemoveLogin", "Account"))
-                {
-                    @Html.AntiForgeryToken()
-                    <div>
-                        @Html.Hidden("loginProvider", account.LoginProvider)
-                        @Html.Hidden("providerKey", account.ProviderKey)
-                        <div class="col-md-4">
-                            <div class="btn-group btn-group-lg btn-group-justified" role="group" style="margin-bottom:10px">
-                                <div class="btn-group" style="width:80%" role="group" title="@(account.ProviderKey)">
+                <div class="col-md-4 mb-3">
+                    @if (Model.ShowRemoveButton)
+                    {
+                        using (Html.BeginForm("RemoveLogin", "Account"))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("loginProvider", account.LoginProvider)
+                            @Html.Hidden("providerKey", account.ProviderKey)
+                            <div class="btn-group btn-group-lg btn-group-justified w-100" role="group" style="margin-bottom:10px">
+                                <div class="btn-group w-100" role="group" title="@(account.ProviderKey)">
                                     <span disabled class="btn btn-lg btn-social btn-@(account.LoginProvider.ToLower())"><span class="icon-@(account.LoginProvider.ToLower())"></span>@(account.ProviderUsername ?? account.ProviderKey)</span>
                                 </div>
-                                <div class="btn-group" style="width:20%" role="group">
-                                    <button type="submit" class="btn btn-lg btn-danger btn-block"><span class="glyphicon glyphicon-remove"></span></button>
+                                <div class="btn-group" role="group">
+                                    <button type="submit" class="btn btn-lg btn-danger btn-block"><span class="fa fa-remove"></span></button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                }
-            }
-            else
-            {
-                <div class="col-md-4" style="margin-bottom:10px">
-                    <span disabled class="btn btn-lg btn-social btn-block btn-@(account.LoginProvider.ToLower())"><span class="icon-@(account.LoginProvider.ToLower())"></span>@(account.ProviderUsername ?? account.ProviderKey)</span>
+                        }
+                    }
+                    else
+                    {
+                        <span disabled class="btn btn-lg btn-social btn-block btn-@(account.LoginProvider.ToLower())"><span class="icon-@(account.LoginProvider.ToLower())"></span>@(account.ProviderUsername ?? account.ProviderKey)</span>
+                    }
                 </div>
             }
-        }
+        </div>
     </div>
 </div>
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4>Add another login</h4>
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>Add another login</h5>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         @{
             var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
 
             using (Html.BeginForm("LinkLogin", "Account"))
             {
                 @Html.AntiForgeryToken()
-                <div id="providerList">
+                <div class="row d-flex flex-wrap">
                     @foreach (AuthenticationDescription p in loginProviders)
                     {
-                        <div class="col-md-4" style="margin-bottom:10px">
+                        <div class="col-md-4 mb-3">
                             <button type="submit" class="btn btn-block btn-lg btn-social btn-@(p.AuthenticationType.ToLower())" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><span class="icon-@(p.AuthenticationType.ToLower())"></span>@p.AuthenticationType</button>
                         </div>
                     }

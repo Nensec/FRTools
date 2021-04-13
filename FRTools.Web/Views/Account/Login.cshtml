@@ -6,14 +6,15 @@
 }
 
 @{
+    Layout = V2Layout;
     ViewBag.Title = "Login";
 }
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4>Login</h4>
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>Login</h5>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <p>
             Most features on this site will not require you to have an account to use them, however some tools require either authentication or at the very least verification to use<br />
             Logging in (and therefor registering) is <i>not required</i> to use this tool<br />
@@ -28,10 +29,10 @@
             {
                 @Html.AntiForgeryToken()
                 @Html.HiddenFor(model => model.ReturnUrl)
-                <div id="providerList">
+                <div class="row d-flex flex-wrap">
                     @foreach (AuthenticationDescription p in loginProviders)
                     {
-                        <div class="col-md-4" style="margin-bottom:10px">
+                        <div class="col-4 mb-3">
                             <button type="submit" class="btn btn-block btn-lg btn-social btn-@(p.AuthenticationType.ToLower())" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account"><span class="icon-@(p.AuthenticationType.ToLower())"></span>@p.AuthenticationType</button>
                         </div>
                     }
