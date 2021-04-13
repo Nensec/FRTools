@@ -53,6 +53,10 @@ namespace FRTools.Web.Controllers
                 await UpdateCoverage(skin, DataContext);
             try
             {
+                var isOwn = Request.IsAuthenticated && skin.Creator?.Id == HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>();
+                if (isOwn && skin.Visibility == SkinVisiblity.HideEverywhere)
+                    AddInfoNotification("Notice: You have set this skin to be hidden everywhere, only people who you share the link to this skin with can see this skin");
+
                 return View(new PreviewModelViewModel
                 {
                     Title = skin.Title,
@@ -64,8 +68,7 @@ namespace FRTools.Web.Controllers
                     DragonType = (DragonType)skin.DragonType,
                     Gender = (Gender)skin.GenderType,
                     Visibility = skin.Visibility,
-                    Version = skin.Version,
-                    IsOwn = Request.IsAuthenticated && skin.Creator?.Id == HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>()
+                    Version = skin.Version
                 });
             }
             catch (FileNotFoundException)

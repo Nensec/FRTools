@@ -5,85 +5,92 @@
     @Html.AntiForgeryToken()
     @Html.HiddenFor(model => model.SkinId)
 
-    <div class="form-horizontal">
-        <p>
-            Fill in one of the following fields
-        </p>
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <p>
+        Fill in one of the following fields
+    </p>
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.DragonId, htmlAttributes: new { @class = "control-label col-md-4" })
-            <div class="col-md-8">
-                <div class="input-group">
-                    @Html.EditorFor(model => model.DragonId, new { htmlAttributes = new { @class = "form-control", onchange = "clear_DragonId()", oninput = "clear_DragonId()" } })
-                    <span class="input-group-addon" style="padding:0; border-left:0; border-right:0" data-toggle="tooltip" title="Toggle this to swap the gender of the supplied dragon">
-                        @Html.CheckBoxFor(model => model.SwapSilhouette, new { data_on = "Swap", data_off = "Original", data_toggle="toggle"})                        
-                    </span>
-                    <span class="input-group-addon">                        
-                        <span id="DragonHelp" data-toggle="popover" class="glyphicon glyphicon-info-sign"></span>
-                    </span>
-                </div>
-                @Html.ValidationMessageFor(model => model.DragonId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.ScryerUrl, htmlAttributes: new { @class = "control-label col-md-4" })
-            <div class="col-md-8">
-                <div class="input-group">
-                    @Html.EditorFor(model => model.ScryerUrl, new { htmlAttributes = new { @class = "form-control", onchange = "clear_ScryUrl()", oninput = "clear_ScryUrl()" } })
-                    <span class="input-group-addon">
-                        <span id="ScryHelp" data-toggle="popover" class="glyphicon glyphicon-info-sign"></span>
-                    </span>
-                </div>
-                @Html.ValidationMessageFor(model => model.ScryerUrl, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        @if (!Model.DragonType.IsAncientBreed())
-        {
-            <div class="form-group">
-                @Html.LabelFor(model => model.DressingRoomUrl, htmlAttributes: new { @class = "control-label col-md-4" })
-                <div class="col-md-8">
-                    <div class="input-group">
-                        @Html.EditorFor(model => model.DressingRoomUrl, new { htmlAttributes = new { @class = "form-control", onchange = "clear_DressingUrl()", oninput = "clear_DressingUrl()" } })
-                        <span class="input-group-addon">
-                            <span id="DressingHelp" data-toggle="popover" class="glyphicon glyphicon-info-sign"></span>
-                        </span>
+    <div class="form-group row">
+        @Html.LabelFor(model => model.DragonId, htmlAttributes: new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            <div class="input-group">
+                @Html.EditorFor(model => model.DragonId, new { htmlAttributes = new { @class = "form-control", onchange = "clear_DragonId()", oninput = "clear_DragonId()" } })
+                <div class="input-group-append" data-toggle="tooltip" title="Toggle this to swap the gender of the supplied dragon">
+                    <div class="input-group-text">
+                        <div class="custom-control custom-switch mr-n2">
+                            @Html.CheckBoxFor(model => model.SwapSilhouette, new { @class = "custom-control-input" })
+                            <label for="@Html.IdFor(model => model.SwapSilhouette)" class="custom-control-label"></label>
+                        </div>
                     </div>
-                    @Html.ValidationMessageFor(model => model.DressingRoomUrl, "", new { @class = "text-danger" })
+                </div>
+                <div class="input-group-append">
+                    <div class="input-group-text" id="DragonHelp" data-toggle="popover">
+                        <span class="fa fa-info-circle"></span>
+                    </div>
                 </div>
             </div>
-        }
-        <div class="form-group">
-            <div class="col-md-offset-4 col-md-8">
-                <input type="submit" value="Show me the preview!" class="btn btn-primary" />
-            </div>
+            @Html.ValidationMessageFor(model => model.DragonId, "", new { @class = "text-danger" })
         </div>
     </div>
-
-    <div id="DragonHelp_popover" style="display:none;">
-        <p class="text-center">
-            On Flight Rising go to the dragon you want to preview on.<br />
-            Just under the name select it's ID (without the #), right click it and copy it.
-        </p>
-        <img class="text-center" src="https://i.imgur.com/uvFuIJz.gif" />
+    <div class="form-group row">
+        @Html.LabelFor(model => model.ScryerUrl, htmlAttributes: new { @class = "control-label col-md-4" })
+        <div class="col-md-8">
+            <div class="input-group">
+                @Html.EditorFor(model => model.ScryerUrl, new { htmlAttributes = new { @class = "form-control", onchange = "clear_ScryUrl()", oninput = "clear_ScryUrl()" } })
+                <div class="input-group-append">
+                    <div class="input-group-text" id="ScryHelp" data-toggle="popover">
+                        <span class="fa fa-info-circle"></span>
+                    </div>
+                </div>
+            </div>
+            @Html.ValidationMessageFor(model => model.ScryerUrl, "", new { @class = "text-danger" })
+        </div>
     </div>
-
-    <div id="ScryHelp_popover" style="display:none;">
-        <p class="text-center">
-            On Flight Rising go to the "Scrying Workshop" and select "Predict Morphology".<br />
-            After creating the dragon of your choosing, right click the image and copy it's URL.
-        </p>
-        <img width="600" src="https://i.imgur.com/dXaRmNP.gif" />
-    </div>
-
-    <div id="DressingHelp_popover" style="display:none;">
-        <p class="text-center">
-            On Flight Rising go to the "Dressing Room" and select either option to dress a dragon.<br />
-            After dressing the dragon to your liking, right click the image and copy it's URL.
-        </p>
-        <img width="600" src="https://i.imgur.com/kZ1UnCk.gif" />
+    if (!Model.DragonType.IsAncientBreed())
+    {
+        <div class="form-group row">
+            @Html.LabelFor(model => model.DressingRoomUrl, htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                <div class="input-group">
+                    @Html.EditorFor(model => model.DressingRoomUrl, new { htmlAttributes = new { @class = "form-control", onchange = "clear_DressingUrl()", oninput = "clear_DressingUrl()" } })
+                    <div class="input-group-append">
+                        <div class="input-group-text" id="DressingHelp" data-toggle="popover">
+                            <span class="fa fa-info-circle"></span>
+                        </div>
+                    </div>
+                </div>
+                @Html.ValidationMessageFor(model => model.DressingRoomUrl, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    }
+    <div class="d-flex justify-content-end">
+        <input type="submit" value="Show me the preview!" class="btn btn-primary" />
     </div>
 }
+
+<div id="DragonHelp_popover" class="d-none">
+    <p class="text-center">
+        On Flight Rising go to the dragon you want to preview on.<br />
+        Just under the name select it's ID (without the #), right click it and copy it.
+    </p>
+    <img class="text-center" src="https://i.imgur.com/uvFuIJz.gif" />
+</div>
+
+<div id="ScryHelp_popover" class="d-none">
+    <p class="text-center">
+        On Flight Rising go to the "Scrying Workshop" and select "Predict Morphology".<br />
+        After creating the dragon of your choosing, right click the image and copy it's URL.
+    </p>
+    <img width="600" src="https://i.imgur.com/dXaRmNP.gif" />
+</div>
+
+<div id="DressingHelp_popover" class="d-none">
+    <p class="text-center">
+        On Flight Rising go to the "Dressing Room" and select either option to dress a dragon.<br />
+        After dressing the dragon to your liking, right click the image and copy it's URL.
+    </p>
+    <img width="600" src="https://i.imgur.com/kZ1UnCk.gif" />
+</div>
 
 <script>
     clear_DragonId = function () {
@@ -126,6 +133,6 @@
 
     .toggle.btn, .toggle .btn {
         border-radius: 0;
-        border:0;
+        border: 0;
     }
 </style>

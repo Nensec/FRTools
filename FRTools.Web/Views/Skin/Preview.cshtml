@@ -1,82 +1,72 @@
 ﻿@model PreviewModelViewModel
 
 @{
+    Layout = V2Layout;
     ViewBag.Title = "Preview";
 }
 
-@section meta{
+@section meta {
     <meta property="og:title" content="Skin preview@(Model.Title != null ? $" of '{Model.Title}'" : "")" />
     <meta property="og:image" content="@(Model.CDNBasePath + Model.PreviewUrl)" />
     <meta property="og:url" content="@Url.RouteUrl("Preview", new { SkinId = Model.SkinId })" />
     <meta property="og:description" content="@(Model.Description ?? "No description provided")" />
 }
 
-@if (Model.IsOwn && Model.Visibility == SkinVisiblity.HideEverywhere)
-{
-    <div class="alert alert-info alert-dismissible" role="alert">
-        Notice: You have set this skin to be hidden everywhere, only people who you share the link to this skin with can see this skin
-    </div>
-}
-
 <div class="row">
     <div class="col-md-7">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4>
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5>
                     Preview skin: @(Model.Title)
                     <sup>
                         @(Model.Version != 1 ? $"v{Model.Version}" : "")
                     </sup>
-                </h4>
+                </h5>
             </div>
-            <div class="panel-body">
-                <div class="form-horizontal">
-                    <div class="form-group">
-                        <label class="text-right col-md-4">Creator</label>
-                        <div class="col-md-8">
-                            @if (Model.Creator != null && Model.Creator.ProfileSettings.PublicProfile)
+            <div class="card-body">
+                <div class="form-group row">
+                    <label class="col-md-4">Creator</label>
+                    <div class="col-md-8">
+                        @if (Model.Creator != null && Model.Creator.ProfileSettings.PublicProfile)
+                        {
+                            if (Model.Creator.FRUser != null)
                             {
-                                <p>
-                                    @if (Model.Creator.FRUser != null)
-                                    {
-                                        if (Model.Creator.ProfileSettings.ShowFRLinkStatus)
-                                        {
-                                            <a href="@($"https://www1.flightrising.com/clan-profile/{Model.Creator.FRUser.FRId}")" target="_blank" title="Visit the creator's Flight Rising profile!">@Model.Creator.FRUser.Username</a>
-                                        }
-                                        else
-                                        {
-                                            @Model.Creator.UserName
-                                        }
-                                        <span class="glyphicon glyphicon-ok text-success" data-toggle="tooltip" title="This user account is verified on Flight Rising"></span>
-                                    }
-                                    else
-                                    {
-
-                                        @Model.Creator.UserName
-                                        <span class="glyphicon glyphicon-info-sign text-info" data-toggle="tooltip" title="This user account has not been verified on Flight Rising"></span>
-                                    }
-                                    <a href="@Url.RouteUrl("Profile", new { username = Model.Creator.UserName })">
-                                        <span class="glyphicon glyphicon-user text-info" data-toggle="tooltip" title="View this user's profile on this tool"></span>
-                                    </a>
-                                </p>
+                                if (Model.Creator.ProfileSettings.ShowFRLinkStatus)
+                                {
+                                    <a href="@($"https://www1.flightrising.com/clan-profile/{Model.Creator.FRUser.FRId}")" target="_blank" title="Visit the creator's Flight Rising profile!">@Model.Creator.FRUser.Username</a>
+                                }
+                                else
+                                {
+                                    @Model.Creator.UserName
+                                }
+                                <span class="fa fa-check text-success" data-toggle="tooltip" title="This user account is verified on Flight Rising"></span>
                             }
                             else
                             {
-                                <p><i>Anonymous</i></p>
+
+                                @Model.Creator.UserName
+                                <span class="fa fa-info-circle text-info" data-toggle="tooltip" title="This user account has not been verified on Flight Rising"></span>
                             }
-                        </div>
+                            <a href="@Url.RouteUrl("Profile", new { username = Model.Creator.UserName })">
+                                <span class="fa fa-user text-info" data-toggle="tooltip" title="View this user's profile on this site"></span>
+                            </a>
+                        }
+                        else
+                        {
+                            <p><i>Anonymous</i></p>
+                        }
                     </div>
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "text-right control-label col-md-4" })
-                        <div class="col-md-8">
-                            <textarea class="form-control" rows="3" readonly>@(Model.Description)</textarea>
-                        </div>
+                </div>
+                <div class="form-group row">
+                    @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        <textarea class="form-control" rows="3" readonly>@(Model.Description)</textarea>
                     </div>
-                    <div class="form-group">
-                        <label class="text-right col-md-4">Coverage</label>
-                        <div class="col-md-8">
-                            <div>@(Model.Coverage)%</div>
-                        </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-4">Coverage</label>
+                    <div class="col-md-8">
+                        <div>@(Model.Coverage)%</div>
                     </div>
                 </div>
                 <hr />
@@ -85,10 +75,10 @@
         </div>
     </div>
     <div class="col-md-5">
-        <div class="panel panel-default">
-            <div class="panel-body">
+        <div class="card mt-3">
+            <div class="card-body">
                 <div class="text-center">
-                    <img class="dragonImage" src="@(Model.CDNBasePath + Model.PreviewUrl)" />
+                    <img class="img-fluid" src="@(Model.CDNBasePath + Model.PreviewUrl)" />
                 </div>
             </div>
         </div>

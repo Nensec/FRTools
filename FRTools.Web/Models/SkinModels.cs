@@ -58,7 +58,6 @@ namespace FRTools.Web.Models
         public DragonType DragonType { get; set; }
         public Gender Gender { get; set; }
         public SkinVisiblity Visibility { get; set; }
-        public bool IsOwn { get; set; }
         public int Version { get; internal set; }
     }
 

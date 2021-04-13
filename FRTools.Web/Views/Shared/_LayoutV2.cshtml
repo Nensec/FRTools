@@ -168,28 +168,28 @@
                         <div class="mt-3">
                             @if (TempData["Error"] != null)
                             {
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <div class="alert alert-danger alert-dismissible fade show mb-0" role="alert">
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                     @Html.Raw(TempData["Error"])
                                 </div>
                             }
                             @if (TempData["Warning"] != null)
                             {
-                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                <div class="alert alert-warning alert-dismissible fade show mb-0" role="alert">
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                     @Html.Raw(TempData["Warning"])
                                 </div>
                             }
                             @if (TempData["Success"] != null)
                             {
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <div class="alert alert-success alert-dismissible fade show mb-0" role="alert">
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                     @Html.Raw(TempData["Success"])
                                 </div>
                             }
                             @if (TempData["Info"] != null)
                             {
-                                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                <div class="alert alert-info alert-dismissible fade show mb-0" role="alert">
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                     @Html.Raw(TempData["Info"])
                                 </div>
