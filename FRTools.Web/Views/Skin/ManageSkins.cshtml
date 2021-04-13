@@ -1,6 +1,7 @@
 ﻿@model ManageSkinsViewModel
 
 @{
+    Layout = V2Layout;
     ViewBag.Title = "Manage your skins";
 }
 
@@ -8,11 +9,11 @@
     @Scripts.Render("~/bundles/chartjs")
 }
 
-<div class="panel panel-success">
-    <div class="panel-heading">
-        <h4>These are your skins</h4>
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>These are your skins</h5>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <p>
             Click on an image to go to its manage page.
         </p>
@@ -21,7 +22,7 @@
             <script>
                 var previewData = {};
             </script>
-            <div class="well clearfix">
+            <div class="d-flex flex-wrap">
                 @foreach (var skin in Model.Skins.Select((x, i) => (x, i)))
                 {
                     var previews = skin.Item1.Previews.Select((x, i) => (x, i)).ToList();
@@ -34,12 +35,13 @@
                             labels: [@Html.Raw(string.Join(", ", previewData.Select(x => $"'{x.Item1}'")))],
                         data: [@string.Join(", ", previewData.Select(x => x.Item2))]};
                     </script>
-                    <div class="col-sm-2">
-                        <a href="@Url.RouteUrl("Manage", new { SkinId = skin.Item1.GeneratedId, SecretKey = skin.Item1.SecretKey })">
-                            <img onload="$(this).removeClass('loading')" class="loading" id="Skin@(skin.Item2)" data-toggle="popover" style="max-width:100%; max-height:100%" src="@Url.RouteUrl("DummyPreview", new { skinId = skin.Item1.GeneratedId, version = skin.Item1.Version })" />
-                            <div id="Skin@(skin.Item2)_popover" class="hide">
-                                <ul style="list-style:none; padding:0">
-                                    <li><b>Id:</b> @(skin.Item1.GeneratedId)</li>
+                    <div class="col-sm-2 text-center">
+                        <a id="Skin@(skin.Item2)" href="@Url.RouteUrl("Manage", new { SkinId = skin.Item1.GeneratedId, SecretKey = skin.Item1.SecretKey })" data-toggle="popover">
+                            <img onload="$(this).removeClass('loading')" class="loading mw-100 mh-100" src="@Url.RouteUrl("DummyPreview", new { skinId = skin.Item1.GeneratedId, version = skin.Item1.Version })" />
+                            <b>Id:</b> @(skin.Item1.GeneratedId)
+                            <hr/>
+                            <div id="Skin@(skin.Item2)_popover" class="d-none">
+                                <ul class="list-unstyled p-0 @(skin.Item1.Previews.Count == 0 ? "mb-1" : "")">
                                     @if (skin.Item1.Version != 1)
                                     {
                                         <li><b>Version:</b> v@(skin.Item1.Version)</li>
@@ -50,7 +52,7 @@
                                     <li><b>Skin info:</b> @((Gender)skin.Item1.GenderType) @((DragonType)skin.Item1.DragonType)</li>
                                     <li><b>Preview stats:</b> @($"{scries.Count + reals.Count} Total ({reals.Count} real, {scries.Count} scries)")</li>
                                 </ul>
-                                <canvas id="Chart_Skin@(skin.Item2)" style="width:100px; height:50px; @(skin.Item1.Previews.Count == 0 ? "display:none;" : "")"></canvas>
+                                <canvas class="Chart_Skin@(skin.Item2) p-0" style="@(skin.Item1.Previews.Count == 0 ? "display:none;" : "")"></canvas>
                             </div>
                         </a>
                     </div>
@@ -64,32 +66,32 @@
     </div>
 </div>
 
-
 @section scripts{
     <script>
-        $("[data-toggle=popover]").each(function (i, obj) {
-            $(this).popover({
-                html: true,
-                content: function () {
-                    var id = $(this).attr('id');
-                    var popover = $(`#${id}_popover`);
-                    return popover.html();
-                },
-                trigger: 'hover focus'
-            });
-            $(this).on('shown.bs.popover', function () {
-                var id = $(this).attr('id');
-                var chart = new Chart(document.getElementById(`Chart_${id}`).getContext('2d'), {
-                    type: 'line',
-                    data: {
-                        labels: previewData[`data_${id}`].labels,
-                        datasets: [{
-                            label: 'Previews',
-                            data: previewData[`data_${id}`].data,
-                            borderColor: '#bce8f1',
-                            backgroundColor: '#d9edf7'
-                        }]
-                    }
+        $(() => {
+            $("[data-toggle=popover]").each((_, obj) => {
+                $(obj).popover({
+                    html: true,
+                    sanitize: false,
+                    content: () => $(`#${$(obj).attr('id')}_popover`).html(),
+                    trigger: 'hover focus'
+                }).on('shown.bs.popover', () => {
+                    var id = $(obj).attr('id');
+                    new Chart($(`.Chart_${id}`)[1].getContext('2d'), {
+                        type: 'line',
+                        options: {
+                            legend: false
+                        },
+                        data: {
+                            labels: previewData[`data_${id}`].labels,
+                            datasets: [{
+                                label: 'Previews',
+                                data: previewData[`data_${id}`].data,
+                                borderColor: '#bce8f1',
+                                backgroundColor: '#d9edf7'
+                            }]
+                        }
+                    });
                 });
             });
         });
@@ -103,8 +105,8 @@
     }
 
     .loading {
-        min-width:100px;
-        min-height:100px;
+        min-width: 100px;
+        min-height: 100px;
         background: transparent url('/Content/ajax-loader.gif') center no-repeat;
     }
 </style>

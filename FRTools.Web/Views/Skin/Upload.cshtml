@@ -1,6 +1,7 @@
 ﻿@model UploadModelPost
 
 @{
+    Layout = V2Layout;
     ViewBag.Title = "Upload";
 }
 
@@ -11,36 +12,35 @@
     <meta property="og:description" content="Upload your skin on this page, you will be given a link to share where users can preview your skin on their dragons or scries" />
 }
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4>Upload your skin</h4>
-    </div>
-    <div class="panel-body" style="min-height:370px">
-        <p>Selecting a file, even without actually uploading, will give you some useful information such as the coverage % and an indication if there is anything outside the dragon</p>
-        @using (Html.BeginRouteForm("UploadPost", FormMethod.Post, new { enctype = "multipart/form-data" }))
-        {
-            @Html.AntiForgeryToken()
+<div class="row">
+    <div class="col-md-7">
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5>Upload your skin</h5>
+            </div>
+            <div class="card-body" style="min-height:370px">
+                <p>Selecting a file, even without actually uploading, will give you some useful information such as the coverage % and an indication if there is anything outside the dragon</p>
+                @using (Html.BeginRouteForm("UploadPost", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-            <div class="form-horizontal">
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-                <div class="col-md-6">
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="form-group row">
+                        @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "col-md-4 col-form-label" })
                         <div class="col-md-8">
                             @Html.TextBoxFor(model => model.Title, htmlAttributes: new { @class = "form-control" })
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="form-group row">
+                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "col-md-4 col-form-label" })
                         <div class="col-md-8">
                             @Html.TextAreaFor(model => model.Description, htmlAttributes: new { @class = "form-control", rows = 3 })
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.DragonType, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="form-group row">
+                        @Html.LabelFor(model => model.DragonType, htmlAttributes: new { @class = "col-md-4 col-form-label" })
                         <div class="col-md-8">
                             <select class="form-control" name="@(Html.NameFor(model => model.DragonType))" id="@(Html.IdFor(model => model.DragonType))">
                                 <option disabled>- Modern -</option>
@@ -57,8 +57,8 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.Gender, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="form-group row">
+                        @Html.LabelFor(model => model.Gender, htmlAttributes: new { @class = "col-md-4 col-form-label" })
                         <div class="col-md-8">
                             <select class="form-control" name="@(Html.NameFor(model => model.Gender))" id="@(Html.IdFor(model => model.Gender))">
                                 @foreach (var gender in Enum.GetValues(typeof(Gender)).Cast<Gender>())
@@ -69,8 +69,8 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.Skin, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="form-group row">
+                        @Html.LabelFor(model => model.Skin, htmlAttributes: new { @class = "col-md-4 col-form-label" })
                         <div class="col-md-8">
                             <span class="control-fileupload">
                                 <label for="file" class="text-left">Please choose a file on your computer.</label>
@@ -79,39 +79,37 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <div class="col-md-offset-4 col-md-8">
-                            <div class=" alert alert-warning">
-                                If you are uploading a new version of a skin, please go to your skin's management page and upload a new version there!
-                                <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" title="The reason for this is that every skin gets their own bit.ly link, however I only have a limited amount available every month. Updating a skin will re-use that skin's link."></span>
-                            </div>
-                            <input type="submit" value="Upload Skin" class="btn btn-primary" />
+                    <div class="d-flex justify-content-end">
+                        <div class="alert alert-warning">
+                            If you are uploading a new version of a skin, please go to your skin's management page and upload a new version there!
+                            <span class="fa fa-info-circle" data-toggle="tooltip" title="The reason for this is that every skin gets their own bit.ly link, however I only have a limited amount available every month. Updating a skin will re-use that skin's link."></span>
                         </div>
                     </div>
-                </div>
 
-                <div class="col-md-6">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div id="CoverageContainer" style="display:none;">
-                                <div class="text-center">
-                                    Coverage: <b><span id="Coverage"></span>%</b>
-                                    Outside: <b><span id="Outside"></span>%</b>
-                                    <br/>
-                                    <small class="text-center"><a href="@(Url.RouteUrl("SnippetsHome"))#skin_coverage">Looking for the new advanced coverage checker? It's a code snippet now!</a></small>
-                                </div>
-                            </div>
-                            <div id="skinpreview" style="margin-top:5px">
-                                <div class="center-block" style="width:350px;height:350px;">
-                                    <img class="dummyDragon" style="z-index:1;position:absolute;display:none;" />
-                                    <img class="preview" style="z-index:2;position:absolute;display:none;" />
-                                </div>
-                            </div>
-                        </div>
+                    <div class="d-flex justify-content-end">
+                        <input type="submit" value="Upload Skin" class="btn btn-primary" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="card mt-3">
+            <div class="card-body">
+                <div class="w-100 justify-content-center text-center mb-3" id="CoverageContainer" style="display:none;">
+                    Coverage: <b><span id="Coverage"></span>%</b>
+                    Outside: <b><span id="Outside"></span>%</b>
+                    <br />
+                    <small><a href="@(Url.RouteUrl("SnippetsHome"))#skin_coverage">Looking for the new advanced coverage checker? It's a code snippet now!</a></small>
+                </div>
+                <div class="w-100 d-flex justify-content-center" id="skinpreview" style="margin-top:5px">
+                    <div style="width:350px; height:350px;">
+                        <img class="dummyDragon" style="z-index:1;position:absolute;display:none;" />
+                        <img class="preview" style="z-index:2;position:absolute;display:none;" />
                     </div>
                 </div>
             </div>
-        }
+        </div>
     </div>
 </div>
 

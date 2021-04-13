@@ -93,7 +93,7 @@
                                             <div class="row justify-content-center">
                                                 <img id="Preview@(preview.Item2)" src="@(Model.CDNBasePath + preview.Item1.PreviewImage)" data-toggle="popover">
                                                 <div id="Preview@(preview.Item2)_popover" class="d-none">
-                                                    <ul style="list-style:none; padding:0">
+                                                    <ul class="list-unstyled p-0 mb-1">
                                                         <li><b>Colors:</b> @(dragon.BodyColor) / @(dragon.WingColor) / @(dragon.TertiaryColor)</li>
                                                         <li><b>Genes:</b> @(dragon.GetPrimaryGene()) / @(dragon.GetSecondaryGene()) / @(dragon.GetTertiaryGene())</li>
 
@@ -303,6 +303,7 @@
     $("[data-toggle=popover]").each(function (i, obj) {
         $(this).popover({
             html: true,
+            sanitize: false,
             content: function () {
                 var id = $(this).attr('id');
                 return $(`#${id}_popover`).html();

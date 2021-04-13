@@ -1,12 +1,11 @@
-﻿$(() => {
+﻿<script>
+$(() => {
     $('[data-toggle="tooltip"]').tooltip({ html: true });
 })
 
 copyOrGenerateUrl = (e, b, t, id) => {
     if (e.value != '') {
-        e.select();
-        document.execCommand('copy');
-        b.innerHTML = 'Copied!';
+        copyText(e, b);
     }
     else {
         b.innerHTML = 'Fetching..';
@@ -23,3 +22,4 @@ copyText = (e, b) => {
     document.execCommand('copy');
     b.innerHTML = 'Copied!';
 }
+</script>

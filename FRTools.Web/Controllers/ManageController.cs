@@ -100,8 +100,8 @@ namespace FRTools.Web.Controllers
             }
         }
 
-        [Route("createShareUrl", Name = "GetShareUrl")]
-        
+        [AllowAnonymous]
+        [Route("createShareUrl", Name = "GetShareUrl")]        
         public async Task<ActionResult> GetShareUrl(string type, string id)
         {
             switch (type)

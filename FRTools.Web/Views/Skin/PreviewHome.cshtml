@@ -1,30 +1,25 @@
 ﻿@{
+    Layout = V2Layout;
     ViewBag.Title = "Preview";
 }
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4>Enter the ID of the preview</h4>
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>Enter the ID of the skin</h5>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <p>
-            This page was made due to the ongoing censorship on Flight Rising forums preventing artists from sharing links to the tool easily.<br/>
+            This page was made due to the ongoing censorship on Flight Rising forums preventing artists from sharing links to the tool easily.<br />
             Enter the skin id that the artist shared in the box and hit the "Go to preview" button
         </p>
-        <div class="form-horizontal">
-            <div class="col-md-6">
-                <div class="form-group">
-                    @Html.Label("Skin ID", new { @class = "control-label col-md-4" })
-                    <div class="col-md-8">
-                        @Html.TextBox("id", null, new { @class = "form-control" })
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-offset-4 col-md-8">
-                        <input type="submit" value="Go to preview" class="btn btn-primary" />
-                    </div>
-                </div>
+        <div class="form-group row">
+            @Html.Label("Skin ID", new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.TextBox("id", null, new { @class = "form-control" })
             </div>
+        </div>
+        <div class="d-flex justify-content-end">
+            <input type="submit" value="Go to preview" class="btn btn-primary" />
         </div>
     </div>
 </div>
