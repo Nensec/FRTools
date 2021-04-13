@@ -1,16 +1,17 @@
 ﻿@model AccountViewModel
 
 @{
+    Layout = V2Layout;
     ViewBag.Title = "Account management";
 }
 
 <div class="row">
-    <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4>Account management</h4>
+    <div class="col-md-4">
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5>Account management</h5>
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 <p>
                     To change your profile settings @(Html.RouteLink("click here", "EditProfile")).
                 </p>
@@ -20,25 +21,27 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                Flight Rising account link
+    <div class="col-md-8">
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5>Flight Rising account link</h5>
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 <p>
-                    Linking this account to a Flight Rising account allows for verification and linking to your Flight Rising profile.
-                    This can help to ensure to users that skins uploaded using your account are actually made by you.
+                    Connecting this account to a Flight Rising account allows for verification and linking to your Flight Rising profile.<br/>
+                    This can help to ensure to other users that skins uploaded using your account are actually made by you.<br/>
                     The verification process is one-way, meaning it will allow this site to <b>read</b> from Flight Rising only.
                 </p>
+                <hr/>
                 @if (Model.User.FRUser == null)
                 {
                     <p>
-                        Your account is currently not linked to any Flight Rising account.
+                        Your account is currently not linked to any Flight Rising account.<br/>
+                        You can do so by clicking the button
                     </p>
-                    <p>
-                        You can do so here: @Html.RouteLink("Link Flight Rising", "VerifyFR", null, new { @class = "btn btn-primary" })
-                    </p>
+                    <div class="d-flex justify-content-end">
+                        @Html.RouteLink("Link Flight Rising", "VerifyFR", null, new { @class = "btn btn-primary" })
+                    </div>
                 }
                 else
                 {
@@ -46,7 +49,6 @@
                         Your account is currently linked to Flight Rising account <b>@(Model.User.FRUser.Username) (@(Model.User.FRUser.FRId)).</b>
                     </p>
                 }
-
             </div>
         </div>
     </div>

@@ -1,26 +1,27 @@
 ﻿@model VerifyFRViewModel
 
 @{
+    Layout = V2Layout;
     ViewBag.Title = "Verify Flight Rising account";
 }
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4>Verify account</h4>
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>Verify account</h5>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <p>
             Please log in to Flight Rising and go to your profile page.<br />
-            Next edit your Clan Information and add the following token to it (don't worry, you can remove it once you are verified):<br />
+            Once you are on your profile page edit your <b>Clan Information</b> and add the following token to it (don't worry, you can remove it once you are verified).<br />
+            When you have saved the token to your <b>Clan Information</b> simply enter your User Id in the box below and click the verify button.
         </p>
-        <div class="form-horizontal">
-            <div class="form-group">
-                @Html.Label("Verify code", new { style = "padding-top:7px", @class = "control-label col-md-2" })
-                <div class=" col-md-8">
-                    @Html.CopyTextBoxFor(model => model.Guid)
-                </div>
+        <div class="form-group row">
+            @Html.Label("Verify code", new { @class = "col-md-2 col-form-label" })
+            <div class="col-md-10">
+                @Html.CopyTextBoxFor(model => model.Guid)
             </div>
         </div>
+        <hr/>
         <p>
             Don't take too long, this token is only valid for a short period!<br />
             Make sure you saved your edited Clan Information.
