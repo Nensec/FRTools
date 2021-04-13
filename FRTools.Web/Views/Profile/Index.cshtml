@@ -56,9 +56,9 @@
                         <div class="skin-container d-flex flex-wrap">
                             @foreach (var skin in skins)
                             {
-                                <div class="col-sm-@(Model.User.ProfileSettings.ShowPreviewsOnProfile || Model.IsOwn ? "4" : "2")">
+                                <div class="col-sm-@(Model.User.ProfileSettings.ShowPreviewsOnProfile || Model.IsOwn ? "4" : "2")" id="Skin@(skin.Item2)" data-toggle="popover">
                                     <a href="@Url.RouteUrl("Preview", new { SkinId = skin.Item1.GeneratedId })">
-                                        <img onload="$(this).removeClass('loading');" class="loading w-100 h-100" id="Skin@(skin.Item2)" data-toggle="popover" src="@Url.RouteUrl("DummyPreview", new { skinId = skin.Item1.GeneratedId, version = skin.Item1.Version })" />
+                                        <img onload="$(this).removeClass('loading');" class="loading w-100 h-100" src="@Url.RouteUrl("DummyPreview", new { skinId = skin.Item1.GeneratedId, version = skin.Item1.Version })" />
                                         <div id="Skin@(skin.Item2)_popover" class="d-none">
                                             <ul class="list-unstyled">
                                                 <li><b>Id:</b> @(skin.Item1.GeneratedId)</li>
@@ -272,7 +272,8 @@
                 return $(`#${id}_popover`).html();
             },
             trigger: 'hover focus',
-            container: 'body'
+            container: 'body',
+            boundary: 'window'
         });
 
     });
