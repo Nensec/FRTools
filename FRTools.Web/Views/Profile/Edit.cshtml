@@ -114,35 +114,35 @@
                         </div>
                         <div class="card-body">
                             <div class="form-group row">
-                                <label class="col-md-6">Default opacity dummy dragon</label>
+                                <label for="@Html.IdFor(model => model.DefaultAdvancedCoverageDummyOpacity)" class="col-md-6">Default opacity dummy dragon</label>
                                 <div class="col-md-6">
                                     <input class="w-100" style="margin-top:3px" type="range" min="1" max="100" value="@Model.DefaultAdvancedCoverageDummyOpacity" id="@Html.IdFor(model => model.DefaultAdvancedCoverageDummyOpacity)" name="@Html.NameFor(model => model.DefaultAdvancedCoverageDummyOpacity)">
                                     @Html.ValidationMessageFor(model => model.DefaultAdvancedCoverageDummyOpacity)
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-md-6">Default opacity skin dragon</label>
+                                <label for="@Html.IdFor(model => model.DefaultAdvancedCoverageDummyOpacity)" class="col-md-6">Default opacity skin dragon</label>
                                 <div class="col-md-6">
                                     <input class="w-100" style="margin-top:3px" type="range" min="1" max="100" value="@Model.DefaultAdvancedCoverageSkinOpacity" id="@Html.IdFor(model => model.DefaultAdvancedCoverageSkinOpacity)" name="@Html.NameFor(model => model.DefaultAdvancedCoverageSkinOpacity)">
                                     @Html.ValidationMessageFor(model => model.DefaultAdvancedCoverageDummyOpacity)
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-md-6">Default background color</label>
+                                <label for="@Html.IdFor(model => model.DefaultAdvancedCoverageBackgroundColor)" class="col-md-6">Default background color</label>
                                 <div class="col-md-6">
                                     <input class="w-100" type="color" value="@Model.DefaultAdvancedCoverageBackgroundColor" id="@Html.IdFor(model => model.DefaultAdvancedCoverageBackgroundColor)" name="@Html.NameFor(model => model.DefaultAdvancedCoverageBackgroundColor)" style="width:100%;">
                                     @Html.ValidationMessageFor(model => model.DefaultAdvancedCoverageBackgroundColor)
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-md-6">Default outside overlay color</label>
+                                <label for="@Html.IdFor(model => model.DefaultAdvancedCoverageOverlayColor)" class="col-md-6">Default outside overlay color</label>
                                 <div class="col-md-6">
                                     <input class="w-100" type="color" value="@Model.DefaultAdvancedCoverageOverlayColor" id="@Html.IdFor(model => model.DefaultAdvancedCoverageOverlayColor)" name="@Html.NameFor(model => model.DefaultAdvancedCoverageOverlayColor)" style="width:100%;">
                                     @Html.ValidationMessageFor(model => model.DefaultAdvancedCoverageOverlayColor)
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-md-6">Default percentage precision</label>
+                                <label for="@Html.IdFor(model => model.DefaultAdvancedCoveragePercentagePrecision)" name="@Html.NameFor(model => model.DefaultAdvancedCoveragePercentagePrecision)" class="col-md-6">Default percentage precision</label>
                                 <div class="col-md-6">
                                     <input class="w-100" style="margin-top:3px" type="range" min="0" max="10" value="@Model.DefaultAdvancedCoveragePercentagePrecision" id="@Html.IdFor(model => model.DefaultAdvancedCoveragePercentagePrecision)" name="@Html.NameFor(model => model.DefaultAdvancedCoveragePercentagePrecision)">
                                     @Html.ValidationMessageFor(model => model.DefaultAdvancedCoveragePercentagePrecision)
@@ -160,7 +160,7 @@
                                 <div class="col-6">
                                     <div class="custom-control custom-switch">
                                         @Html.CheckBoxFor(model => model.ShowAds, new { @class = "custom-control-input" })
-                                        <label for="@Html.IdFor(model => model.DefaultSkinsArePublic)" class="custom-control-label"></label>
+                                        <label for="@Html.IdFor(model => model.ShowAds)" class="custom-control-label"></label>
                                     </div>
                                 </div>
                             </div>

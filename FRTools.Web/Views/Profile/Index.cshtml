@@ -138,7 +138,7 @@
                                                     <img id="Preview@(preview.Item2)" class="center-block" src="@(Model.CDNBasePath + preview.Item1.PreviewImage)" data-toggle="popover">
                                                     <div id="Preview@(preview.Item2)_popover" class="d-none">
                                                         @{ var dragon = DragonCache.FromString(preview.Item1.DragonData); }
-                                                        <ul style="list-style:none; padding:0">
+                                                        <ul class="list-unstyled">
                                                             <li><b>Colors:</b> @(dragon.BodyColor) / @(dragon.WingColor) / @(dragon.TertiaryColor)</li>
                                                             <li><b>Genes:</b> @(dragon.BodyGene) / @(dragon.WingGene) / @(dragon.TertiaryGene)</li>
                                                             <li><b>Element:</b> @(dragon.Element)</li>

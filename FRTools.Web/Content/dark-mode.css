@@ -1,14 +1,14 @@
 [data-theme="dark"].text-dark {
-    color: #555 !important;
+    color: #8e8e8e !important;
 }
 
 [data-theme="dark"] {
-    background-color: #111 !important;
-    color: #eee;
+    background-color: #2b2b2b !important;
+    color: #eee !important;
 }
 
-    [data-theme="dark"] a {
-        color: #004a9a;
+    [data-theme="dark"] a:not(.btn) {
+        color: #005fc5;
     }
 
     [data-theme="dark"] .bg-light {
@@ -20,5 +20,70 @@
     }
 
     [data-theme="dark"] .card {
-        background-color: #151515 !important;
+        background-color: #1f1f1f !important;
+    }
+
+    [data-theme="dark"] .card-header {
+        background-color: rgba(0, 0, 0, 0.12) !important;
+    }
+
+    [data-theme="dark"] .alert-info {
+        background-color: #a1b7bb !important;
+        color: #155c77 !important;
+        border-color: #68949a !important;
+    }
+
+    [data-theme="dark"] .alert-warning {
+        background-color: #e8d9a9 !important;
+        color: #694f03 !important;
+    }
+
+    [data-theme="dark"] .popover {
+        background-color: #2b2b2b !important;
+    }
+
+    [data-theme="dark"] .popover-body {
+        color: #8e8e8e !important;
+    }
+
+    [data-theme="dark"] .bs-popover-auto[x-placement^=right] > .arrow::after,
+    [data-theme="dark"] .bs-popover-right > .arrow::after {
+        border-right-color: #2b2b2b !important;
+    }
+
+    [data-theme="dark"] .bs-popover-auto[x-placement^=left] > .arrow::after,
+    [data-theme="dark"] .bs-popover-left > .arrow::after {
+        border-left-color: #2b2b2b !important;
+    }
+
+    [data-theme="dark"] .bs-popover-auto[x-placement^=top] > .arrow::after,
+    [data-theme="dark"] .bs-popover-top > .arrow::after {
+        border-top-color: #2b2b2b !important;
+    }
+
+    [data-theme="dark"] .bs-popover-auto[x-placement^=bottom] > .arrow::after,
+    [data-theme="dark"] .bs-popover-bottom > .arrow::after {
+        border-bottom-color: #2b2b2b !important;
+    }
+
+    [data-theme="dark"] .form-control {
+        background-color: #2b2b2b !important;
+        border-color: #6d6d6d !important;
+        color: #6d6d6d !important;
+    }
+
+    [data-theme="dark"] select.form-control option:disabled {
+        opacity: 0.6;
+    }
+
+    [data-theme="dark"] .page-link {
+        background-color: #2b2b2b;
+        color: #6d6d6d;
+        border-color: #6d6d6d !important;
+    }
+
+    [data-theme="dark"] .page-item.disabled .page-link {
+        background-color: #2b2b2b;
+        color: #6d6d6d;
+        opacity: 0.6;
     }
