@@ -18,7 +18,13 @@ namespace FRTools.MS.ItemFetcher
 
         static async Task Main()
         {
-            _serviceBus = new QueueClient(ConfigurationManager.AppSettings["AzureSBConnString"], ConfigurationManager.AppSettings["AzureSBQueueName"]);
+            var settings = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            int maxTries = 3;
+
+            if (DateTime.TryParse(settings.AppSettings.Settings["LastSuccess"]?.Value, out var lastSuccess) && DateTime.UtcNow > lastSuccess.AddDays(1))            
+                maxTries += (int)(DateTime.UtcNow - lastSuccess.AddDays(1)).TotalHours;            
+
+            _serviceBus = new QueueClient(settings.AppSettings.Settings["AzureSBConnString"].Value, settings.AppSettings.Settings["AzureSBQueueName"].Value);
             await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new GenericMessage(MessageCategory.ItemFetcher, "Started")))));
 
             var random = new Random();
@@ -26,7 +32,7 @@ namespace FRTools.MS.ItemFetcher
             {
                 var highestItemId = ctx.FRItems.Any() ? ctx.FRItems.Max(x => x.FRId) : 0;
 
-                while (_noItemFoundCounter < 5)
+                while (_noItemFoundCounter < maxTries)
                 {
                     ++highestItemId;
                     Console.WriteLine($"Fetching item: {highestItemId}");
@@ -42,8 +48,17 @@ namespace FRTools.MS.ItemFetcher
                     await Task.Delay(random.Next(75, 500));
                 }
 
-                Console.WriteLine($"Done for now, saving {ctx.ChangeTracker.Entries().Count()} items.");
+                var count = ctx.ChangeTracker.Entries().Count();
+                Console.WriteLine($"Done for now, saving {count} items.");
                 await ctx.SaveChangesAsync();
+
+                if(count > 0)
+                {
+                    // This gets stored in app.config, which gets wiped every deploy but is good enough to store a temp value in between instances
+                    // Since if the value is not present we use the default, which will be the vast majority of times anyway
+                    settings.AppSettings.Settings["LastSuccess"].Value = DateTime.UtcNow.ToString();
+                    settings.Save();
+                }    
             }
             await _serviceBus.CloseAsync();
         }
