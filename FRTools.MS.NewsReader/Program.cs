@@ -209,14 +209,30 @@ namespace FRTools.MS.NewsReader
                     var postAuthorId = Convert.ToInt32(GetUserIdFromAnchor(forumPost.SelectSingleNode("div[2]/div[1]/div[2]/a")));
                     var postAuthorName = forumPost.SelectSingleNode("div[2]/div[1]/div[2]/a").InnerText;
                     var postTimeStamp = DateTime.ParseExact(forumPost.SelectSingleNode("div[2]/div[2]/div[1]/div[1]").InnerText.Replace(" </strong>", ""), "MMMM dd, yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-                    var postInfoContent = FRHelpers.CleanupFRHtmlText(forumPost.SelectSingleNode("div[2]/div[2]/div[2]").InnerHtml);
+                    var postContent = forumPost.SelectSingleNode("div[2]/div[2]/div[2]");
+                    var postContentHtml = FRHelpers.CleanupFRHtmlText(forumPost.SelectSingleNode("div[2]/div[2]/div[2]").InnerHtml);
+
+                    if (postId == topic.FRTopicId)
+                    {
+                        var itemsInContent = postContent.QuerySelectorAll(".bbcode-item-icon")
+                            .Select(x => x.GetAttributeValue("data-itemid", null))
+                            .Where(x => x != null)
+                            .Select(x => Convert.ToInt32(x));
+
+                        if (itemsInContent.Any())
+                        {
+                            var unknownItems = itemsInContent.Except(ctx.FRItems.Where(x => !itemsInContent.Contains(x.FRId)).ToList().Select(x => x.FRId));
+                            foreach (var unknownItem in unknownItems)
+                                FRHelpers.FetchItem(unknownItem);
+                        }
+                    }
 
                     topic.Posts.Add(new Post
                     {
                         FRPostId = postId,
                         PostAuthor = postAuthorName,
                         PostAuthorClanId = postAuthorId,
-                        Content = postInfoContent,
+                        Content = postContentHtml,
                         TimeStamp = postTimeStamp
                     });
                     hasChanges = true;
