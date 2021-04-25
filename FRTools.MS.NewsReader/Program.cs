@@ -221,9 +221,14 @@ namespace FRTools.MS.NewsReader
 
                         if (itemsInContent.Any())
                         {
-                            var unknownItems = itemsInContent.Except(ctx.FRItems.Where(x => !itemsInContent.Contains(x.FRId)).ToList().Select(x => x.FRId));
+                            var unknownItems = itemsInContent.Except(ctx.FRItems.Where(x => itemsInContent.Contains(x.FRId)).ToList().Select(x => x.FRId));
                             foreach (var unknownItem in unknownItems)
-                                FRHelpers.FetchItem(unknownItem);
+                            {
+                                var item = FRHelpers.FetchItem(unknownItem);
+                                if (item != null)
+                                    ctx.FRItems.Add(item);
+                            }
+                            ctx.SaveChanges();
                         }
                     }
 
