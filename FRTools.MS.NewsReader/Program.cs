@@ -1,11 +1,16 @@
 ﻿using FRTools.Common;
 using FRTools.Data;
 using FRTools.Data.DataModels.NewsReaderModels;
+using FRTools.Data.Messages;
 using HtmlAgilityPack;
+using Microsoft.Azure.ServiceBus;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -13,6 +18,7 @@ namespace FRTools.MS.NewsReader
 {
     class Program
     {
+        private static IQueueClient _serviceBus;
         private const int _initialDelay = 30000;
 
         static int _delay = _initialDelay;
@@ -24,8 +30,12 @@ namespace FRTools.MS.NewsReader
 
         static async Task Main()
         {
+            _serviceBus = new QueueClient(ConfigurationManager.AppSettings["AzureSBConnString"], ConfigurationManager.AppSettings["AzureSBQueueName"]);
+
             while (true)
             {
+                await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new GenericMessage(MessageCategory.NewsReader, "Started")))));
+
                 try
                 {
                     var changeDetected = await ParseNewsForum();
@@ -90,6 +100,7 @@ namespace FRTools.MS.NewsReader
                             FRTopicName = topicName
                         });
                         ctx.SaveChanges();
+                        await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NewNewsMessage(MessageCategory.NewsReader, topic)))));
                     }
                     else
                     {
@@ -226,9 +237,13 @@ namespace FRTools.MS.NewsReader
                             {
                                 var item = FRHelpers.FetchItem(unknownItem);
                                 if (item != null)
+                                {
                                     ctx.FRItems.Add(item);
+                                    ctx.SaveChanges();
+
+                                    await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NewItemMessage(MessageCategory.NewsReader, item)))));
+                                }
                             }
-                            ctx.SaveChanges();
                         }
                     }
 
