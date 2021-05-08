@@ -58,16 +58,17 @@ namespace FRTools.Web.Controllers
         [Route("externalLoginCallback", Name = "ExternalLoginCallback")]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl, string error)
         {
+            if(error == "access_denied")
+            {
+                AddErrorNotification("Login failed.");
+                return RedirectToRoute("Login");
+            }
+
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
             if (loginInfo == null)
             {
-                // Since retrying the entire thing again seems to work, maybe just doing this call again will fix the null?
-                loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
-                if (loginInfo == null)
-                {
-                    AddErrorNotification("Could not retrieve external login information from request, please try again.<br/>If the issue persists then please let me know <a href=\"https://github.com/Nensec/FRTools/issues/5\">here</a>.");
-                    return RedirectToRoute("Login");
-                }
+                AddErrorNotification("Could not retrieve external login information from request, please try again.<br/>If the issue persists then please let me know <a href=\"https://github.com/Nensec/FRTools/issues/5\">here</a>.");
+                return RedirectToRoute("Login");
             }
             loginInfo.Login.ProviderKey = GetProviderData(loginInfo);
 
