@@ -472,10 +472,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\OwinOAuthProviders\src\Owin.Security.Providers.Discord\Owin.Security.Providers.Discord.csproj">
-      <Project>{4be728eb-778a-41af-8dea-0c7159711d44}</Project>
-      <Name>Owin.Security.Providers.Discord</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FRTools.Common\FRTools.Common.csproj">
       <Project>{46ff50d2-fbab-421e-bac4-41533af80a95}</Project>
       <Name>FRTools.Common</Name>
@@ -487,6 +483,10 @@
     <ProjectReference Include="..\FRTools.Tools.SkinTester\FRTools.Tools.SkinTester.csproj">
       <Project>{57402622-763d-4a12-bf00-6eac9770bf5c}</Project>
       <Name>FRTools.Tools.SkinTester</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OwinOAuthProviders\Owin.Security.Providers.Discord\Owin.Security.Providers.Discord.csproj">
+      <Project>{4be728eb-778a-41af-8dea-0c7159711d44}</Project>
+      <Name>Owin.Security.Providers.Discord</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

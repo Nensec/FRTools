@@ -49,7 +49,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{F902D080
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools.MS.NewsReader", "FRTools.MS.NewsReader\FRTools.MS.NewsReader.csproj", "{979C29D0-FFB9-40A2-8DD5-ED75566326F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owin.Security.Providers.Discord", "..\OwinOAuthProviders\src\Owin.Security.Providers.Discord\Owin.Security.Providers.Discord.csproj", "{4BE728EB-778A-41AF-8DEA-0C7159711D44}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OwinOAuthProviders", "OwinOAuthProviders", "{4E4FCD45-DAFF-4095-8271-177D18ADA256}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owin.Security.Providers.Discord", "OwinOAuthProviders\Owin.Security.Providers.Discord\Owin.Security.Providers.Discord.csproj", "{4BE728EB-778A-41AF-8DEA-0C7159711D44}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -136,7 +138,7 @@ Global
 		{3A36E78F-4324-4BDE-A313-4FDF6C071E70} = {6FF57E80-6712-4E3A-812A-4BE1D09285EB}
 		{57402622-763D-4A12-BF00-6EAC9770BF5C} = {F902D080-6C26-4417-AE77-4F056352511A}
 		{979C29D0-FFB9-40A2-8DD5-ED75566326F8} = {6FF57E80-6712-4E3A-812A-4BE1D09285EB}
-		{4BE728EB-778A-41AF-8DEA-0C7159711D44} = {F902D080-6C26-4417-AE77-4F056352511A}
+		{4BE728EB-778A-41AF-8DEA-0C7159711D44} = {4E4FCD45-DAFF-4095-8271-177D18ADA256}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {394695AE-5734-4F1A-96A2-774FEB7DF305}
