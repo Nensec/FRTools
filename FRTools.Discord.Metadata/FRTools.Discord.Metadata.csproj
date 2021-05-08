@@ -110,6 +110,11 @@ copy "$(SolutionDir)\DiscordMetadata.json" "$(SolutionDir)\FRTools.Web\bin\"</Po
       <DesignTime>True</DesignTime>
       <DependentUpon>MetadataGenerator.tt</DependentUpon>
     </None>
+    <None Include="..\DiscordMetadata.json">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MetadataGenerator.tt</DependentUpon>
+    </None>
     <None Include="app.config" />
   </ItemGroup>
   <ProjectExtensions />

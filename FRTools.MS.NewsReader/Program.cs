@@ -30,10 +30,10 @@ namespace FRTools.MS.NewsReader
 
         static async Task Main()
         {
-            _serviceBus = new QueueClient(ConfigurationManager.AppSettings["AzureSBConnString"], ConfigurationManager.AppSettings["AzureSBQueueName"]);
 
             while (true)
             {
+                _serviceBus = new QueueClient(ConfigurationManager.AppSettings["AzureSBConnString"], ConfigurationManager.AppSettings["AzureSBQueueName"]);
                 await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new GenericMessage(MessageCategory.NewsReader, "Started")))));
 
                 try
@@ -50,6 +50,7 @@ namespace FRTools.MS.NewsReader
                 }
                 Console.WriteLine($"Waiting {Delay} milliseconds before checking again..");
 
+                await _serviceBus.CloseAsync();
                 await Task.Delay(30000);
             }
         }
@@ -61,10 +62,8 @@ namespace FRTools.MS.NewsReader
             var client = new HtmlWeb();
             var mainNewsForum = client.Load("https://www1.flightrising.com/forums/ann");
             var topics = mainNewsForum.GetElementbyId("postlist").SelectNodes("tr");
-            var unlockedTopics = topics.Where(x => !x.QuerySelector(".poststatus").GetClassList().Contains("poststatus-locked")).ToList();
-            Console.WriteLine($"Found {unlockedTopics.Count} that are not locked, parsing them..");
 
-            foreach (var newsTopic in unlockedTopics)
+            foreach (var newsTopic in topics)
             {
                 var topicInfo = newsTopic.SelectSingleNode("td[1]");
                 var topicId = Convert.ToInt32(Regex.Match(topicInfo.SelectSingleNode("a").GetAttributeValue("href", ""), @".+/ann/(\d+)").Groups[1].Value);
