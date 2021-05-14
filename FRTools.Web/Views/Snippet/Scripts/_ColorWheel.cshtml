@@ -7,7 +7,7 @@
 
 <div class="row">
     <div class="form-group col-sm-6">
-        <select class="form-control" onchange="$('.grid-item').removeClass('col-xs-12 col-xs-6 col-xs-4 col-xs-3').addClass(`col-xs-${this.value}`); $('.grid').masonry()">
+        <select class="form-control" onchange="$('.grid-item').removeClass('col-12 col-6 col-4 col-3').addClass(`col-${this.value}`); $('.grid').masonry()">
             <option value="3" selected>4 columns</option>
             <option value="4">3 columns</option>
             <option value="6">2 columns</option>
@@ -27,10 +27,15 @@
     @foreach (var color in frSort)
     {
         var hex = color.GetHex();
-        <div class="grid-item col-xs-3" style="padding:5px" data-fr="@frSort.IndexOf(color)" data-brightness="@brightnessSort.IndexOf(color)">
+        <div class="grid-item col-3" style="padding:5px" data-fr="@frSort.IndexOf(color)" data-brightness="@brightnessSort.IndexOf(color)">
             <div style="background-color:@hex; width:100%; height:20px; border:1px solid black; margin-bottom:1px"></div>
-            @color.ToString() @hex
-            <button onclick="CopyHex('@hex')" title="Copy HEX" type="button" class="btn btn-success btn-xs pull-right"><span class="glyphicon glyphicon-copy"></span></button>
+            <div class="d-flex justify-content-between">
+                <div class="align-items-center text-truncate">
+                    <div>@color.ToString()</div>
+                    <div>@hex</div>
+                </div>
+                <button onclick="CopyHex('@hex')" title="Copy HEX" type="button" class="btn btn-success btn-xs"><span class="fa fa-copy"></span></button>
+            </div>
         </div>
     }
 </div>

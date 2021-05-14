@@ -9,24 +9,22 @@
     </div>
     <div id="ColiImageResult" style="display:none;">
         <hr />
-        <div class="form-horizontal">
-            <div class="form-group">
-                <label class="col-md-2 control-label">Preview</label>
-                <div class="col-md-10">
-                    <img id="ColiImageResultImage" />
-                </div>
+        <div class="form-group row">
+            <label class="col-md-2">Preview</label>
+            <div class="col-md-10">
+                <img id="ColiImageResultImage" />
             </div>
-            <div class="form-group">
-                <label class="col-md-2 control-label" for="plainColi">Direct link</label>
-                <div class="col-md-10">
-                    @Html.CopyTextBox("", "plainColi")
-                </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-md-2" for="plainColi">Direct link</label>
+            <div class="col-md-10">
+                @Html.CopyTextBox("", "plainColi")
             </div>
-            <div class="form-group">
-                <label class="col-md-2 control-label" for="plainColi">BBCode link</label>
-                <div class="col-md-10">
-                    @Html.CopyTextBox("", "IMGColi")
-                </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-md-2" for="plainColi">BBCode link</label>
+            <div class="col-md-10">
+                @Html.CopyTextBox("", "IMGColi")
             </div>
         </div>
     </div>

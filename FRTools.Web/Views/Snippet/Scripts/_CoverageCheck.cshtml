@@ -34,57 +34,57 @@
     Outside: <b><span id="Outside">--.--</span>%</b>
 </p>
 <div style="margin-top:5px; margin-bottom:-15px">
-    <div id="advancedcoverage">
-        <div id="imagecontainer" class="center-block" style="width:350px;height:350px;background-color:@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageBackgroundColor ?? "#000000")">
-            <img class="dummyDragon" style="z-index:1;position:absolute;display:none;opacity:@((CurrentUser?.ProfileSettings.DefaultAdvancedCoverageDummyOpacity ?? 40) / 100d)" />
-            <img class="preview" style="z-index:2;position:absolute;opacity:@((CurrentUser?.ProfileSettings.DefaultAdvancedCoverageSkinOpacity ?? 40) / 100d)" />
-            <canvas id="overlay" style="z-index:2;position:absolute;" width="350" height="350" />
-        </div>
+    <div id="advancedcoverage" >
+        <dib class="d-flex justify-content-center">
+            <div id="imagecontainer" style="width:350px;height:350px;background-color:@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageBackgroundColor ?? "#000000")">
+                <img class="dummyDragon" style="z-index:1;position:absolute;display:none;opacity:@((CurrentUser?.ProfileSettings.DefaultAdvancedCoverageDummyOpacity ?? 40) / 100d)" />
+                <img class="preview" style="z-index:2;position:absolute;opacity:@((CurrentUser?.ProfileSettings.DefaultAdvancedCoverageSkinOpacity ?? 40) / 100d)" />
+                <canvas id="overlay" style="z-index:2;position:absolute;" width="350" height="350" />
+            </div>
+        </dib>
         <hr />
-        <div class="form-horizontal">
-            <div class="form-group">
-                <span class="col-xs-4">Dummy transparency</span>
-                <div class="col-xs-8">
-                    <div class="@(Request.IsAuthenticated ? "input-group" : "")">
-                        <input id="@(nameof(ProfileSettings.DefaultAdvancedCoverageDummyOpacity))" style="margin-top:3px" oninput="$('#advancedcoverage .dummyDragon').css('opacity', this.value / 100);@(Request.IsAuthenticated ? $" resetSaveButton('{nameof(ProfileSettings.DefaultAdvancedCoverageDummyOpacity)}');" : "")" type="range" min="1" max="100" value="@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageDummyOpacity ?? 40)">
-                        @SaveButton(nameof(ProfileSettings.DefaultAdvancedCoverageDummyOpacity))
-                    </div>
+        <div class="form-group row">
+            <span class="col-12 col-sm-4">Dummy transparency</span>
+            <div class="col col-sm-8 align-items-center">
+                <div class="@(Request.IsAuthenticated ? "input-group" : "")">
+                    <input class="flex-grow-1" id="@(nameof(ProfileSettings.DefaultAdvancedCoverageDummyOpacity))" oninput="$('#advancedcoverage .dummyDragon').css('opacity', this.value / 100);@(Request.IsAuthenticated ? $" resetSaveButton('{nameof(ProfileSettings.DefaultAdvancedCoverageDummyOpacity)}');" : "")" type="range" min="1" max="100" value="@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageDummyOpacity ?? 40)">
+                    @SaveButton(nameof(ProfileSettings.DefaultAdvancedCoverageDummyOpacity))
                 </div>
             </div>
-            <div class="form-group">
-                <span class="col-xs-4">Skin transparency</span>
-                <div class="col-xs-8">
-                    <div class="@(Request.IsAuthenticated ? "input-group" : "")">
-                        <input id="@(nameof(ProfileSettings.DefaultAdvancedCoverageSkinOpacity))" style="margin-top:3px" oninput="$('#advancedcoverage .preview').css('opacity', this.value / 100);@(Request.IsAuthenticated ? $" resetSaveButton('{nameof(ProfileSettings.DefaultAdvancedCoverageSkinOpacity)}');" : "")" type="range" min="1" max="100" value="@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageSkinOpacity ?? 40)">
-                        @SaveButton(nameof(ProfileSettings.DefaultAdvancedCoverageSkinOpacity))
-                    </div>
+        </div>
+        <div class="form-group row">
+            <span class="col-12 col-sm-4">Skin transparency</span>
+            <div class="col col-sm-8 align-items-center">
+                <div class="@(Request.IsAuthenticated ? "input-group" : "")">
+                    <input class="flex-grow-1" id="@(nameof(ProfileSettings.DefaultAdvancedCoverageSkinOpacity))" oninput="$('#advancedcoverage .preview').css('opacity', this.value / 100);@(Request.IsAuthenticated ? $" resetSaveButton('{nameof(ProfileSettings.DefaultAdvancedCoverageSkinOpacity)}');" : "")" type="range" min="1" max="100" value="@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageSkinOpacity ?? 40)">
+                    @SaveButton(nameof(ProfileSettings.DefaultAdvancedCoverageSkinOpacity))
                 </div>
             </div>
-            <div class="form-group">
-                <span class="col-xs-4">Background color</span>
-                <div class="col-xs-8">
-                    <div class="@(Request.IsAuthenticated ? "input-group" : "")">
-                        <input id="@(nameof(ProfileSettings.DefaultAdvancedCoverageBackgroundColor))" type="color" onchange="$('#advancedcoverage #imagecontainer').css('background-color', this.value);@(Request.IsAuthenticated ? $" resetSaveButton('{nameof(ProfileSettings.DefaultAdvancedCoverageBackgroundColor)}');" : "")" value="@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageBackgroundColor ?? "#000000")" style="width:100%;">
-                        @SaveButton(nameof(ProfileSettings.DefaultAdvancedCoverageBackgroundColor))
-                    </div>
+        </div>
+        <div class="form-group row">
+            <span class="col-12 col-sm-4">Background color</span>
+            <div class="col col-sm-8 align-items-center">
+                <div class="@(Request.IsAuthenticated ? "input-group" : "")">
+                    <input class="flex-grow-1" id="@(nameof(ProfileSettings.DefaultAdvancedCoverageBackgroundColor))" type="color" onchange="$('#advancedcoverage #imagecontainer').css('background-color', this.value);@(Request.IsAuthenticated ? $" resetSaveButton('{nameof(ProfileSettings.DefaultAdvancedCoverageBackgroundColor)}');" : "")" value="@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageBackgroundColor ?? "#000000")">
+                    @SaveButton(nameof(ProfileSettings.DefaultAdvancedCoverageBackgroundColor))
                 </div>
             </div>
-            <div class="form-group">
-                <span class="col-xs-4">Outside pixel overlay color</span>
-                <div class="col-xs-8">
-                    <div class="@(Request.IsAuthenticated ? "input-group" : "")">
-                        <input id="@(nameof(ProfileSettings.DefaultAdvancedCoverageOverlayColor))" type="color" onchange="updateCoverage();@(Request.IsAuthenticated ? $" resetSaveButton('{nameof(ProfileSettings.DefaultAdvancedCoverageOverlayColor)}');" : "")" value="@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageOverlayColor ?? "#FF0000")" style="width:100%;">
-                        @SaveButton(nameof(ProfileSettings.DefaultAdvancedCoverageOverlayColor))
-                    </div>
+        </div>
+        <div class="form-group row">
+            <span class="col-12 col-sm-4">Outside pixel overlay color</span>
+            <div class="col col-sm-8 align-items-center">
+                <div class="@(Request.IsAuthenticated ? "input-group" : "")">
+                    <input class="flex-grow-1" id="@(nameof(ProfileSettings.DefaultAdvancedCoverageOverlayColor))" type="color" onchange="updateCoverage();@(Request.IsAuthenticated ? $" resetSaveButton('{nameof(ProfileSettings.DefaultAdvancedCoverageOverlayColor)}');" : "")" value="@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageOverlayColor ?? "#FF0000")">
+                    @SaveButton(nameof(ProfileSettings.DefaultAdvancedCoverageOverlayColor))
                 </div>
             </div>
-            <div class="form-group">
-                <span class="col-xs-4">Percentage precision</span>
-                <div class="col-xs-8">
-                    <div class="@(Request.IsAuthenticated ? "input-group" : "")">
-                        <input id="@(nameof(ProfileSettings.DefaultAdvancedCoveragePercentagePrecision))" style="margin-top:3px" oninput="setPercentageValues();@(Request.IsAuthenticated ? $" resetSaveButton('{nameof(ProfileSettings.DefaultAdvancedCoveragePercentagePrecision)}');" : "")" type="range" id="precision" min="0" max="10" value="@(CurrentUser?.ProfileSettings.DefaultAdvancedCoveragePercentagePrecision ?? 2)">
-                        @SaveButton(nameof(ProfileSettings.DefaultAdvancedCoveragePercentagePrecision))
-                    </div>
+        </div>
+        <div class="form-group row">
+            <span class="col-12 col-sm-4">Percentage precision</span>
+            <div class="col col-sm-8 align-items-center">
+                <div class="@(Request.IsAuthenticated ? "input-group" : "")">
+                    <input class="flex-grow-1" id="@(nameof(ProfileSettings.DefaultAdvancedCoveragePercentagePrecision))" oninput="setPercentageValues();@(Request.IsAuthenticated ? $" resetSaveButton('{nameof(ProfileSettings.DefaultAdvancedCoveragePercentagePrecision)}');" : "")" type="range" min="0" max="10" value="@(CurrentUser?.ProfileSettings.DefaultAdvancedCoveragePercentagePrecision ?? 2)">
+                    @SaveButton(nameof(ProfileSettings.DefaultAdvancedCoveragePercentagePrecision))
                 </div>
             </div>
         </div>

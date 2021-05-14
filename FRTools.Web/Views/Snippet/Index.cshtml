@@ -2,45 +2,55 @@
 
 @{
     ViewBag.Title = "Code snippets";
+    Layout = V2Layout;
 }
 
 <div class="row">
     <div class="col-md-4">
-        <div class="panel panel-default">
-            <div class="panel-heading">
+        <div class="card mt-3">
+            <div class="card-header" style="cursor:pointer;" data-toggle="collapse" data-target=".snippets">
                 Available snippets
             </div>
-            <div class="panel-body">
-                @foreach (var script in Model.Values)
-                {
-                    <a href="#@(script.SanitizedName)" class="module">
-                        <div class="panel panel-default panel-transparent" style="margin-bottom:0">
-                            <div class="panel-body">
-                                <div class="moduleIcon">
-                                    @if (string.IsNullOrEmpty(script.IconBase64))
-                                    {
-                                        <span>@(script.Name[0])</span>
-                                    }
-                                    else
-                                    {
-                                        <img src="@($"data:image/png;base64, {script.IconBase64}")" />
-                                    }
+            <div class="card-body py-0">
+                <div class="snippets collapse show">
+                    <div class="pb-3">
+                        @foreach (var script in Model.Values)
+                        {
+                            <a href="#@(script.SanitizedName)" class="module">
+                                <div class="card mt-3" style="margin-bottom:0">
+                                    <div class="card-body">
+                                        <div class="moduleIcon d-none d-xl-block">
+                                            @if (string.IsNullOrEmpty(script.IconBase64))
+                                            {
+                                                <span>@(script.Name[0])</span>
+                                            }
+                                            else
+                                            {
+                                                <img src="@($"data:image/png;base64, {script.IconBase64}")" />
+                                            }
+                                        </div>
+                                        <div class="moduleDescription">
+                                            <h5>@(script.Name)</h5>
+                                            @(script.Description)
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="moduleDescription">
-                                    <h4 style="margin-bottom:15px;">@(script.Name)</h4>
-                                    @(script.Description)
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                }
+                            </a>
+                        }
+                    </div>
+                </div>
+                <div class="snippets collapse">
+                    <div class="py-3">
+                        Snippets are hidden, click the header to view them again
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-8">
-        <div class="panel panel-default">
-            <div class="panel-body">
+    <div class="col col-md-8">
+        <div class="card mt-3">
+            <div class="card-body">
                 <div class="selectModuleHelp">
                     <h4>What are snippets?</h4>
                     <p>Code snippets, or just snippets, are simple scripts that are often simply transformative in nature. Meaning, it just changes a URL to a slightly different one for example. Or just shows you information based on a given input.</p>
