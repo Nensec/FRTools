@@ -87,7 +87,6 @@
 
     .moduleIcon {
         border-radius: 32px;
-        transition: all 0.25s cubic-bezier(0.29,-0.07, 0.56, 1.65);
         width: 64px;
         height: 64px;
         text-align: center;
@@ -107,6 +106,10 @@
             margin-top: 15px;
             font-family: 'Arimo', sans-serif;
         }
+
+    [data-theme="dark"] .moduleIcon {
+        background-color: #555;
+    }
 
     .moduleDescription {
         display: table-cell;

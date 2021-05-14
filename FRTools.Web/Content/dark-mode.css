@@ -8,7 +8,7 @@
 }
 
     [data-theme="dark"] a:not(.btn) {
-        color: #005fc5;
+        color: #2c86e6;
     }
 
     [data-theme="dark"] .bg-light {
@@ -23,14 +23,21 @@
         background-color: #2b2b2b !important;
     }
 
+    [data-theme="dark"] .card-body .card-header {
+        background-color: #272727 !important;
+    }
+
+    [data-theme="dark"] .card-body .card {
+        background-color: #313131 !important;
+    }
+
     [data-theme="dark"] .card-header {
         background-color: rgba(0, 0, 0, 0.12) !important;
     }
 
     [data-theme="dark"] .alert-info {
-        background-color: #a1b7bb !important;
-        color: #155c77 !important;
-        border-color: #68949a !important;
+        background-color: #aff2ff !important;
+
     }
 
     [data-theme="dark"] .alert-warning {
@@ -69,7 +76,7 @@
     [data-theme="dark"] .form-control {
         background-color: #2b2b2b !important;
         border-color: #6d6d6d !important;
-        color: #6d6d6d !important;
+        color: #c7c7c7 !important;
     }
 
     [data-theme="dark"] select.form-control option:disabled {
@@ -86,4 +93,43 @@
         background-color: #2b2b2b;
         color: #6d6d6d;
         opacity: 0.6;
+    }
+
+    [data-theme="dark"] .control-fileupload {
+        background-color: #2b2b2b !important;
+        border-color: #6d6d6d !important;
+        color: #6d6d6d !important;
+    }
+
+    [data-theme="dark"] .table {
+        color: inherit;
+    }
+
+    [data-theme="dark"] .table-hover tbody tr:hover {
+        background-color: #ffffff13;
+        color: #c7c7c7;
+    }
+
+    [data-theme="dark"] .dropdown-menu {
+        background-color: #343a40;
+    }
+
+    [data-theme="dark"] a.dropdown-item {
+        color: #8e8e8e;
+    }
+
+    [data-theme="dark"] .dropdown-item:hover {
+        background-color: #2b2b2b;
+    }
+
+    [data-theme="dark"] .dropdown-divider {
+        border-color: #616161;
+    }
+
+    [data-theme="dark"] input[type="color"] {
+        background-color: transparent;
+    }
+
+    [data-theme="dark"] input[type="range"] {
+        background-color: transparent;
     }
