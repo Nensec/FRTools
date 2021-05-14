@@ -124,6 +124,10 @@ namespace FRTools.Data
 		Swirl = 10,
 		[Description("Innocent")]
 		Innocent = 11,
+		[Description("Pastel")]
+		Pastel = 12,
+		[Description("Bright")]
+		Bright = 13,
 	}
 
 	public enum Color

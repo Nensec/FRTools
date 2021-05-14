@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FRTools.Data.Messages
+﻿namespace FRTools.Data.Messages
 {
     public enum MessageCategory
     {
@@ -12,6 +6,7 @@ namespace FRTools.Data.Messages
         SettingUpdated,
         ItemFetcher,
         DiscordTestMessage,
-        FlashTracker
+        FlashTracker,
+        NewsReader
     }
 }

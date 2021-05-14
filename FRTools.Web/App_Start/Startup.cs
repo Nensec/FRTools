@@ -47,8 +47,6 @@ namespace FRTools.App_Start
 
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
-            //AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.NameIdentifier;
-
             app.UseGoogleAuthentication(new GoogleAuthenticationOptions
             {
                 ClientId = ConfigurationManager.AppSettings["GoogleClientId"],

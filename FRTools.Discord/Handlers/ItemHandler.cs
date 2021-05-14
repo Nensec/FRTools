@@ -68,6 +68,13 @@ namespace FRTools.Discord.Handlers
                             using (var client = new WebClient())
                                 assetStream = await client.OpenReadTaskAsync(string.Format(SiteHelpers.DummyDragonSkinProxyUrl, (int)dragonType, (int)gender, $"{item.FRId}"));
 
+                        embed.AddField(x =>
+                        {
+                            x.Name = "For";
+                            x.Value = $"{dragonType} {gender}";
+                            x.IsInline = true;
+                        });
+
                         var username = Regex.Match(item.Description, @"Designed by ([^.]+)[.|\)]");
                         if (username.Success)
                         {

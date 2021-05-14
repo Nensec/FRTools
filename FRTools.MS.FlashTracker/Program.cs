@@ -32,7 +32,13 @@ namespace FRTools.MS.FlashTracker
             var itemId = int.Parse(flashSaleItem.ChildNodes.First(x => x.GetAttributes().Any(a => a.Name == "data-itemid")).GetAttributeValue("data-itemid", null));
             using (var ctx = new DataContext())
             {
-                var item = ctx.FRItems.First(x => x.FRId == itemId);
+                var item = ctx.FRItems.FirstOrDefault(x => x.FRId == itemId);
+                if (item == null)
+                {
+                    item = FRHelpers.FetchItem(itemId);
+                    if(item != null)
+                        await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NewItemMessage(MessageCategory.FlashTracker, item)))));
+                }
                 if (item.FlashSales.All(x => x.RemovedAt != null))
                 {
                     await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new FlashSaleMessage(MessageCategory.FlashTracker, item), new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }))));
@@ -44,6 +50,7 @@ namespace FRTools.MS.FlashTracker
                     ctx.SaveChanges();
                 }
             }
+            await _serviceBus.CloseAsync();
         }
     }
 }

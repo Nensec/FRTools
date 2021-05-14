@@ -1,7 +1,7 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ assembly name="System.Core" #>
 <#@ assembly name="System.Xml" #>
-<#@ assembly name="$(packagesFolder)\HtmlAgilityPack.1.11.24\lib\Net45\HtmlAgilityPack.dll" #>
+<#@ assembly name="$(packagesFolder)\HtmlAgilityPack.1.11.33\lib\Net45\HtmlAgilityPack.dll" #>
 <#@ assembly name="$(packagesFolder)\ExCSS.4.1.0\lib\net48\ExCSS.dll" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>

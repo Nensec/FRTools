@@ -1,6 +1,6 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ assembly name="System.Core" #>
-<#@ assembly name="$(packagesFolder)\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll" #>
+<#@ assembly name="$(packagesFolder)\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll" #>
 <#@ assembly name="$(discordBot)\FRTools.Discord.exe" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
