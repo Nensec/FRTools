@@ -6,53 +6,48 @@
 
 <div class="row">
     <div class="col-md-8">
-        <div class="panel panel-default">
-            <div class="panel-body">
+        <div class="card mt-3">
+            <div class="card-body">
                 <ul id="entryContainer" tabindex="0" role="listbox">
                     @foreach (var entry in Model.PinglistEntries)
                     {
-                        <li @(Model.SecretKey != null || (entry.FRUser.User != null && entry.FRUser.User.Id == Model.CurrentUserId) ? $"secretkey={entry.SecretKey}" : "") entryid="@(entry.EntryId)" userid="@(entry.FRUser.FRId)" username="@(entry.FRUser.Username)" role="option" onclick="selectEntry(this)" title="@(entry.Remarks)">@(entry.FRUser.Username) (@(entry.FRUser.FRId)) @Html.Raw(!string.IsNullOrEmpty(entry.Remarks) ? "<span class=\"glyphicon glyphicon-comment\"></span>" : "")</li>
+                        <li class="text-nowrap" @(Model.SecretKey != null || (entry.FRUser.User != null && entry.FRUser.User.Id == Model.CurrentUserId) ? $"secretkey={entry.SecretKey}" : "") entryid="@(entry.EntryId)" userid="@(entry.FRUser.FRId)" username="@(entry.FRUser.Username)" role="option" onclick="selectEntry(this)" title="@(entry.Remarks)">@(entry.FRUser.Username) (@(entry.FRUser.FRId)) @Html.Raw(!string.IsNullOrEmpty(entry.Remarks) ? "<span class=\"fa fa-comment\"></span>" : "")</li>
                     }
                 </ul>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="panel panel-default">
-            <div id="entryManagement" class="panel-body">
-                <div id="SearchContainer">
-                    <label for="SearchEntry">Search</label> <span data-toggle="tooltip" class="glyphicon glyphicon-info-sign" title="Enter the name, FR user ID or entry ID"></span>
-                    <input type="text" id="SearchEntry" class="form-control" />
-                </div>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div id="entryManagement" class="panel-body">
-                @if (Model.IsPublic && Model.CurrentUserId != null && Model.SecretKey == null)
-                {
-                    var onList = Model.PinglistEntries.Any(x => x.FRUser.User?.Id == Model.CurrentUserId);
-                    <button @(onList ? "disabled" : "") id="AddEntryButton" onclick="addEntry()" class="btn btn-primary col-md-12">Add Self</button>
-                }
-                else if (Model.IsPublic || Model.SecretKey != null)
-                {
-                    <button id="AddEntryButton" onclick="addEntry()" class="btn btn-primary col-md-12">Add</button>
-                }
-                @if (Model.IsPublic || Model.SecretKey != null)
-                {
-                    <button id="EditEntryButton" onclick="editEntry()" disabled class="btn btn-warning col-md-12">Edit</button>
-                }
-                <button id="RemoveEntryButton" onclick="deleteEntry()" disabled class="btn btn-danger col-md-12">Remove</button>
-                @if (Model.IsPublic || Model.SecretKey != null)
-                {
-                    <button id="SetSecretKey" onclick="setSecretKey()" style="display: none;" data-toggle="tooltip" title="If you have the secret key for this entry, you can set it by clicking here" class="btn btn-info col-md-12">Set secret key</button>
-                }
+        <div class="card-body px-0 pt-0 mt-3" id="entryManagement">
+            @if (Model.IsPublic && Model.CurrentUserId != null && Model.SecretKey == null)
+            {
+                var onList = Model.PinglistEntries.Any(x => x.FRUser.User?.Id == Model.CurrentUserId);
+                <button @(onList ? "disabled" : "") id="AddEntryButton" onclick="addEntry()" class="btn btn-primary col-md-12">Add Self</button>
+            }
+            else if (Model.IsPublic || Model.SecretKey != null)
+            {
+                <button id="AddEntryButton" onclick="addEntry()" class="btn btn-primary col-md-12">Add</button>
+            }
+            @if (Model.IsPublic || Model.SecretKey != null)
+            {
+                <button id="EditEntryButton" onclick="editEntry()" disabled class="btn btn-warning col-md-12">Edit</button>
+            }
+            <button id="RemoveEntryButton" onclick="deleteEntry()" disabled class="btn btn-danger col-md-12">Remove</button>
+            @if (Model.IsPublic || Model.SecretKey != null)
+            {
+                <button id="SetSecretKey" onclick="setSecretKey()" style="display: none;" data-toggle="tooltip" title="If you have the secret key for this entry, you can set it by clicking here" class="btn btn-info col-md-12">Set secret key</button>
+            }
+            <hr/>
+            <div id="SearchContainer">
+                <label for="SearchEntry">Search</label> <span data-toggle="tooltip" class="fa fa-info-circle" title="Enter the full name or FR user ID"></span>
+                <input type="text" id="SearchEntry" class="form-control" />
             </div>
         </div>
     </div>
     <div class="col-md-12">
         @if (Model.SecretKey != null)
         {
-            <a href="@Url.RouteUrl("PinglistBatchUpdateUsers", new { listId = Model.ListId, secretKey = Model.SecretKey})" class="btn btn-warning col-md-12" data-toggle="tooltip" title="This will go and update every single user on your pinglist for a change in username, every user can only be updated once a day!" onclick="updateUsers(event)">Update all users on pinglist</a>
+            <a href="@Url.RouteUrl("PinglistBatchUpdateUsers", new { listId = Model.ListId, secretKey = Model.SecretKey})" class="btn btn-warning w-100 mt-3" data-toggle="tooltip" title="This will go and update every single user on your pinglist for a change in username, every user can only be updated once a day!" onclick="updateUsers(event)">Update all users on this pinglist</a>
         }
     </div>
 </div>
@@ -127,9 +122,11 @@
         padding: 0;
         margin: 0;
         height: 100%;
+        width:100%;
         max-height: 450px;
         min-height: 219px;
         overflow-y: scroll;
+        overflow-x: auto;
     }
 
         #entryContainer:focus {
@@ -205,11 +202,11 @@
 
         $('#AddModal').on('shown.bs.modal', function () {
             $("input:text:visible:first", '#AddModal').focus();
-        })  
+        })
 
         $('#EditModal').on('shown.bs.modal', function () {
             $("textarea:first", '#EditModal').focus();
-        })  
+        })
     });
 
     selectEntry = function (entry) {

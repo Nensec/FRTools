@@ -2,13 +2,14 @@
 
 @{
     ViewBag.Title = $"Private pinglist '{Model.Name}'";
+    Layout = V2Layout;
 }
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4>Pinglist: <b>@(Model.Name)</b></h4>
+    <div class="card mt-3">
+        <div class="card-header">
+            <h5>Pinglist: <b>@(Model.Name)</b></h5>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
             @Html.Partial("Userlist", Model.EntriesViewModel)
         </div>
     </div>

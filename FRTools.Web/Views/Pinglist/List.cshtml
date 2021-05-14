@@ -2,135 +2,128 @@
 
 @{
     ViewBag.Title = "View pinglist";
+    Layout = V2Layout;
 }
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4>View pinglist</h4>
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>View pinglist</h5>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <p>
             Use the fields here to navigate to a a pinglist that you have the ID for.<br />
             If you created a pinglist without being logged in, you will need to enter your secret key if you wish to manage your list.
         </p>
-        <div class="form-horizontal">
-            <div class="col-md-6">
-                <div class="form-group">
-                    @Html.LabelFor(model => model.ListId, new { @class = "control-label col-md-4" })
-                    <div class="col-md-8">
-                        @Html.TextBoxFor(model => model.ListId, new { @class = "form-control" })
-                    </div>
-                </div>
-                <div class="form-group">
-                    @Html.LabelFor(model => model.SecretKey, new { @class = "control-label col-md-4" })
-                    <div class="col-md-8">
-                        @Html.TextBoxFor(model => model.SecretKey, new { @class = "form-control", placeholder = "Optional", data_placement = "right", data_toggle = "tooltip", title = "You only need this if you own this pinglist, and want to manage it." })
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="col-md-offset-4 col-md-8">
-                        <input type="submit" value="Go to pinglist" class="btn btn-primary" />
-                    </div>
-                </div>
+        <div class="form-group row">
+            @Html.LabelFor(model => model.ListId, new { @class = "col-md-4" })
+            <div class="col-md-8">
+                @Html.TextBoxFor(model => model.ListId, new { @class = "form-control" })
             </div>
+        </div>
+        <div class="form-group row">
+            @Html.LabelFor(model => model.SecretKey, new { @class = "col-md-4" })
+            <div class="col-md-8">
+                @Html.TextBoxFor(model => model.SecretKey, new { @class = "form-control", placeholder = "Optional", data_placement = "right", data_toggle = "tooltip", title = "You only need this if you own this pinglist, and want to manage it." })
+            </div>
+        </div>
+        <div class="d-flex justify-content-end">
+            <input type="submit" value="Go to pinglist" class="btn btn-primary" />
         </div>
     </div>
 </div>
 
 @if (Request.IsAuthenticated)
 {
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4>
+    <div class="card mt-3">
+        <div class="card-header">
+            <h5>
                 Your pinglists
                 <span style="margin-top:-5px;" class="pull-right"><a class="btn btn-primary btn-sm" href="@Url.RouteUrl("PinglistCreate")">Create pinglist</a></span>
-            </h4>
+            </h5>
         </div>
 
-        <div class="panel-body">
-
-            <div class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Pinglists with your entry
-                    </div>
-                    <div class="panel-body">
-                        @if (Model.HasVerified)
-                        {
-                            if (Model.OnLists.Any())
+        <div class="card-body pt-0">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            Pinglists with your entry
+                        </div>
+                        <div class="card-body">
+                            @if (Model.HasVerified)
                             {
-                                <ul class="listContainer" id="onListContainer" tabindex="0" role="listbox">
-                                    @foreach (var list in Model.OnLists)
+                                if (Model.OnLists.Any())
+                                {
+                                    <ul class="listContainer" id="onListContainer" tabindex="0" role="listbox">
+                                        @foreach (var list in Model.OnLists)
+                                        {
+                                            <li>@(list.Name) (Owner: @Html.Raw(list.Owner?.UserName ?? "<i>Anonymous</i>")) <span class="pull-right"><a class="btn btn-primary btn-sm" href="@Url.RouteUrl("PinglistDirect", new { listId = list.ListId })">View</a></span></li>
+                                        }
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <i>You are not on any pinglists :(</i>
+                                }
+                            }
+                            else
+                            {
+                                <p><i>To see on what pinglists you are, link your Flight Rising account to your FRTools account. You can do so <a href="@Url.RouteUrl("VerifyFR")">here</a></i></p>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            Owned pinglists
+                            <span class="pull-right">
+                                <a class="btn btn-success btn-sm" href="#" onclick="AddCategory()">Add category</a>
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            @if (Model.OwnedLists.Any())
+                            {
+                                <ul class="listContainer" id="ownedListContainer" tabindex="0" role="listbox">
+                                    @foreach (var list in Model.OwnedLists.Where(x => x.PinglistCategory == null))
                                     {
-                                        <li>@(list.Name) (Owner: @Html.Raw(list.Owner?.UserName ?? "<i>Anonymous</i>")) <span class="pull-right"><a class="btn btn-primary btn-xs" href="@Url.RouteUrl("PinglistDirect", new { listId = list.ListId })">View</a></span></li>
+                                        <li>@(list.Name)<span class="pull-right"><a class="btn btn-primary btn-sm" href="@Url.RouteUrl("PinglistDirect", new { listId = list.ListId })">Manage</a></span></li>
+                                    }
+                                    <li><hr style="margin:10px 0" /></li>
+                                    @foreach (var category in Model.AvailableCategories)
+                                    {
+                                        <li>
+                                            @if (Model.OwnedLists.Any(x => x.PinglistCategory?.Id == category.Id))
+                                            {
+                                                <span class="category-caret category-caret-down">@(category.Name)</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="category-caret">@(category.Name) <i>(Empty Category)</i></span>
+                                            }
+                                            <span class="pull-right">
+                                                <a class="btn btn-warning btn-sm" href="#" onclick="EditCategory(@(category.Id))">Edit</a>
+                                                <a class="btn btn-danger btn-sm" href="#" onclick="DeleteCategory(@(category.Id))">Delete</a>
+                                            </span>
+                                            <ul class="nested active">
+                                                @foreach (var list in Model.OwnedLists.Where(x => x.PinglistCategory?.Id == category.Id))
+                                                {
+                                                    <li>@(list.Name)<span class="pull-right"><a class="btn btn-primary btn-sm" href="@Url.RouteUrl("PinglistDirect", new { listId = list.ListId })">Manage</a></span></li>
+                                                }
+                                            </ul>
+                                        </li>
+
                                     }
                                 </ul>
                             }
                             else
                             {
-                                <i>You are not on any pinglists :(</i>
+                                <i>You do not own any pinglists :(</i>
                             }
-                        }
-                        else
-                        {
-                            <p><i>To see on what pinglists you are, link your Flight Rising account to your FRTools account. You can do so <a href="@Url.RouteUrl("VerifyFR")">here</a></i></p>
-                        }
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Owned pinglists
-                        <span class="pull-right">
-                            <a class="btn btn-success btn-xs" href="#" onclick="AddCategory()">Add category</a>
-                        </span>
-                    </div>
-
-                    <div class="panel-body">
-                        @if (Model.OwnedLists.Any())
-                        {
-                            <ul class="listContainer" id="ownedListContainer" tabindex="0" role="listbox">
-                                @foreach (var list in Model.OwnedLists.Where(x => x.PinglistCategory == null))
-                                {
-                                    <li>@(list.Name)<span class="pull-right"><a class="btn btn-primary btn-xs" href="@Url.RouteUrl("PinglistDirect", new { listId = list.ListId })">Manage</a></span></li>
-                                }
-                                <li><hr style="margin:10px 0" /></li>
-                                @foreach (var category in Model.AvailableCategories)
-                                {
-                                    <li>
-                                        @if (Model.OwnedLists.Any(x => x.PinglistCategory?.Id == category.Id))
-                                        {
-                                            <span class="category-caret category-caret-down">@(category.Name)</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="category-caret">@(category.Name) <i>(Empty Category)</i></span>
-                                        }
-                                        <span class="pull-right">
-                                            <a class="btn btn-warning btn-xs" href="#" onclick="EditCategory(@(category.Id))">Edit</a>
-                                            <a class="btn btn-danger btn-xs" href="#" onclick="DeleteCategory(@(category.Id))">Delete</a>
-                                        </span>
-                                        <ul class="nested active">
-                                            @foreach (var list in Model.OwnedLists.Where(x => x.PinglistCategory?.Id == category.Id))
-                                            {
-                                                <li>@(list.Name)<span class="pull-right"><a class="btn btn-primary btn-xs" href="@Url.RouteUrl("PinglistDirect", new { listId = list.ListId })">Manage</a></span></li>
-                                            }
-                                        </ul>
-                                    </li>
-
-                                }
-                            </ul>
-                        }
-                        else
-                        {
-                            <i>You do not own any pinglists :(</i>
-                        }
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 }
@@ -225,10 +218,10 @@
 
         /* Create the caret/arrow with a unicode, and style it */
         .category-caret::before {
-            content: "\25B6";
+            content: "\25B8";
             color: black;
             display: inline-block;
-            margin-right: 6px;
+            font-size: 24px;
         }
 
     .category-caret-down::before {

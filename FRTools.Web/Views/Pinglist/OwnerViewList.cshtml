@@ -2,13 +2,14 @@
 
 @{
     ViewBag.Title = $"Manage pinglist '{Model.Name}'";
+    Layout = V2Layout;
 }
 
 @if (TempData["NewList"] != null)
 {
     var (listId, secretKey) = (ValueTuple<string, string>)TempData["NewList"];
-    <div class="panel panel-default">
-        <div class="panel-body">
+    <div class="card mt-3">
+        <div class="card-body">
             <p>Your list has been succesfully created:</p>
             <p>
                 <b>
@@ -23,14 +24,14 @@
         </div>
     </div>
 }
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4>Pinglist: <b>@(Model.Name)</b></h4>
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>Pinglist: <b>@(Model.Name)</b></h5>
     </div>
     @if (Model.FinishedJobs.Any())
     {
-        <div class="panel-body">
-            <div class="panel panel-default">
+        <div class="card-body pt-0">
+            <div class="card mt-3">
                 <div class="panel-body">
                     <p>The following tasks have been finished in the background:</p>
                     @foreach (var job in Model.FinishedJobs)
@@ -70,133 +71,140 @@
         </div>
     }
 
-    <div class="panel-body">
-        <div class="col-md-6">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Management
-                </div>
-                <div class="panel-body">
-                    @using (Html.BeginRouteForm("PinglistManageListPost", new { listId = Model.ListId, secretKey = Model.SecretKey }, FormMethod.Post, new { @class = "form-horizontal" }))
-                    {
-                        <div class="form-group">
-                            <label class="col-md-3 control-label" for="PinglistLink">
-                                Your link <span class="glyphicon glyphicon-alert text-danger" data-toggle="tooltip" title="This link will not work on the Flight Rising forums due to their censorship of off-site tools."></span>
-                            </label>
-                            <div class="col-md-9">
-                                @Html.CopyTextBox(Url.RouteUrl("PinglistDirect", new { listId = Model.ListId }, "https"), "PinglistLink", "pinglist", Model.ListId)
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-3 control-label" for="PinglistShareLink">
-                                Share link <span class="glyphicon glyphicon-alert text-warning" data-toggle="tooltip" title="Generating a share link allows you to post links on the Flight Rising forums."></span>
-                            </label>
-                            <div class="col-md-9">
-                                @Html.CopyTextBox(Model.ShareUrl, "PinglistShareLink", "pinglist", Model.ListId)
-                            </div>
-                        </div>
-                        <hr />
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.Name, new { @class = "control-label col-md-3" })
-                            <div class="col-md-9">
-                                @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.IsPublic, new { @class = "control-label col-md-3" })
-                            <div class="col-md-9">
-                                <div class="checkbox">
-                                    @Html.CheckBoxFor(model => model.IsPublic, new { style = "margin-top:-7px; margin-left:0; width: 25px; height: 34px;" })
-                                    @Html.ValidationMessageFor(model => model.IsPublic, "", new { @class = "text-danger" })
+    <div class="card-body pt-0">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        Management
+                    </div>
+                    <div class="card-body">
+                        @using (Html.BeginRouteForm("PinglistManageListPost", new { listId = Model.ListId, secretKey = Model.SecretKey }))
+                        {
+                            <div class="form-group row">
+                                <label class="col-md-3" for="PinglistLink">
+                                    <span class="fa fa-warning text-danger" data-toggle="tooltip" title="This link will not work on the Flight Rising forums due to their censorship of off-site tools."></span> Your link
+                                </label>
+                                <div class="col-md-9">
+                                    @Html.CopyTextBox(Url.RouteUrl("PinglistDirect", new { listId = Model.ListId }, "https"), "PinglistLink", "pinglist", Model.ListId)
                                 </div>
                             </div>
-                        </div>
-                        if (Request.IsAuthenticated)
-                        {
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.NewPinglistCategory, new { @class = "control-label col-md-3" })
+                            <div class="form-group row">
+                                <label class="col-md-3" for="PinglistShareLink">
+                                    <span class="fa fa-warning text-warning" data-toggle="tooltip" title="Generating a share link allows you to post links on the Flight Rising forums."></span> Share link
+                                </label>
                                 <div class="col-md-9">
-                                    <div class="input-group">
-                                        @Html.DropDownListFor(model => model.NewPinglistCategory, Model.AvailableCategories.Select(x => new SelectListItem { Text = x.Name, Value = x.Id == -1 ? null : x.Id.ToString(), Selected = Model.PinglistCategory?.Id == x.Id }), new { @class = "form-control" })
-                                        <span class="input-group-btn">
-                                            <a href="#" class="btn-group-sm btn btn-success" onclick="NewCategory()">+ New</a>
-                                        </span>
+                                    @Html.CopyTextBox(Model.ShareUrl, "PinglistShareLink", "pinglist", Model.ListId)
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="form-group row">
+                                @Html.LabelFor(model => model.Name, new { @class = "col-md-3" })
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                @Html.LabelFor(model => model.IsPublic, new { @class = "col-md-3" })
+                                <div class="col-md-9">
+                                    <div class="custom-control custom-switch">
+                                        @Html.CheckBoxFor(model => model.IsPublic, new { @class = "custom-control-input" })
+                                        <label class="custom-control-label" for="@Html.IdFor(model => model.IsPublic)"></label>
                                     </div>
                                 </div>
                             </div>
-                        }
-                        <hr />
-                        <div class="form-group">
-                            <label class="control-label col-md-3" for="@Html.IdFor(model => model.Format.Separator)">@Html.DisplayNameFor(model => model.Format.Separator) <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" title="The separator that is between each individual user mention."></span></label>
-                            <div class="col-md-9">
-                                @Html.TextBoxFor(model => model.Format.Separator, new { @class = "form-control" })
+                            if (Request.IsAuthenticated)
+                            {
+                                <div class="form-group row">
+                                    @Html.LabelFor(model => model.NewPinglistCategory, new { @class = "col-md-3" })
+                                    <div class="col-md-9">
+                                        <div class="input-group">
+                                            @Html.DropDownListFor(model => model.NewPinglistCategory, Model.AvailableCategories.Select(x => new SelectListItem { Text = x.Name, Value = x.Id == -1 ? null : x.Id.ToString(), Selected = Model.PinglistCategory?.Id == x.Id }), new { @class = "form-control" })
+                                            <span class="input-group-btn">
+                                                <a href="#" class="btn-group-sm btn btn-success" onclick="NewCategory()">+ New</a>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <hr />
+                            <div class="form-group row">
+                                <label class="col-md-3" for="@Html.IdFor(model => model.Format.Separator)">@Html.DisplayNameFor(model => model.Format.Separator) <span class="fa fa-info-circle" data-toggle="tooltip" title="The separator that is between each individual user mention."></span></label>
+                                <div class="col-md-9">
+                                    @Html.TextBoxFor(model => model.Format.Separator, new { @class = "form-control" })
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3" for="@Html.IdFor(model => model.Format.Prefix)">@Html.DisplayNameFor(model => model.Format.Prefix) <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" title="The text to put before the list of user mentions. For example the opening tags of BBCode."></span></label>
-                            <div class="col-md-9">
-                                @Html.TextAreaFor(model => model.Format.Prefix, new { @class = "form-control", rows = 3, style = "resize: vertical" })
+                            <div class="form-group row">
+                                <label class="col-md-3" for="@Html.IdFor(model => model.Format.Prefix)">@Html.DisplayNameFor(model => model.Format.Prefix) <span class="fa fa-info-circle" data-toggle="tooltip" title="The text to put before the list of user mentions. For example the opening tags of BBCode."></span></label>
+                                <div class="col-md-9">
+                                    @Html.TextAreaFor(model => model.Format.Prefix, new { @class = "form-control", rows = 3, style = "resize: vertical" })
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-3" for="@Html.IdFor(model => model.Format.Postfix)">@Html.DisplayNameFor(model => model.Format.Postfix) <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" title="The text to put after the list of user mentions. For example the closing tags of BBCode."></span></label>
-                            <div class="col-md-9">
-                                @Html.TextAreaFor(model => model.Format.Postfix, new { @class = "form-control", rows = 3, style = "resize: vertical" })
+                            <div class="form-group row">
+                                <label class="col-md-3" for="@Html.IdFor(model => model.Format.Postfix)">@Html.DisplayNameFor(model => model.Format.Postfix) <span class="fa fa-info-circle" data-toggle="tooltip" title="The text to put after the list of user mentions. For example the closing tags of BBCode."></span></label>
+                                <div class="col-md-9">
+                                    @Html.TextAreaFor(model => model.Format.Postfix, new { @class = "form-control", rows = 3, style = "resize: vertical" })
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-md-offset-3 col-md-9">
+                            <div class="d-flex justify-content-end">
                                 <input type="submit" value="Save" class="btn btn-primary" />
                             </div>
-                        </div>
-                    }
-                    <hr />
-                    @Html.CopyTextAreaFor(model => model.CopyPinglist)
+                        }
+                        <hr />
+                        @Html.CopyTextAreaFor(model => model.CopyPinglist)
+                    </div>
                 </div>
-            </div>
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    Import pinglist
-                </div>
-                <div class="panel-body">
-                    @using (Html.BeginRouteForm("PinglistImportCSV", new { listId = Model.ListId, secretKey = Model.SecretKey }, FormMethod.Post, new { }))
-                    {
+                <div class="card mt-3">
+                    <div class="card-header bg-danger text-white">
+                        Thar be dangerous stuff  'ere
+                    </div>
+                    <div class="card-body border-danger">
                         <div class="form-group">
-                            <label for="CSV" class="control-label">CSV</label>
-                            <div class="input-group">
-                                @Html.TextArea("CSV", new { @class = "form-control", rows = 3, style = "resize: vertical" })
-                                <span class="input-group-addon">
-                                    <span id="CSVHelp" data-toggle="popover" class="glyphicon glyphicon-info-sign"></span>
+                            This will permanently delete your pinglist!&nbsp;
+                            <div class="d-flex justify-content-end">
+                                <span>
+                                    <a class="btn btn-sm btn-danger" href="@Url.RouteUrl("PinglistDelete", new { listId = Model.ListId, SecretKey = Model.SecretKey })" onclick="return userConfirm();">Delete your pinglist</a>
                                 </span>
                             </div>
                         </div>
-                        <input type="submit" value="Import" class="btn btn-primary" onclick="alert('Depending on how many users are already known on the site, this action may take a while.')" />
-                    }
-                </div>
-            </div>
-            <div class="panel panel-warning">
-                <div class="panel-heading">
-                    Thar be dangerous stuff  'ere
-                </div>
-                <div class="panel-body">
-                    <div class="form-group">
-                        This will permanently delete your pinglist!&nbsp;
-                        <span>
-                            <a class="btn btn-xs btn-danger" href="@Url.RouteUrl("PinglistDelete", new { listId = Model.ListId, SecretKey = Model.SecretKey })" onclick="return userConfirm();">Delete your pinglist</a>
-                        </span>
                     </div>
                 </div>
-            </div>
 
-        </div>
-        <div class="col-md-6">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Entries
+            </div>
+            <div class="col-md-6">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        Entries
+                    </div>
+                    <div class="card-body pt-0">
+                        @Html.Partial("Userlist", Model.EntriesViewModel)
+                    </div>
                 </div>
-                <div class="panel-body">
-                    @Html.Partial("Userlist", Model.EntriesViewModel)
+                <div class="card mt-3">
+                    <div class="card-header">
+                        Import pinglist
+                    </div>
+                    <div class="card-body">
+                        @using (Html.BeginRouteForm("PinglistImportCSV", new { listId = Model.ListId, secretKey = Model.SecretKey }, FormMethod.Post, new { }))
+                        {
+                            <div class="form-group">
+                                <label for="CSV" class="control-label">CSV</label>
+                                <div class="input-group">
+                                    @Html.TextArea("CSV", new { @class = "form-control", rows = 3, style = "resize: vertical" })
+                                    <div class="input-group-append">
+                                        <div class="input-group-text">
+                                            <span id="CSVHelp" data-toggle="popover" class="fa fa-info-circle"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <input type="submit" value="Import" class="btn btn-primary" onclick="alert('Depending on how many users are already known on the site, this action may take a while.')" />
+                            </div>
+                        }
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -206,7 +214,7 @@
     <p class="text-center">
         If you are managing your pinglist somewhere else, you can import your existing list using CSV (Comma Separated Value).<br />
         It would be impossible to give examples for everything, but a lot of people are using Google Spreadsheets so this GIF will show you how to create a CSV file there.
-        <img style="width:80%;" class="text-center" src="https://i.imgur.com/jQmSLYH.gif" />
+        <img class="text-center img-fluid" src="https://i.imgur.com/jQmSLYH.gif" />
     </p>
 </div>
 
@@ -247,5 +255,6 @@
     .popover {
         max-width: 40%;
         z-index: 100;
+        pointer-events:none;
     }
 </style>

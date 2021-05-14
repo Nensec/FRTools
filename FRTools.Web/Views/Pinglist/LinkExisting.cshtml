@@ -2,15 +2,16 @@
 
 @{
     ViewBag.Title = "Claim existing pinglist";
+    Layout = V2Layout;
 }
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4>
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>
             Claim existing pinglist
-        </h4>
+        </h5>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <p>
             If you have created a pinglist while not logged in you can use this page to link that pinglist to your account<br />
             Simply fill in the pinglist id and the corresponding secret key<br />
@@ -19,31 +20,24 @@
         @using (Html.BeginRouteForm("PinglistLinkPost"))
         {
             @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-            <div class="form-horizontal">
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-                <div class="col-md-6">
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.ListId, htmlAttributes: new { @class = "control-label col-md-4" })
-                        <div class="col-md-8">
-                            @Html.EditorFor(model => model.ListId, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.ListId, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.SecretKey, htmlAttributes: new { @class = "control-label col-md-4" })
-                        <div class="col-md-8">
-                            @Html.EditorFor(model => model.SecretKey, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.SecretKey, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-offset-4 col-md-8">
-                            <input type="submit" value="Link to my account!" class="btn btn-primary" />
-                        </div>
-                    </div>
+            <div class="form-group row">
+                @Html.LabelFor(model => model.ListId, htmlAttributes: new { @class = "col-md-4" })
+                <div class="col-md-8">
+                    @Html.EditorFor(model => model.ListId, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ListId, "", new { @class = "text-danger" })
                 </div>
+            </div>
+            <div class="form-group row">
+                @Html.LabelFor(model => model.SecretKey, htmlAttributes: new { @class = "col-md-4" })
+                <div class="col-md-8">
+                    @Html.EditorFor(model => model.SecretKey, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.SecretKey, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <input type="submit" value="Link to my account!" class="btn btn-primary" />
             </div>
         }
     </div>
