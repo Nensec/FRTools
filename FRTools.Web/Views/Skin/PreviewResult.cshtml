@@ -2,15 +2,16 @@
 
 @{
     ViewBag.Title = "Preview";
+    Layout = V2Layout;
 }
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4>
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>
             Here is your preview, hope you like it!
-        </h4>
+        </h5>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         @if (Model.Dragon.EyeType == EyeType.Primal || Model.Dragon.EyeType == EyeType.Glowing || (Model.Dragon.EyeType == EyeType.MultiGaze && Model.Dragon.DragonType.IsAncientBreed()))
         {
             <div class="alert alert-warning">
@@ -32,17 +33,17 @@
         <div class="row">
             @if (Model.Result.Urls.Length == 1)
             {
-                <div>
-                    <img class="dragonImage center-block" src="@(Model.CDNBasePath + Model.Result.Urls[0])" />
+                <div class="text-center">
+                    <img class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[0])" />
                 </div>
             }
             else
             {
-                <div class="col-md-6">
-                    <img class="dragonImage center-block" src="@(Model.CDNBasePath + Model.Result.Urls[0])" />
+                <div class="col-md-6 text-center">
+                    <img class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[0])" />
                 </div>
-                <div class="col-md-6">
-                    <img class="dragonImage center-block" src="@(Model.CDNBasePath + Model.Result.Urls[1])" />
+                <div class="col-md-6 text-center">
+                    <img class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[1])" />
                 </div>
 
             }
@@ -68,7 +69,7 @@
 
                 @Html.Hidden("Force", true)
             }
-            <div class="alert alert-info">
+            <div class="alert alert-info mt-3">
                 This result is a cached version, if you want to completely re-generate the preview (in case of a change in dragon or apparel) you can do so by clicking <a href="javascript:document.getElementById('forceRegen').submit()">here</a>
             </div>
         }
@@ -79,12 +80,15 @@
         </p>
         @if (!Request.IsAuthenticated)
         {
+
             <p class="pull-right">
                 <i style="font-size:10px;">
                     Did you know that if you <a href="@Url.RouteUrl("Login")">login</a> all previews you create will be linked to your account and you can view them in your profile?
                 </i>
             </p>
         }
+        <div class="d-flex justify-content-end">
+            <a class="btn btn-primary" href="@Url.Action("Preview", new { SkinId = Model.SkinId })">Try on another dragon? &raquo;</a>
+        </div>
     </div>
 </div>
-<p><a class="btn btn-primary" href="@Url.Action("Preview", new { SkinId = Model.SkinId })">Try on another dragon? &raquo;</a></p>
