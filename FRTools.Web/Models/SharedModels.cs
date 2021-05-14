@@ -26,7 +26,7 @@ namespace FRTools.Web.Models
         {
             RouteUrlName = routeUrlBase;
             Page = page ?? 1;
-            PageSize = pageSize ?? 20;
+            PageSize = pageSize ?? 25;
         }
     }
 }

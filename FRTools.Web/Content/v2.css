@@ -148,3 +148,7 @@ input[type=file] {
         margin-right: 90px;
         cursor: text;
     }
+
+.table-hover tbody tr:hover {
+    cursor: pointer;
+}

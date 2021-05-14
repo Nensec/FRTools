@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "FR news topic: " + Model.TopicName;
+    Layout = V2Layout;
 }
 
 @section meta{
@@ -12,34 +13,33 @@
     <meta property="og:description" content="@(Model.DeletedOnly ? "Deleted" : "All") posts made in the thread: @(Model.TopicName)" />
 }
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <span class="pull-right">
-            <a class="btn btn-warning" href="@(Url.RouteUrl(Model.DeletedOnly ? "ReadNews" : "ReadDeletedNews", new { topicId = Model.FRTopicId }))">View @(Model.DeletedOnly ? "all" : "only deleted") posts</a>
-        </span>
-        <h4>@(Model.TopicName)</h4>
+<div class="card mt-3">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-12 col-sm">
+                <h5 class="text-break">@(Model.TopicName)</h5>
+            </div>
+            <div class="col-auto">
+                <a class="btn btn-sm btn-secondary mr-1" href="@(Url.RouteUrl(Model.DeletedOnly ? "ReadNews" : "ReadDeletedNews", new { topicId = Model.FRTopicId }))">View @(Model.DeletedOnly ? "all" : "only deleted") posts</a>
+                <a class="btn btn-sm btn-secondary" href="@(Url.RouteUrl("NewsReader"))">Back to topics</a>
+            </div>
+
+        </div>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
         <p class="text-danger">
             Due to the nature of not knowing why a post is deleted, this tool also catches posts deleted by users and genuine bad posts that <b>should</b> be moderated.
         </p>
         <p class="text-danger">
             <b>Read the contents of the pages here at your own risk, there might be things in here that really should not be!<br />If you do catch something, hit the report button on the post.</b>
         </p>
-        <div class="panel panel-info">
-            <div class="panel-body text-center">
-                @foreach (var page in Enumerable.Range(1, (int)Math.Ceiling((double)(Model.DeletedOnly ? Model.DeletedPosts : Model.TotalPosts) / 10)))
-                {
-                    <a href="@Url.RouteUrl(Model.DeletedOnly ? "ReadDeletedNews" : "ReadNews", new { topicId = Model.FRTopicId, page = page })">@(page)</a>
-                }
-            </div>
-        </div>
+        @Html.Partial("_Pagination", Model.Pagination)
 
         <div id="FRContent">
             @foreach (var post in Model.Posts)
             {
-                <div class="panel @(post.IsDeleted ? "panel-danger" : "panel-default")">
-                    <div class="panel-heading" data-toggle=collapse data-target="#post_@(post.FRPostId)" title="Click to toggle show/hide">
+                <div class="card @(post.IsDeleted ? "border-danger" : "") mb-3">
+                    <div class="card-header" data-toggle=collapse data-target="#post_@(post.FRPostId)" title="Click to toggle show/hide">
                         Post ID: @(post.FRPostId) | Created: @(post.CreatedAt)
                         <span class="pull-right">
                             @if (post.IsDeleted)
@@ -52,19 +52,21 @@
                             }
                         </span>
                     </div>
-                    <div id="post_@(post.FRPostId)" class="panel-collapse collapse @(post.Reports > 5 ? "" : "in")">
-                        <div class="panel-body @(post.IsDeleted ? "bg-danger":"")">
-                            <div class="col-xs-3">
-                                <div class="panel panel-default">
-                                    <div class="panel-body">
-                                        <a target="_blank" href="@($"https://www1.flightrising.com/clan-profile/{post.PostAuthorClanId}")">@(post.PostAuthor)</a>
+                    <div id="post_@(post.FRPostId)" class="panel-collapse collapse show @(post.Reports > 5 ? "" : "in")">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-auto pr-0">
+                                    <div class="card @(post.IsDeleted ? "border-danger" : "")">
+                                        <div class="card-body">
+                                            <a target="_blank" href="@($"https://www1.flightrising.com/clan-profile/{post.PostAuthorClanId}")">@(post.PostAuthor)</a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-xs-9">
-                                <div class="panel panel-default">
-                                    <div class="panel-body">
-                                        @Html.Raw(post.RawHtmlContent)
+                                <div class="col">
+                                    <div class="card @(post.IsDeleted ? "border-danger" : "")">
+                                        <div class="card-body">
+                                            @Html.Raw(post.RawHtmlContent)
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -85,20 +87,12 @@
                     }
                 });
 
-                $('.bbcode_quote').addClass('panel panel-info');
-                $('.bbcode_quote_head').addClass('panel-heading');
-                $('.bbcode_quote_body').addClass('panel-body');
+                $('.bbcode_quote').addClass('card border-info mt-3');
+                $('.bbcode_quote_head').addClass('card-header');
+                $('.bbcode_quote_body').addClass('card-body');
             </script>
         </div>
-        <div class="panel panel-info">
-            <div class="panel-body text-center">
-                @foreach (var page in Enumerable.Range(1, (int)Math.Ceiling((double)(Model.DeletedOnly ? Model.DeletedPosts : Model.TotalPosts) / 10)))
-                {
-                    <a href="@Url.RouteUrl(Model.DeletedOnly ? "ReadDeletedNews" : "ReadNews" , new { topicId=Model.FRTopicId, page=page })">@(page)</a>
-                }
-            </div>
-        </div>
-
+        @Html.Partial("_Pagination", Model.Pagination)
     </div>
 </div>
 

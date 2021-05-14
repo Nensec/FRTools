@@ -26,17 +26,19 @@ namespace FRTools.Web.Controllers
             return View(model);
         }
 
-        [Route("view/{topicId}/{page?}", Name = "ReadNews")]
-        public ActionResult Read(int topicId, int? page)
+        [Route("view/{topicId}", Name = "ReadNews")]
+        public ActionResult Read(int topicId, PaginationModel pagination)
         {
             var model = new NewsTopicViewModel { FRTopicId = topicId };
+            model.Pagination = new PaginationModel("ReadNews", pagination.Page, 10);
             var topic = DataContext.Topics.FirstOrDefault(x => x.FRTopicId == topicId);
             if (topic == null)
             {
                 AddErrorNotification($"Could not find topic id {topicId}.");
                 return RedirectToRoute("NewsReader");
             }
-            var posts = topic.Posts.OrderBy(x => x.TimeStamp);
+            var posts = topic.Posts.OrderBy(x => x.TimeStamp).ToList();
+            model.Pagination.TotalItems = posts.Count();
             var firstPost = posts.First();
             model.TopicStarterClanId = topic.TopicStarterClanId;
             model.TopicStarer = topic.TopicStarter;
@@ -44,7 +46,7 @@ namespace FRTools.Web.Controllers
             model.TotalPosts = posts.Count();
             model.DeletedPosts = posts.Count(x => x.Deleted);
             model.TopicName = topic.FRTopicName;
-            model.Posts = posts.Skip(model.TotalPosts > 10 ? ((page ?? 1) - 1) * 10 : 0).Take(10).Select(x => new NewsPostViewModel
+            model.Posts = posts.Skip(model.Pagination.PageSize * (model.Pagination.Page - 1)).Take(model.Pagination.PageSize).Select(x => new NewsPostViewModel
             {
                 FRPostId = x.FRPostId,
                 PostAuthor = x.PostAuthor,
@@ -59,17 +61,18 @@ namespace FRTools.Web.Controllers
             return View(model);
         }
 
-        [Route("viewdeleted/{topicId}/{page?}", Name = "ReadDeletedNews")]
-        public ActionResult ReadDeletedOnly(int topicId, int? page)
+        [Route("viewdeleted/{topicId}", Name = "ReadDeletedNews")]
+        public ActionResult ReadDeletedOnly(int topicId, PaginationModel pagination)
         {
             var model = new NewsTopicViewModel { FRTopicId = topicId, DeletedOnly = true };
+            model.Pagination = new PaginationModel("ReadDeletedNews", pagination.Page, 10);
             var topic = DataContext.Topics.FirstOrDefault(x => x.FRTopicId == topicId);
             if (topic == null)
             {
                 AddErrorNotification($"Could not find topic id {topicId}.");
                 return RedirectToRoute("NewsReader");
             }
-            var posts = topic.Posts.OrderBy(x => x.TimeStamp);
+            var posts = topic.Posts.OrderBy(x => x.TimeStamp).ToList();
             var firstPost = posts.First();
             model.TopicStarterClanId = topic.TopicStarterClanId;
             model.TopicStarer = topic.TopicStarter;
@@ -77,7 +80,7 @@ namespace FRTools.Web.Controllers
             model.TotalPosts = posts.Count();
             model.DeletedPosts = posts.Count(x => x.Deleted);
             model.TopicName = topic.FRTopicName;
-            model.Posts = posts.Where(x => x.Deleted).Skip(model.DeletedPosts > 10 ? ((page ?? 1) - 1) * 10 : 0).Take(10).Select(x => new NewsPostViewModel
+            model.Posts = posts.Where(x => x.Deleted).Skip(model.Pagination.PageSize * (model.Pagination.Page - 1)).Take(model.Pagination.PageSize).Select(x => new NewsPostViewModel
             {
                 FRPostId = x.FRPostId,
                 PostAuthor = x.PostAuthor,
