@@ -2,94 +2,95 @@
 
 @{
     ViewBag.Title = "ManageServer";
+    Layout = V2Layout;
 }
 
-<div class="panel panel-default">
-    <div class="panel-heading">
+<div class="card mt-3">
+    <div class="card-header">
         <div class="row">
-            <div class="col-xs-5">
-                <h4>Manage server: <b>@(Model.ServerName)</b></h4>
+            <div class="col-5">
+                <h5>Manage server: <b>@(Model.ServerName)</b></h5>
             </div>
-            <div class="col-xs-7">
-                <span class="pull-right"><a class="btn btn-default" href="@Url.RouteUrl("DiscordManage")">Back to server list</a></span>
+            <div class="col-7">
+                <span class="pull-right"><a class="btn btn-sm btn-outline-secondary" href="@Url.RouteUrl("DiscordManage")">Back to server list</a></span>
             </div>
         </div>
     </div>
-    <div class="panel-body">
-        <div class="panel panel-default">
-            <div class="panel-heading">
+    <div class="card-body pt-0">
+        <div class="card mt-3">
+            <div class="card-header">
                 Bot settings
             </div>
-            <div class="panel-body">
-                <div class="form-horizontal">
-                    @foreach (var setting in Model.BotSettings.Where(x => x.Category == null))
+            <div class="card-body">
+                @foreach (var setting in Model.BotSettings.Where(x => x.Category == null))
+                {
+                    <div class="form-group row">
+                        <label class="col-sm-3" style="text-align:left"><span class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" title="@(setting.Description)"></span> @(setting.SettingName)</label>
+                        <div class="col-sm-9">
+                            @Html.EditorFor(model => setting)
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        @foreach (var category in Model.BotSettingCategories)
+        {
+            <div class="card mt-3">
+                <div class="card-header">
+                    @(category.Description)
+                </div>
+                <div class="card-body">
+                    @foreach (var setting in Model.BotSettings.Where(x => x.Category == category))
                     {
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label" style="text-align:left"><span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="left" title="@(setting.Description)"></span> @(setting.SettingName)</label>
-                            <div class="col-sm-9">
+                        <div class="form-group row">
+                            <label class="col-3" style="text-align:left"><span class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" title="@(setting.Description)"></span> @(setting.SettingName)</label>
+                            <div class="col-9">
                                 @Html.EditorFor(model => setting)
                             </div>
                         </div>
                     }
                 </div>
             </div>
-        </div>
-        @foreach (var category in Model.BotSettingCategories)
-        {
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    @(category.Description)
-                </div>
-                <div class="panel-body">
-                    <div class="form-horizontal">
-                        @foreach (var setting in Model.BotSettings.Where(x => x.Category == category))
-                        {
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label" style="text-align:left"><span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="left" title="@(setting.Description)"></span> @(setting.SettingName)</label>
-                                <div class="col-sm-9">
-                                    @Html.EditorFor(model => setting)
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
         }
 
-        <div class="panel panel-default">
-            <div class="panel-heading">
+        <div class="card mt-3">
+            <div class="card-header">
                 Available modules
             </div>
-            <div class="panel-body">
-                @foreach (var module in Model.Modules)
-                {
-                    <div class="col-sm-6 module">
-                        <div class="panel panel-default panel-transparent">
-                            <div class="panel-body">
-                                <a href="@Url.RouteUrl("DiscordManageModule", new { discordServer = Model.ServerId, module = module.Name.ToLower() })">
-                                    <div class="col-sm-4">
-                                        <div class="moduleIcon">
-                                            @if (string.IsNullOrEmpty(module.Help?.IconBase64))
-                                            {
-                                                <span>@module.Name[0]</span>
-                                            }
-                                            else
-                                            {
-                                                <img src="@($"data:image/png;base64, {module.Help.IconBase64}")" />
-                                            }
+            <div class="card-body">
+                <div class="row">
+                    @foreach (var module in Model.Modules)
+                    {
+                        <div class="col-sm-6 module">
+                            <div class="card mt-3">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-auto">
+                                            <a href="@Url.RouteUrl("DiscordManageModule", new { discordServer = Model.ServerId, module = module.Name.ToLower() })">
+                                                <div class="moduleIcon">
+                                                    @if (string.IsNullOrEmpty(module.Help?.IconBase64))
+                                                    {
+                                                        <span>@module.Name[0]</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="@($"data:image/png;base64, {module.Help.IconBase64}")" />
+                                                    }
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="col">
+                                            <a href="@Url.RouteUrl("DiscordManageModule", new { discordServer = Model.ServerId, module = module.Name.ToLower() })">
+                                                <h4 style="margin-bottom:15px">@module.Name</h4>
+                                            </a>
+                                            <p>@(module.Description)</p>
                                         </div>
                                     </div>
-                                </a>
-                                <div class="col-sm-8">
-                                    <a href="@Url.RouteUrl("DiscordManageModule", new { discordServer = Model.ServerId, module = module.Name.ToLower() })">
-                                        <h4 style="margin-bottom:15px">@module.Name</h4>
-                                    </a>
-                                    <p>@(module.Description)</p>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                }
+                    }
+                </div>
             </div>
         </div>
     </div>

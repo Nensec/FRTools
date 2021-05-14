@@ -1,50 +1,55 @@
 ﻿@model FRTools.Common.ServersViewModel
 
 @{
-    ViewBag.Title = "Discord Manage";
+    ViewBag.Title = "Discord servers";
+    Layout = V2Layout;
 }
 
 @section head {
     <link href="https://fonts.googleapis.com/css?family=Arimo" rel="stylesheet">
 }
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4>Manage bot</h4>
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>Manage bot</h5>
     </div>
-    <div class="panel-body">
-        <p>Below are servers that you share with the bot, you can only manage the bot for servers you are in and are an administrator</p>
-        @foreach (var server in Model.Servers)
-        {
-            <div class="col-sm-6 server">
-                <div class="panel panel-default panel-transparent">
-                    <div class="panel-body">
-                        <a href="@Url.RouteUrl("DiscordManageServer", new { discordServer = server.ServerId })">
-                            <div class="col-sm-4">
-                                <div class="serverIcon">
-                                    @if (string.IsNullOrEmpty(server.IconBase64))
-                                    {
-                                        <span>@server.ServerName[0]</span>
-                                    }
-                                    else
-                                    {
-                                        <img src="@($"data:image/png;base64, {server.IconBase64}")" />
-                                    }
+    <div class="card-body">
+        <p>Below are servers that you share with the bot, you can only manage the bot for servers you are in and have a role with Administrator permissions or are the owner.</p>
+        <div class="row">
+            @foreach (var server in Model.Servers)
+            {
+                <div class="col-sm-6 server">
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <a href="@Url.RouteUrl("DiscordManageServer", new { discordServer = server.ServerId })">
+                                        <div class="serverIcon">
+                                            @if (string.IsNullOrEmpty(server.IconBase64))
+                                            {
+                                                <span>@server.ServerName[0]</span>
+                                            }
+                                            else
+                                            {
+                                                <img src="@($"data:image/png;base64, {server.IconBase64}")" />
+                                            }
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    <a href="@Url.RouteUrl("DiscordManageServer", new { discordServer = server.ServerId })">
+                                        <h4 style="margin-bottom:15px">@server.ServerName</h4>
+                                    </a>
+                                    <ul>
+                                        <li><b>User count:</b> @(server.UserCount)</li>
+                                    </ul>
                                 </div>
                             </div>
-                        </a>
-                        <div class="col-sm-8">
-                            <a href="@Url.RouteUrl("DiscordManageServer", new { discordServer = server.ServerId })">
-                                <h4 style="margin-bottom:15px">@server.ServerName</h4>
-                            </a>
-                            <ul>
-                                <li><b>User count:</b> @(server.UserCount)</li>
-                            </ul>
                         </div>
                     </div>
                 </div>
-            </div>
-        }
+            }
+        </div>
     </div>
 </div>
 

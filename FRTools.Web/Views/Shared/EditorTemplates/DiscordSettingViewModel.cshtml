@@ -13,7 +13,9 @@
             fallBack = fallBack.Split('.')[1];
         }
     }
-    <span id="@(Html.Id(Model.Key))_status" class="input-group-addon @(settingType == typeof(bool) ? "input-group-addon-close" : "")"><span style="display:block; width:75px">Unchanged</span></span>
+    <div class="input-group-prepend @(settingType == typeof(bool) ? "input-group-addon-close" : "")">
+        <span id="@(Html.Id(Model.Key))_status" class="input-group-text"><span style="display:block; width:75px">Unchanged</span></span>
+    </div>
     @if (!(settingType?.IsArray == true || fallBack.EndsWith("[]")))
     {
         switch (settingType?.Name ?? fallBack)
@@ -42,8 +44,8 @@
                 </select>
                 if (channels.Any(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Text))
                 {
-                    <div class="input-group-btn">
-                        <button type="button" class="btn btn-default" data-toggle="tooltip" title="Check the permissions for this channel by sending a test to it" onclick="sendTestMessage('@(Model.Key)')">Send test message</button>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" title="Check the permissions for this channel by sending a test to it" onclick="sendTestMessage('@(Model.Key)')">Send test message</button>
                     </div>
                     if (!Context.Items.Contains("SendTestMessageScript"))
                     {
@@ -79,8 +81,17 @@
                     enabled = Model.ExtraArgs[0];
                     disabled = Model.ExtraArgs[1];
                 }
-                <div style="padding-left:12px">
-                    <input type="checkbox" id="@(id)" name="@(name)" @(bool.TryParse(Model.Value, out var r) && r ? "checked" : "") data-on="@(enabled)" data-off="@(disabled)" data-toggle="toggle" data-height="32" data-width="100" onchange="saveDiscordSetting('@(Model.Key)', this.checked)" />
+                <div class="d-flex align-items-center flex-grow-1 border pl-2">
+                    @if (enabled != "True" && disabled != "False")
+                    {
+                        <span class="fa fa-info-circle" title="On = <b class='text-warning'>@enabled</b>, Off = <b class='text-warning'>@disabled</b>" data-toggle="tooltip"></span>
+                    }
+                    <div class="custom-control custom-switch ml-1">
+                        <input type="checkbox" id="@(id)" name="@(name)" class="custom-control-input" @(bool.TryParse(Model.Value, out var r) && r ? "checked" : "") onchange="saveDiscordSetting('@(Model.Key)', this.checked)" />
+                        <label class="custom-control-label" for="@(id)">
+                            &nbsp;
+                        </label>
+                    </div>
                 </div>
                 break;
             case nameof(Int32):
@@ -114,7 +125,7 @@
                 }
                 else
                 {
-                    currentValue = Model.Value?.Split(',') ?? new string[] {};
+                    currentValue = Model.Value?.Split(',') ?? new string[] { };
                 }
                 foreach (var option in Enum.GetValues(arrayType))
                 {
@@ -188,7 +199,7 @@
     <script>
         saveDiscordSetting = function (key, value) {
             var statusElm = $(`#@Html.IdForModel()_${key}_status`);
-            statusElm.removeClass('success danger').toggleClass('warning').find($('span')).html('Saving..');
+            statusElm.removeClass('bg-success bg-danger border-success border-danger text-white').toggleClass('bg-warning border-warning').find($('span')).html('Saving..');
             $.post({
                 url: '@Url.RouteUrl("DiscordSaveSetting")',
                 data: {
@@ -197,8 +208,8 @@
                     key: key,
                     value: value
                 }
-            }).done(function (data) { statusElm.toggleClass('warning').toggleClass('success').find($('span')).html('Saved!'); })
-                .fail(function (data) { statusElm.toggleClass('warning').toggleClass('danger').find($('span')).html('Error!'); });
+            }).done(function (data) { statusElm.toggleClass('bg-warning border-warning').toggleClass('bg-success border-success text-white').find($('span')).html('Saved!'); })
+                .fail(function (data) { statusElm.toggleClass('bg-warning border-warning').toggleClass('bg-danger border-danger text-white').find($('span')).html('Error!'); });
         }
     </script>
 }
