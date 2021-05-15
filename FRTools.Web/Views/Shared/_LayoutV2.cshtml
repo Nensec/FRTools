@@ -226,6 +226,30 @@
 
     @RenderSection("scripts", required: false)
     <script src="~/Scripts/dark-mode-switch.min.js"></script>
-    @Html.Partial("Site.js.cshtml")
+    <script>
+        $(() => {
+            $('[data-toggle="tooltip"]').tooltip({ html: true });
+        })
+
+        copyOrGenerateUrl = (e, b, t, id) => {
+            if (e.value != '') {
+                copyText(e, b);
+            }
+            else {
+                b.innerHTML = 'Fetching..';
+                $.get({
+                    url: '@Url.RouteUrl("GetShareUrl")',
+                    data: { type: t, id: id },
+                    success: d => { e.value = d; copyText(e, b); }
+                }).fail(() => b.innerHTML = 'Error!');
+            }
+        }
+
+        copyText = (e, b) => {
+            e.select();
+            document.execCommand('copy');
+            b.innerHTML = 'Copied!';
+        }
+    </script>
 </body>
 </html>
