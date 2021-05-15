@@ -1,7 +1,7 @@
 ﻿@model ViewProfileViewModel
 
 @{
-    Layout = V2Layout;
+    
     ViewBag.Title = Model.User.UserName + (Model.User.UserName.EndsWith("s") ? "" : "'s") + " profile";
     var previews = Model.Previews?.Select((x, i) => (x, i)).ToList();
     var skins = Model.Skins?.Select((x, i) => (x, i)).ToList();

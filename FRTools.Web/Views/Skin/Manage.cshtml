@@ -1,7 +1,7 @@
 ﻿@model ManageModelViewModel
 
 @{
-    Layout = V2Layout;
+    
     ViewBag.Title = "Manage";
     var previews = Model.Skin.Previews.Select((x, i) => (x, i)).ToList();
     var scries = previews.Where(x => x.Item1.DragonId == null).ToList();
