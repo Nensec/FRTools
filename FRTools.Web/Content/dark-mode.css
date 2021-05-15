@@ -110,6 +110,11 @@
         color: #c7c7c7;
     }
 
+    [data-theme="dark"] .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #ffffff13;
+        color: #c7c7c7;
+    }
+
     [data-theme="dark"] .dropdown-menu {
         background-color: #343a40;
     }
