@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Dress up a scry";
+    Layout = V2Layout;
 }
 
 @section meta{
@@ -10,51 +11,51 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4>@ViewBag.Title</h4>
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5>@ViewBag.Title</h5>
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 @using (Html.BeginRouteForm("PreviewPost"))
                 {
                     @Html.AntiForgeryToken()
 
-                    <div class="form-horizontal">
-                        <p>
-                            Enter the following fields, make sure the dragon breed and gender match!
-                        </p>
-                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <p>
+                        Enter the following fields, make sure the dragon breed and gender match!
+                    </p>
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.ScryerUrl, htmlAttributes: new { @class = "control-label col-md-2" })
-                            <div class="col-md-8">
-                                <div class="input-group">
-                                    @Html.EditorFor(model => model.ScryerUrl, new { htmlAttributes = new { @class = "form-control", onchange = "setScryerImg()", oninput = "setScryerImg()" } })
-                                    <span class="input-group-addon">
-                                        <span id="ScryHelp" data-toggle="popover" class="glyphicon glyphicon-info-sign"></span>
-                                    </span>
+                    <div class="form-group row">
+                        @Html.LabelFor(model => model.ScryerUrl, htmlAttributes: new { @class = "col-md-2" })
+                        <div class="col-md-10">
+                            <div class="input-group">
+                                @Html.EditorFor(model => model.ScryerUrl, new { htmlAttributes = new { @class = "form-control", onchange = "setScryerImg()", oninput = "setScryerImg()" } })
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <span id="ScryHelp" data-toggle="popover" class="fa fa-info-circle"></span>
+                                    </div>
                                 </div>
-                                @Html.ValidationMessageFor(model => model.ScryerUrl, "", new { @class = "text-danger" })
                             </div>
+                            @Html.ValidationMessageFor(model => model.ScryerUrl, "", new { @class = "text-danger" })
                         </div>
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.DressingRoomUrl, htmlAttributes: new { @class = "control-label col-md-2" })
-                            <div class="col-md-8">
-                                <div class="input-group">
-                                    @Html.EditorFor(model => model.DressingRoomUrl, new { htmlAttributes = new { @class = "form-control", onchange = "setDressingImg()", oninput = "setDressingImg()" } })
-                                    <span class="input-group-addon">
-                                        <span id="DressingHelp" data-toggle="popover" class="glyphicon glyphicon-info-sign"></span>
-                                    </span>
+                    </div>
+                    <div class="form-group row">
+                        @Html.LabelFor(model => model.DressingRoomUrl, htmlAttributes: new { @class = "col-md-2" })
+                        <div class="col-md-10">
+                            <div class="input-group">
+                                @Html.EditorFor(model => model.DressingRoomUrl, new { htmlAttributes = new { @class = "form-control", onchange = "setDressingImg()", oninput = "setDressingImg()" } })
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <span id="DressingHelp" data-toggle="popover" class="fa fa-info-circle"></span>
+                                    </div>
                                 </div>
-                                @Html.ValidationMessageFor(model => model.DressingRoomUrl, "", new { @class = "text-danger" })
                             </div>
+                            @Html.ValidationMessageFor(model => model.DressingRoomUrl, "", new { @class = "text-danger" })
                         </div>
+                    </div>
 
-                        <div class="form-group">
-                            <div class="col-md-offset-2 col-md-8">
-                                <input type="submit" value="Show me the preview!" class="btn btn-primary" />
-                            </div>
-                        </div>
+                    <div class="d-flex justify-content-end">
+                        <input type="submit" value="Show me the preview!" class="btn btn-primary" />
                     </div>
 
                     <div id="ScryHelp_popover" style="display:none;">
@@ -79,22 +80,22 @@
 </div>
 <div class="row">
     <div class="col-md-6">
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                <h4>Scryer image</h4>
+        <div class="card mt-3 border-info">
+            <div class="card-header">
+                <h5>Scryer image</h5>
             </div>
-            <div class="panel-body text-center">
+            <div class="card-body text-center">
                 <img id="ScryerImage" src="/Content/nodata.png" onerror="this.src='/Content/nodata.png'" />
             </div>
         </div>
     </div>
     <div class="col-md-6">
-        <div class="panel panel-warning">
-            <div class="panel-heading">
-                <h4>Dressing room image</h4>
+        <div class="card mt-3 border-warning">
+            <div class="card-header">
+                <h5>Dressing room image</h5>
             </div>
-            <div class="panel-body text-center">
-                <img id="DressingImage" src="/Content/nodata.png" onerror="this.src='/Content/nodata.png'"/>
+            <div class="card-body text-center">
+                <img id="DressingImage" src="/Content/nodata.png" onerror="this.src='/Content/nodata.png'" />
             </div>
         </div>
     </div>
