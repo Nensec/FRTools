@@ -445,7 +445,7 @@
     <Content Include="Views\Pinglist\Index.cshtml" />
     <Content Include="Views\Pinglist\Create.cshtml" />
     <Content Include="Views\Pinglist\OwnerViewList.cshtml" />
-    <Content Include="Views\Pinglist\Userlist.cshtml" />
+    <Content Include="Views\Pinglist\_Userlist.cshtml" />
     <Content Include="Views\Pinglist\PublicViewList.cshtml" />
     <Content Include="Views\Pinglist\PrivateViewList.cshtml" />
     <Content Include="Views\Pinglist\List.cshtml" />

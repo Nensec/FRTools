@@ -30,12 +30,12 @@
 <body class="text-dark">
     <nav class="navbar navbar-expand-xl fixed-top navbar-dark bg-dark">
         <a href="@Url.RouteUrl("Home")" class="navbar-brand pt-0">
-            <img style="height:30px;" src="@(ViewBag.Logo ?? "/Content/frtools.svg")" onerror="this.src='@(ViewBag.PngLogo ?? "/Content/frtools.png")'" />
+            <img style="height:30px;max-width:185px;" src="@(ViewBag.Logo ?? "/Content/frtools.svg")" onerror="this.src='@(ViewBag.PngLogo ?? "/Content/frtools.png")'" />
         </a>
         <div>
             @if (!Request.IsAuthenticated || (ViewContext.Controller as FRTools.Web.Controllers.BaseController).LoggedInUser?.ProfileSettings.ShowAds == true)
             {
-                <a class="d-xl-none pr-3" href='https://ko-fi.com/X8X6RLCS' target='_blank'><img style="border:0px;height:34px;vertical-align:top;" src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+                <a class="d-xl-none pr-2" href='https://ko-fi.com/X8X6RLCS' target='_blank'><img style="border:0px;height:34px;vertical-align:top;" src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
             }
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -119,7 +119,7 @@
                 <li class="nav-link">
                     <div class="custom-control custom-switch">
                         <input type="checkbox" class="custom-control-input" id="darkSwitch">
-                        <label class="custom-control-label" for="darkSwitch"><span class="fa fa-warning text-warning" title="Dark mode is only available on pages in the new layout, so some pages can still burn your eyes out at night. Sorry!" data-toggle="tooltip"></span> Dark</label>
+                        <label class="custom-control-label" for="darkSwitch">Dark mode</label>
                     </div>
                 </li>
                 @if (Request.IsAuthenticated)

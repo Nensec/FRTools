@@ -26,7 +26,7 @@ namespace FRTools.Web.Infrastructure.Helpers
             inputTag.MergeAttribute("class", "form-control");
 
             var spanTag = new TagBuilder("span");
-            spanTag.MergeAttribute("class", "input-group-btn");
+            spanTag.MergeAttribute("class", "input-group-append");
 
             var buttonTag = new TagBuilder("button");
             buttonTag.MergeAttribute("class", "btn btn-success");
@@ -61,10 +61,15 @@ namespace FRTools.Web.Infrastructure.Helpers
             inputTag.MergeAttribute("style", "resize: vertical;");
 
             var spanTag = new TagBuilder("span");
-            spanTag.MergeAttribute("class", "input-group-addon btn btn-success");
-            spanTag.MergeAttribute("onclick", $"document.getElementById('{inputTag.Attributes["id"]}').select(); document.execCommand('copy'); this.innerHTML = 'Copied!'");
-            spanTag.InnerHtml = "Copy!";
+            spanTag.MergeAttribute("class", "input-group-append");
 
+            var buttonTag = new TagBuilder("button");
+            buttonTag.MergeAttribute("class", "btn btn-success");
+            buttonTag.MergeAttribute("type", "button");
+            buttonTag.MergeAttribute("onclick", $"document.getElementById('{inputTag.Attributes["id"]}').select(); document.execCommand('copy'); this.innerHTML = 'Copied!'");
+            buttonTag.InnerHtml = "Copy!";
+
+            spanTag.InnerHtml = buttonTag.ToString();
             outerTag.InnerHtml = inputTag.ToString() + spanTag.ToString();
 
             return MvcHtmlString.Create(outerTag.ToString());

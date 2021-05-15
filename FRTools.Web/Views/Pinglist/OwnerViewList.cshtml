@@ -120,7 +120,7 @@
                                     <div class="col-md-9">
                                         <div class="input-group">
                                             @Html.DropDownListFor(model => model.NewPinglistCategory, Model.AvailableCategories.Select(x => new SelectListItem { Text = x.Name, Value = x.Id == -1 ? null : x.Id.ToString(), Selected = Model.PinglistCategory?.Id == x.Id }), new { @class = "form-control" })
-                                            <span class="input-group-btn">
+                                            <span class="input-group-append">
                                                 <a href="#" class="btn-group-sm btn btn-success" onclick="NewCategory()">+ New</a>
                                             </span>
                                         </div>
@@ -154,11 +154,11 @@
                         @Html.CopyTextAreaFor(model => model.CopyPinglist)
                     </div>
                 </div>
-                <div class="card mt-3">
-                    <div class="card-header bg-danger text-white">
+                <div class="card mt-3 border-danger">
+                    <div class="card-header">
                         Thar be dangerous stuff  'ere
                     </div>
-                    <div class="card-body border-danger">
+                    <div class="card-body">
                         <div class="form-group">
                             This will permanently delete your pinglist!&nbsp;
                             <div class="d-flex justify-content-end">
@@ -177,7 +177,7 @@
                         Entries
                     </div>
                     <div class="card-body pt-0">
-                        @Html.Partial("Userlist", Model.EntriesViewModel)
+                        @Html.Partial("_Userlist", Model.EntriesViewModel)
                     </div>
                 </div>
                 <div class="card mt-3">

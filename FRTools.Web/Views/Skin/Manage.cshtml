@@ -179,15 +179,17 @@
     </div>
     <div class="col-md-12">
         <div class="card mt-3 border-danger">
-            <div class="card-header bg-danger text-light">
+            <div class="card-header">
                 Thar be dangerous stuff 'ere
             </div>
             <div class="card-body">
                 <div class="form-group">
                     This will permanently delete your skin!&nbsp;
-                    <span>
-                        <a class="btn btn-xs btn-danger" href="@Url.RouteUrl("Delete", new { SkinId = Model.Skin.GeneratedId, SecretKey = Model.Skin.SecretKey })" onclick="return userConfirm();">Delete your skin</a>
-                    </span>
+                    <div class="d-flex justify-content-end">
+                        <span>
+                            <a class="btn btn-sm btn-danger" href="@Url.RouteUrl("Delete", new { SkinId = Model.Skin.GeneratedId, SecretKey = Model.Skin.SecretKey })" onclick="return userConfirm();">Delete your skin</a>
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
