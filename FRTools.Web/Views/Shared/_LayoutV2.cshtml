@@ -137,7 +137,7 @@
                             @using (Html.BeginRouteForm("Logout", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
                             {
                                 @Html.AntiForgeryToken()
-                                <a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()"><span class="glyphicon glyphicon-off"></span> Log out</a>
+                                <a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()"><span class="fa fa-power-off"></span> Log out</a>
                             }
                         </div>
                     </li>

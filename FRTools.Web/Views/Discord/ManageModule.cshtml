@@ -26,7 +26,7 @@
         @foreach (var setting in Model.Settings.Where(x => x.Category == null))
         {
             <div class="form-group row">
-                <label class="col-sm-3" style="text-align:left"><span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="left" title="@(setting.Description)"></span> @(setting.SettingName)</label>
+                <label class="col-sm-3" style="text-align:left"><span class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" title="@(setting.Description)"></span> @(setting.SettingName)</label>
                 <div class="col-sm-9">
                     @Html.EditorFor(model => setting)
                 </div>
@@ -44,7 +44,7 @@
             @foreach (var setting in Model.Settings.Where(x => x.Category == category))
             {
                 <div class="form-group row">
-                    <label class="col-sm-3" style="text-align:left"><span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="left" title="@(setting.Description)"></span> @(setting.SettingName)</label>
+                    <label class="col-sm-3" style="text-align:left"><span class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" title="@(setting.Description)"></span> @(setting.SettingName)</label>
                     <div class="col-sm-9">
                         @Html.EditorFor(model => setting)
                     </div>
@@ -71,7 +71,7 @@
                             @foreach (var setting in command.Settings)
                             {
                                 <div class="form-group row">
-                                    <label class="col-sm-3" style="text-align:left"><span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="left" title="@(setting.Description)"></span> @(setting.SettingName)</label>
+                                    <label class="col-sm-3" style="text-align:left"><span class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" title="@(setting.Description)"></span> @(setting.SettingName)</label>
                                     <div class="col-sm-9">
                                         @Html.EditorFor(model => setting)
                                     </div>

@@ -14,13 +14,13 @@
         {
             <div class="form-row">
                 <div class="col form-group">
-                    @Html.Label(nameof(Model.Filter.Name)) <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" title="Entered text will be searched as part of the 'Title' only!"></span>
+                    @Html.Label(nameof(Model.Filter.Name)) <span class="fa fa-info-circle" data-toggle="tooltip" title="Entered text will be searched as part of the 'Title' only!"></span>
                     @Html.TextBox(nameof(Model.Filter.Name), Model.Filter.Name, new { @class = "form-control", placeholder = "Enter name of skin.." })
                 </div>
             </div>
             <div class="form-row">
                 <div class="col-md-3 form-group">
-                    @Html.Label(nameof(Model.Filter.DragonTypes)) <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" title="Hold CTRL to select multiple, or hold SHIFT to select range"></span>
+                    @Html.Label(nameof(Model.Filter.DragonTypes)) <span class="fa fa-info-circle" data-toggle="tooltip" title="Hold CTRL to select multiple, or hold SHIFT to select range"></span>
                     <select size="8" id="@Html.Id(nameof(Model.Filter.DragonTypes))" name="@Html.Name(nameof(Model.Filter.DragonTypes))" multiple class="form-control">
                         <option disabled>- Modern -</option>
                         @foreach (var breed in GeneratedFRHelpers.GetModernBreeds())
@@ -35,7 +35,7 @@
                     </select>
                 </div>
                 <div class="col-md-3 form-group">
-                    @Html.Label(nameof(Model.Filter.Genders)) <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" title="Hold CTRL to select multiple, or hold SHIFT to select range"></span>
+                    @Html.Label(nameof(Model.Filter.Genders)) <span class="fa fa-info-circle" data-toggle="tooltip" title="Hold CTRL to select multiple, or hold SHIFT to select range"></span>
                     <select size="2" id="@Html.Id(nameof(Model.Filter.Genders))" name="@Html.Name(nameof(Model.Filter.Genders))" multiple class="form-control">
                         @foreach (var gender in Enum.GetValues(typeof(Gender)).Cast<Gender>())
                         {
@@ -44,7 +44,7 @@
                     </select>
                 </div>
                 <div class="col-md-3 form-group">
-                    @Html.Label(nameof(Model.Filter.SkinTypes)) <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" title="Hold CTRL to select multiple, or hold SHIFT to select range"></span>
+                    @Html.Label(nameof(Model.Filter.SkinTypes)) <span class="fa fa-info-circle" data-toggle="tooltip" title="Hold CTRL to select multiple, or hold SHIFT to select range"></span>
                     <select size="2" id="@Html.Id(nameof(Model.Filter.SkinTypes))" name="@Html.Name(nameof(Model.Filter.SkinTypes))" multiple class="form-control">
                         @foreach (var skinType in Enum.GetValues(typeof(BrowseFilterModel.SkinType)).Cast<BrowseFilterModel.SkinType>())
                         {
