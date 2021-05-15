@@ -52,7 +52,7 @@
         <div class="card mt-3">
             <div class="card-body">
                 <div class="selectModuleHelp">
-                    <h4>What are snippets?</h4>
+                    <h5>What are snippets?</h5>
                     <p>Code snippets, or just snippets, are simple scripts that are often simply transformative in nature. Meaning, it just changes a URL to a slightly different one for example. Or just shows you information based on a given input.</p>
                     <p>To begin, select a snippet on the left.</p>
                 </div>
@@ -65,7 +65,7 @@
                         {
                             <img style="width:128px;height:128px; margin-right:15px" class="pull-left" src="@($"data:image/png;base64, {script.IconBase64}")" />
                         }
-                        <h4>@(script.Name)</h4>
+                        <h5>@(script.Name)</h5>
                         <p>@(script.Description)</p>
                         <hr />
                         @Html.Partial(model.Key, model.Value)

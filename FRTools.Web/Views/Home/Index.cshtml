@@ -36,7 +36,7 @@
             dataType: "JSON",
             success: b => {
                 p = b.response.posts[0];
-                $('#blogPost').html($(`<h4>${p.title}${p.title ? ' - ' : ''}${p.date}</h4>${p.body_abstract || p.caption || p.body}<a href="${p.post_url}">Read full post</a>`));
+                $('#blogPost').html($(`<h5>${p.title}${p.title ? ' - ' : ''}${p.date}</h5><hr/>${p.body_abstract || p.caption || p.body}<a href="${p.post_url}">Read full post</a>`));
             }}));
     </script>
 }
