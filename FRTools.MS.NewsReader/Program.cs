@@ -229,9 +229,16 @@ namespace FRTools.MS.NewsReader
                             .Where(x => x != null)
                             .Select(x => Convert.ToInt32(x));
 
-                        if (itemsInContent.Any())
+                        var skinsInContent = postContent.QuerySelectorAll(".skin-bbcode")
+                            .Select(x => x.GetAttributeValue("skin-id", null))
+                            .Where(x => x != null)
+                            .Select(x => Convert.ToInt32(x));
+
+                        var items = itemsInContent.Concat(skinsInContent).ToList();
+
+                        if (items.Any())
                         {
-                            var unknownItems = itemsInContent.Except(ctx.FRItems.Where(x => itemsInContent.Contains(x.FRId)).ToList().Select(x => x.FRId));
+                            var unknownItems = items.Except(ctx.FRItems.Where(x => items.Contains(x.FRId)).ToList().Select(x => x.FRId));
                             foreach (var unknownItem in unknownItems)
                             {
                                 var item = FRHelpers.FetchItem(unknownItem);
