@@ -358,30 +358,52 @@ namespace FRTools.Discord.Handlers
             if (bool.TryParse(await _settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_ANNNEWITEM", Guild), out var shouldAnnounce) && shouldAnnounce)
             {
                 // Check if item is in list of announceables
-                var itemTypesToAnnounce = ((await _settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_NEWITEMTYPES", Guild)) ?? "").Split(',').Select(x => (FRItemCategory)int.Parse(x)).ToList();
-                if (itemTypesToAnnounce.Contains(newItemMessage.Item.ItemCategory))
+                var settingValue = await _settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_NEWITEMTYPES", Guild);
+                try
                 {
-                    // Get the channel to announce item in
-                    ISocketMessageChannel annChannel = null;
-                    if (bool.TryParse(await _settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_USEANNCHANNEL", Guild), out var useGeneralAnnChannel) && useGeneralAnnChannel)
-                    {
-                        var annChannelId = await _settingManager.GetSettingValue("GUILDCONFIG_ANN_CHANNEL", Guild);
-                        if (annChannelId != null)
-                            annChannel = Guild.GetChannel(ulong.Parse(annChannelId)) as ISocketMessageChannel;
-                    }
-                    else
-                    {
-                        var annNewItemChannelId = await _settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_ANN_CHANNEL", Guild);
-                        if (annNewItemChannelId != null)
-                            annChannel = Guild.GetChannel(ulong.Parse(annNewItemChannelId)) as ISocketMessageChannel;
-                    }
+                    var itemTypesToAnnounce = (settingValue ?? "")
+                        .Split(',')
+                        .Select(x =>
+                        {
+                            FRItemCategory? cat = null;
+                            if (Enum.TryParse<FRItemCategory>(x, out var category))
+                                cat = category;
+                            return cat;
+                        })
+                        .Where(x => x != null)
+                        .Select(x => x.Value)
+                        .ToList();
 
-                    if (annChannel != null)
+                    if (itemTypesToAnnounce.Contains(newItemMessage.Item.ItemCategory))
                     {
-                        var embed = await ItemHandler.CreateItemEmbed(newItemMessage.Item, Guild, _settingManager);
-                        embed.Embed.Title = "New item found! - " + embed.Embed.Title;
-                        await annChannel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
+                        // Get the channel to announce item in
+                        ISocketMessageChannel annChannel = null;
+                        if (bool.TryParse(await _settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_USEANNCHANNEL", Guild), out var useGeneralAnnChannel) && useGeneralAnnChannel)
+                        {
+                            var annChannelId = await _settingManager.GetSettingValue("GUILDCONFIG_ANN_CHANNEL", Guild);
+                            if (annChannelId != null)
+                                annChannel = Guild.GetChannel(ulong.Parse(annChannelId)) as ISocketMessageChannel;
+                        }
+                        else
+                        {
+                            var annNewItemChannelId = await _settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_ANN_CHANNEL", Guild);
+                            if (annNewItemChannelId != null)
+                                annChannel = Guild.GetChannel(ulong.Parse(annNewItemChannelId)) as ISocketMessageChannel;
+                        }
+
+                        if (annChannel != null)
+                        {
+                            var embed = await ItemHandler.CreateItemEmbed(newItemMessage.Item, Guild, _settingManager);
+                            embed.Embed.Title = "New item found! - " + embed.Embed.Title;
+                            await annChannel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to parse GUILDCONFIG_ITEMDB_NEWITEMTYPES for guild {Guild.Id}, setting had value '{settingValue}'");
+                    Console.WriteLine(ex.ToString());
+                    throw;
                 }
             }
         }
