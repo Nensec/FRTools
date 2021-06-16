@@ -32,6 +32,8 @@ namespace FRTools.Data
 		Skydancer = 13,
 		[Description("Bogsneak")]
 		Bogsneak = 14,
+		[Description("Obelisk")]
+		Obelisk = 15,
 		[Description("Gaoler")]
 		Gaoler = 17,
 		[Description("Banescale")]
@@ -1103,6 +1105,7 @@ namespace FRTools.Data
 				DragonType.Coatl,
 				DragonType.Skydancer,
 				DragonType.Bogsneak,
+				DragonType.Obelisk,
 				
 			};
 		}
