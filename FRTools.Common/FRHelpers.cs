@@ -190,14 +190,19 @@ namespace FRTools.Common
 
             if (azureImageService.Exists(azureUrl, out _))
             {
-                using (var stream = await azureImageService.GetImage(azureUrl))
-                    dwagonImage = (Bitmap)Image.FromStream(stream);
-                return dwagonImage;
+                try
+                {
+                    using (var stream = await azureImageService.GetImage(azureUrl))
+                        dwagonImage = (Bitmap)Image.FromStream(stream);
+                    return dwagonImage;
+                }
+                catch
+                {
+                }
             }
 
             using (var client = new WebClient())
             {
-
                 var dwagonImageBytes = await client.DownloadDataTaskAsync(dragon.ConstructImageString() ?? string.Format(DressingRoomDummyUrl, (int)dragon.DragonType, (int)dragon.Gender));
                 using (var memStream = new MemoryStream(dwagonImageBytes, false))
                     await azureImageService.WriteImage(azureUrl, memStream);
