@@ -73,13 +73,12 @@ namespace FRTools.Web.Controllers
                 return RedirectToRoute("NewsReader");
             }
             var posts = topic.Posts.OrderBy(x => x.TimeStamp).ToList();
-            model.Pagination.TotalItems = posts.Count();
             var firstPost = posts.First();
             model.TopicStarterClanId = topic.TopicStarterClanId;
             model.TopicStarer = topic.TopicStarter;
             model.CreatedAt = firstPost.TimeStamp;
             model.TotalPosts = posts.Count();
-            model.DeletedPosts = posts.Count(x => x.Deleted);
+            model.Pagination.TotalItems = model.DeletedPosts = posts.Count(x => x.Deleted);
             model.TopicName = topic.FRTopicName;
             model.Posts = posts.Where(x => x.Deleted).Skip(model.Pagination.PageSize * (model.Pagination.Page - 1)).Take(model.Pagination.PageSize).Select(x => new NewsPostViewModel
             {
