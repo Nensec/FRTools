@@ -73,6 +73,7 @@ namespace FRTools.Web.Controllers
                 return RedirectToRoute("NewsReader");
             }
             var posts = topic.Posts.OrderBy(x => x.TimeStamp).ToList();
+            model.Pagination.TotalItems = posts.Count();
             var firstPost = posts.First();
             model.TopicStarterClanId = topic.TopicStarterClanId;
             model.TopicStarer = topic.TopicStarter;
