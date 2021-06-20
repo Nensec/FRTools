@@ -1,7 +1,7 @@
 ﻿@model ManageModelViewModel
 
 @{
-    
+
     ViewBag.Title = "Manage";
     var previews = Model.Skin.Previews.Select((x, i) => (x, i)).ToList();
     var scries = previews.Where(x => x.Item1.DragonId == null).ToList();
@@ -45,6 +45,9 @@
                 Your share link
             </div>
             <div class="card-body">
+                <div class="form-group row">
+                    <span class="col">Click <a href="@Url.RouteUrl("Preview", new { skinId = Model.Skin.GeneratedId }, "https")">here</a> to go to your preview page.</span>
+                </div>
                 <div class="form-group row">
                     <label style="padding-top:7px; text-align:left" class="col-4" for="PreviewLink">
                         <span class="fa fa-warning text-danger" data-toggle="tooltip" title="This link will not work on the Flight Rising forums due to their censorship of off-site tools."></span> Your link
