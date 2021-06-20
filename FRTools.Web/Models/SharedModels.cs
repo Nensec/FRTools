@@ -11,8 +11,8 @@ namespace FRTools.Web.Models
         public int Page { get; set; } = 1;
         public int PageSize
         {
-            get => _pageSize;
-            set => _pageSize = ValidPageSizes.Aggregate((x, y) => Math.Abs(x - value) < Math.Abs(y - value) ? x : y);
+            get => ValidPageSizes.Aggregate((x, y) => Math.Abs(x - _pageSize) < Math.Abs(y - _pageSize) ? x : y);
+            set => _pageSize = value;
         }
         public string RouteUrlName { get; set; }
         public int TotalItems { get; set; }

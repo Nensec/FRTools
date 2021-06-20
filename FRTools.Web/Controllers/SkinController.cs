@@ -307,12 +307,19 @@ namespace FRTools.Web.Controllers
         }
 
         [Route("manage", Name = "ManageSkins")]
-        public ActionResult ManageSkins()
+        public ActionResult ManageSkins(PaginationModel pagination)
         {
             var model = new ManageSkinsViewModel
             {
-                Skins = LoggedInUser.Skins.ToList()
+                Pagination = new PaginationModel("ManageSkins", pagination.Page, pagination.PageSize)
+                {
+                    ValidPageSizes = new[] { 6, 12, 18, 24, 30 }
+                }
             };
+
+            model.Skins = LoggedInUser.Skins.OrderByDescending(x => x.Id).Skip(model.Pagination.PageSize * (model.Pagination.Page - 1)).Take(model.Pagination.PageSize).ToList();
+            model.Pagination.TotalItems = LoggedInUser.Skins.Count();
+
             return View(model);
         }
 
@@ -442,7 +449,7 @@ namespace FRTools.Web.Controllers
 
             model.Pagination.TotalItems = query.Count();
 
-            query = query.OrderByDescending(x => x.Id).Skip(pagination.PageSize * (pagination.Page - 1)).Take(pagination.PageSize);
+            query = query.OrderByDescending(x => x.Id).Skip(model.Pagination.PageSize * (model.Pagination.Page - 1)).Take(model.Pagination.PageSize);
 
             model.Results = query.Select(x => new PreviewModelViewModel
             {

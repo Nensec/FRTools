@@ -1,7 +1,7 @@
 ﻿@model ManageSkinsViewModel
 
 @{
-    
+
     ViewBag.Title = "Manage your skins";
 }
 
@@ -14,6 +14,18 @@
         <h5>These are your skins</h5>
     </div>
     <div class="card-body">
+        <div class="card-body">
+            @using (Html.BeginRouteForm("ManageSkins", FormMethod.Get))
+            {
+                <div class="col-md-3 form-group row">
+                    @Html.Label(nameof(Model.Pagination.PageSize))
+                    @Html.DropDownList(nameof(Model.Pagination.PageSize), Model.Pagination.ValidPageSizes.Select(x => new SelectListItem { Selected = x == Model.Pagination.PageSize, Text = x.ToString() }), new { @class = "form-control" })
+                </div>
+                <div class="d-flex justify-content-end">
+                    <input class="btn btn-primary" type="submit" value="Filter" />
+                </div>
+            }
+        </div>
         <p>
             Click on an image to go to its manage page.
         </p>
@@ -22,6 +34,7 @@
             <script>
                 var previewData = {};
             </script>
+            @Html.Partial("_Pagination", Model.Pagination)
             <div class="d-flex flex-wrap">
                 @foreach (var skin in Model.Skins.Select((x, i) => (x, i)))
                 {
@@ -39,7 +52,7 @@
                         <a id="Skin@(skin.Item2)" href="@Url.RouteUrl("Manage", new { SkinId = skin.Item1.GeneratedId, SecretKey = skin.Item1.SecretKey })" data-toggle="popover">
                             <img onload="$(this).removeClass('loading')" class="loading mw-100 mh-100" src="@Url.RouteUrl("DummyPreview", new { skinId = skin.Item1.GeneratedId, version = skin.Item1.Version })" />
                             <b>Id:</b> @(skin.Item1.GeneratedId)
-                            <hr/>
+                            <hr />
                             <div id="Skin@(skin.Item2)_popover" class="d-none">
                                 <ul class="list-unstyled p-0 @(skin.Item1.Previews.Count == 0 ? "mb-1" : "")">
                                     @if (skin.Item1.Version != 1)
@@ -58,6 +71,7 @@
                     </div>
                 }
             </div>
+            @Html.Partial("_Pagination", Model.Pagination)
         }
         else
         {

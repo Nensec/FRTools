@@ -135,6 +135,7 @@ namespace FRTools.Web.Models
     public class ManageSkinsViewModel : BaseSkinModel
     {
         public List<Skin> Skins { get; set; }
+        public PaginationModel Pagination { get; set; }
         public async Task<string> GetDummyPreviewImage(string skinId, int version)
         {
             return (await SkinTester.GenerateOrFetchDummyPreview(skinId, version)).Urls[0];
