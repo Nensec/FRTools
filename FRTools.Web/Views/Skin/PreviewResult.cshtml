@@ -2,7 +2,7 @@
 
 @{
     ViewBag.Title = "Preview";
-    
+
 }
 
 <div class="card mt-3">
@@ -30,21 +30,15 @@
                 Eyes might not look right compared to the final, but they should still give a good indication of what will be. This is a work in progress!
             </div>
         }
-        <div class="row">
+        <div class="text-center">
             @if (Model.Result.Urls.Length == 1)
             {
-                <div class="text-center">
-                    <img class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[0])" />
-                </div>
+                <img class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[0])" />
             }
             else
             {
-                <div class="col-md-6 text-center">
-                    <img class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[0])" />
-                </div>
-                <div class="col-md-6 text-center">
-                    <img class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[1])" />
-                </div>
+                <img class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[0])" />
+                <img class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[1])" />
 
             }
         </div>
@@ -73,6 +67,9 @@
                 This result is a cached version, if you want to completely re-generate the preview (in case of a change in dragon or apparel) you can do so by clicking <a href="javascript:document.getElementById('forceRegen').submit()">here</a>
             </div>
         }
+        <div class="d-flex justify-content-end">
+            <a class="btn btn-primary" href="@Url.Action("Preview", new { SkinId = Model.SkinId })">Try on another dragon? &raquo;</a>
+        </div>
         <p class="pull-left">
             <i style="font-size:10px;">
                 Notice anything wrong with the result? Let me know so I can fix it <a href="https://github.com/nensec/FRTools/issues">&gt;here&lt;</a>!
@@ -87,8 +84,5 @@
                 </i>
             </p>
         }
-        <div class="d-flex justify-content-end">
-            <a class="btn btn-primary" href="@Url.Action("Preview", new { SkinId = Model.SkinId })">Try on another dragon? &raquo;</a>
-        </div>
     </div>
 </div>

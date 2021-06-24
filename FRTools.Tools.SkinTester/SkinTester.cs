@@ -70,9 +70,21 @@ namespace FRTools.Tools.SkinTester
             }
             else if (dragonUrl.Contains("scrying/predict"))
             {
-                // Scry predict link
                 result = new PreviewResult(PreviewSource.ScryLink) { Forced = force };
-                var dragon = FRHelpers.ParseUrlForDragon(GeneratedFRHelpers.GenerateDragonImageUrl(FRHelpers.ParseUrlForDragon(dragonUrl, forced: true)));
+
+                DragonCache dragon;
+                var scryId = Regex.Match(dragonUrl, @"morph=(\d*)");
+                if (scryId.Success)
+                {
+                    // Saved morph link
+                    var scryUrl = FRHelpers.GetDragonImageUrlFromScryId(int.Parse(scryId.Groups[1].Value));
+                    dragon = FRHelpers.ParseUrlForDragon(scryUrl);
+                }
+                else
+                {
+                    // Scry predict link
+                    dragon = FRHelpers.ParseUrlForDragon(GeneratedFRHelpers.GenerateDragonImageUrl(FRHelpers.ParseUrlForDragon(dragonUrl, forced: true)));
+                }
 
                 result = await GenerateOrFetchPreview(result, skinId, version, dragon, false, false, force);
             }

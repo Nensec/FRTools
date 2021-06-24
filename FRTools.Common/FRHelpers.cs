@@ -170,13 +170,15 @@ namespace FRTools.Common
             using (var client = new WebClient())
             {
                 var htmlPage = client.DownloadString(scryUrl);
-                var scryPageUrlParse = Regex.Match(htmlPage, @"breed=(\d+)&gender=(\d+)&age=(\d+)&bodygene=(\d+)&body=(\d+)&winggene=(\d+)&wings=(\d+)&tertgene=(\d+)&tert=(\d+)&element=(\d+)&eyetype=(\d+)");
-                return GeneratedFRHelpers.GenerateDragonImageUrl(int.Parse(scryPageUrlParse.Groups[1].Value), int.Parse(scryPageUrlParse.Groups[2].Value), int.Parse(scryPageUrlParse.Groups[3].Value),
-                    int.Parse(scryPageUrlParse.Groups[4].Value), int.Parse(scryPageUrlParse.Groups[5].Value), int.Parse(scryPageUrlParse.Groups[6].Value),
-                    int.Parse(scryPageUrlParse.Groups[7].Value), int.Parse(scryPageUrlParse.Groups[8].Value), int.Parse(scryPageUrlParse.Groups[9].Value),
-                    int.Parse(scryPageUrlParse.Groups[10].Value), int.Parse(scryPageUrlParse.Groups[11].Value));
+                return GeneratedFRHelpers.GenerateDragonImageUrl(GetRegexValue(Regex.Match(htmlPage, @"breed=(\d+)")), GetRegexValue(Regex.Match(htmlPage, @"gender=(\d+)")), 1,
+                    GetRegexValue(Regex.Match(htmlPage, @"bodygene=(\d+)")), GetRegexValue(Regex.Match(htmlPage, @"body=(\d+)")),
+                    GetRegexValue(Regex.Match(htmlPage, @"winggene=(\d+)")), GetRegexValue(Regex.Match(htmlPage, @"wings=(\d+)")),
+                    GetRegexValue(Regex.Match(htmlPage, @"tertgene=(\d+)")), GetRegexValue(Regex.Match(htmlPage, @"tert=(\d+)")),
+                    GetRegexValue(Regex.Match(htmlPage, @"element=(\d+)")), GetRegexValue(Regex.Match(htmlPage, @"eyetype=(\d+)")));
             }
         }
+
+        private static int GetRegexValue(Match match) => int.Parse(match.Groups[1].Value);
 
         public static DragonCache GetDragonFromDragonId(int dragonId) => ParseUrlForDragon(GetDragonImageUrlFromDragonId(dragonId));
 
