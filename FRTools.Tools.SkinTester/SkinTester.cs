@@ -143,9 +143,8 @@ namespace FRTools.Tools.SkinTester
             Bitmap dragonImage = null;
 
             var azureImagePreviewPath = $@"previews\{skinId}\{(version == 1 ? "" : $@"{version}\")}{dragon.GetFileName()}.png";
-            dragon.PreviewUrls.TryGetValue((skinId, version ?? 1), out var previewUrl);
 
-            if (force || (previewUrl == null && !new AzureImageService().Exists(azureImagePreviewPath, out previewUrl)))
+            if (force || (!new AzureImageService().Exists(azureImagePreviewPath, out var previewUrl)))
             {
                 try
                 {
