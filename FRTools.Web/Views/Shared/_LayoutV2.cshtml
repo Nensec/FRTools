@@ -30,7 +30,8 @@
 <body class="text-dark">
     <nav class="navbar navbar-expand-xl fixed-top navbar-dark bg-dark">
         <a href="@Url.RouteUrl("Home")" class="navbar-brand pt-0">
-            <img style="height:30px;max-width:185px;" src="@(ViewBag.Logo ?? "/Content/frtools.svg")" onerror="this.src='@(ViewBag.PngLogo ?? "/Content/frtools.png")'" />
+            <img class="d-none d-xl-block" style="height:30px;max-width:185px;" src="@(ViewBag.Logo ?? "/Content/frtools.svg")" onerror="this.src='@(ViewBag.PngLogo ?? "/Content/frtools.png")'" />
+            <img class="d-block d-xl-none" style="height:30px;max-width:137px;" src="@(ViewBag.Logo ?? "/Content/frtools.svg")" onerror="this.src='@(ViewBag.PngLogo ?? "/Content/frtools.png")'" />
         </a>
         <div>
             @if (!Request.IsAuthenticated || (ViewContext.Controller as FRTools.Web.Controllers.BaseController).LoggedInUser?.ProfileSettings.ShowAds == true)
