@@ -2,6 +2,7 @@
 using FRTools.Data.DataModels;
 using Microsoft.AspNet.Identity;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -16,6 +17,17 @@ namespace FRTools.Web.Controllers
         protected DataContext DataContext { get; } = new DataContext();
         public User LoggedInUser => _loggedInUser ?? (_loggedInUser = GetLoggedInUser());
 
+        [Route("robots.txt")]
+        public ContentResult DynamicRobotsFile()
+        {
+            var content = new StringBuilder();
+            content.AppendLine("user-agent: *");
+            content.AppendLine("Allow: /");
+            content.AppendLine("Disallow: /newsreader/view/*");
+            content.AppendLine("Disallow: /newsreader/viewdeleted/*");
+            return Content(content.ToString(), "text/plain", Encoding.UTF8);
+        }
+
         private User GetLoggedInUser()
         {
             if (Request.IsAuthenticated)
@@ -26,6 +38,7 @@ namespace FRTools.Web.Controllers
 
             return null;
         }
+
 
         protected override void EndExecute(System.IAsyncResult asyncResult)
         {
