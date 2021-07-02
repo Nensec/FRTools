@@ -509,7 +509,7 @@
     <Content Include="Web.config" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\Error500.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Skin\Upload.cshtml" />
     <Content Include="Views\Skin\UploadResult.cshtml" />
@@ -528,7 +528,7 @@
     <Content Include="Views\Skin\PreviewHome.cshtml" />
     <Content Include="Views\Skin\Browse.cshtml" />
     <Content Include="Views\Skin\_UpdateSkin.cshtml" />
-    <Content Include="Views\Shared\NotFound.cshtml" />
+    <Content Include="Views\Shared\Error404.cshtml" />
     <Content Include="Views\News\Index.cshtml" />
     <Content Include="Views\News\Read.cshtml" />
     <Content Include="Views\Skin\Index.cshtml" />

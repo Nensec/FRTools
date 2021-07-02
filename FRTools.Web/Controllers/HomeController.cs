@@ -13,7 +13,7 @@ namespace FRTools.Web.Controllers
         {
             Response.StatusCode = (int)HttpStatusCode.NotFound;
             Response.TrySkipIisCustomErrors = true;
-            return View();
+            return View("Error404");
         }
 
         [Route("error", Name = "Error")]
@@ -21,7 +21,7 @@ namespace FRTools.Web.Controllers
         {
             Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             Response.TrySkipIisCustomErrors = true;
-            return View();
+            return View("Error500");
         }
 
         [Route("privacy", Name = "Privacy")]
