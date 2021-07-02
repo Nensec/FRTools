@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Web.Mvc;
+using HtmlAgilityPack;
 
 namespace FRTools.Web.Controllers
 {
@@ -53,7 +54,7 @@ namespace FRTools.Web.Controllers
                 PostAuthorClanId = x.PostAuthorClanId,
                 CreatedAt = x.TimeStamp,
                 IsDeleted = x.Deleted,
-                RawHtmlContent = x.Content,
+                RawHtmlContent = SanitizeFRRawContent(x.Content),
                 Reports = x.Reports,
                 ExpectedFRPage = (int)Math.Ceiling(posts.Count(p => !p.Deleted && p.FRPostId <= x.FRPostId) / 10d)
             }).ToList();
@@ -87,7 +88,7 @@ namespace FRTools.Web.Controllers
                 PostAuthorClanId = x.PostAuthorClanId,
                 CreatedAt = x.TimeStamp,
                 IsDeleted = x.Deleted,
-                RawHtmlContent = x.Content,
+                RawHtmlContent = SanitizeFRRawContent(x.Content),
                 Reports = x.Reports
             }).ToList();
 
@@ -104,6 +105,32 @@ namespace FRTools.Web.Controllers
                 DataContext.SaveChanges();
             }
             return Content("");
+        }
+
+        private string SanitizeFRRawContent(string rawcontent)
+        {
+            var document = new HtmlDocument();
+            document.LoadHtml(rawcontent);
+            document.QuerySelectorAll("img").ToList().ForEach(x =>
+            {
+                if (x.Attributes?["src"].Value.StartsWith("/") == true)
+                {
+                    x.Attributes["src"].Value = $"https://www1.flightrising.com{x.Attributes["src"].Value}";
+                }
+            });
+            document.QuerySelectorAll(".gamedb-bbcode-icon").ToList().ForEach(x =>
+            {
+                if (x.Attributes?["style"].Value != null)
+                {
+                    x.Attributes["style"].Value = x.Attributes["style"].Value.Replace("background-image: url(/", "background-image: url(https://www1.flightrising.com/");
+                }
+            });
+
+            document.QuerySelectorAll(".bbcode_quote").ToList().ForEach(x => x.Attributes["class"].Value += " card border-info mt-3");
+            document.QuerySelectorAll(".bbcode_quote_head").ToList().ForEach(x => x.Attributes["class"].Value += " card-header");
+            document.QuerySelectorAll(".bbcode_quote_body").ToList().ForEach(x => x.Attributes["class"].Value += " card-body");
+            document.QuerySelectorAll("script").ToList().ForEach(x => x.Remove());
+            return document.DocumentNode.OuterHtml;
         }
     }
 };

@@ -2,7 +2,7 @@
 
 @{
     ViewBag.Title = "FR news topic: " + Model.TopicName;
-    
+
 }
 
 @section meta{
@@ -74,23 +74,6 @@
                     </div>
                 </div>
             }
-            <script>
-                $('#FRContent script').html('');
-
-                $('#FRContent img').each(function (i, e) {
-                    try {
-                        var src = $(e).attr('src');
-                        if (src.startsWith('/')) {
-                            $(e).attr('src', 'https://www1.flightrising.com' + src);
-                        }
-                    } catch (e) {
-                    }
-                });
-
-                $('.bbcode_quote').addClass('card border-info mt-3');
-                $('.bbcode_quote_head').addClass('card-header');
-                $('.bbcode_quote_body').addClass('card-body');
-            </script>
         </div>
         @Html.Partial("_Pagination", Model.Pagination)
     </div>
