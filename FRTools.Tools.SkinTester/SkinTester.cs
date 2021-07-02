@@ -99,6 +99,7 @@ namespace FRTools.Tools.SkinTester
 
         private static async Task<PreviewResult> GenerateOrFetchPreview(PreviewResult result, string skinId, int? version, DragonCache dragon, bool isDressingRoom, bool swapSilhouette, bool force)
         {
+            var azureImageService = new AzureImageService();
             using (var ctx = new DataContext())
             {
                 Skin skin;
@@ -143,8 +144,8 @@ namespace FRTools.Tools.SkinTester
             Bitmap dragonImage = null;
 
             var azureImagePreviewPath = $@"previews\{skinId}\{(version == 1 ? "" : $@"{version}\")}{dragon.GetFileName()}.png";
-
-            if (force || (!new AzureImageService().Exists(azureImagePreviewPath, out var previewUrl)))
+            var previewUrl = await azureImageService.Exists(azureImagePreviewPath);
+            if (force || previewUrl == null)
             {
                 try
                 {
@@ -248,7 +249,7 @@ namespace FRTools.Tools.SkinTester
                 {
                     var apparelIds = dragon.GetApparel();
                     var cacheUrl = $@"previews\{skinId}\{dragon.FRDragonId?.ToString() ?? dragon.ToString()}_{dragon.Gender}_apparel.png";
-                    if (force || !new AzureImageService().Exists(cacheUrl, out apparelPreviewUrl))
+                    if (force || (apparelPreviewUrl = await azureImageService.Exists(cacheUrl)) == null)
                     {
                         string dressingRoomUrl;
                         if (dragon.FRDragonId.HasValue)
@@ -263,7 +264,7 @@ namespace FRTools.Tools.SkinTester
                 else if (dragon.FRDragonId.HasValue && !dragon.DragonType.IsAncientBreed())
                 {
                     var cacheUrl = $@"previews\{skinId}\{dragon.FRDragonId}_{dragon.Gender}_apparel.png";
-                    if (force || !new AzureImageService().Exists(cacheUrl, out apparelPreviewUrl))
+                    if (force || (apparelPreviewUrl = await azureImageService.Exists(cacheUrl)) == null)
                     {
                         var invisibleDragonWithApparel = await GetInvisibleDragonWithApparel(dragon, force);
 
@@ -290,7 +291,8 @@ namespace FRTools.Tools.SkinTester
         {
             Bitmap invisibleDwagon;
             var azureUrl = $@"dragoncache\{dragon.FRDragonId}_{dragon.Gender}_invisible.png";
-            if (!force && new AzureImageService().Exists(azureUrl, out var cacheUrl))
+            var cacheUrl = await new AzureImageService().Exists(azureUrl);
+            if (!force && cacheUrl != null)
             {
                 using (var stream = await new AzureImageService().GetImage(azureUrl))
                     invisibleDwagon = (Bitmap)Image.FromStream(stream);
@@ -321,7 +323,7 @@ namespace FRTools.Tools.SkinTester
                         return invisibleDwagon;
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
                     return null;
                 }

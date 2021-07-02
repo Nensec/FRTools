@@ -190,7 +190,7 @@ namespace FRTools.Common
             string azureUrl = $@"dragoncache\{dragon.SHA1Hash}.png";
             var azureImageService = new AzureImageService();
 
-            if (azureImageService.Exists(azureUrl, out _))
+            if (await azureImageService.Exists(azureUrl) != null)
             {
                 try
                 {

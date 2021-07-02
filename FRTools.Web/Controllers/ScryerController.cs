@@ -43,7 +43,8 @@ namespace FRTools.Web.Controllers
             var azureImageService = new AzureImageService();
 
             var azureImagePreviewPath = $@"previews\dresser\{scryerDragon.ToString().Trim('_')}\{dressingRoomDragon.Apparel?.Replace(',', '-').ToString()}.png";
-            if (!azureImageService.Exists(azureImagePreviewPath, out var previewUrl))
+            var previewUrl = await azureImageService.Exists(azureImagePreviewPath);
+            if (previewUrl == null)
             {
                 var invisibleDragon = await FRHelpers.GetInvisibleDressingRoomDragon(dressingRoomDragon);
                 var baseDragon = await FRHelpers.GetDragonBaseImage(scryerDragon);

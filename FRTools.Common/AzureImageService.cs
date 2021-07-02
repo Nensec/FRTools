@@ -18,7 +18,7 @@ namespace FRTools.Common
             var reference = container.GetBlockBlobReference(fileName);
             if (reference.Exists())
             {
-                await reference.DeleteAsync();
+                await reference.DeleteAsync().ConfigureAwait(false);
             }
         }
 
@@ -34,7 +34,7 @@ namespace FRTools.Common
 
             if (reference.Exists())
             {
-                await reference.DownloadToStreamAsync(resultStream);
+                await reference.DownloadToStreamAsync(resultStream).ConfigureAwait(false);
                 resultStream.Position = 0;
                 return resultStream;
             }
@@ -49,19 +49,18 @@ namespace FRTools.Common
             var reference = directory.GetBlockBlobReference(fileName);
             reference.Properties.ContentType = MimeMapping.GetMimeMapping(fileName);
 
-            await reference.UploadFromStreamAsync(stream);
+            await reference.UploadFromStreamAsync(stream).ConfigureAwait(false);
 
             return reference.Uri.AbsolutePath;
         }
 
-        public bool Exists(string path, out string url)
+        public async Task<string> Exists(string path)
         {
             var directory = GetStorageContainer(path);
 
             var fileName = Path.GetFileName(path);
             var reference = directory.GetBlockBlobReference(fileName);
-            url = reference.Exists() ? reference.Uri.AbsolutePath : null;
-            return url != null;
+            return await reference.ExistsAsync().ConfigureAwait(false) ? reference.Uri.AbsolutePath : null;
         }
 
         private CloudBlobDirectory GetStorageContainer(string path)
