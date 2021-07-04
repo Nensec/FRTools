@@ -119,18 +119,12 @@ namespace FRTools.Web.Controllers
                     imgSrc.Value = $"https://www1.flightrising.com{imgSrc.Value}";
                 }
             });
-            document.QuerySelectorAll(".gamedb-bbcode-icon").ToList().ForEach(x =>
-            {
-                if (x.Attributes?["style"].Value != null)
-                {
-                    x.Attributes["style"].Value = x.Attributes["style"].Value.Replace("background-image: url(/", "background-image: url(https://www1.flightrising.com/");
-                }
-            });
 
             document.QuerySelectorAll(".bbcode_quote").ToList().ForEach(x => x.Attributes["class"].Value += " card border-info mt-3");
             document.QuerySelectorAll(".bbcode_quote_head").ToList().ForEach(x => x.Attributes["class"].Value += " card-header");
             document.QuerySelectorAll(".bbcode_quote_body").ToList().ForEach(x => x.Attributes["class"].Value += " card-body");
             document.QuerySelectorAll("script").ToList().ForEach(x => x.Remove());
+            document.QuerySelectorAll(".gamedb-bbcode-icon").ToList().ForEach(x => x.Remove());
             return document.DocumentNode.OuterHtml;
         }
     }
