@@ -140,7 +140,7 @@
                                                         @{ var dragon = DragonCache.FromString(preview.Item1.DragonData); }
                                                         <ul class="list-unstyled">
                                                             <li><b>Colors:</b> @(dragon.BodyColor) / @(dragon.WingColor) / @(dragon.TertiaryColor)</li>
-                                                            <li><b>Genes:</b> @(dragon.BodyGene) / @(dragon.WingGene) / @(dragon.TertiaryGene)</li>
+                                                            <li><b>Genes:</b> @(dragon.GetPrimaryGene().ToString()) / @(dragon.GetSecondaryGene().ToString()) / @(dragon.GetTertiaryGene().ToString())</li>
                                                             <li><b>Element:</b> @(dragon.Element)</li>
                                                             <li><b>Eyetype:</b> @(dragon.EyeType.GetDescription())</li>
                                                             @if (preview.Item1.Skin != null)
