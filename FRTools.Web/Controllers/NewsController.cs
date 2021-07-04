@@ -113,9 +113,10 @@ namespace FRTools.Web.Controllers
             document.LoadHtml(rawcontent);
             document.QuerySelectorAll("img").ToList().ForEach(x =>
             {
-                if (x.Attributes?["src"].Value.StartsWith("/") == true)
+                var imgSrc = x.Attributes?["src"];
+                if (imgSrc != null && imgSrc.Value.StartsWith("/"))
                 {
-                    x.Attributes["src"].Value = $"https://www1.flightrising.com{x.Attributes["src"].Value}";
+                    imgSrc.Value = $"https://www1.flightrising.com{imgSrc.Value}";
                 }
             });
             document.QuerySelectorAll(".gamedb-bbcode-icon").ToList().ForEach(x =>
