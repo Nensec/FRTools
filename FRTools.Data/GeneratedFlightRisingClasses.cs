@@ -560,6 +560,8 @@ namespace FRTools.Data
 		Mosaic = 58,
 		[Description("Stitched")]
 		Stitched = 59,
+		[Description("Flaunt")]
+		Flaunt = 82,
 	}
 	
 	public enum VeilspunBodyGene
@@ -748,6 +750,8 @@ namespace FRTools.Data
 		Breakup = 58,
 		[Description("Patchwork")]
 		Patchwork = 59,
+		[Description("Flare")]
+		Flare = 82,
 	}
 	
 	public enum BanescaleWingGene
