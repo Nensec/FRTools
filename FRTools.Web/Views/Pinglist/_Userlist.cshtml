@@ -22,13 +22,13 @@
             }
             else if (Model.IsPublic || Model.SecretKey != null)
             {
-                <button id="AddEntryButton" onclick="addEntry()" class="btn btn-primary col-md-12">Add</button>
+                <button id="AddEntryButton" onclick="addEntry()" class="btn btn-primary col-md-12">Add new</button>
             }
             @if (Model.IsPublic || Model.SecretKey != null)
             {
-                <button id="EditEntryButton" onclick="editEntry()" disabled class="btn btn-warning col-md-12">Edit</button>
+        <button id="EditEntryButton" onclick="editEntry()" disabled class="btn btn-warning col-md-12">Edit selected</button>
             }
-            <button id="RemoveEntryButton" onclick="deleteEntry()" disabled class="btn btn-danger col-md-12">Remove</button>
+            <button id="RemoveEntryButton" onclick="deleteEntry()" disabled class="btn btn-danger col-md-12">Remove selected</button>
             @if (Model.IsPublic || Model.SecretKey != null)
             {
                 <button id="SetSecretKey" onclick="setSecretKey()" style="display: none;" data-toggle="tooltip" title="If you have the secret key for this entry, you can set it by clicking here" class="btn btn-info col-md-12">Set secret key</button>
@@ -52,8 +52,8 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">Edit entry <span class="modalEntry"></span></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
                 <form id="EditForm" action="@Url.RouteUrl("PinglistEntryManage")" method="POST">
@@ -79,8 +79,8 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">Add entry</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
                 <form id="AddForm" action="@Url.RouteUrl(Model.IsPublic && Model.CurrentUserId != null && Model.SecretKey == null ? "PinglistAddSelfPost" : "PinglistAddEntryPost")" method="POST">
