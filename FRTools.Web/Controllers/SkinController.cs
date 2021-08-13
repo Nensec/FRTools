@@ -239,7 +239,7 @@ namespace FRTools.Web.Controllers
                 {
                     if (!Request.IsAuthenticated)
                     {
-                        AddErrorNotification("This skin is linked to an acocunt, please log in to manage this skin.");
+                        AddErrorNotification("This skin is linked to an account, please log in to manage this skin.");
                         return RedirectToRoute("Home");
                     }
                     else if (skin.Creator.Id != HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>())
@@ -277,7 +277,7 @@ namespace FRTools.Web.Controllers
                 {
                     if (!Request.IsAuthenticated)
                     {
-                        AddErrorNotification("This skin is linked to an acocunt, please log in to manage this skin.");
+                        AddErrorNotification("This skin is linked to an account, please log in to manage this skin.");
                         return RedirectToRoute("Home");
                     }
                     else if (skin.Creator.Id != HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>())
@@ -341,7 +341,7 @@ namespace FRTools.Web.Controllers
                 {
                     if (!Request.IsAuthenticated)
                     {
-                        AddErrorNotification("This skin is linked to an acocunt, please log in to update this skin.");
+                        AddErrorNotification("This skin is linked to an account, please log in to update this skin.");
                         return RedirectToRoute("Home");
                     }
                     else if (skin.Creator.Id != HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId<int>())
@@ -486,7 +486,7 @@ namespace FRTools.Web.Controllers
 
             if (skin.Creator != null)
             {
-                AddErrorNotification("This skin is already linked to an acocunt, skins can only be claimed by a single account.");
+                AddErrorNotification("This skin is already linked to an account, skins can only be claimed by a single account.");
                 return View();
             }
 
