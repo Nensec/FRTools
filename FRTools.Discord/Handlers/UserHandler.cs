@@ -32,6 +32,7 @@ namespace FRTools.Discord.Handlers
                 {
                     using (var client = new WebClient())
                     {
+                        client.Headers.Add(HttpRequestHeader.UserAgent, "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
                         var iconData = client.DownloadData(guild.IconUrl);
                         dbServer.IconBase64 = Convert.ToBase64String(iconData);
                     }
