@@ -750,8 +750,8 @@ namespace FRTools.Data
 		Breakup = 58,
 		[Description("Patchwork")]
 		Patchwork = 59,
-		[Description("Flare")]
-		Flare = 82,
+		[Description("Flair")]
+		Flair = 82,
 	}
 	
 	public enum BanescaleWingGene
