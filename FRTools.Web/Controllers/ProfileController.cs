@@ -113,11 +113,11 @@ namespace FRTools.Web.Controllers
                 while (actualException.InnerException != null)
                     actualException = actualException.InnerException;
 
-                if (actualException is SqlException sqlEx && sqlEx.Number == 2601)
-                    AddErrorNotification("That username is already taken, please pick a different one");
+                if (actualException is SqlException sqlEx && sqlEx.Number == 2601)                
+                    AddErrorNotification("That username is already taken, please pick a different one");                
                 else
                     AddErrorNotification("Something went wrong with your request");
-                return View();
+                return View(model);
             }
             return RedirectToRoute("SelfProfile");
         }
