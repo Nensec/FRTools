@@ -134,6 +134,31 @@ namespace FRTools.Discord.Modules
                 await ReplyAsync("Item not found");
         }
 
+        [Name("Update item"), Command("updateitem")]
+        public async Task UpdateItem(int frId)
+        {
+            var existingItem = DbContext.FRItems.FirstOrDefault(x => x.FRId == frId);
+            if (existingItem != null)
+                await ReplyAsync($"Updating item: {frId}");
+            else
+                await ReplyAsync($"Item not in database, fetching item: {frId}");
+
+            var item = FRHelpers.FetchItem(frId);
+            if (item != null)
+            {
+                await ReplyAsync($"Found item, {(existingItem != null ? "updating" : "adding")}: {item.Name}");
+                if(existingItem != null)
+                    DbContext.FRItems.Remove(existingItem);
+                DbContext.FRItems.Add(item);
+                await DbContext.SaveChangesAsync();
+                var _serviceBus = new QueueClient(ConfigurationManager.AppSettings["AzureSBConnString"], ConfigurationManager.AppSettings["AzureSBQueueName"]);
+                await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NewItemMessage(MessageCategory.ItemFetcher, item)))));
+                await _serviceBus.CloseAsync();
+            }
+            else
+                await ReplyAsync("Item not found");
+        }
+
         [Name("Update item asseturl"), Command("updateitemass")]
         public async Task UpdateItemAssetUrl(int frId, string assetUrl)
         {
