@@ -3,6 +3,7 @@ using Microsoft.WindowsAzure.Storage.Blob;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -51,7 +52,7 @@ namespace FRTools.Common
 
             await reference.UploadFromStreamAsync(stream).ConfigureAwait(false);
 
-            return reference.Uri.AbsolutePath;
+            return WebUtility.UrlDecode(reference.Uri.AbsolutePath);
         }
 
         public async Task<string> Exists(string path)
@@ -60,7 +61,7 @@ namespace FRTools.Common
 
             var fileName = Path.GetFileName(path);
             var reference = directory.GetBlockBlobReference(fileName);
-            return await reference.ExistsAsync().ConfigureAwait(false) ? reference.Uri.AbsolutePath : null;
+            return await reference.ExistsAsync().ConfigureAwait(false) ? WebUtility.UrlDecode(reference.Uri.AbsolutePath) : null;
         }
 
         private CloudBlobDirectory GetStorageContainer(string path)

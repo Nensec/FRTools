@@ -29,6 +29,7 @@ namespace FRTools.Tools.SkinTester
 
         public static async Task<PreviewResult> GenerateOrFetchPreview(string skinId, string dragonUrl, bool force = false, int? version = null)
         {
+            dragonUrl = WebUtility.UrlDecode(dragonUrl).Replace("\\", "/");
             PreviewResult result = null;
             if (dragonUrl.Contains("/dgen/dressing-room"))
             {
@@ -87,6 +88,18 @@ namespace FRTools.Tools.SkinTester
                 }
 
                 result = await GenerateOrFetchPreview(result, skinId, version, dragon, false, false, force);
+            }
+            else if (dragonUrl.Contains("/previews/dresser/"))
+            {
+                // My own scry dresser tool
+                result = new PreviewResult(PreviewSource.ScryDresserTool) { Forced = force };
+
+                var urlSplit = dragonUrl.Split('/');
+                var dragon = DragonCache.FromString(urlSplit[urlSplit.Length - 2]);
+                var apparel = urlSplit.Last().Split('-', '.').Where(x => x.All(char.IsDigit)).Select(x => int.Parse(x)).ToArray();
+                dragon.SetApparel(apparel);
+
+                result = await GenerateOrFetchPreview(result, skinId, version, dragon, true, false, force);
             }
             else
                 return new PreviewResult(PreviewSource.Unknown).WithErrorMessage("The URL provided is not valid.");

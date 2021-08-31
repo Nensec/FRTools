@@ -58,12 +58,14 @@ namespace FRTools.Data.DataModels.FlightRisingModels
                 dragon.Age = (Age)int.Parse(split[10]);
             if (split.Length > 11)
                 dragon.Apparel = split[11].Replace('-', ',');
+
+            dragon.SHA1Hash = "PARSED";
             return dragon;
         }
 
         public string ConstructImageString()
         {
-            if (SHA1Hash != null && !SHA1Hash.StartsWith("DUMMY"))
+            if (SHA1Hash != null && !(SHA1Hash.StartsWith("DUMMY") || SHA1Hash.Equals("PARSED")))
             {
                 return $"https://www1.flightrising.com/dgen/preview/dragon?age={(int)Age}&body={(int)BodyColor}&bodygene={BodyGene}&breed={(int)DragonType}&element={(int)Element}&eyetype={(int)EyeType}&gender={(int)Gender}&tert={(int)TertiaryColor}&tertgene={TertiaryGene}&winggene={WingGene}&wings={(int)WingColor}&auth={SHA1Hash}&dummyext=prev.png";
             }

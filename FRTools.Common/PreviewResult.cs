@@ -11,7 +11,8 @@ namespace FRTools.Common
         ScryImage,
         DressingRoom,
         Dummy,
-        ScryLink
+        ScryLink,
+        ScryDresserTool
     }
 
     public class PreviewResult
