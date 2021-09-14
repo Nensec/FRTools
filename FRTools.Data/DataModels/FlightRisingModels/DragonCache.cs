@@ -45,9 +45,9 @@ namespace FRTools.Data.DataModels.FlightRisingModels
             if (split.Length > 4)
                 dragon.BodyGene = (int)Enum.Parse(dragon.DragonType.PrimaryGeneType(), split[4]);
             if (split.Length > 5)
-                dragon.BodyGene = (int)Enum.Parse(dragon.DragonType.SecondaryGeneType(), split[4]);
+                dragon.WingGene = (int)Enum.Parse(dragon.DragonType.SecondaryGeneType(), split[5]);
             if (split.Length > 6)
-                dragon.BodyGene = (int)Enum.Parse(dragon.DragonType.TertiaryGeneType(), split[4]);
+                dragon.TertiaryGene = (int)Enum.Parse(dragon.DragonType.TertiaryGeneType(), split[6]);
             if (split.Length > 7)
                 dragon.BodyColor = (Color)int.Parse(split[7]);
             if (split.Length > 8)
