@@ -40,14 +40,14 @@
                         if (job.Status == JobStatus.Finished)
                         {
                             <div class="alert alert-success" role="alert">
-                                <a href="@Url.RouteUrl("MarkPinglistJobRead", new { listId = Model.ListId, secretKey = Model.SecretKey, jobId = job.Id })" type="button" class="btn btn-xs btn-info pull-right" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">Mark read</span></a>
+                                <a href="@Url.RouteUrl("MarkPinglistJobRead", new { listId = Model.ListId, secretKey = Model.SecretKey, jobId = job.Id })" type="button" class="btn btn-sm btn-info pull-right" aria-label="Close"><span aria-hidden="true">Mark read</span></a>
                                 Job "@(job.Description)" which started at @(job.StartTime) finished successfully!<br />
                             </div>
                         }
                         if (job.Status == JobStatus.FinishedWithErrors)
                         {
                             <div class="alert alert-warning" role="alert">
-                                <a href="@Url.RouteUrl("MarkPinglistJobRead", new { listId = Model.ListId, secretKey = Model.SecretKey, jobId = job.Id })" type="button" class="btn btn-xs btn-warning pull-right" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">Mark read</span></a>
+                                <a href="@Url.RouteUrl("MarkPinglistJobRead", new { listId = Model.ListId, secretKey = Model.SecretKey, jobId = job.Id })" type="button" class="btn btn-sm btn-warning pull-right" aria-label="Close"><span aria-hidden="true">Mark read</span></a>
                                 Job "@(job.Description)" which started at @(job.StartTime) finished, but with errors:<br />
                                 <ul>
                                     @foreach (var error in errors)
@@ -60,7 +60,7 @@
                         if (job.Status == JobStatus.Error)
                         {
                             <div class="alert alert-danger" role="alert">
-                                <a href="@Url.RouteUrl("MarkPinglistJobRead", new { listId = Model.ListId, secretKey = Model.SecretKey, jobId = job.Id })" type="button" class="btn btn-xs btn-danger pull-right" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">Mark read</span></a>
+                                <a href="@Url.RouteUrl("MarkPinglistJobRead", new { listId = Model.ListId, secretKey = Model.SecretKey, jobId = job.Id })" type="button" class="btn btn-sm btn-danger pull-right" aria-label="Close"><span aria-hidden="true">Mark read</span></a>
                                 Job "@(job.Description)" which started at @(job.StartTime) did not finish, please report this to on the Github issue page or on our discord:<br />
                                 @(errors[0])
                             </div>
