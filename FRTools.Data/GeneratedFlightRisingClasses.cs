@@ -562,6 +562,8 @@ namespace FRTools.Data
 		Stitched = 59,
 		[Description("Flaunt")]
 		Flaunt = 82,
+		[Description("Ribbon")]
+		Ribbon = 84,
 	}
 	
 	public enum VeilspunBodyGene
@@ -752,6 +754,8 @@ namespace FRTools.Data
 		Patchwork = 59,
 		[Description("Flair")]
 		Flair = 82,
+		[Description("Eel")]
+		Eel = 84,
 	}
 	
 	public enum BanescaleWingGene
