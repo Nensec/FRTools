@@ -1,0 +1,4 @@
+{
+    // Every day at midnight
+    "schedule": "0 0 * * 1-7"
+}

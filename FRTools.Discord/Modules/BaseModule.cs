@@ -4,6 +4,7 @@ using Discord.Commands;
 using FRTools.Data;
 using FRTools.Data.DataModels.DiscordModels;
 using FRTools.Discord.Infrastructure;
+using System;
 using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
@@ -58,7 +59,7 @@ namespace FRTools.Discord.Modules
         {
             if (!command.Attributes.Any(x => x is NoLogAttribute) && !command.Module.Attributes.Any(x => x is NoLogAttribute))
             {
-                DbContext.DiscordLogs.Add(new DiscordLog { Channel = Channel, UserId = (long)Context.User.Id, Module = command.Module.Name, Command = command.Name, Data = Context.Message.Content });
+                DbContext.DiscordLogs.Add(new DiscordLog { Channel = Channel, UserId = (long)Context.User.Id, Module = command.Module.Name, Command = command.Name, Data = Context.Message.Content, CreatedAt = DateTime.UtcNow });
                 DbContext.SaveChanges();
             }
 

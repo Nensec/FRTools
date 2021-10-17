@@ -16,5 +16,6 @@ namespace FRTools.Data.DataModels.DiscordModels
         public string Module { get; set; }
         public string Command { get; set; }
         public string Data { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

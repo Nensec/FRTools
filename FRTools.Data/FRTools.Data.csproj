@@ -259,6 +259,10 @@
     <Compile Include="Migrations\202103251044067_flash sale tracker.designer.cs">
       <DependentUpon>202103251044067_flash sale tracker.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202110171701143_Log timestamp.cs" />
+    <Compile Include="Migrations\202110171701143_Log timestamp.designer.cs">
+      <DependentUpon>202110171701143_Log timestamp.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -370,6 +374,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202103251044067_flash sale tracker.resx">
       <DependentUpon>202103251044067_flash sale tracker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202110171701143_Log timestamp.resx">
+      <DependentUpon>202110171701143_Log timestamp.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
