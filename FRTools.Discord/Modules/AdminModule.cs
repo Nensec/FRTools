@@ -64,7 +64,7 @@ namespace FRTools.Discord.Modules
                 await ReplyAsync($"Starting manual sync of server `{guild.Name}`");
                 try
                 {
-                    await UserHandler.SyncServer(guild, Context);
+                    await SyncHandler.SyncServer(guild, Context);
                     await ReplyAsync("Sync finished");
                 }
                 catch (Exception ex)

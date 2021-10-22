@@ -59,8 +59,8 @@ namespace FRTools.Discord
             await _commandService.AddModulesAsync(Assembly.GetEntryAssembly(), _unityServiceProvider);
 
             _client.MessageReceived += Client_MessageReceived;
-            _client.JoinedGuild += guild => Task.Run(() => _handlers.Add(guild.Id, _container.Resolve<GuildHandler>(new ParameterOverride("guild", guild)))).ContinueWith(x => _handlers[guild.Id].Available());
-            _client.LeftGuild += guild => Task.Run(() => _handlers.Remove(guild.Id));
+            _client.JoinedGuild += async guild => _handlers.Add(guild.Id, await CreateHandler(guild));
+            _client.LeftGuild += async guild => await (_handlers.TryGetValue(guild.Id, out var handler) ? Task.Run(() => _handlers.Remove(guild.Id)) : Task.CompletedTask).ContinueWith(x =>SyncHandler.RemoveGuild(guild)).ConfigureAwait(false);
             _client.GuildAvailable += guild => _handlers.TryGetValue(guild.Id, out var handler) ? handler.Available() : Task.Run(() => _handlers.Add(guild.Id, handler = _container.Resolve<GuildHandler>(new ParameterOverride("guild", guild)))).ContinueWith(x => handler.Available());
             _client.GuildUnavailable += async guild => await (_handlers.TryGetValue(guild.Id, out var handler) ? handler.Unavailable() : Task.CompletedTask).ConfigureAwait(false);
             _client.RoleCreated += async role => await (_handlers.TryGetValue(role.Guild.Id, out var handler) ? handler.HandleRoleCreated(role) : Task.CompletedTask).ConfigureAwait(false);
@@ -90,6 +90,13 @@ namespace FRTools.Discord
             _serviceBus.RegisterMessageHandler(ServiceBusMessageHandler, new MessageHandlerOptions(ServiceBusExceptionHandler) { AutoComplete = false, MaxConcurrentCalls = 1 });
 
             await Task.Delay(-1);
+        }
+
+        private static async Task<GuildHandler> CreateHandler(SocketGuild guild)
+        {
+            var handler = _container.Resolve<GuildHandler>(new ParameterOverride("guild", guild));
+            await handler.Available();
+            return handler;
         }
 
         private static async Task Client_UserUpdated(SocketUser userOld, SocketUser userNew)

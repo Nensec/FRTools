@@ -285,7 +285,7 @@
     <Compile Include="Handlers\GuildHandler.cs" />
     <Compile Include="Handlers\DominanceHandler.cs" />
     <Compile Include="Handlers\ItemHandler.cs" />
-    <Compile Include="Handlers\UserHandler.cs" />
+    <Compile Include="Handlers\SyncHandler.cs" />
     <Compile Include="Infrastructure\DiscordExtentions.cs" />
     <Compile Include="Infrastructure\DiscordHelpAttribute.cs" />
     <Compile Include="Infrastructure\DiscordSettingAttribute.cs" />

@@ -12,6 +12,7 @@ using System.Data.Entity;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -414,17 +415,31 @@ namespace FRTools.Discord.Handlers
         }
 
         private static object _syncLock = new object();
-        internal Task Available()
+        internal async Task Available()
         {
-            _ = Task.Run(() =>
-           {
-               lock (_syncLock)
-               {
-                   _ = UserHandler.SyncServer(Guild);
-               }
-           });
+            using (var ctx = new DataContext())
+            {
+                var dbServer = ctx.DiscordServers.FirstOrDefault(x => x.ServerId == (long)Guild.Id);
+                if (dbServer == null)
+                {
+                    ctx.DiscordServers.Add(dbServer = new DiscordServer());
+                    dbServer.ServerId = (long)Guild.Id;
+                }
+                dbServer.Name = Guild.Name;
 
-            return Task.CompletedTask;
+                if (Guild.IconUrl != null)
+                {
+                    using (var client = new WebClient())
+                    {
+                        client.Headers.Add(HttpRequestHeader.UserAgent, "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                        var iconData = client.DownloadData(Guild.IconUrl);
+                        dbServer.IconBase64 = Convert.ToBase64String(iconData);
+                    }
+                }
+                await ctx.SaveChangesAsync();
+            }
+            
+            _ = SyncHandler.SyncServer(Guild);
         }
 
         #region Unused

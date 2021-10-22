@@ -11,34 +11,12 @@ using System.Threading.Tasks;
 
 namespace FRTools.Discord.Handlers
 {
-    public static class UserHandler
+    public static class SyncHandler
     {
         public static async Task SyncServer(SocketGuild guild, SocketCommandContext context = null)
         {
             Console.WriteLine($"Started sync for {guild.Name}");
             await guild.DownloadUsersAsync();
-
-            using (var ctx = new DataContext())
-            {
-                var dbServer = ctx.DiscordServers.FirstOrDefault(x => x.ServerId == (long)guild.Id);
-                if (dbServer == null)
-                {
-                    ctx.DiscordServers.Add(dbServer = new DiscordServer());
-                    dbServer.ServerId = (long)guild.Id;
-                }
-                dbServer.Name = guild.Name;
-
-                if (guild.IconUrl != null)
-                {
-                    using (var client = new WebClient())
-                    {
-                        client.Headers.Add(HttpRequestHeader.UserAgent, "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-                        var iconData = client.DownloadData(guild.IconUrl);
-                        dbServer.IconBase64 = Convert.ToBase64String(iconData);
-                    }
-                }
-                ctx.SaveChanges();
-            }
 
             using (var ctx = new DataContext())
             {
@@ -132,6 +110,24 @@ namespace FRTools.Discord.Handlers
                 ctx.SaveChanges();
             }
             Console.WriteLine($"Completed sync for {guild.Name}");
+        }
+
+        public static async Task RemoveGuild(SocketGuild guild)
+        {
+            using (var ctx = new DataContext())
+            {
+                var server = ctx.DiscordServers.FirstOrDefault(x => x.ServerId == (long)guild.Id);
+                if (server != null)
+                {
+                    ctx.DiscordChannels.RemoveRange(server.Channels);
+                    ctx.DiscordRoles.RemoveRange(server.Roles);
+                    ctx.DiscordServerUsers.RemoveRange(server.Users);
+                    ctx.DiscordSettings.RemoveRange(ctx.DiscordSettings.Where(x => x.Server.Id == server.Id).ToList());
+                    ctx.DiscordServers.Remove(server);
+                }
+
+                await ctx.SaveChangesAsync();
+            }
         }
     }
 }
