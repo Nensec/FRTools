@@ -31,7 +31,7 @@
             <div id="dragon-profile-export-familiar" data-url=""></div>
         </div>
         <hr/>
-        To download right click the image and select Save Image
+        <button onclick="download()" class="btn btn-success w-100">Download scene preview</button>
     </div>
     <div id="AvatarImageError" style="display:none;">
         <hr />
@@ -61,14 +61,14 @@
         familiar = false;
     }
 
-    updateScene = () => {
+    updateScene = (c) => {
         $('#ScenePreview').show();
 
         sceneSource.src = $('#dragon-profile-export-scene').attr('data-url');
         dragonSource.src = $('#dragon-profile-export-dragon').attr('data-url');
         familiarSource.src = $('#dragon-profile-export-familiar').attr('data-url')
 
-        updateDisplay();
+        updateDisplay(c);
     }
 
     fetchDragon = dragonId => {
@@ -124,14 +124,45 @@
         updateDisplay();
     };
 
-    updateDisplay = () => {
-        canvas.setTransform(1, 0, 0, 1, 0, 0);
-        canvas.clearRect(0, 0, 1024, 521);
+    updateDisplay = (c) => {
+        (c ?? canvas).setTransform(1, 0, 0, 1, 0, 0);
+        (c ?? canvas).clearRect(0, 0, 1024, 521);
         if (scene)
-            canvas.drawImage(scene, 0, 0, 1024, 521);
+            (c ?? canvas).drawImage(scene, 0, 0, 1024, 521);
         if (dragon)
-            canvas.drawImage(dragon, 327, 104, 350, 350);
+            (c ?? canvas).drawImage(dragon, 327, 104, 350, 350);
         if (familiar)
-            canvas.drawImage(familiar, 677, 244, 200, 200)
+            (c ?? canvas).drawImage(familiar, 677, 244, 200, 200)
+    }
+
+    download = () => {
+        var url = $('#dragon-profile-export-dragon').attr('data-url');
+        if (url.indexOf('https://') === 0) {
+            url = '@Url.RouteUrl("GetDragonQueryString")?id=' + url;
+            $('#dragon-profile-export-dragon').attr('data-url', url);
+            updateScene();
+            dragonSource.addEventListener('load', doDownload);
+        }
+        else
+            doDownload();
+    }
+
+    doDownload = () => {
+        dragonSource.removeEventListener('load', doDownload);
+
+        let downloadLink = document.createElement('a');
+        downloadLink.setAttribute('download', 'ScenePreview.png');
+
+        let downloadCanvas = document.createElement('canvas');
+        downloadCanvas.setAttribute('width', '1024');
+        downloadCanvas.setAttribute('height', '521');
+
+        updateScene(downloadCanvas.getContext('2d'));
+
+        downloadCanvas.toBlob(function (blob) {
+            let url = URL.createObjectURL(blob);
+            downloadLink.setAttribute('href', url);
+            downloadLink.click();
+        });
     }
 </script>

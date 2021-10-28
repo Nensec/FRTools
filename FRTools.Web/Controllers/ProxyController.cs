@@ -19,6 +19,8 @@ namespace FRTools.Web.Controllers
         private static readonly Dictionary<(int, int, int), byte[]> _apparelCache = new Dictionary<(int, int, int), byte[]>();
         private static readonly Dictionary<(int, int, int), byte[]> _skinCache = new Dictionary<(int, int, int), byte[]>();
         private static readonly Dictionary<int, byte[]> _iconCache = new Dictionary<int, byte[]>();
+        private static readonly Dictionary<int, byte[]> _sceneCache = new Dictionary<int, byte[]>();
+        private static readonly Dictionary<int, byte[]> _familiarCache = new Dictionary<int, byte[]>();
 
         [Route("dummy/{dragonType}/{gender}", Name = "GetDummyDragon")]
         [Route("dummy", Name = "GetDummyDragonQueryString")]
@@ -98,6 +100,8 @@ namespace FRTools.Web.Controllers
 
                 using (var client = new WebClient())
                     bytes = await client.DownloadDataTaskAsync("https://flightrising.com" + item.IconUrl);
+
+                _iconCache[id] = bytes;
             }
 
             return File(bytes, "image/png");
@@ -107,7 +111,7 @@ namespace FRTools.Web.Controllers
         [Route("scene", Name = "GetSceneQueryString")]
         public async Task<ActionResult> GetScene(int id)
         {
-            if (!_iconCache.TryGetValue(id, out var bytes))
+            if (!_sceneCache.TryGetValue(id, out var bytes))
             {
                 var item = DataContext.FRItems.FirstOrDefault(x => x.FRId == id);
                 if (item == null)
@@ -115,6 +119,8 @@ namespace FRTools.Web.Controllers
 
                 using (var client = new WebClient())
                     bytes = await client.DownloadDataTaskAsync($"https://www1.flightrising.com/static/cms/scene/{id}.png");
+
+                _sceneCache[id] = bytes;
             }
 
             return File(bytes, "image/png");
@@ -124,7 +130,7 @@ namespace FRTools.Web.Controllers
         [Route("familiar", Name = "GetFamiliarQueryString")]
         public async Task<ActionResult> GetFamiliar(int id)
         {
-            if (!_iconCache.TryGetValue(id, out var bytes))
+            if (!_familiarCache.TryGetValue(id, out var bytes))
             {
                 var item = DataContext.FRItems.FirstOrDefault(x => x.FRId == id);
                 if (item == null)
@@ -132,7 +138,20 @@ namespace FRTools.Web.Controllers
 
                 using (var client = new WebClient())
                     bytes = await client.DownloadDataTaskAsync($"https://www1.flightrising.com/static/cms/familiar/art/{id}.png");
+
+                _familiarCache[id] = bytes;
             }
+
+            return File(bytes, "image/png");
+        }
+
+        [Route("dragon/{id}", Name = "GetDragon")]
+        [Route("dragon", Name = "GetDragonQueryString")]
+        public async Task<ActionResult> GetDragon(string id)
+        {
+            byte[] bytes;
+            using (var client = new WebClient())
+                bytes = await client.DownloadDataTaskAsync(int.TryParse(id, out var dragonId) ? FRHelpers.GetRenderUrl(dragonId) : id);
 
             return File(bytes, "image/png");
         }
