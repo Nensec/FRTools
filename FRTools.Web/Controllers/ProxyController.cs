@@ -87,7 +87,7 @@ namespace FRTools.Web.Controllers
             return File(bytes, "image/png");
         }
 
-        [Route("icon/{id}/", Name = "GetIcon")]
+        [Route("icon/{id}", Name = "GetIcon")]
         public async Task<ActionResult> GetIcon(int id)
         {
             if (!_iconCache.TryGetValue(id, out var bytes))
@@ -103,5 +103,38 @@ namespace FRTools.Web.Controllers
             return File(bytes, "image/png");
         }
 
+        [Route("scene/{id}", Name = "GetScene")]
+        [Route("scene", Name = "GetSceneQueryString")]
+        public async Task<ActionResult> GetScene(int id)
+        {
+            if (!_iconCache.TryGetValue(id, out var bytes))
+            {
+                var item = DataContext.FRItems.FirstOrDefault(x => x.FRId == id);
+                if (item == null)
+                    return null;
+
+                using (var client = new WebClient())
+                    bytes = await client.DownloadDataTaskAsync($"https://www1.flightrising.com/static/cms/scene/{id}.png");
+            }
+
+            return File(bytes, "image/png");
+        }
+
+        [Route("familiar/{id}", Name = "GetFamiliar")]
+        [Route("familiar", Name = "GetFamiliarQueryString")]
+        public async Task<ActionResult> GetFamiliar(int id)
+        {
+            if (!_iconCache.TryGetValue(id, out var bytes))
+            {
+                var item = DataContext.FRItems.FirstOrDefault(x => x.FRId == id);
+                if (item == null)
+                    return null;
+
+                using (var client = new WebClient())
+                    bytes = await client.DownloadDataTaskAsync($"https://www1.flightrising.com/static/cms/familiar/art/{id}.png");
+            }
+
+            return File(bytes, "image/png");
+        }
     }
 }

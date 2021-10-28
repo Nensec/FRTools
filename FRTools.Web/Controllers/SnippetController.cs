@@ -25,7 +25,11 @@ namespace FRTools.Web.Controllers
 
                 if (modelProperty.PropertyType.BaseType == typeof(BaseScriptModel))
                 {
-                    Scripts.Add(viewPath, Activator.CreateInstance(modelProperty.PropertyType) as BaseScriptModel);
+                    var scriptModel = Activator.CreateInstance(modelProperty.PropertyType) as BaseScriptModel;
+                    if(scriptModel.Initalize != null)
+                        scriptModel.Initalize();
+
+                    Scripts.Add(viewPath, scriptModel);
                 }
             }
         }
