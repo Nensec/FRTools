@@ -1,0 +1,64 @@
+﻿@model DeleteAccountViewModel
+
+@{
+    ViewBag.Title = "Delete account";
+}
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>Deleting your account</h5>
+    </div>
+    <div class="card-body">
+        <h4 class="text-danger text-center"><span class="fa fa-warning text-warning"></span> Deleting your account cannot be undone! <span class="fa fa-warning text-warning"></span> </h4>
+        <p>
+            There is no grace period of sorts.<br />
+            When you click the button at the bottom of this page your account data will be <b class="text-danger">deleted</b>.<br /><br />
+            Some of the tools link your useage to your account.<br />
+            If you decide to delete your account then those things will be either deleted as well or anonymized.<br />
+            Below is a list of what will be removed and what will be anonymized:
+        </p>
+        <ul>
+            <li>
+                <b>Skins</b>
+                <ul>
+                    <li>Your skins will be deleted</li>
+                    <li>Previews that have been made using your skins will continue to exist</li>
+                </ul>
+            </li>
+            <li>
+                <b>Previews</b>
+                <ul>
+                    <li>Previews you have made will become anonymous</li>
+                </ul>
+            </li>
+            <li>
+                <b>Pinglists</b>
+                <ul>
+                    <li>Your pinglists will be deleted</li>
+                    <li>Pinglists that you are on will remain unchanged</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="card mt-3">
+    <div class="card-header">
+        <h5>If you understand and still wish to delete your account then proceed.</h5>
+    </div>
+    <div class="card-body">
+        @using (Html.BeginRouteForm("DeleteAccountPost"))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <div>
+                    @Html.LabelFor(model => model.Confirm, "I understand that this cannot be undone and wish to proceed")
+                    @Html.CheckBoxFor(model => model.Confirm, new { @class = "ml-2" })
+                </div>
+                @Html.ValidationMessageFor(model => model.Confirm, "", new { @class = "text-danger" })
+            </div>
+
+            <button type="submit" class="btn btn-danger">Delete account</button>
+        }
+    </div>
+</div>

@@ -1,17 +1,20 @@
-﻿using FRTools.Web.Infrastructure;
-using FRTools.Data.DataModels;
-using FRTools.Web.Models;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security;
+﻿using System.Data.Entity;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Net;
-using Newtonsoft.Json;
+using FRTools.Common;
+using FRTools.Data;
+using FRTools.Data.DataModels;
+using FRTools.Web.Infrastructure;
 using FRTools.Web.Infrastructure.Managers;
+using FRTools.Web.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
+using Newtonsoft.Json;
 
 namespace FRTools.Web.Controllers
 {
@@ -39,6 +42,77 @@ namespace FRTools.Web.Controllers
         public ActionResult LogOut()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            AddInfoNotification("You have been logged out");
+            return RedirectToRoute("Home");
+        }
+
+        [Route("delete", Name = "DeleteAccount")]
+        [Authorize]
+        public ActionResult DeleteAccount() => View(new DeleteAccountViewModel());
+
+        [HttpPost]
+        [Route("delete", Name = "DeleteAccountPost")]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteAccount(DeleteAccountViewModel model)
+        {
+            if (model.Confirm != true)
+                ModelState.AddModelError("Confirm", "You need to confirm just to be sure.");
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            using (var ctx = new DataContext())
+            {
+                var user = ctx.Users
+                    .Where(x => x.Id == LoggedInUser.Id)
+                    .Include(x => x.Skins)
+                    .Include(x => x.Previews)
+                    .Include(x => x.Pinglists)
+                    .First();
+
+                var azureImageService = new AzureImageService();
+                foreach (var skin in user.Skins)
+                {
+                    await azureImageService.DeleteImage($@"skins\{skin.GeneratedId}.png");
+                    skin.Previews.Clear();
+                }
+                ctx.Skins.RemoveRange(user.Skins);
+                foreach (var preview in user.Previews)
+                {
+                    preview.Requestor = null;
+                }
+
+                foreach (var pinglist in user.Pinglists)
+                {
+                    ctx.PingListEntries.RemoveRange(pinglist.Entries);
+                }
+                ctx.Pinglists.RemoveRange(user.Pinglists);
+
+                var pinglistCategories = ctx.PinglistCategories.Where(x => x.Owner.Id == user.Id).ToList();
+                ctx.PinglistCategories.RemoveRange(pinglistCategories);
+
+                if(user.FRUser != null)
+                    user.FRUser.User = null;
+                await ctx.SaveChangesAsync();
+            }
+
+            foreach (var login in LoggedInUser.Logins)
+            {
+                await UserManager.RemoveLoginAsync(LoggedInUser.Id, new UserLoginInfo(login.LoginProvider, login.ProviderKey));
+            }
+
+            using (var ctx = new DataContext())
+            {
+                var user = ctx.Users.Find(LoggedInUser.Id);
+
+                ctx.Users.Remove(user);
+                await ctx.SaveChangesAsync();
+            }
+
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            AddInfoNotification("Your account has been deleted and you have been logged out");
+
             return RedirectToRoute("Home");
         }
 
@@ -64,7 +138,7 @@ namespace FRTools.Web.Controllers
         [Route("externalLoginCallback", Name = "ExternalLoginCallback")]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl, string error)
         {
-            if(error == "access_denied")
+            if (error == "access_denied")
             {
                 AddErrorNotification("Login failed.");
                 return RedirectToRoute("Login");
@@ -209,7 +283,7 @@ namespace FRTools.Web.Controllers
             {
                 case "discord":
                     providerData.ProviderKey = GetDiscordUserId(loginInfo).ToString();
-                    providerData.ProviderUsername = $"{loginInfo.ExternalIdentity.FindFirstValue("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")}#{loginInfo.ExternalIdentity.FindFirstValue("urn:discord:discriminator")}";
+                    providerData.ProviderUsername = $"{loginInfo.ExternalIdentity.FindFirstValue("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")}#{loginInfo.ExternalIdentity.FindFirstValue("urn:discord:discriminator")}";
                     break;
                 default:
                     providerData.ProviderKey = loginInfo.Login.ProviderKey;
