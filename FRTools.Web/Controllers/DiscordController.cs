@@ -395,7 +395,11 @@ namespace FRTools.Web.Controllers
 
                 if (!userServersResponse.IsSuccessful)
                 {
-                    AddErrorNotification("Something went wrong fetching data from Discord, try again later or contact me<br/><br/>" + (userServersResponse.ErrorMessage ?? userServersResponse.Content));
+                    if (userServersResponse.Content.Contains("Unauthorized") && userServersResponse.Content.Contains("401"))                    
+                        AddErrorNotification("The website was not authorized to fetch data from Discord, your access token might have expired. Try logging out and back in with your Discord account then try again.");                    
+                    else                    
+                        AddErrorNotification("Something went wrong fetching data from Discord, try again later or contact me.<br/>Alternatively try logging out and back in using your Discord account, your access token might have expired.<br/><br/>" + (userServersResponse.ErrorMessage ?? userServersResponse.Content));
+                    
                     return null;
                 }
 
