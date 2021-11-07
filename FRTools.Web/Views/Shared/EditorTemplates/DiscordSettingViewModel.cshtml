@@ -21,13 +21,13 @@
         switch (settingType?.Name ?? fallBack)
         {
             case "ITextChannel":
-                channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Text);
+                channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordChannelType.Text);
                 goto case "IChannel";
             case "IVoiceChannel":
-                channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Voice);
+                channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordChannelType.Voice);
                 goto case "IChannel";
             case "ICategoryChannel":
-                channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Category);
+                channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordChannelType.Category);
                 goto case "IChannel";
             case "IChannel":
                 <select id="@(id)" name="@(name)" configKey="@(Model.Key)" class="form-control" onchange="saveDiscordSetting('@(Model.Key)', this.value)">
@@ -42,7 +42,7 @@
                         }
                     }
                 </select>
-                if (channels.Any(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Text))
+                if (channels.Any(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordChannelType.Text))
                 {
                     <div class="input-group-append">
                         <button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" title="Check the permissions for this channel by sending a test to it" onclick="sendTestMessage('@(Model.Key)')">Send test message</button>
@@ -155,13 +155,13 @@
                     switch (discordType)
                     {
                         case "ITextChannel":
-                            channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Text);
+                            channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordChannelType.Text);
                             goto case "IChannel";
                         case "IVoiceChannel":
-                            channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Voice);
+                            channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordChannelType.Voice);
                             goto case "IChannel";
                         case "ICategoryChannel":
-                            channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordModels.DiscordChannelType.Category);
+                            channels = Model.ParentServer.Channels.Where(x => x.DiscordChannelType == FRTools.Data.DataModels.DiscordChannelType.Category);
                             goto case "IChannel";
                         case "IChannel":
                             if (Model.Value == "ALL")

@@ -60,7 +60,7 @@ namespace FRTools.Discord
 
             _client.MessageReceived += Client_MessageReceived;
             _client.JoinedGuild += async guild => _handlers.Add(guild.Id, await CreateHandler(guild));
-            _client.LeftGuild += async guild => await (_handlers.TryGetValue(guild.Id, out var handler) ? Task.Run(() => _handlers.Remove(guild.Id)) : Task.CompletedTask).ContinueWith(x =>SyncHandler.RemoveGuild(guild)).ConfigureAwait(false);
+            _client.LeftGuild += async guild => await (_handlers.TryGetValue(guild.Id, out var handler) ? Task.Run(() => _handlers.Remove(guild.Id)) : Task.CompletedTask).ConfigureAwait(false);
             _client.GuildAvailable += guild => _handlers.TryGetValue(guild.Id, out var handler) ? handler.Available() : Task.Run(() => _handlers.Add(guild.Id, handler = _container.Resolve<GuildHandler>(new ParameterOverride("guild", guild)))).ContinueWith(x => handler.Available());
             _client.GuildUnavailable += async guild => await (_handlers.TryGetValue(guild.Id, out var handler) ? handler.Unavailable() : Task.CompletedTask).ConfigureAwait(false);
             _client.RoleCreated += async role => await (_handlers.TryGetValue(role.Guild.Id, out var handler) ? handler.HandleRoleCreated(role) : Task.CompletedTask).ConfigureAwait(false);
@@ -79,9 +79,6 @@ namespace FRTools.Discord
             _client.ReactionAdded += async (message, channel, reaction) => await (channel is SocketGuildChannel guildChannel && _handlers.TryGetValue(guildChannel.Guild.Id, out var handler) ? handler.HandleReactionAdded(message, guildChannel, reaction) : Task.CompletedTask).ConfigureAwait(false);
             _client.ReactionRemoved += async (message, channel, reaction) => await (channel is SocketGuildChannel guildChannel && _handlers.TryGetValue(guildChannel.Guild.Id, out var handler) ? handler.HandleReactionRemoved(message, guildChannel, reaction) : Task.CompletedTask).ConfigureAwait(false);
             _client.ReactionsCleared += async (message, channel) => await (channel is SocketGuildChannel guildChannel && _handlers.TryGetValue(guildChannel.Guild.Id, out var handler) ? handler.HandleReactionsCleared(message, guildChannel) : Task.CompletedTask).ConfigureAwait(false);
-            _client.UserUpdated += Client_UserUpdated;
-            //client.Disconnected += async ex => await Client_Disconnected(ex);
-            //client.Connected += async () => await Client_Connected();
             _client.UserVoiceStateUpdated += async (user, stateOld, stateNew) => await ((user is SocketGuildUser guildUser) ? _handlers.TryGetValue(guildUser.Guild.Id, out var handler) ? handler.HandlerUserVoiceUpdated(guildUser, stateOld, stateNew) : Task.CompletedTask : Task.CompletedTask).ConfigureAwait(false);
 
             await _client.LoginAsync(TokenType.Bot, ConfigurationManager.AppSettings["DiscordToken"]);
@@ -99,19 +96,6 @@ namespace FRTools.Discord
             return handler;
         }
 
-        private static async Task Client_UserUpdated(SocketUser userOld, SocketUser userNew)
-        {
-            using (var ctx = new DataContext())
-            {
-                var dbUser = ctx.DiscordUsers.FirstOrDefault(x => x.UserId == (long)userNew.Id);
-                if (dbUser == null)
-                    ctx.DiscordUsers.Add(dbUser = new Data.DataModels.DiscordModels.DiscordUser { UserId = (long)userNew.Id });
-                dbUser.Username = userNew.Username;
-                dbUser.Discriminator = userNew.DiscriminatorValue;
-
-                await ctx.SaveChangesAsync();
-            }
-        }
 
         private static Task ServiceBusExceptionHandler(ExceptionReceivedEventArgs ex) => Task.Run(() => Console.WriteLine(ex.Exception.ToString()));
 

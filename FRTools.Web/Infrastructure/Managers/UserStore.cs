@@ -82,6 +82,7 @@ namespace FRTools.Web.Infrastructure.Managers
         {
             public string ProviderKey { get; set; }
             public string ProviderUsername { get; set; }
+            public string AccessToken { get; set; }
         }
     }
 }

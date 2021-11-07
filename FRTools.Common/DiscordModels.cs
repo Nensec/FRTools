@@ -1,4 +1,5 @@
-﻿using FRTools.Data.DataModels.DiscordModels;
+﻿using FRTools.Data.DataModels;
+using FRTools.Data.DataModels.DiscordModels;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -80,20 +81,15 @@ namespace FRTools.Common
         public long RequiresGuildPermission { get; set; }
     }
 
-    public class DiscordBaseViewModel
+    public class ServersViewModel
     {
-        public DiscordUser CurrentUser { get; set; }
-    }
-
-    public class ServersViewModel : DiscordBaseViewModel
-    {
-        public List<ServerViewModel> Servers { get; set; }
+        public List<ServerViewModel> Servers { get; set; } = new List<ServerViewModel>();
     }
 
     public class ServerViewModel
     {
         public long ServerId { get; set; }
-        public string IconBase64 { get; set; }
+        public string IconHash { get; set; }
         public string ServerName { get; set; }
         public int UserCount { get; set; }
         public List<DiscordRoleViewModel> Roles { get; set; }

@@ -85,6 +85,8 @@ namespace FRTools.App_Start
 
             discordOptions.Scope.Clear();
             discordOptions.Scope.Add("identify");
+            discordOptions.Scope.Add("guilds");
+            discordOptions.Scope.Add("guilds.members.read");
             app.UseDiscordAuthentication(discordOptions);
 
             using (var ctx = new DataContext())

@@ -43,37 +43,6 @@ namespace FRTools.Discord.Modules
             return ReplyAsync($"Updated Key `{key}` with value `{value}` for `Global`");
         }
 
-        [Name("Sync server"), Command("syncserver")]
-        public async Task SyncServer(ulong? serverId = null)
-        {
-            SocketGuild guild = null;
-            if (serverId != null)
-            {
-                var g = Context.Client.Guilds.FirstOrDefault(x => x.Id == serverId);
-                if (g == null)
-                {
-                    await ReplyAsync($"I am not in server `{serverId}`");
-                }
-                else
-                    guild = g;
-            }
-            else
-                guild = Context.Guild;
-            if (guild != null)
-            {
-                await ReplyAsync($"Starting manual sync of server `{guild.Name}`");
-                try
-                {
-                    await SyncHandler.SyncServer(guild, Context);
-                    await ReplyAsync("Sync finished");
-                }
-                catch (Exception ex)
-                {
-                    await ReplyAsync($"Error: {ex}");
-                }
-            }
-        }
-
         [Name("Servers"), Command("servers")]
         public async Task Servers(ulong? serverId = null)
         {

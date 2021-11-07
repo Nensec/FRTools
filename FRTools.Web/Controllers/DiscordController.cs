@@ -1,22 +1,27 @@
-﻿using FRTools.Common;
-using FRTools.Data;
-using FRTools.Data.DataModels;
-using FRTools.Data.DataModels.DiscordModels;
-using FRTools.Data.Messages;
-using FRTools.Web.Infrastructure;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Azure.ServiceBus;
-using Newtonsoft.Json;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
+using FRTools.Common;
+using FRTools.Data;
+using FRTools.Data.DataModels;
+using FRTools.Data.DataModels.DiscordModels.RestModels;
+using FRTools.Data.Messages;
+using FRTools.Web.Infrastructure;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Azure.ServiceBus;
+using Newtonsoft.Json;
+using RestSharp;
+using RestSharp.Authenticators;
+using RestSharp.Serializers.NewtonsoftJson;
 
 namespace FRTools.Web.Controllers
 {
@@ -25,6 +30,10 @@ namespace FRTools.Web.Controllers
     {
         private static DiscordMetadata DiscordMetadata { get; }
         private static long DiscordBotOwnerId { get; }
+        private RestClient UserDiscordClient { get; }
+        private RestClient BotDiscordClient { get; }
+
+        private MemoryCache Cache { get; } = MemoryCache.Default;
 
         static DiscordController()
         {
@@ -38,6 +47,11 @@ namespace FRTools.Web.Controllers
         {
             ViewBag.PngLogo = "/Content/frtools_discord.png";
             ViewBag.Logo = "/Content/frtools_discord.svg";
+            UserDiscordClient = new RestClient("https://discord.com/api");
+            UserDiscordClient.UseNewtonsoftJson();
+            BotDiscordClient = new RestClient("https://discord.com/api");
+            BotDiscordClient.UseNewtonsoftJson();
+            BotDiscordClient.Authenticator = new BotAuthenticator(ConfigurationManager.AppSettings["DiscordToken"]);
         }
 
         private long? _currentUserId;
@@ -47,15 +61,20 @@ namespace FRTools.Web.Controllers
             if (Request.IsAuthenticated)
             {
                 _currentUserId = Session["CurrentDiscordUser"] as long?;
+                var owin = HttpContext.GetOwinContext();
+                var userManager = owin.GetUserManager<UserManager<User, int>>();
+                var userId = HttpContext.User.Identity.GetUserId<int>();
                 if (_currentUserId == null)
                 {
-                    var owin = HttpContext.GetOwinContext();
-                    var userManager = owin.GetUserManager<UserManager<User, int>>();
-                    var logins = userManager.GetLogins(HttpContext.User.Identity.GetUserId<int>());
+                    var logins = userManager.GetLogins(userId);
                     var discordLogin = logins.FirstOrDefault(x => x.LoginProvider.ToLower() == "discord");
                     if (discordLogin != null)
                         Session["CurrentDiscordUser"] = _currentUserId = long.Parse(discordLogin.ProviderKey);
                 }
+                var claims = userManager.GetClaims(userId);
+                var accessTokenClaim = claims.FirstOrDefault(x => x.Type == "DiscordAccessToken");
+                if (accessTokenClaim != null)
+                    UserDiscordClient.Authenticator = new JwtAuthenticator(accessTokenClaim.Value);
             }
 
             base.OnActionExecuting(filterContext);
@@ -97,61 +116,87 @@ namespace FRTools.Web.Controllers
         [Route("manage", Name = "DiscordManage")]
         [Authorize]
         [MustHaveLoginProvider("discord", "DiscordHome")]
-        public ActionResult Manage()
+        public async Task<ActionResult> Manage()
         {
-            var currentUser = DataContext.DiscordUsers.FirstOrDefault(x => x.UserId == _currentUserId);
-            if (currentUser == null)
-                TempData["Warning"] = "The bot has not encountered you at all yet in any servers, are you in a mutual server with the bot?";
-            return View(new ServersViewModel
+            var userServers = await GetUserGuilds();
+
+            if (userServers == null)
+                return RedirectToRoute("Home");
+
+            var userServerIds = userServers.Select(x => x.Id).ToArray();
+            var matchingServerIds = DataContext.DiscordServers.Where(x => userServerIds.Contains(x.ServerId)).Select(x => x.ServerId);
+
+            var matchingServers = userServers.Where(x => matchingServerIds.Contains(x.Id) && (x.Owner || (x.Permissions & 8) != 0)).ToList();
+
+            if (!matchingServers.Any())
+                TempData["Warning"] = "You don't appear to share a server with a bot";
+
+            var vm = new ServersViewModel();
+            foreach (var server in matchingServers)
             {
-                Servers = currentUser?.Servers.Where(x => x.Server != null && (x.IsOwner || x.Roles.Any(r => (r.DiscordPermissions & 8) != 0))).Select(x => new ServerViewModel
+                vm.Servers.Add(new ServerViewModel
                 {
-                    ServerId = x.Server.ServerId,
-                    UserCount = x.Server.Users.Count,
-                    IconBase64 = x.Server.IconBase64,
-                    ServerName = x.Server.Name
-                }).ToList() ?? new System.Collections.Generic.List<ServerViewModel>(),
-                CurrentUser = currentUser
-            });
+                    ServerId = server.Id,
+                    IconHash = server.Icon,
+                    ServerName = server.Name
+                });
+            }
+
+            return View(vm);
         }
 
-        private ServerViewModel GetServerViewModel(DataContext DataContext, DiscordUser currentUser, long discordServer)
+        private async Task<ServerViewModel> GetServerViewModel(long serverId)
         {
-            var server = currentUser.Servers.First(x => x.Server?.ServerId == discordServer).Server;
-            var serverModel = new ServerViewModel
+            var serverModel = (ServerViewModel)Cache[$"ServerModel_{serverId}"];
+
+            if (serverModel == null)
             {
-                ServerId = discordServer,
-                Modules = DiscordMetadata.Modules.Where(x => CheckModule(x.Name)).ToList(),
-                ServerName = server.Name,
-            };
-            serverModel.Channels = server.Channels.Select(x => new DiscordChannelViewModel { ChannelId = x.ChannelId, ChannelName = x.Name, ParentServer = serverModel, DiscordChannelType = x.ChannelType }).ToList();
-            serverModel.Roles = server.Roles.Where(x => x.Name != "@everyone").Select(x => new DiscordRoleViewModel { RoleId = x.RoleId, RoleName = x.Name, ParentServer = serverModel }).ToList();
-            var botSettingCategories = DiscordMetadata.BotSettingCategories.OrderBy(x => x.Name).ToList();
-            var botSettings = DiscordMetadata.BotSettings.OrderBy(x => x.Order).ThenBy(x => x.Type).Select(x => new DiscordSettingViewModel
-            {
-                Key = x.Key,
-                ParentServer = serverModel,
-                Value = DataContext.DiscordSettings.FirstOrDefault(s => s.Server.ServerId == discordServer && s.Key == x.Key)?.Value ?? x.DefaultValue,
-                SettingType = x.Type,
-                SettingName = x.Name,
-                Description = ParseDescription(x),
-                ExtraArgs = x.ExtraArgs,
-                Category = x.Category
-            }).ToList();
-            serverModel.BotSettingCategories = botSettingCategories;
-            serverModel.BotSettings = botSettings;
+
+                var guildResponse = await BotDiscordClient.ExecuteGetAsync<DiscordGuild>(new RestRequest($"/guilds/{serverId}"));
+                var guildChannelsResponse = await BotDiscordClient.ExecuteGetAsync<List<DiscordChannel>>(new RestRequest($"/guilds/{serverId}/channels"));
+
+                if (!guildResponse.IsSuccessful || !guildChannelsResponse.IsSuccessful)
+                {
+                    AddErrorNotification("Something went wrong fetching data from Discord, try again later or contact me<br/><br/>" + (guildResponse.IsSuccessful ? guildResponse.ErrorMessage : guildChannelsResponse.ErrorMessage));
+                    return null;
+                }
+
+                serverModel = new ServerViewModel
+                {
+                    ServerId = serverId,
+                    Modules = DiscordMetadata.Modules.Where(x => CheckModule(x.Name)).ToList(),
+                    ServerName = guildResponse.Data.Name,
+                };
+                serverModel.Channels = guildChannelsResponse.Data.Select(x => new DiscordChannelViewModel { ChannelId = x.Id, ChannelName = x.Name, ParentServer = serverModel, DiscordChannelType = (DiscordChannelType)x.Type }).ToList();
+                serverModel.Roles = guildResponse.Data.Roles.Where(x => x.Name != "@everyone").Select(x => new DiscordRoleViewModel { RoleId = x.Id, RoleName = x.Name, ParentServer = serverModel }).ToList();
+                var botSettingCategories = DiscordMetadata.BotSettingCategories.OrderBy(x => x.Name).ToList();
+                var botSettings = DiscordMetadata.BotSettings.OrderBy(x => x.Order).ThenBy(x => x.Type).Select(x => new DiscordSettingViewModel
+                {
+                    Key = x.Key,
+                    ParentServer = serverModel,
+                    Value = DataContext.DiscordSettings.FirstOrDefault(s => s.Server.ServerId == serverId && s.Key == x.Key)?.Value ?? x.DefaultValue,
+                    SettingType = x.Type,
+                    SettingName = x.Name,
+                    Description = ParseDescription(x),
+                    ExtraArgs = x.ExtraArgs,
+                    Category = x.Category
+                }).ToList();
+                serverModel.BotSettingCategories = botSettingCategories;
+                serverModel.BotSettings = botSettings;
+
+                Cache.Add($"ServerModel_{serverId}", serverModel, DateTimeOffset.UtcNow.AddMinutes(5));
+            }
+
             return serverModel;
         }
 
         [Route("manage/{discordServer}", Name = "DiscordManageServer")]
         [Authorize]
         [MustHaveLoginProvider("discord", "DiscordHome")]
-        public ActionResult ManageServer(long discordServer)
+        public async Task<ActionResult> ManageServer(long discordServer)
         {
-            var currentUser = DataContext.DiscordUsers.First(x => x.UserId == _currentUserId);
-
-            if (CheckMutualServer(discordServer, currentUser))
-                return View(GetServerViewModel(DataContext, currentUser, discordServer));
+            if (await CheckMutualServer(discordServer))
+                return View(await GetServerViewModel(discordServer));
             else
                 return RedirectToRoute("DiscordManage");
         }
@@ -159,15 +204,13 @@ namespace FRTools.Web.Controllers
         [Route("manage/{discordServer}/{module}", Name = "DiscordManageModule")]
         [Authorize]
         [MustHaveLoginProvider("discord", "DiscordHome")]
-        public ActionResult ManageModule(long discordServer, string module)
+        public async Task<ActionResult> ManageModule(long discordServer, string module)
         {
-            var currentUser = DataContext.DiscordUsers.First(x => x.UserId == _currentUserId);
-
-            if (CheckMutualServer(discordServer, currentUser))
+            if (await CheckMutualServer(discordServer))
             {
                 if (CheckModule(module))
                 {
-                    var serverModel = GetServerViewModel(DataContext, currentUser, discordServer);
+                    var serverModel = await GetServerViewModel(discordServer);
 
                     var model = new DiscordModuleViewModel
                     {
@@ -249,9 +292,6 @@ namespace FRTools.Web.Controllers
         {
             var discordServerId = long.Parse(discordServer);
             ActionResult ErrorResult() => new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest, "User does not have required permission");
-            var currentUser = DataContext.DiscordUsers.FirstOrDefault(x => x.UserId == _currentUserId)?.Servers.FirstOrDefault(x => x.Server?.ServerId == discordServerId);
-            if (currentUser == null)
-                return ErrorResult();
 
             Data.DataModels.DiscordModels.DiscordSetting setting = null;
             if (module == null)
@@ -260,11 +300,11 @@ namespace FRTools.Web.Controllers
                 if (botSetting == null)
                     return ErrorResult();
 
-                if (currentUser.IsOwner || currentUser.Roles.Any(x => (x.DiscordPermissions & 8) != 0))
+                if (await CheckMutualServer(discordServerId))
                 {
-                    setting = DataContext.DiscordSettings.FirstOrDefault(x => x.Server.ServerId == currentUser.Server.ServerId && x.Key == botSetting.Key);
+                    setting = DataContext.DiscordSettings.FirstOrDefault(x => x.Server.ServerId == discordServerId && x.Key == botSetting.Key);
                     if (setting == null)
-                        setting = DataContext.DiscordSettings.Add(new Data.DataModels.DiscordModels.DiscordSetting { Server = currentUser.Server, Key = botSetting.Key });
+                        setting = DataContext.DiscordSettings.Add(new Data.DataModels.DiscordModels.DiscordSetting { Server = DataContext.DiscordServers.First(x => x.ServerId == discordServerId), Key = botSetting.Key });
                     setting.Value = value;
                 }
             }
@@ -278,11 +318,11 @@ namespace FRTools.Web.Controllers
                 if (moduleSetting == null)
                     return ErrorResult();
 
-                if (currentUser.IsOwner || currentUser.Roles.Any(x => (x.DiscordPermissions & 8) != 0))
+                if (await CheckMutualServer(discordServerId))
                 {
-                    setting = DataContext.DiscordSettings.FirstOrDefault(x => x.Server.ServerId == currentUser.Server.ServerId && x.Key == moduleSetting.Key);
+                    setting = DataContext.DiscordSettings.FirstOrDefault(x => x.Server.ServerId == discordServerId && x.Key == moduleSetting.Key);
                     if (setting == null)
-                        setting = DataContext.DiscordSettings.Add(new Data.DataModels.DiscordModels.DiscordSetting { Server = currentUser.Server, Key = moduleSetting.Key });
+                        setting = DataContext.DiscordSettings.Add(new Data.DataModels.DiscordModels.DiscordSetting { Server = DataContext.DiscordServers.First(x => x.ServerId == discordServerId), Key = moduleSetting.Key });
                     setting.Value = value;
                 }
             }
@@ -302,9 +342,6 @@ namespace FRTools.Web.Controllers
         {
             var discordServerId = long.Parse(discordServer);
             ActionResult ErrorResult() => new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest, "User does not have required permission");
-            var currentUser = DataContext.DiscordUsers.FirstOrDefault(x => x.UserId == _currentUserId)?.Servers.FirstOrDefault(x => x.Server?.ServerId == discordServerId);
-            if (currentUser == null)
-                return ErrorResult();
 
             bool IsChannelType(string settingType)
             {
@@ -324,8 +361,8 @@ namespace FRTools.Web.Controllers
                 if (botSetting == null)
                     return ErrorResult();
 
-                if (IsChannelType(botSetting.Type) && (currentUser.IsOwner || currentUser.Roles.Any(x => (x.DiscordPermissions & 8) != 0)))
-                    setting = DataContext.DiscordSettings.FirstOrDefault(x => x.Server.ServerId == currentUser.Server.ServerId && x.Key == botSetting.Key);
+                if (IsChannelType(botSetting.Type) && await CheckMutualServer(discordServerId))
+                    setting = DataContext.DiscordSettings.FirstOrDefault(x => x.Server.ServerId == discordServerId && x.Key == botSetting.Key);
             }
             else
             {
@@ -337,8 +374,8 @@ namespace FRTools.Web.Controllers
                 if (moduleSetting == null)
                     return ErrorResult();
 
-                if (IsChannelType(moduleSetting.Type) && (currentUser.IsOwner || currentUser.Roles.Any(x => (x.DiscordPermissions & 8) != 0)))
-                    setting = DataContext.DiscordSettings.FirstOrDefault(x => x.Server.ServerId == currentUser.Server.ServerId && x.Key == moduleSetting.Key);
+                if (IsChannelType(moduleSetting.Type) && await CheckMutualServer(discordServerId))
+                    setting = DataContext.DiscordSettings.FirstOrDefault(x => x.Server.ServerId == discordServerId && x.Key == moduleSetting.Key);
             }
 
             var _serviceBus = new QueueClient(ConfigurationManager.AppSettings["AzureSBConnString"], ConfigurationManager.AppSettings["AzureSBQueueName"]);
@@ -348,9 +385,39 @@ namespace FRTools.Web.Controllers
 
         }
 
-        private bool CheckMutualServer(long discordServer, DiscordUser currentUser)
+        private async Task<List<DiscordGuild>> GetUserGuilds()
         {
-            if (currentUser.Servers.Where(x => x.Server != null && (x.IsOwner || x.Roles.Any(r => (r.DiscordPermissions & 8) != 0))).Select(x => x.Server).Any(x => x.ServerId == discordServer))
+            var userServers = (List<DiscordGuild>)Cache[$"UserServers_{User.Identity.GetUserId<int>()}"];
+
+            if (userServers == null)
+            {
+                var userServersResponse = await UserDiscordClient.ExecuteGetAsync<List<DiscordGuild>>(new RestRequest("/users/@me/guilds"));
+
+                if (!userServersResponse.IsSuccessful)
+                {
+                    AddErrorNotification("Something went wrong fetching data from Discord, try again later or contact me<br/><br/>" + (userServersResponse.ErrorMessage ?? userServersResponse.Content));
+                    return null;
+                }
+
+                Cache.Add($"UserServers_{User.Identity.GetUserId<int>()}", userServers = userServersResponse.Data, DateTimeOffset.UtcNow.AddMinutes(5));
+            }
+            return userServers;
+        }
+
+        private async Task<bool> CheckMutualServer(long discordServer)
+        {
+            var userServers = await GetUserGuilds();
+            if (userServers == null)
+                return false;
+
+            var userServer = userServers.FirstOrDefault(x => x.Id == discordServer);
+
+            if (userServer == null)
+            {
+                AddErrorNotification($"User is not in server {discordServer}");
+                return false;
+            }
+            if (DataContext.DiscordServers.Any(x => x.ServerId == userServer.Id) && (userServer.Owner || (userServer.Permissions & 8) != 0))
                 return true;
             else
             {

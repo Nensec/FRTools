@@ -1,4 +1,12 @@
-﻿using Discord;
+﻿using System;
+using System.Configuration;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using FRTools.Data;
@@ -6,15 +14,6 @@ using FRTools.Data.DataModels.DiscordModels;
 using FRTools.Data.DataModels.FlightRisingModels;
 using FRTools.Data.Messages;
 using FRTools.Discord.Infrastructure;
-using System;
-using System.Configuration;
-using System.Data.Entity;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace FRTools.Discord.Handlers
 {
@@ -47,76 +46,6 @@ namespace FRTools.Discord.Handlers
             settingManager.GetAllGuildSettings(guild);
         }
 
-        internal async Task HandleRoleCreated(SocketRole role)
-        {
-            using (var ctx = new DataContext())
-            {
-                ctx.DiscordServers.SingleOrDefault(x => x.ServerId == (long)role.Guild.Id)?.Roles.Add(new DiscordRole
-                {
-                    RoleId = (long)role.Id,
-                    Name = role.Name,
-                    DiscordPermissions = (long)role.Permissions.RawValue,
-                    Color = role.Color.RawValue.ToString()
-                });
-                await ctx.SaveChangesAsync();
-            }
-        }
-
-        internal async Task HandleRoleDeleted(SocketRole role)
-        {
-            using (var ctx = new DataContext())
-            {
-                var roles = ctx.DiscordRoles.Where(x => x.RoleId == (long)role.Id);
-                ctx.DiscordRoles.RemoveRange(roles);
-                await ctx.SaveChangesAsync();
-            }
-        }
-
-        internal async Task HandleRoleUpdate(SocketRole roleOld, SocketRole roleNew)
-        {
-            using (var ctx = new DataContext())
-            {
-                DiscordRole role = null;
-                var roles = ctx.DiscordRoles.Where(x => x.RoleId == (long)roleNew.Id).ToList();
-                if (roles.Count > 1)
-                {
-                    role = roles[0];
-                    ctx.DiscordRoles.RemoveRange(roles.Skip(1));
-                }
-                else
-                    role = roles.FirstOrDefault();
-
-                if (role != null)
-                {
-                    role.Name = roleNew.Name;
-                    role.Color = roleNew.Color.RawValue.ToString();
-                    role.DiscordPermissions = (long)roleNew.Permissions.RawValue;
-                    await ctx.SaveChangesAsync();
-                }
-            }
-        }
-
-        internal async Task HandleMemberUpdate(SocketGuildUser userOld, SocketGuildUser userNew)
-        {
-            using (var ctx = new DataContext())
-            {
-                var dbServer = ctx.DiscordServers.SingleOrDefault(x => x.ServerId == (long)userNew.Guild.Id);
-                var dbServerUser = dbServer.Users.FirstOrDefault(x => x.User.UserId == (long)userNew.Id);
-                if (dbServerUser == null)
-                {
-                    var dbUser = ctx.DiscordUsers.FirstOrDefault(x => x.UserId == (long)userNew.Id);
-                    if (dbUser == null)
-                        ctx.DiscordUsers.Add(dbUser = new DiscordUser { UserId = (long)userNew.Id });
-                    dbServer.Users.Add(dbServerUser = new DiscordServerUser { User = dbUser });
-                }
-                dbServerUser.Nickname = userNew.Nickname;
-                dbServerUser.Roles.Clear();
-                dbServerUser.Roles = dbServer.Roles.Where(x => userNew.Roles.Any(r => (long)r.Id == x.RoleId)).ToList();
-                dbServerUser.User.Username = userNew.Username;
-                dbServerUser.User.Discriminator = userNew.DiscriminatorValue;
-                await ctx.SaveChangesAsync();
-            }
-        }
 
         internal async Task HandleUpdateGuild(SocketGuild guildOld, SocketGuild guildNew)
         {
@@ -125,53 +54,6 @@ namespace FRTools.Discord.Handlers
                 var guild = ctx.DiscordServers.SingleOrDefault(x => x.ServerId == (long)guildNew.Id);
                 guild.Name = guildNew.Name;
                 await ctx.SaveChangesAsync();
-            }
-        }
-
-        internal async Task HandleChannelCreated(SocketGuildChannel guildChannel)
-        {
-            using (var ctx = new DataContext())
-            {
-                ctx.DiscordServers.SingleOrDefault(x => x.ServerId == (long)guildChannel.Guild.Id).Channels.Add(new DiscordChannel
-                {
-                    ChannelId = (long)guildChannel.Id,
-                    Name = guildChannel.Name
-                });
-                await ctx.SaveChangesAsync();
-            }
-        }
-
-        internal async Task HandleChannelRemoved(SocketGuildChannel guildChannel)
-        {
-            using (var ctx = new DataContext())
-            {
-                var channels = ctx.DiscordChannels.Where(x => x.ChannelId == (long)guildChannel.Id);
-                ctx.DiscordChannels.RemoveRange(channels);
-                await ctx.SaveChangesAsync();
-            }
-        }
-
-        internal async Task HandleChannelUpdated(SocketGuildChannel guildChannelOld, SocketGuildChannel guildChannelNew)
-        {
-            using (var ctx = new DataContext())
-            {
-                DiscordChannel channel = null;
-                var channels = ctx.DiscordChannels.Where(x => x.ChannelId == (long)guildChannelNew.Id).ToList();
-                if (channels.Count > 1)
-                {
-                    channel = channels[0];
-                    ctx.DiscordChannels.RemoveRange(channels.Skip(1));
-                }
-                else
-                    channel = channels.FirstOrDefault();
-
-                if (channel != null)
-                {
-                    channel.Name = guildChannelNew.Name;
-                    ctx.SaveChanges();
-                }
-                else
-                    await HandleChannelCreated(guildChannelNew);
             }
         }
 
@@ -237,27 +119,6 @@ namespace FRTools.Discord.Handlers
             }
         }
 
-        internal async Task HandleUserJoin(SocketGuildUser user)
-        {
-            using (var ctx = new DataContext())
-            {
-                var dbServer = ctx.DiscordServers.SingleOrDefault(x => x.ServerId == (long)user.Guild.Id);
-                var dbServerUser = dbServer.Users.FirstOrDefault(x => x.User.UserId == (long)user.Id);
-                if (dbServerUser == null)
-                {
-                    var dbUser = ctx.DiscordUsers.FirstOrDefault(x => x.UserId == (long)user.Id);
-                    if (dbUser == null)
-                        ctx.DiscordUsers.Add(dbUser = new DiscordUser { UserId = (long)user.Id });
-                    dbServer.Users.Add(dbServerUser = new DiscordServerUser { User = dbUser });
-                }
-                dbServerUser.Nickname = user.Nickname;
-                dbServerUser.Roles = dbServer.Roles.Where(x => user.Roles.Any(r => (long)r.Id == x.RoleId)).ToList();
-                dbServerUser.User.Username = user.Username;
-                dbServerUser.User.Discriminator = user.DiscriminatorValue;
-                await ctx.SaveChangesAsync();
-            }
-        }
-
         internal async Task HandleFlashSaleUpdate(FlashSaleMessage flashSaleMessage)
         {
             // Check if setting is turned on
@@ -276,20 +137,6 @@ namespace FRTools.Discord.Handlers
                     embed.Embed.Color = new global::Discord.Color(243, 181, 144);
                     await annChannel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
                 }
-            }
-        }
-
-        internal async Task HandleUserLeave(SocketGuildUser user)
-        {
-            using (var ctx = new DataContext())
-            {
-                var dbServer = ctx.DiscordServers.SingleOrDefault(x => x.ServerId == (long)user.Guild.Id);
-                var dbServerUser = dbServer.Users.FirstOrDefault(x => x.User.UserId == (long)user.Id);
-                if (dbServerUser == null)
-                    return;
-
-                ctx.DiscordServerUsers.Remove(dbServerUser);
-                await ctx.SaveChangesAsync();
             }
         }
 
@@ -438,8 +285,6 @@ namespace FRTools.Discord.Handlers
                 }
                 await ctx.SaveChangesAsync();
             }
-            
-            _ = SyncHandler.SyncServer(Guild);
         }
 
         #region Unused
@@ -450,6 +295,15 @@ namespace FRTools.Discord.Handlers
         internal Task HandleReactionAdded(Cacheable<IUserMessage, ulong> message, SocketGuildChannel guildChannel, SocketReaction reaction) => Task.CompletedTask;
         internal Task HandleReactionRemoved(Cacheable<IUserMessage, ulong> message, SocketGuildChannel guildChannel, SocketReaction reaction) => Task.CompletedTask;
         internal Task HandlerUserVoiceUpdated(SocketGuildUser guildUser, SocketVoiceState stateOld, SocketVoiceState stateNew) => Task.CompletedTask;
+        internal Task HandleRoleCreated(SocketRole role) => Task.CompletedTask;
+        internal Task HandleRoleDeleted(SocketRole role) => Task.CompletedTask;
+        internal Task HandleRoleUpdate(SocketRole roleOld, SocketRole roleNew) => Task.CompletedTask;
+        internal Task HandleMemberUpdate(SocketGuildUser userOld, SocketGuildUser userNew) => Task.CompletedTask;
+        internal Task HandleChannelCreated(SocketGuildChannel guildChannel) => Task.CompletedTask;
+        internal Task HandleChannelRemoved(SocketGuildChannel guildChannel) => Task.CompletedTask;
+        internal Task HandleChannelUpdated(SocketGuildChannel guildChannelOld, SocketGuildChannel guildChannelNew) => Task.CompletedTask;
+        internal Task HandleUserJoin(SocketGuildUser user) => Task.CompletedTask;
+        internal Task HandleUserLeave(SocketGuildUser user) => Task.CompletedTask;
         #endregion
     }
 }

@@ -21,4 +21,12 @@ namespace FRTools.Data.DataModels
         FinishedWithErrors,
         UserConfirmedDone
     }
+
+    public enum DiscordChannelType
+    {
+        Text,
+        Voice,
+        Category,
+        Other
+    }
 }

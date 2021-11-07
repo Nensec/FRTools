@@ -17,7 +17,7 @@ namespace FRTools.Discord.Modules
         protected DataContext DbContext { get; }
         protected SettingManager SettingManager { get; }
         protected DiscordServer Server { get; private set; }
-        protected DiscordChannel Channel { get; private set; }
+        protected long ChannelId { get; private set; }
         protected string CDNBasePath = ConfigurationManager.AppSettings["CDNBasePath"];
         protected string WebsiteBaseUrl = ConfigurationManager.AppSettings["WebsiteBaseUrl"];
         private string _moduleName;
@@ -48,7 +48,7 @@ namespace FRTools.Discord.Modules
             if (Context.Guild != null)
             {
                 Server = DbContext.DiscordServers.FirstOrDefault(x => x.ServerId == (long)Context.Guild.Id) ?? DbContext.DiscordServers.Add(new DiscordServer { ServerId = (long)Context.Guild.Id, Name = Context.Guild.Name });
-                Channel = DbContext.DiscordChannels.FirstOrDefault(x => x.ChannelId == (long)Context.Channel.Id) ?? DbContext.DiscordChannels.Add(new DiscordChannel { Server = Server, ChannelId = (long)Context.Channel.Id, Name = Context.Channel.Name });
+                ChannelId = (long)Context.Channel.Id;
                 DbContext.SaveChanges();
             }
 
@@ -59,7 +59,7 @@ namespace FRTools.Discord.Modules
         {
             if (!command.Attributes.Any(x => x is NoLogAttribute) && !command.Module.Attributes.Any(x => x is NoLogAttribute))
             {
-                DbContext.DiscordLogs.Add(new DiscordLog { Channel = Channel, UserId = (long)Context.User.Id, Module = command.Module.Name, Command = command.Name, Data = Context.Message.Content, CreatedAt = DateTime.UtcNow });
+                DbContext.DiscordLogs.Add(new DiscordLog { ChannelId = ChannelId, UserId = (long)Context.User.Id, Module = command.Module.Name, Command = command.Name, Data = Context.Message.Content, CreatedAt = DateTime.UtcNow });
                 DbContext.SaveChanges();
             }
 

@@ -85,13 +85,13 @@
     <Compile Include="DataModels\AccountModels\UserLogin.cs" />
     <Compile Include="DataModels\AccountModels\UserRole.cs" />
     <Compile Include="DataModels\DataModelEnums.cs" />
-    <Compile Include="DataModels\DiscordModels\DiscordChannel.cs" />
     <Compile Include="DataModels\DiscordModels\DiscordLog.cs" />
-    <Compile Include="DataModels\DiscordModels\DiscordRole.cs" />
     <Compile Include="DataModels\DiscordModels\DiscordServer.cs" />
-    <Compile Include="DataModels\DiscordModels\DiscordServerUser.cs" />
     <Compile Include="DataModels\DiscordModels\DiscordSetting.cs" />
-    <Compile Include="DataModels\DiscordModels\DiscordUser.cs" />
+    <Compile Include="DataModels\DiscordModels\RestModels\DiscordChannel.cs" />
+    <Compile Include="DataModels\DiscordModels\RestModels\DiscordEmoji.cs" />
+    <Compile Include="DataModels\DiscordModels\RestModels\DiscordGuild.cs" />
+    <Compile Include="DataModels\DiscordModels\RestModels\DiscordRole.cs" />
     <Compile Include="DataModels\FlightRisingModels\DragonCache.cs" />
     <Compile Include="DataModels\FlightRisingModels\FRDominance.cs" />
     <Compile Include="DataModels\FlightRisingModels\FRItem.cs" />
@@ -263,6 +263,10 @@
     <Compile Include="Migrations\202110171701143_Log timestamp.designer.cs">
       <DependentUpon>202110171701143_Log timestamp.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202111070031019_Remove discord tables.cs" />
+    <Compile Include="Migrations\202111070031019_Remove discord tables.designer.cs">
+      <DependentUpon>202111070031019_Remove discord tables.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -377,6 +381,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202110171701143_Log timestamp.resx">
       <DependentUpon>202110171701143_Log timestamp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202111070031019_Remove discord tables.resx">
+      <DependentUpon>202111070031019_Remove discord tables.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
@@ -166,6 +167,12 @@ namespace FRTools.Web.Controllers
                             providerLogin.ProviderUsername = providerData.ProviderUsername;
                             await UserManager.UpdateAsync(user);
                         }
+
+                        if (providerData.AccessToken != null)
+                        {
+                            SetDiscordAccessToken(user.Id, providerData.AccessToken);
+                        }
+
                         if (returnUrl != null)
                             return RedirectToLocal(returnUrl);
                         return RedirectToRoute("Home");
@@ -174,13 +181,13 @@ namespace FRTools.Web.Controllers
                 default:
                     if (ModelState.IsValid)
                     {
-                        async Task<(IdentityResult, User)> CreateNewUser(ExternalLoginInfo externalLoginInfo, string usernameAffix = null)
+                        async Task<(IdentityResult, User)> CreateNewUser(string usernameAffix = null)
                         {
-                            var providerData = JsonConvert.DeserializeObject<UserStore.ProviderData>(externalLoginInfo.Login.ProviderKey);
+                            var providerData = JsonConvert.DeserializeObject<UserStore.ProviderData>(loginInfo.Login.ProviderKey);
                             var user = new User
                             {
                                 UserName = providerData.ProviderUsername + usernameAffix,
-                                Email = externalLoginInfo.Email,
+                                Email = loginInfo.Email,
                                 ProfileSettings = new ProfileSettings()
                             };
 
@@ -189,11 +196,14 @@ namespace FRTools.Web.Controllers
 
                         async Task<ActionResult> LoginUser(User user)
                         {
-
                             var loginResult = await UserManager.AddLoginAsync(user.Id, loginInfo.Login);
                             if (loginResult.Succeeded)
                             {
                                 await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
+                                var providerData = JsonConvert.DeserializeObject<UserStore.ProviderData>(loginInfo.Login.ProviderKey);
+                                if (providerData.AccessToken != null)
+                                    SetDiscordAccessToken(user.Id, providerData.AccessToken);
                                 return RedirectToLocal(returnUrl);
                             }
                             else
@@ -205,13 +215,13 @@ namespace FRTools.Web.Controllers
 
                         string externalUsername = loginInfo.DefaultUserName ?? loginInfo.ExternalIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-                        var (newUser, identity) = await CreateNewUser(loginInfo);
+                        var (newUser, identity) = await CreateNewUser();
 
                         if (newUser.Succeeded)
                             return await LoginUser(identity);
                         else if (!identity.UserName.All(x => char.IsDigit(x)))
                         {
-                            (newUser, identity) = await CreateNewUser(loginInfo, CodeHelpers.GenerateId(5));
+                            (newUser, identity) = await CreateNewUser("_" + CodeHelpers.GenerateId(5));
                             if (newUser.Succeeded)
                                 return await LoginUser(identity);
                             AddErrorNotification($"Could not create user:<br/><br/><ul>{string.Join("", newUser.Errors.Select(x => $"<li>{x}</li>"))}</ul>");
@@ -271,9 +281,23 @@ namespace FRTools.Web.Controllers
             if (!result.Succeeded)
                 AddErrorNotification(result.Errors.First());
             else
+            {
+                var providerData = JsonConvert.DeserializeObject<UserStore.ProviderData>(loginInfo.Login.ProviderKey);
+                if (providerData.AccessToken != null)                
+                    SetDiscordAccessToken(User.Identity.GetUserId<int>(), providerData.AccessToken);
+                
                 AddSuccessNotification($"Succesfully added your {loginInfo.Login.LoginProvider} login to your account!");
+            }
 
             return RedirectToRoute("ManageLogins");
+        }
+
+        private void SetDiscordAccessToken(int userId, string accessToken)
+        {
+            foreach (var claim in UserManager.GetClaims(userId))
+                UserManager.RemoveClaim(userId, claim);
+
+            UserManager.AddClaim(userId, new Claim("DiscordAccessToken", accessToken));
         }
 
         private string GetProviderData(ExternalLoginInfo loginInfo)
@@ -284,6 +308,7 @@ namespace FRTools.Web.Controllers
                 case "discord":
                     providerData.ProviderKey = GetDiscordUserId(loginInfo).ToString();
                     providerData.ProviderUsername = $"{loginInfo.ExternalIdentity.FindFirstValue("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")}#{loginInfo.ExternalIdentity.FindFirstValue("urn:discord:discriminator")}";
+                    providerData.AccessToken = loginInfo.ExternalIdentity.FindFirstValue("urn:discord:accesstoken");
                     break;
                 default:
                     providerData.ProviderKey = loginInfo.Login.ProviderKey;

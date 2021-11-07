@@ -54,11 +54,7 @@ namespace FRTools.Data
         // Discord tables
         public DbSet<DiscordLog> DiscordLogs { get; set; }
         public DbSet<DiscordServer> DiscordServers { get; set; }
-        public DbSet<DiscordChannel> DiscordChannels { get; set; }
-        public DbSet<DiscordRole> DiscordRoles { get; set; }
         public DbSet<DiscordSetting> DiscordSettings { get; set; }
-        public DbSet<DiscordUser> DiscordUsers { get; set; }
-        public DbSet<DiscordServerUser> DiscordServerUsers { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -72,8 +68,6 @@ namespace FRTools.Data
 
             modelBuilder.Entity<User>().HasOptional(x => x.FRUser).WithOptionalDependent(x => x.User);
             modelBuilder.Entity<User>().HasOptional(x => x.ProfileSettings).WithOptionalPrincipal(x => x.User);
-
-            modelBuilder.Entity<DiscordChannel>().HasMany(x => x.Logs).WithRequired(x => x.Channel).WillCascadeOnDelete(true);
         }
     }
 }
