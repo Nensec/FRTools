@@ -100,6 +100,14 @@ namespace FRTools.Web.Controllers
 
             foreach (var login in LoggedInUser.Logins)
             {
+                if(login.LoginProvider == "discord")
+                {
+                    using (var ctx = new DataContext())
+                    {
+                        ctx.DiscordSettings.RemoveRange(ctx.DiscordSettings.Where(x => x.Key.EndsWith("USER_" + login.ProviderKey)).ToList());
+                        await ctx.SaveChangesAsync();
+                    }
+                }
                 await UserManager.RemoveLoginAsync(LoggedInUser.Id, new UserLoginInfo(login.LoginProvider, login.ProviderKey));
             }
 
