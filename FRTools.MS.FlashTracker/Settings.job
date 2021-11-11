@@ -1,4 +1,4 @@
 {
-    // Every 6:31 and 18:31
-    "schedule": "0 31 6,18 * * *"
+    // Every 8:31 and 20:31
+    "schedule": "0 31 8,20 * * *"
 }
