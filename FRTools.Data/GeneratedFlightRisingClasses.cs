@@ -612,6 +612,8 @@ namespace FRTools.Data
 		Clown = 77,
 		[Description("Crystal (Gaoler)")]
 		Crystal = 37,
+		[Description("Fade (Gaoler)")]
+		Fade = 86,
 		[Description("Falcon (Gaoler)")]
 		Falcon = 30,
 		[Description("Giraffe (Gaoler)")]
@@ -652,6 +654,8 @@ namespace FRTools.Data
 		Chevron = 54,
 		[Description("Clown (Banescale)")]
 		Clown = 75,
+		[Description("Fade (Banescale)")]
+		Fade = 85,
 		[Description("Falcon (Banescale)")]
 		Falcon = 80,
 		[Description("Giraffe (Banescale)")]
@@ -766,6 +770,8 @@ namespace FRTools.Data
 		Alloy = 49,
 		[Description("Arrow (Banescale)")]
 		Arrow = 54,
+		[Description("Blend (Banescale)")]
+		Blend = 85,
 		[Description("Butterfly (Banescale)")]
 		Butterfly = 51,
 		[Description("Current (Banescale)")]
@@ -808,6 +814,8 @@ namespace FRTools.Data
 		Basic = 0,
 		[Description("Bee (Gaoler)")]
 		Bee = 28,
+		[Description("Blend (Gaoler)")]
+		Blend = 86,
 		[Description("Breakup (Gaoler)")]
 		Breakup = 38,
 		[Description("Current (Gaoler)")]
@@ -978,6 +986,8 @@ namespace FRTools.Data
 		Blossom = 36,
 		[Description("Braids (Gaoler)")]
 		Braids = 55,
+		[Description("Capsule (Gaoler)")]
+		Capsule = 75,
 		[Description("Fans (Gaoler)")]
 		Fans = 3,
 		[Description("Ghost (Gaoler)")]
@@ -1014,6 +1024,8 @@ namespace FRTools.Data
 	{
 		[Description("Basic")]
 		Basic = 0,
+		[Description("Capsule (Banescale)")]
+		Capsule = 74,
 		[Description("Contour (Banescale)")]
 		Contour = 46,
 		[Description("Crackle (Banescale)")]
