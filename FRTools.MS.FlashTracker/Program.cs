@@ -142,7 +142,7 @@ namespace FRTools.MS.FlashTracker
                                     break;
                             }
 
-                            body += $"<img src=\"{itemUrl ?? string.Format(SiteHelpers.IconProxyUrl, item.Id)}\"/>";
+                            body += $"<img src=\"{itemUrl ?? string.Format(SiteHelpers.IconProxyUrl, item.FRId)}\"/>";
 
                             var post = PostData.CreateText(body, $"New Flash Sale: {item.Name}", tags);
                             var postParamaters = (MethodParameterSet)typeof(PostData).GetField("parameters", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(post);
