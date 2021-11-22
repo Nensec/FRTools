@@ -112,11 +112,13 @@ namespace FRTools.MS.FlashTracker
                                 case FRItemCategory.Trinket when item.ItemType == "Specialty Item" && (item.Name.StartsWith("Primary") || item.Name.StartsWith("Secondary") || item.Name.StartsWith("Tertiary")):
                                     tags.Add($"{(item.Name.StartsWith("Primary") ? "primary" : item.Name.StartsWith("Secondary") ? "secondary" : "tertiarty")} gene");
                                     tags.Add("gene");
+                                    tags.Add(item.Name.Split(':')[1].ToLower());
                                     var ancientBreed = GeneratedFRHelpers.GetAncientBreeds().Where(x => item.Name.EndsWith($"({x})"));
                                     if (ancientBreed.Any())
                                     {
                                         itemUrl = string.Format(SiteHelpers.DummyDragonGeneProxyUrl, (int)ancientBreed.First(), random.Next(0, 2), $"{item.FRId}");
                                         tags.Add("ancient gene");
+                                        tags.Add(ancientBreed.First().ToString().ToLower());
                                     }
                                     else
                                     {
