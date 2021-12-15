@@ -946,6 +946,8 @@ namespace FRTools.Data
 	{
 		[Description("Basic")]
 		Basic = 0,
+		[Description("Angler (Veilspun)")]
+		Angler = 78,
 		[Description("Beetle (Veilspun)")]
 		Beetle = 65,
 		[Description("Branches (Veilspun)")]
@@ -996,6 +998,8 @@ namespace FRTools.Data
 		Gnarlhorns = 27,
 		[Description("Opal (Gaoler)")]
 		Opal = 37,
+		[Description("Pinions (Gaoler)")]
+		Pinions = 77,
 		[Description("Ringlets (Gaoler)")]
 		Ringlets = 30,
 		[Description("Runes (Gaoler)")]
@@ -1036,6 +1040,8 @@ namespace FRTools.Data
 		Filigree = 43,
 		[Description("Ghost (Banescale)")]
 		Ghost = 47,
+		[Description("Gliders (Banescale)")]
+		Gliders = 76,
 		[Description("Lace (Banescale)")]
 		Lace = 44,
 		[Description("Plumage (Banescale)")]
