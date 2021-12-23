@@ -5,6 +5,7 @@ using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
 using System;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,14 +22,18 @@ namespace FRTools.MS.ItemFetcher
             var settings = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             int maxTries = 3;
 
-            var hasLastSuccess = DateTime.TryParse(settings.AppSettings.Settings["LastSuccess"]?.Value, out var lastSuccess);
-            if (hasLastSuccess && DateTime.UtcNow > lastSuccess.AddDays(1))
+            if (File.Exists("lastrun.json"))
             {
-                maxTries += (int)(DateTime.UtcNow - lastSuccess.AddDays(1)).TotalHours;
-                Console.WriteLine($"Last succesful bout of skins were found at {lastSuccess}, which makes the max tries to be {maxTries} attempts");
+                var lastRunData = JsonConvert.DeserializeObject<dynamic>(File.ReadAllText("lastrun.json"));
+                var hasLastSuccess = DateTime.TryParse((string)lastRunData.LastSuccess, out DateTime lastSuccess);
+                if (hasLastSuccess && DateTime.UtcNow > lastSuccess.AddDays(1))
+                {
+                    maxTries += (int)(DateTime.UtcNow - lastSuccess.AddDays(1)).TotalHours;
+                    Console.WriteLine($"Last succesful bout of skins were found at {lastSuccess}, which makes the max tries to be {maxTries} attempts");
+                }
             }
             else
-                Console.WriteLine($"No last succes found in config, max tries is {maxTries} attempts");            
+                Console.WriteLine($"No last run found, max tries is {maxTries} attempts");
 
             _serviceBus = new QueueClient(settings.AppSettings.Settings["AzureSBConnString"].Value, settings.AppSettings.Settings["AzureSBQueueName"].Value);
             await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new GenericMessage(MessageCategory.ItemFetcher, "Started")))));
@@ -60,10 +65,9 @@ namespace FRTools.MS.ItemFetcher
 
                 if (count > 0)
                 {
-                    // This gets stored in app.config, which gets wiped every deploy but is good enough to store a temp value in between instances
-                    // Since if the value is not present we use the default, which will be the vast majority of times anyway
-                    settings.AppSettings.Settings["LastSuccess"].Value = DateTime.UtcNow.ToString();
-                    Console.WriteLine($"Since skins were found, saving last success in config at {settings.AppSettings.Settings["LastSuccess"].Value}");
+
+                    File.WriteAllText("lastrun.json", JsonConvert.SerializeObject(new { Count = count, LastSuccess = DateTime.UtcNow }));
+                    Console.WriteLine($"Since skins were found, saving last success at {DateTime.UtcNow}");
                     settings.Save();
                 }
             }
