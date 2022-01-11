@@ -274,9 +274,9 @@ namespace FRTools.MS.NewsReader
                 Console.WriteLine($"Checking if any post is deleted between first post (id: {firstPostId}) and last post (id: {lastPostId})");
 
                 var expectedPosts = topic.Posts.Where(x => !x.Deleted && x.FRPostId >= firstPostId && x.FRPostId <= lastPostId).Select(x => new Post { Id = x.Id, FRPostId = x.FRPostId }).ToList();
-                var givenPostIds = posts.Select(x => Convert.ToInt32(Regex.Match(x.GetAttributeValue("id", ""), @"post_(\d+)").Groups[1].Value)).ToList();
+                var givenPostIds = posts.Select(x => Convert.ToInt32(Regex.Match(x.GetAttributeValue("id", ""), @"post_(\d+)").Groups[1].Value)).OrderBy(x => x).ToList();
 
-                if (!expectedPosts.Select(x => x.FRPostId).SequenceEqual(givenPostIds))
+                if (!expectedPosts.Select(x => x.FRPostId).OrderBy(x => x).SequenceEqual(givenPostIds))
                 {
                     Console.WriteLine("Delete detected! Expected posts do not match up. Checking which post is deleted..");
                     foreach (var expectedPost in expectedPosts)
