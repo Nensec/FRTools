@@ -228,14 +228,22 @@ namespace FRTools.Common
                 if (dispose = ctx == null)
                     ctx = new DataContext();
 
+                Console.WriteLine($"Checking if we know {username ?? userId.ToString()}");
                 var frUser = ctx.FRUsers.FirstOrDefault(x => x.Username == username || x.FRId == userId);
 
                 if (frUser == null)
                 {
+                    Console.WriteLine("We do not, fetching user info");
                     var (frName, frId) = GetFRUserInfo(username, userId);
 
                     if (frName == null)
+                    {
+                        var prev = Console.ForegroundColor;
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("User cannot be found");
+                        Console.ForegroundColor = prev;
                         return null;
+                    }
 
                     frUser = ctx.FRUsers.FirstOrDefault(x => x.Username == frName || x.FRId == frId) ?? ctx.FRUsers.Add(new FRUser());
                     frUser.Username = frName;
@@ -248,6 +256,7 @@ namespace FRTools.Common
                 }
                 else
                 {
+                    Console.WriteLine("We do, updating user");
                     frUser = await frUser.UpdateFRUser();
                     await ctx.SaveChangesAsync();
                 }
@@ -264,7 +273,10 @@ namespace FRTools.Common
         {
             // Only update if it hasn't been a day to avoid spamming FR server
             if (DateTime.UtcNow < frUser.LastUpdated.AddDays(1))
+            {
+                Console.WriteLine("User recently updated, skipping");
                 return frUser;
+            }
 
             var (frName, frId) = GetFRUserInfo(null, frUser.FRId);
 
@@ -290,6 +302,7 @@ namespace FRTools.Common
                 var userBio = Regex.Match(userProfilePage, @"<div class=""userdata-section"" style=""height:136px;"">[\s\S]+?<span style=""position:absolute; top:8px; left:8px; color:#731d08; font-weight:bold; font-size:16px;"">\s+([\s\S]+?)\s+</span>[\s\S]+?<span>([\d]+?)</span>[\s\S]+?</div>");
                 var frName = userBio.Groups[1].Value;
                 var frId = int.Parse(userBio.Groups[2].Value);
+                Console.WriteLine($"Found info:\n\tUsername: {frName}\n\tID: {frId}");
 
                 return (frName, frId);
             }
@@ -325,7 +338,7 @@ namespace FRTools.Common
             }
         }
 
-        public static FRItem FetchItem(int itemId, string category = "skins")
+        public static async Task<FRItem> FetchItem(int itemId, string category = "skins")
         {
             var client = new HtmlWeb();
             var itemDoc = client.Load(string.Format(ItemFetchUrl, itemId, category));
@@ -343,51 +356,59 @@ namespace FRTools.Common
                 if (categoryMatch.Groups["Category"].Value != category)
                 {
                     Console.WriteLine($"Item {itemId} is not {category}, but is actually {categoryMatch.Groups["Category"]}. Fetching that item instead.");
-                    return FetchItem(itemId, categoryMatch.Groups["Category"].Value);
+                    return await FetchItem(itemId, categoryMatch.Groups["Category"].Value);
                 }
-
-                var item = new FRItem { FRId = itemId, IconUrl = iconUrl, ItemCategory = (FRItemCategory)Enum.Parse(typeof(FRItemCategory), category, true) };
-                item.Name = itemDoc.DocumentNode.SelectSingleNode("/div/div[1]/div[1]").InnerText.Trim();
-                item.Description = CleanupFRHtmlText(itemDoc.DocumentNode.SelectSingleNode("/div/div[2]").InnerText);
-                item.ItemType = itemDoc.DocumentNode.SelectSingleNode("/div/div[1]/div[2]").InnerText.Trim();
-                var rarityUrl = itemDoc.DocumentNode.SelectSingleNode("/div/div[1]/img[1]").GetAttributeValue("src", "");
-                var rarityMatch = Regex.Match(rarityUrl, @"../images/layout/tooltips/star-(?<Rarity>\d).png");
-
-                if (rarityMatch.Success)
-                    item.Rarity = int.Parse(rarityMatch.Groups["Rarity"].Value);
-
-                switch (item.ItemCategory)
+                using (var ctx = new DataContext())
                 {
-                    case FRItemCategory.Food:
-                        item.TreasureValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText);
-                        item.FoodValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[4]").InnerText);
-                        item.FoodType = (FRFoodType)Enum.Parse(typeof(FRFoodType), item.ItemType, true);
-                        break;
-                    case FRItemCategory.Skins:
-                        item.AssetUrl = itemDoc.DocumentNode.SelectSingleNode("/div/div[2]/div/img").GetAttributeValue("src", "");
-                        break;
-                    case FRItemCategory.Equipment:
-                        item.TreasureValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText);
-                        item.AssetUrl = string.Format(DressingRoomDummyUrl, (int)DragonType.Fae, (int)Gender.Male) + $"&apparel=22046,{item.FRId}";
-                        break;
-                    case FRItemCategory.Familiar:
-                        item.TreasureValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText);
-                        item.AssetUrl = string.Format(FamiliarArtUrl, item.FRId);
-                        break;
-                    case FRItemCategory.Battle_Items:
-                        item.TreasureValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText);
-                        item.RequiredLevel = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[4]/strong").InnerText);
-                        break;
-                    case FRItemCategory.Trinket:
-                        item.TreasureValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText);
-                        if (item.ItemType == "Scene")
-                            item.AssetUrl = string.Format(SceneArtUrl, item.FRId);
-                        break;
+                    var existingItem = ctx.FRItems.FirstOrDefault(x => x.FRId == itemId);
+                    if (existingItem != null)
+                        ctx.FRItems.Remove(existingItem);
+                    var item = ctx.FRItems.Add(new FRItem { FRId = itemId, IconUrl = iconUrl, ItemCategory = (FRItemCategory)Enum.Parse(typeof(FRItemCategory), category, true) });
+                    item.Name = itemDoc.DocumentNode.SelectSingleNode("/div/div[1]/div[1]").InnerText.Trim();
+                    item.Description = CleanupFRHtmlText(itemDoc.DocumentNode.SelectSingleNode("/div/div[2]").InnerText);
+                    item.ItemType = itemDoc.DocumentNode.SelectSingleNode("/div/div[1]/div[2]").InnerText.Trim();
+                    var rarityUrl = itemDoc.DocumentNode.SelectSingleNode("/div/div[1]/img[1]").GetAttributeValue("src", "");
+                    var rarityMatch = Regex.Match(rarityUrl, @"../images/layout/tooltips/star-(?<Rarity>\d).png");
+
+                    if (rarityMatch.Success)
+                        item.Rarity = int.Parse(rarityMatch.Groups["Rarity"].Value);
+
+                    switch (item.ItemCategory)
+                    {
+                        case FRItemCategory.Food:
+                            item.TreasureValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText);
+                            item.FoodValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[4]").InnerText);
+                            item.FoodType = (FRFoodType)Enum.Parse(typeof(FRFoodType), item.ItemType, true);
+                            break;
+                        case FRItemCategory.Skins:
+                            item.AssetUrl = itemDoc.DocumentNode.SelectSingleNode("/div/div[2]/div/img").GetAttributeValue("src", "");
+                            var username = Regex.Match(item.Description, @"Designed by ([^.]+)[.|\)]");
+                            if (username.Success)
+                                item.Creator = await GetOrUpdateFRUser(username.Groups[1].Value, ctx);
+                            break;
+                        case FRItemCategory.Equipment:
+                            item.TreasureValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText);
+                            item.AssetUrl = string.Format(DressingRoomDummyUrl, (int)DragonType.Fae, (int)Gender.Male) + $"&apparel=22046,{item.FRId}";
+                            break;
+                        case FRItemCategory.Familiar:
+                            item.TreasureValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText);
+                            item.AssetUrl = string.Format(FamiliarArtUrl, item.FRId);
+                            break;
+                        case FRItemCategory.Battle_Items:
+                            item.TreasureValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText);
+                            item.RequiredLevel = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[4]/strong").InnerText);
+                            break;
+                        case FRItemCategory.Trinket:
+                            item.TreasureValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText);
+                            if (item.ItemType == "Scene")
+                                item.AssetUrl = string.Format(SceneArtUrl, item.FRId);
+                            break;
+                    }
+
+                    item.AssetUrl = item.AssetUrl?.Replace("https://flightrising.com", "").Replace("https://www1.flightrising.com", "");
+                    ctx.SaveChanges();
+                    return item;
                 }
-
-                item.AssetUrl = item.AssetUrl?.Replace("https://flightrising.com", "").Replace("https://www1.flightrising.com", "");
-
-                return item;
             }
             catch (Exception ex)
             {

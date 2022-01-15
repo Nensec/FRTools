@@ -241,14 +241,9 @@ namespace FRTools.MS.NewsReader
                             var unknownItems = items.Except(ctx.FRItems.Where(x => items.Contains(x.FRId)).ToList().Select(x => x.FRId));
                             foreach (var unknownItem in unknownItems)
                             {
-                                var item = FRHelpers.FetchItem(unknownItem);
+                                var item = await FRHelpers.FetchItem(unknownItem);
                                 if (item != null)
-                                {
-                                    ctx.FRItems.Add(item);
-                                    ctx.SaveChanges();
-
                                     await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NewItemMessage(MessageCategory.NewsReader, item)))));
-                                }
                             }
                         }
                     }

@@ -267,6 +267,10 @@
     <Compile Include="Migrations\202111070031019_Remove discord tables.designer.cs">
       <DependentUpon>202111070031019_Remove discord tables.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202201150239093_FRItem Creator.cs" />
+    <Compile Include="Migrations\202201150239093_FRItem Creator.designer.cs">
+      <DependentUpon>202201150239093_FRItem Creator.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -384,6 +388,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202111070031019_Remove discord tables.resx">
       <DependentUpon>202111070031019_Remove discord tables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202201150239093_FRItem Creator.resx">
+      <DependentUpon>202201150239093_FRItem Creator.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

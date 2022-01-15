@@ -18,6 +18,7 @@ namespace FRTools.Data.DataModels.FlightRisingModels
         public FRFoodType? FoodType { get; set; }
         public int? FoodValue { get; set; }
         public int? RequiredLevel { get; set; }
+        public FRUser Creator {get;set;}
 
         public virtual ICollection<FRItemFlashSale> FlashSales { get; set; } = new HashSet<FRItemFlashSale>();
     }

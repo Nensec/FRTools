@@ -184,7 +184,7 @@ namespace FRTools.Discord.Modules
             }
 
             [Command]
-            public Task ItemLookup([Remainder] string search) => ItemLookup(x => x.Name.Contains(search) || x.Description.Contains(search), search);
+            public Task ItemLookup([Remainder] string search) => ItemLookup(x => x.Name.Contains(search) || (x.ItemCategory != FRItemCategory.Skins && x.Description.Contains(search) || x.Creator.Username.Contains(search)), search);
 
             [Command]
             public Task ItemLookup(int frItemId) => ItemLookup(x => x.FRId == frItemId, frItemId);
@@ -200,7 +200,7 @@ namespace FRTools.Discord.Modules
             }
 
             [Command]
-            public Task ItemLookup([Remainder] string search) => ItemLookup(x => x.ItemCategory == FRItemCategory.Skins && (x.Name.Contains(search) || x.Description.Contains(search)), search);
+            public Task ItemLookup([Remainder] string search) => ItemLookup(x => x.ItemCategory == FRItemCategory.Skins && (x.Name.Contains(search) || x.Creator.Username.Contains(search)), search);
 
             [Command]
             public Task ItemLookup(int frItemId) => ItemLookup(x => x.ItemCategory == FRItemCategory.Skins && x.FRId == frItemId, frItemId);
@@ -290,7 +290,7 @@ namespace FRTools.Discord.Modules
 
             protected async Task ItemLookup(Expression<Func<FRItem, bool>> query, string searchTerm)
             {
-                var plsWait = await Context.Channel.SendMessageAsync("Searching for your item, this takes a moment (I promise to speed it up in the future!)..");
+                var plsWait = await Context.Channel.SendMessageAsync("Searching for your item, this takes a moment..");
 
                 var searchResult = DbContext.FRItems.Where(query).ToList();
 
@@ -317,7 +317,11 @@ namespace FRTools.Discord.Modules
                             sb.AppendLine($"Please refine your search, perhaps use a category filter such as `{await SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}lookup {cats.FirstOrDefault().Key.ToString().ToLower()} {searchTerm}`");
                         }
                         else
+                        {
+                            sb.AppendLine();
+                            sb.AppendLine($"All of the items were part of the category **{cats.FirstOrDefault().Key}**");
                             sb.AppendLine("Please refine your search.");
+                        }
                         var embed = new EmbedBuilder()
                             .WithDescription(sb.ToString());
                         await ReplyAsync(embed: embed.Build());

@@ -47,11 +47,10 @@ namespace FRTools.MS.ItemFetcher
                 {
                     ++highestItemId;
                     Console.WriteLine($"Fetching item: {highestItemId}");
-                    var item = FRHelpers.FetchItem(highestItemId);
+                    var item = await FRHelpers.FetchItem(highestItemId);
                     if (item != null)
                     {
                         _noItemFoundCounter = 0;
-                        ctx.FRItems.Add(item);
                         await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NewItemMessage(MessageCategory.ItemFetcher, item)))));
                     }
                     else

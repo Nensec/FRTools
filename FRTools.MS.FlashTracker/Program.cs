@@ -40,7 +40,7 @@ namespace FRTools.MS.FlashTracker
                 var item = ctx.FRItems.FirstOrDefault(x => x.FRId == itemId);
                 if (item == null)
                 {
-                    item = FRHelpers.FetchItem(itemId);
+                    item = await FRHelpers.FetchItem(itemId);
                     if (item != null)
                         await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NewItemMessage(MessageCategory.FlashTracker, item)))));
                 }

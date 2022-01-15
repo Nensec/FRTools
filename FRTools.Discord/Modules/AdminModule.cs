@@ -89,12 +89,11 @@ namespace FRTools.Discord.Modules
 
             await ReplyAsync($"Fetching item: {frId}");
 
-            var item = FRHelpers.FetchItem(frId);
+            var item = await FRHelpers.FetchItem(frId);
             if (item != null)
             {
                 await ReplyAsync($"Found item, adding: {item.Name}");
-                DbContext.FRItems.Add(item);
-                await DbContext.SaveChangesAsync();
+
                 var _serviceBus = new QueueClient(ConfigurationManager.AppSettings["AzureSBConnString"], ConfigurationManager.AppSettings["AzureSBQueueName"]);
                 await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NewItemMessage(MessageCategory.ItemFetcher, item)))));
                 await _serviceBus.CloseAsync();
@@ -112,13 +111,10 @@ namespace FRTools.Discord.Modules
             else
                 await ReplyAsync($"Item not in database, fetching item: {frId}");
 
-            var item = FRHelpers.FetchItem(frId);
+            var item = await FRHelpers.FetchItem(frId);
             if (item != null)
             {
                 await ReplyAsync($"Found item, {(existingItem != null ? "updating" : "adding")}: {item.Name}");
-                if(existingItem != null)
-                    DbContext.FRItems.Remove(existingItem);
-                DbContext.FRItems.Add(item);
                 await DbContext.SaveChangesAsync();
                 var _serviceBus = new QueueClient(ConfigurationManager.AppSettings["AzureSBConnString"], ConfigurationManager.AppSettings["AzureSBQueueName"]);
                 await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NewItemMessage(MessageCategory.ItemFetcher, item)))));
