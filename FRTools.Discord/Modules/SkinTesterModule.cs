@@ -1,4 +1,11 @@
-﻿using Discord;
+﻿using System;
+using System.Data.Entity;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 using FRTools.Common;
 using FRTools.Data;
@@ -7,12 +14,6 @@ using FRTools.Data.DataModels.FlightRisingModels;
 using FRTools.Discord.Infrastructure;
 using FRTools.Discord.Preconditions;
 using FRTools.Tools.SkinTester;
-using System;
-using System.Data.Entity;
-using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace FRTools.Discord.Modules
 {
@@ -24,9 +25,9 @@ namespace FRTools.Discord.Modules
         {
         }
 
-        [Command("lookup"), Name("Lookup"), Alias("lu")]
-        [DiscordHelp("SkinTesterLookup")]
-        public async Task Lookup(string skinId)
+        [Command("view"), Name("View"), Alias("v")]
+        [DiscordHelp("SkinTesterView")]
+        public async Task View(string skinId)
         {
             var skin = DbContext.Skins.Include(x => x.Creator.FRUser).FirstOrDefault(x => x.GeneratedId == skinId);
             if (skin == null)
@@ -50,20 +51,64 @@ namespace FRTools.Discord.Modules
             }
             else
             {
-                var previewUrl = (await SkinTester.GenerateOrFetchDummyPreview(skin.GeneratedId, skin.Version)).Urls[0];
-
-                var embed = new EmbedBuilder();
-                embed.WithTitle(skin.Title ?? "_No title_");
-                embed.WithImageUrl($"{CDNBasePath}{previewUrl}");
-                embed.WithDescription(skin.Description ?? "_No description_");
-                embed.WithAuthor(new EmbedAuthorBuilder()
-                    .WithName(skin.Creator?.UserName ?? "Anonymous")
-                    .WithUrl(skin.Creator != null ? $"{WebsiteBaseUrl}/profile/{skin.Creator.UserName}" : null));
-                embed.WithFooter(new EmbedFooterBuilder().WithText($"Version {skin.Version}"));
-                embed.WithUrl($"{WebsiteBaseUrl}/skintester/preview/{skinId}");
+                var embed = await CreateSkinTesterEmbed(skin);
 
                 await ReplyAsync(embed: embed.Build());
             }
+        }
+
+        private async Task<EmbedBuilder> CreateSkinTesterEmbed(Skin skin)
+        {
+            var previewUrl = (await SkinTester.GenerateOrFetchDummyPreview(skin.GeneratedId, skin.Version)).Urls[0];
+
+            var embed = new EmbedBuilder();
+            embed.WithTitle(skin.Title ?? "_No title_");
+            embed.WithImageUrl($"{CDNBasePath}{previewUrl}");
+            embed.WithDescription(skin.Description ?? "_No description_");
+            embed.WithAuthor(new EmbedAuthorBuilder()
+                .WithName(skin.Creator?.UserName ?? "Anonymous")
+                .WithUrl(skin.Creator != null ? $"{WebsiteBaseUrl}/profile/{skin.Creator.UserName}" : null));
+            embed.WithFooter(new EmbedFooterBuilder().WithText($"Version {skin.Version}"));
+            embed.WithUrl($"{WebsiteBaseUrl}/skintester/preview/{skin.GeneratedId}");
+            return embed;
+        }
+
+        [Command("lookup"), Name("Lookup"), Alias("lu")]
+        [DiscordHelp("SkinTesterLookup")]
+        public async Task Lookup([Remainder] string searchTerm)
+        {
+            var plsWait = await Context.Channel.SendMessageAsync("Searching for skins that match your query, this takes a moment..");
+
+            var searchResult = DbContext.Skins.Include(x => x.Creator.FRUser).Where(x => x.Title.Contains(searchTerm) || x.Description.Contains(searchTerm) || x.Creator.UserName.Contains(searchTerm) || x.Creator.FRUser.Username.Contains(searchTerm)).ToList();
+
+            if (searchResult.Count == 0)
+                await ReplyAsync($"Found no skins on frtools that match `{searchTerm}`, either you misspelled or there are no skins. Your query must be part of the skin's Title, Description, Site Username or FR's Username of the user (if linked).");
+            else if (searchResult.Count == 1)
+            {
+                await plsWait.ModifyAsync(x => x.Content = "I found your item! Please give me a moment while I fetch the data..");
+                var embed = await CreateSkinTesterEmbed(searchResult[0]);
+                await ReplyAsync(embed: embed.Build());
+            }
+            else
+            {
+                if (searchResult.Count > 25)
+                {
+                    var sb = new StringBuilder();
+                    sb.AppendLine($"Found {searchResult.Count} items that match `{searchTerm}`, but I can only display a preview of 25 items.");
+                    sb.AppendLine("Please refine your search.");
+                    var embed = new EmbedBuilder()
+                        .WithDescription(sb.ToString());
+                    await ReplyAsync(embed: embed.Build());
+                }
+                else
+                {
+                    var embed = new EmbedBuilder()
+                        .WithDescription($"Found {searchResult.Count} items that match your query. Please look at the items below and use `{await SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}skintester view <skinid>` to view it's details.")
+                        .WithFields(searchResult.Select(x => new EmbedFieldBuilder().WithValue($"Skin Id: _{x.GeneratedId}_\nUploaded by: {x.Creator?.FRUser?.Username ?? x.Creator?.UserName ?? "_Anonymous_"}" + (x.Description != null ? $"\nDescription: {x.Description}" : "")).WithName(x.Title ?? "_No title_").WithIsInline(true)));
+                    await ReplyAsync("", embed: embed.Build());
+                }
+            }
+            await plsWait.DeleteAsync();
         }
 
         [Group("preview"), Name("Preview"), Alias("p")]

@@ -362,18 +362,13 @@ namespace FRTools.Discord {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://i.imgur.com/V4REa2B.png.
-        /// </summary>
-        internal static string SkinTesterLookup_0 {
-            get {
-                return ResourceManager.GetString("SkinTesterLookup_0", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This command just shows you the requested skin on a mannequin, along with the creators name (Anonymous if there&apos;s no account made), its name, a link to it on FRTools and its description.
-        ///&lt;br&gt;&lt;br&gt;
-        ///{0}.
+        ///   Looks up a localized string similar to With this command you can search for skins uploaded to the FRTools website. The fields searched are:
+        ///&lt;ul&gt;
+        ///&lt;li&gt;Skin title&lt;/li&gt;
+        ///&lt;li&gt;Skin description&lt;/li&gt;
+        ///&lt;li&gt;Site username of creator&lt;/li&gt;
+        ///&lt;li&gt;FR username of creator (if linked)&lt;/li&gt;
+        ///&lt;/ul&gt;.
         /// </summary>
         internal static string SkinTesterLookupDetailed {
             get {
@@ -441,6 +436,26 @@ namespace FRTools.Discord {
         internal static string SkinTesterPreviewDetailed {
             get {
                 return ResourceManager.GetString("SkinTesterPreviewDetailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://i.imgur.com/V4REa2B.png.
+        /// </summary>
+        internal static string SkinTesterView_0 {
+            get {
+                return ResourceManager.GetString("SkinTesterView_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This command just shows you the requested skin on a mannequin, along with the creators name (Anonymous if there&apos;s no account made), its name, a link to it on FRTools and its description.
+        ///&lt;br&gt;&lt;br&gt;
+        ///{0}.
+        /// </summary>
+        internal static string SkinTesterViewDetailed {
+            get {
+                return ResourceManager.GetString("SkinTesterViewDetailed", resourceCulture);
             }
         }
     }

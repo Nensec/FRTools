@@ -253,12 +253,13 @@ You should only use this command if:
     <value>Lookup data from Flight Rising</value>
   </data>
   <data name="SkinTesterLookupDetailed" xml:space="preserve">
-    <value>This command just shows you the requested skin on a mannequin, along with the creators name (Anonymous if there's no account made), its name, a link to it on FRTools and its description.
-&lt;br&gt;&lt;br&gt;
-{0}</value>
-  </data>
-  <data name="SkinTesterLookup_0" xml:space="preserve">
-    <value>https://i.imgur.com/V4REa2B.png</value>
+    <value>With this command you can search for skins uploaded to the FRTools website. The fields searched are:
+&lt;ul&gt;
+&lt;li&gt;Skin title&lt;/li&gt;
+&lt;li&gt;Skin description&lt;/li&gt;
+&lt;li&gt;Site username of creator&lt;/li&gt;
+&lt;li&gt;FR username of creator (if linked)&lt;/li&gt;
+&lt;/ul&gt;</value>
   </data>
   <data name="SkinTesterModuleDetailed" xml:space="preserve">
     <value>This module allows you to look up skins uploaded on FRTools and preview them on dragons.</value>
@@ -294,5 +295,13 @@ Example of an existing dragon ID, without apparel and with apparel:
   </data>
   <data name="SkinTesterPreview_1" xml:space="preserve">
     <value>https://i.imgur.com/hlc1oWH.png</value>
+  </data>
+  <data name="SkinTesterViewDetailed" xml:space="preserve">
+    <value>This command just shows you the requested skin on a mannequin, along with the creators name (Anonymous if there's no account made), its name, a link to it on FRTools and its description.
+&lt;br&gt;&lt;br&gt;
+{0}</value>
+  </data>
+  <data name="SkinTesterView_0" xml:space="preserve">
+    <value>https://i.imgur.com/V4REa2B.png</value>
   </data>
 </root>
