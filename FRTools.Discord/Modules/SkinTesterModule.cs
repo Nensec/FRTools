@@ -104,7 +104,7 @@ namespace FRTools.Discord.Modules
                 {
                     var embed = new EmbedBuilder()
                         .WithDescription($"Found {searchResult.Count} items that match your query. Please look at the items below and use `{await SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}skintester view <skinid>` to view it's details.")
-                        .WithFields(searchResult.Select(x => new EmbedFieldBuilder().WithValue($"Skin Id: _{x.GeneratedId}_\nUploaded by: {x.Creator?.FRUser?.Username ?? x.Creator?.UserName ?? "_Anonymous_"}" + (x.Description != null ? $"\nDescription: {x.Description}" : "")).WithName(x.Title ?? "_No title_").WithIsInline(true)));
+                        .WithFields(searchResult.Select(x => new EmbedFieldBuilder().WithValue($"Skin Id: [{x.GeneratedId}]({WebsiteBaseUrl}/skintester/preview/{x.GeneratedId})\nUploaded by: {x.Creator?.FRUser?.Username ?? x.Creator?.UserName ?? "_Anonymous_"}" + (x.Description != null ? $"\nDescription: {x.Description}" : "")).WithName(x.Title ?? "_No title_").WithIsInline(true)));
                     await ReplyAsync("", embed: embed.Build());
                 }
             }

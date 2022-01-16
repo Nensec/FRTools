@@ -330,7 +330,7 @@ namespace FRTools.Discord.Modules
                     {
                         var embed = new EmbedBuilder()
                             .WithDescription($"Found {searchResult.Count} items that match your query. Please look at the items below and use `{await SettingManager.GetSettingValue("GUILDCONFIG_PREFIX", Context.Guild)}lookup item <frid>` to view it's details.")
-                            .WithFields(searchResult.Select(x => new EmbedFieldBuilder().WithValue($"FR Id: _{x.FRId}_ ({x.ItemCategory.ToString().ToLower()})").WithName(x.Name).WithIsInline(true)));
+                            .WithFields(searchResult.Select(x => new EmbedFieldBuilder().WithValue($"FR Id: [{x.FRId}]({string.Format(FRHelpers.GameDatabaseUrl, x.FRId)}) ({x.ItemCategory.ToString().ToLower()})").WithName(x.Name).WithIsInline(true)));
                         await ReplyAsync("", embed: embed.Build());
                     }
                 }
