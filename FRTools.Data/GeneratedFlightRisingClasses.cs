@@ -564,6 +564,8 @@ namespace FRTools.Data
 		Flaunt = 82,
 		[Description("Ribbon")]
 		Ribbon = 84,
+		[Description("Pharaoh")]
+		Pharaoh = 87,
 	}
 	
 	public enum VeilspunBodyGene
@@ -760,6 +762,8 @@ namespace FRTools.Data
 		Flair = 82,
 		[Description("Eel")]
 		Eel = 84,
+		[Description("Sarcophagus")]
+		Sarcophagus = 87,
 	}
 	
 	public enum BanescaleWingGene
