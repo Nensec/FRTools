@@ -175,7 +175,7 @@ namespace FRTools.MS.NewsReader
                             for (var iex = actualExpectedPages; iex > expectedPages; iex--)
                             {
                                 Console.WriteLine($"Navigating to page {iex}..");
-                                var topicPageEx = client.Load($"https://www1.flightrising.com/forums/ann/{topicId}/{i}");
+                                var topicPageEx = client.Load($"https://www1.flightrising.com/forums/ann/{topicId}/{iex}");
                                 var postsEx = topicPageEx.DocumentNode.QuerySelectorAll("#forum-content .post").ToList();
                                 Console.WriteLine($"Found {postsEx.Count} posts on this page");
                                 if (onLastPage && CheckLastPostDeletion(postsEx))
