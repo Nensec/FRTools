@@ -350,6 +350,7 @@
     <Compile Include="Views\Shared\FRToolsBasePage.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="app_offline.html" />
     <Content Include="Content\ajax-loader.gif" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
