@@ -152,3 +152,9 @@ input[type=file] {
 .table-hover tbody tr:hover {
     cursor: pointer;
 }
+
+@media (max-width: 1199px) {
+    .w-100-xl {
+        width:100% !important;
+    }
+}

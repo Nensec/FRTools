@@ -28,25 +28,26 @@
     </script>
 </head>
 <body class="text-dark">
-    <nav class="navbar navbar-expand-xl fixed-top navbar-dark bg-dark d-flex flex-nowrap">
-        <div class="w-100 d-block d-xl-none">
-            <a href="@Url.RouteUrl("Home")" class="navbar-brand pt-0">
-                <img class="img-fluid" style="height:30px;" src="@(ViewBag.Logo ?? "/Content/frtools.svg")" onerror="this.src='@(ViewBag.PngLogo ?? "/Content/frtools.png")'" />
-            </a>
+    <nav class="navbar navbar-expand-xl fixed-top navbar-dark bg-dark d-flex">
+        <div class="d-flex w-100-xl">
+            <div class="w-100 d-block d-xl-none">
+                <a href="@Url.RouteUrl("Home")" class="navbar-brand pt-0">
+                    <img class="img-fluid" style="height:30px;" src="@(ViewBag.Logo ?? "/Content/frtools.svg")" onerror="this.src='@(ViewBag.PngLogo ?? "/Content/frtools.png")'" />
+                </a>
+            </div>
+            <div class="d-none d-xl-block">
+                <a href="@Url.RouteUrl("Home")" class="navbar-brand pt-0">
+                    <img class="img-fluid" style="height:30px;" src="@(ViewBag.Logo ?? "/Content/frtools.svg")" onerror="this.src='@(ViewBag.PngLogo ?? "/Content/frtools.png")'" />
+                </a>
+            </div>
+            @if (!Request.IsAuthenticated || (ViewContext.Controller as FRTools.Web.Controllers.BaseController).LoggedInUser?.ProfileSettings.ShowAds == true)
+            {
+                <a class="d-xl-none pr-2" href='https://ko-fi.com/X8X6RLCS' target='_blank'><img style="border:0px;height:34px;vertical-align:top;" src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+            }
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
         </div>
-        <div class="d-none d-xl-block">
-            <a href="@Url.RouteUrl("Home")" class="navbar-brand pt-0">
-                <img class="img-fluid" style="height:30px;" src="@(ViewBag.Logo ?? "/Content/frtools.svg")" onerror="this.src='@(ViewBag.PngLogo ?? "/Content/frtools.png")'" />
-            </a>
-        </div>
-        @if (!Request.IsAuthenticated || (ViewContext.Controller as FRTools.Web.Controllers.BaseController).LoggedInUser?.ProfileSettings.ShowAds == true)
-        {
-            <a class="d-xl-none pr-2" href='https://ko-fi.com/X8X6RLCS' target='_blank'><img style="border:0px;height:34px;vertical-align:top;" src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
-        }
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item dropdown">
