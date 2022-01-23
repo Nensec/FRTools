@@ -76,6 +76,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OrderAttribute.cs" />
+    <Compile Include="ReadOnlyAttribute.cs" />
     <Compile Include="ColorAttribute.cs" />
     <Compile Include="DataContext.cs" />
     <Compile Include="DataModels\AccountModels\ProfileSettings.cs" />

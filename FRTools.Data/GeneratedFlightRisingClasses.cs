@@ -690,6 +690,274 @@ namespace FRTools.Data
 		Tiger = 46,
 	}
 	
+	public enum AllBodyGene
+	{
+		[Description("Basic")]
+		[Order(0)]
+		Basic = 0,		
+		[Description("Iridescent")]
+		[Order(1)]
+		Iridescent = 1,		
+		[Description("Tiger")]
+		[Order(2)]
+		Tiger = 2,		
+		[Description("Clown")]
+		[Order(3)]
+		Clown = 3,		
+		[Description("Speckle")]
+		[Order(4)]
+		Speckle = 4,		
+		[Description("Ripple")]
+		[Order(5)]
+		Ripple = 5,		
+		[Description("Bar")]
+		[Order(6)]
+		Bar = 6,		
+		[Description("Crystal")]
+		[Order(7)]
+		Crystal = 7,		
+		[Description("Vipera")]
+		[Order(8)]
+		Vipera = 8,		
+		[Description("Piebald")]
+		[Order(9)]
+		Piebald = 9,		
+		[Description("Cherub")]
+		[Order(10)]
+		Cherub = 10,		
+		[Description("Poison")]
+		[Order(11)]
+		Poison = 11,		
+		[Description("Giraffe")]
+		[Order(12)]
+		Giraffe = 12,		
+		[Description("Petals")]
+		[Order(13)]
+		Petals = 13,		
+		[Description("Jupiter")]
+		[Order(14)]
+		Jupiter = 14,		
+		[Description("Skink")]
+		[Order(15)]
+		Skink = 15,		
+		[Description("Falcon")]
+		[Order(16)]
+		Falcon = 16,		
+		[Description("Metallic")]
+		[Order(17)]
+		Metallic = 17,		
+		[Description("Savannah")]
+		[Order(18)]
+		Savannah = 18,		
+		[Description("Jaguar")]
+		[Order(19)]
+		Jaguar = 19,		
+		[Description("Wasp")]
+		[Order(20)]
+		Wasp = 20,		
+		[Description("Tapir")]
+		[Order(21)]
+		Tapir = 21,		
+		[Description("Pinstripe")]
+		[Order(22)]
+		Pinstripe = 22,		
+		[Description("Python")]
+		[Order(23)]
+		Python = 23,		
+		[Description("Starmap")]
+		[Order(24)]
+		Starmap = 24,		
+		[Description("Lionfish")]
+		[Order(25)]
+		Lionfish = 25,		
+		[Description("Laced")]
+		[Order(26)]
+		Laced = 26,		
+		[Description("Leopard")]
+		[Order(27)]
+		Leopard = 40,		
+		[Description("Slime")]
+		[Order(28)]
+		Slime = 41,		
+		[Description("Fade")]
+		[Order(29)]
+		Fade = 42,		
+		[Description("Swirl")]
+		[Order(30)]
+		Swirl = 57,		
+		[Description("Mosaic")]
+		[Order(31)]
+		Mosaic = 58,		
+		[Description("Stitched")]
+		[Order(32)]
+		Stitched = 59,		
+		[Description("Flaunt")]
+		[Order(33)]
+		Flaunt = 82,		
+		[Description("Ribbon")]
+		[Order(34)]
+		Ribbon = 84,		
+		[Description("Pharaoh")]
+		[Order(35)]
+		Pharaoh = 87,		
+		[Description("Arc (Veilspun)")]
+		[Order(36)]
+		Veilspun_Arc = 70,
+		[Description("Bright (Veilspun)")]
+		[Order(37)]
+		Veilspun_Bright = 69,
+		[Description("Clown (Veilspun)")]
+		[Order(38)]
+		Veilspun_Clown = 76,
+		[Description("Fade (Veilspun)")]
+		[Order(39)]
+		Veilspun_Fade = 60,
+		[Description("Giraffe (Veilspun)")]
+		[Order(40)]
+		Veilspun_Giraffe = 83,
+		[Description("Jupiter (Veilspun)")]
+		[Order(41)]
+		Veilspun_Jupiter = 64,
+		[Description("Laced (Veilspun)")]
+		[Order(42)]
+		Veilspun_Laced = 61,
+		[Description("Shell (Veilspun)")]
+		[Order(43)]
+		Veilspun_Shell = 71,
+		[Description("Skink (Veilspun)")]
+		[Order(44)]
+		Veilspun_Skink = 67,
+		[Description("Sphinxmoth (Veilspun)")]
+		[Order(45)]
+		Veilspun_Sphinxmoth = 72,
+		[Description("Starmap (Veilspun)")]
+		[Order(46)]
+		Veilspun_Starmap = 65,
+		[Description("Stitched (Veilspun)")]
+		[Order(47)]
+		Veilspun_Stitched = 66,
+		[Description("Tapir (Veilspun)")]
+		[Order(48)]
+		Veilspun_Tapir = 62,
+		[Description("Vipera (Veilspun)")]
+		[Order(49)]
+		Veilspun_Vipera = 63,
+		[Description("Wasp (Veilspun)")]
+		[Order(50)]
+		Veilspun_Wasp = 68,
+		[Description("Bar (Gaoler)")]
+		[Order(51)]
+		Gaoler_Bar = 34,
+		[Description("Clown (Gaoler)")]
+		[Order(52)]
+		Gaoler_Clown = 77,
+		[Description("Crystal (Gaoler)")]
+		[Order(53)]
+		Gaoler_Crystal = 37,
+		[Description("Fade (Gaoler)")]
+		[Order(54)]
+		Gaoler_Fade = 86,
+		[Description("Falcon (Gaoler)")]
+		[Order(55)]
+		Gaoler_Falcon = 30,
+		[Description("Giraffe (Gaoler)")]
+		[Order(56)]
+		Gaoler_Giraffe = 27,
+		[Description("Jaguar (Gaoler)")]
+		[Order(57)]
+		Gaoler_Jaguar = 33,
+		[Description("Laced (Gaoler)")]
+		[Order(58)]
+		Gaoler_Laced = 73,
+		[Description("Mosaic (Gaoler)")]
+		[Order(59)]
+		Gaoler_Mosaic = 38,
+		[Description("Phantom (Gaoler)")]
+		[Order(60)]
+		Gaoler_Phantom = 39,
+		[Description("Piebald (Gaoler)")]
+		[Order(61)]
+		Gaoler_Piebald = 31,
+		[Description("Pinstripe (Gaoler)")]
+		[Order(62)]
+		Gaoler_Pinstripe = 32,
+		[Description("Ripple (Gaoler)")]
+		[Order(63)]
+		Gaoler_Ripple = 78,
+		[Description("Shaggy (Gaoler)")]
+		[Order(64)]
+		Gaoler_Shaggy = 29,
+		[Description("Tapir (Gaoler)")]
+		[Order(65)]
+		Gaoler_Tapir = 35,
+		[Description("Tiger (Gaoler)")]
+		[Order(66)]
+		Gaoler_Tiger = 36,
+		[Description("Wasp (Gaoler)")]
+		[Order(67)]
+		Gaoler_Wasp = 28,
+		[Description("Candycane (Banescale)")]
+		[Order(68)]
+		Banescale_Candycane = 55,
+		[Description("Cherub (Banescale)")]
+		[Order(69)]
+		Banescale_Cherub = 43,
+		[Description("Chevron (Banescale)")]
+		[Order(70)]
+		Banescale_Chevron = 54,
+		[Description("Clown (Banescale)")]
+		[Order(71)]
+		Banescale_Clown = 75,
+		[Description("Fade (Banescale)")]
+		[Order(72)]
+		Banescale_Fade = 85,
+		[Description("Falcon (Banescale)")]
+		[Order(73)]
+		Banescale_Falcon = 80,
+		[Description("Giraffe (Banescale)")]
+		[Order(74)]
+		Banescale_Giraffe = 81,
+		[Description("Jaguar (Banescale)")]
+		[Order(75)]
+		Banescale_Jaguar = 44,
+		[Description("Laced (Banescale)")]
+		[Order(76)]
+		Banescale_Laced = 48,
+		[Description("Marble (Banescale)")]
+		[Order(77)]
+		Banescale_Marble = 47,
+		[Description("Metallic (Banescale)")]
+		[Order(78)]
+		Banescale_Metallic = 49,
+		[Description("Petals (Banescale)")]
+		[Order(79)]
+		Banescale_Petals = 51,
+		[Description("Pinstripe (Banescale)")]
+		[Order(80)]
+		Banescale_Pinstripe = 45,
+		[Description("Poison (Banescale)")]
+		[Order(81)]
+		Banescale_Poison = 53,
+		[Description("Ragged (Banescale)")]
+		[Order(82)]
+		Banescale_Ragged = 56,
+		[Description("Ripple (Banescale)")]
+		[Order(83)]
+		Banescale_Ripple = 79,
+		[Description("Savannah (Banescale)")]
+		[Order(84)]
+		Banescale_Savannah = 50,
+		[Description("Skink (Banescale)")]
+		[Order(85)]
+		Banescale_Skink = 52,
+		[Description("Tapir (Banescale)")]
+		[Order(86)]
+		Banescale_Tapir = 74,
+		[Description("Tiger (Banescale)")]
+		[Order(87)]
+		Banescale_Tiger = 46,
+	}
+
 	public enum WingGene
 	{
 		[Description("Basic")]
@@ -887,7 +1155,275 @@ namespace FRTools.Data
 		[Description("Web (Veilspun)")]
 		Web = 71,
 	}
-		
+	
+	public enum AllWingGene
+	{
+		[Description("Basic")]
+		[Order(0)]
+		Basic = 0,
+		[Description("Shimmer")]
+		[Order(1)]
+		Shimmer = 1,
+		[Description("Stripes")]
+		[Order(2)]
+		Stripes = 2,
+		[Description("Eye Spots")]
+		[Order(3)]
+		EyeSpots = 3,
+		[Description("Freckle")]
+		[Order(4)]
+		Freckle = 4,
+		[Description("Seraph")]
+		[Order(5)]
+		Seraph = 5,
+		[Description("Current")]
+		[Order(6)]
+		Current = 6,
+		[Description("Daub")]
+		[Order(7)]
+		Daub = 7,
+		[Description("Facet")]
+		[Order(8)]
+		Facet = 8,
+		[Description("Hypnotic")]
+		[Order(9)]
+		Hypnotic = 9,
+		[Description("Paint")]
+		[Order(10)]
+		Paint = 10,
+		[Description("Peregrine")]
+		[Order(11)]
+		Peregrine = 11,
+		[Description("Toxin")]
+		[Order(12)]
+		Toxin = 12,
+		[Description("Butterfly")]
+		[Order(13)]
+		Butterfly = 13,
+		[Description("Hex")]
+		[Order(14)]
+		Hex = 14,
+		[Description("Saturn")]
+		[Order(15)]
+		Saturn = 15,
+		[Description("Spinner")]
+		[Order(16)]
+		Spinner = 16,
+		[Description("Alloy")]
+		[Order(17)]
+		Alloy = 17,
+		[Description("Safari")]
+		[Order(18)]
+		Safari = 18,
+		[Description("Rosette")]
+		[Order(19)]
+		Rosette = 19,
+		[Description("Bee")]
+		[Order(20)]
+		Bee = 20,
+		[Description("Striation")]
+		[Order(21)]
+		Striation = 21,
+		[Description("Trail")]
+		[Order(22)]
+		Trail = 22,
+		[Description("Morph")]
+		[Order(23)]
+		Morph = 23,
+		[Description("Noxtide")]
+		[Order(24)]
+		Noxtide = 24,
+		[Description("Constellation")]
+		[Order(25)]
+		Constellation = 25,
+		[Description("Edged")]
+		[Order(26)]
+		Edged = 26,
+		[Description("Clouded")]
+		[Order(27)]
+		Clouded = 40,
+		[Description("Sludge")]
+		[Order(28)]
+		Sludge = 41,
+		[Description("Blend")]
+		[Order(29)]
+		Blend = 42,
+		[Description("Marbled")]
+		[Order(30)]
+		Marbled = 57,
+		[Description("Breakup")]
+		[Order(31)]
+		Breakup = 58,
+		[Description("Patchwork")]
+		[Order(32)]
+		Patchwork = 59,
+		[Description("Flair")]
+		[Order(33)]
+		Flair = 82,
+		[Description("Eel")]
+		[Order(34)]
+		Eel = 84,
+		[Description("Sarcophagus")]
+		[Order(35)]
+		Sarcophagus = 87,
+		[Description("Alloy (Banescale)")]
+		[Order(36)]
+		Banescale_Alloy = 49,
+		[Description("Arrow (Banescale)")]
+		[Order(37)]
+		Banescale_Arrow = 54,
+		[Description("Blend (Banescale)")]
+		[Order(38)]
+		Banescale_Blend = 85,
+		[Description("Butterfly (Banescale)")]
+		[Order(39)]
+		Banescale_Butterfly = 51,
+		[Description("Current (Banescale)")]
+		[Order(40)]
+		Banescale_Current = 79,
+		[Description("Edged (Banescale)")]
+		[Order(41)]
+		Banescale_Edged = 48,
+		[Description("Eye Spots (Banescale)")]
+		[Order(42)]
+		Banescale_EyeSpots = 75,
+		[Description("Hex (Banescale)")]
+		[Order(43)]
+		Banescale_Hex = 81,
+		[Description("Mottle (Banescale)")]
+		[Order(44)]
+		Banescale_Mottle = 47,
+		[Description("Peregrine (Banescale)")]
+		[Order(45)]
+		Banescale_Peregrine = 80,
+		[Description("Rosette (Banescale)")]
+		[Order(46)]
+		Banescale_Rosette = 44,
+		[Description("Safari (Banescale)")]
+		[Order(47)]
+		Banescale_Safari = 50,
+		[Description("Seraph (Banescale)")]
+		[Order(48)]
+		Banescale_Seraph = 43,
+		[Description("Spinner (Banescale)")]
+		[Order(49)]
+		Banescale_Spinner = 52,
+		[Description("Striation (Banescale)")]
+		[Order(50)]
+		Banescale_Striation = 74,
+		[Description("Stripes (Banescale)")]
+		[Order(51)]
+		Banescale_Stripes = 46,
+		[Description("Sugarplum (Banescale)")]
+		[Order(52)]
+		Banescale_Sugarplum = 55,
+		[Description("Tear (Banescale)")]
+		[Order(53)]
+		Banescale_Tear = 56,
+		[Description("Toxin (Banescale)")]
+		[Order(54)]
+		Banescale_Toxin = 53,
+		[Description("Trail (Banescale)")]
+		[Order(55)]
+		Banescale_Trail = 45,
+		[Description("Bee (Gaoler)")]
+		[Order(56)]
+		Gaoler_Bee = 28,
+		[Description("Blend (Gaoler)")]
+		[Order(57)]
+		Gaoler_Blend = 86,
+		[Description("Breakup (Gaoler)")]
+		[Order(58)]
+		Gaoler_Breakup = 38,
+		[Description("Current (Gaoler)")]
+		[Order(59)]
+		Gaoler_Current = 78,
+		[Description("Daub (Gaoler)")]
+		[Order(60)]
+		Gaoler_Daub = 34,
+		[Description("Edged (Gaoler)")]
+		[Order(61)]
+		Gaoler_Edged = 73,
+		[Description("Eye Spots (Gaoler)")]
+		[Order(62)]
+		Gaoler_EyeSpots = 77,
+		[Description("Facet (Gaoler)")]
+		[Order(63)]
+		Gaoler_Facet = 37,
+		[Description("Hex (Gaoler)")]
+		[Order(64)]
+		Gaoler_Hex = 27,
+		[Description("Paint (Gaoler)")]
+		[Order(65)]
+		Gaoler_Paint = 31,
+		[Description("Peregrine (Gaoler)")]
+		[Order(66)]
+		Gaoler_Peregrine = 30,
+		[Description("Rosette (Gaoler)")]
+		[Order(67)]
+		Gaoler_Rosette = 33,
+		[Description("Spirit (Gaoler)")]
+		[Order(68)]
+		Gaoler_Spirit = 39,
+		[Description("Streak (Gaoler)")]
+		[Order(69)]
+		Gaoler_Streak = 29,
+		[Description("Striation (Gaoler)")]
+		[Order(70)]
+		Gaoler_Striation = 35,
+		[Description("Stripes (Gaoler)")]
+		[Order(71)]
+		Gaoler_Stripes = 36,
+		[Description("Trail (Gaoler)")]
+		[Order(72)]
+		Gaoler_Trail = 32,
+		[Description("Bee (Veilspun)")]
+		[Order(73)]
+		Veilspun_Bee = 60,
+		[Description("Blend (Veilspun)")]
+		[Order(74)]
+		Veilspun_Blend = 61,
+		[Description("Constellation (Veilspun)")]
+		[Order(75)]
+		Veilspun_Constellation = 66,
+		[Description("Edged (Veilspun)")]
+		[Order(76)]
+		Veilspun_Edged = 62,
+		[Description("Eye Spots (Veilspun)")]
+		[Order(77)]
+		Veilspun_EyeSpots = 76,
+		[Description("Hawkmoth (Veilspun)")]
+		[Order(78)]
+		Veilspun_Hawkmoth = 72,
+		[Description("Hex (Veilspun)")]
+		[Order(79)]
+		Veilspun_Hex = 83,
+		[Description("Hypnotic (Veilspun)")]
+		[Order(80)]
+		Veilspun_Hypnotic = 64,
+		[Description("Loop (Veilspun)")]
+		[Order(81)]
+		Veilspun_Loop = 70,
+		[Description("Patchwork (Veilspun)")]
+		[Order(82)]
+		Veilspun_Patchwork = 67,
+		[Description("Saturn (Veilspun)")]
+		[Order(83)]
+		Veilspun_Saturn = 65,
+		[Description("Spinner (Veilspun)")]
+		[Order(84)]
+		Veilspun_Spinner = 68,
+		[Description("Striation (Veilspun)")]
+		[Order(85)]
+		Veilspun_Striation = 63,
+		[Description("Vivid (Veilspun)")]
+		[Order(86)]
+		Veilspun_Vivid = 69,
+		[Description("Web (Veilspun)")]
+		[Order(87)]
+		Veilspun_Web = 71,
+	}
+	
 	public enum TertiaryGene
 	{
 		[Description("Basic")]
@@ -1068,6 +1604,247 @@ namespace FRTools.Data
 		Wraith = 48,
 	}
 	
+	public enum AllTertiaryGene
+	{
+		[Description("Basic")]
+		[Order(0)]
+		Basic = 0,
+		[Description("Circuit")]
+		[Order(1)]
+		Circuit = 1,
+		[Description("Gembond")]
+		[Order(2)]
+		Gembond = 4,
+		[Description("Underbelly")]
+		[Order(3)]
+		Underbelly = 5,
+		[Description("Crackle")]
+		[Order(4)]
+		Crackle = 6,
+		[Description("Smoke")]
+		[Order(5)]
+		Smoke = 7,
+		[Description("Spines")]
+		[Order(6)]
+		Spines = 8,
+		[Description("Okapi")]
+		[Order(7)]
+		Okapi = 9,
+		[Description("Glimmer")]
+		[Order(8)]
+		Glimmer = 10,
+		[Description("Thylacine")]
+		[Order(9)]
+		Thylacine = 11,
+		[Description("Stained")]
+		[Order(10)]
+		Stained = 12,
+		[Description("Contour")]
+		[Order(11)]
+		Contour = 13,
+		[Description("Runes")]
+		[Order(12)]
+		Runes = 14,
+		[Description("Scales")]
+		[Order(13)]
+		Scales = 15,
+		[Description("Lace")]
+		[Order(14)]
+		Lace = 16,
+		[Description("Opal")]
+		[Order(15)]
+		Opal = 17,
+		[Description("Capsule")]
+		[Order(16)]
+		Capsule = 18,
+		[Description("Smirch")]
+		[Order(17)]
+		Smirch = 19,
+		[Description("Ghost")]
+		[Order(18)]
+		Ghost = 20,
+		[Description("Filigree")]
+		[Order(19)]
+		Filigree = 21,
+		[Description("Firefly")]
+		[Order(20)]
+		Firefly = 22,
+		[Description("Ringlets")]
+		[Order(21)]
+		Ringlets = 23,
+		[Description("Peacock")]
+		[Order(22)]
+		Peacock = 24,
+		[Description("Veined")]
+		[Order(23)]
+		Veined = 38,
+		[Description("Keel")]
+		[Order(24)]
+		Keel = 53,
+		[Description("Glowtail")]
+		[Order(25)]
+		Glowtail = 54,
+		[Description("Koi")]
+		[Order(26)]
+		Koi = 73,
+		[Description("Angler (Veilspun)")]
+		[Order(27)]
+		Veilspun_Angler = 78,
+		[Description("Beetle (Veilspun)")]
+		[Order(28)]
+		Veilspun_Beetle = 65,
+		[Description("Branches (Veilspun)")]
+		[Order(29)]
+		Veilspun_Branches = 63,
+		[Description("Capsule (Veilspun)")]
+		[Order(30)]
+		Veilspun_Capsule = 56,
+		[Description("Crackle (Veilspun)")]
+		[Order(31)]
+		Veilspun_Crackle = 58,
+		[Description("Diaphanous (Veilspun)")]
+		[Order(32)]
+		Veilspun_Diaphanous = 66,
+		[Description("Firefly (Veilspun)")]
+		[Order(33)]
+		Veilspun_Firefly = 61,
+		[Description("Flecks (Veilspun)")]
+		[Order(34)]
+		Veilspun_Flecks = 64,
+		[Description("Mop (Veilspun)")]
+		[Order(35)]
+		Veilspun_Mop = 67,
+		[Description("Okapi (Veilspun)")]
+		[Order(36)]
+		Veilspun_Okapi = 59,
+		[Description("Opal (Veilspun)")]
+		[Order(37)]
+		Veilspun_Opal = 62,
+		[Description("Peacock (Veilspun)")]
+		[Order(38)]
+		Veilspun_Peacock = 60,
+		[Description("Runes (Veilspun)")]
+		[Order(39)]
+		Veilspun_Runes = 57,
+		[Description("Stained (Veilspun)")]
+		[Order(40)]
+		Veilspun_Stained = 72,
+		[Description("Thorns (Veilspun)")]
+		[Order(41)]
+		Veilspun_Thorns = 68,
+		[Description("Underbelly (Veilspun)")]
+		[Order(42)]
+		Veilspun_Underbelly = 70,
+		[Description("Blossom (Gaoler)")]
+		[Order(43)]
+		Gaoler_Blossom = 36,
+		[Description("Braids (Gaoler)")]
+		[Order(44)]
+		Gaoler_Braids = 55,
+		[Description("Capsule (Gaoler)")]
+		[Order(45)]
+		Gaoler_Capsule = 75,
+		[Description("Fans (Gaoler)")]
+		[Order(46)]
+		Gaoler_Fans = 3,
+		[Description("Ghost (Gaoler)")]
+		[Order(47)]
+		Gaoler_Ghost = 25,
+		[Description("Gnarlhorns (Gaoler)")]
+		[Order(48)]
+		Gaoler_Gnarlhorns = 27,
+		[Description("Opal (Gaoler)")]
+		[Order(49)]
+		Gaoler_Opal = 37,
+		[Description("Pinions (Gaoler)")]
+		[Order(50)]
+		Gaoler_Pinions = 77,
+		[Description("Ringlets (Gaoler)")]
+		[Order(51)]
+		Gaoler_Ringlets = 30,
+		[Description("Runes (Gaoler)")]
+		[Order(52)]
+		Gaoler_Runes = 32,
+		[Description("Scorpion (Gaoler)")]
+		[Order(53)]
+		Gaoler_Scorpion = 33,
+		[Description("Shardflank (Gaoler)")]
+		[Order(54)]
+		Gaoler_Shardflank = 26,
+		[Description("Smoke (Gaoler)")]
+		[Order(55)]
+		Gaoler_Smoke = 28,
+		[Description("Stained (Gaoler)")]
+		[Order(56)]
+		Gaoler_Stained = 71,
+		[Description("Thylacine (Gaoler)")]
+		[Order(57)]
+		Gaoler_Thylacine = 29,
+		[Description("Underbelly (Gaoler)")]
+		[Order(58)]
+		Gaoler_Underbelly = 31,
+		[Description("Veined (Gaoler)")]
+		[Order(59)]
+		Gaoler_Veined = 2,
+		[Description("Weathered (Gaoler)")]
+		[Order(60)]
+		Gaoler_Weathered = 35,
+		[Description("Wintercoat (Gaoler)")]
+		[Order(61)]
+		Gaoler_Wintercoat = 34,
+		[Description("Capsule (Banescale)")]
+		[Order(62)]
+		Banescale_Capsule = 74,
+		[Description("Contour (Banescale)")]
+		[Order(63)]
+		Banescale_Contour = 46,
+		[Description("Crackle (Banescale)")]
+		[Order(64)]
+		Banescale_Crackle = 50,
+		[Description("Fans (Banescale)")]
+		[Order(65)]
+		Banescale_Fans = 41,
+		[Description("Filigree (Banescale)")]
+		[Order(66)]
+		Banescale_Filigree = 43,
+		[Description("Ghost (Banescale)")]
+		[Order(67)]
+		Banescale_Ghost = 47,
+		[Description("Gliders (Banescale)")]
+		[Order(68)]
+		Banescale_Gliders = 76,
+		[Description("Lace (Banescale)")]
+		[Order(69)]
+		Banescale_Lace = 44,
+		[Description("Plumage (Banescale)")]
+		[Order(70)]
+		Banescale_Plumage = 51,
+		[Description("Porcupine (Banescale)")]
+		[Order(71)]
+		Banescale_Porcupine = 49,
+		[Description("Ringlets (Banescale)")]
+		[Order(72)]
+		Banescale_Ringlets = 40,
+		[Description("Skeletal (Banescale)")]
+		[Order(73)]
+		Banescale_Skeletal = 45,
+		[Description("Squiggle (Banescale)")]
+		[Order(74)]
+		Banescale_Squiggle = 42,
+		[Description("Stained (Banescale)")]
+		[Order(75)]
+		Banescale_Stained = 69,
+		[Description("Trimmings (Banescale)")]
+		[Order(76)]
+		Banescale_Trimmings = 39,
+		[Description("Underbelly (Banescale)")]
+		[Order(77)]
+		Banescale_Underbelly = 52,
+		[Description("Wraith (Banescale)")]
+		[Order(78)]
+		Banescale_Wraith = 48,
+	}
+
 	public static class GeneratedFREnumExtentions
 	{
 		public static bool IsAncientBreed(this DragonType type)

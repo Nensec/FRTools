@@ -116,20 +116,37 @@
         // array
         string[] currentValue = new string[] { };
         var arrayType = settingType?.GetElementType();
-        <select id="@(id)" name="@(name)" configKey="@(Model.Key)" multiple class="form-control" title="Hold CTRL to select multiple" data-toggle="tooltip">
+        <select id="@(id)" name="@(name)" configKey="@(Model.Key)" multiple class="form-control" title="Hold <span class='text-warning'><b>CTRL</b></span> to select multiple or to deselect a single value<br/>Hit <span class='text-warning'><b>CTRL-A</b></span> to select all after you focus the list" data-toggle="tooltip">
             @if (arrayType?.IsEnum == true)
             {
                 if (Model.Value == "ALL")
                 {
-                    currentValue = Enum.GetValues(arrayType).Cast<Enum>().Select(x => x.ToString()).ToArray();
+                    currentValue = Enum.GetValues(arrayType).Cast<Enum>().Select(x => Convert.ToInt32(x).ToString()).ToArray();
                 }
                 else
                 {
                     currentValue = Model.Value?.Split(',') ?? new string[] { };
                 }
-                foreach (var option in Enum.GetValues(arrayType))
+                var values = Enum.GetValues(arrayType).Cast<Enum>();
+                if (values.All(x => x.GetAttributeOfType<OrderAttribute>() != null))
                 {
-                    <option @(currentValue?.Contains(((int)option).ToString()) == true ? "selected" : "") value="@((int)option)">@option.ToString()</option>
+                    values = values.OrderBy(x => x.GetAttributeOfType<OrderAttribute>().Order);
+                }
+
+                foreach (var option in values)
+                {
+                    var descriptionAttribute = (option as Enum).GetAttributeOfType<System.ComponentModel.DescriptionAttribute>();
+                    if (descriptionAttribute != null)
+                    {
+                        <option @(currentValue?.Contains(Convert.ToInt32(option).ToString()) == true ? "selected" : "") value="@(Convert.ToInt32(option))">@descriptionAttribute.Description</option>
+                        continue;
+                    }
+                    var readOnlyAttribute = (option as Enum).GetAttributeOfType<ReadOnlyAttribute>();
+                    if (readOnlyAttribute != null)
+                    {
+                        <option disabled @(currentValue?.Contains(Convert.ToInt32(option).ToString()) == true ? "selected" : "") value="@(Convert.ToInt32(option))">@readOnlyAttribute.Description</option>
+                        continue;
+                    }
                 }
             }
             else
@@ -188,7 +205,7 @@
         </select>
         <script>
             $(document).ready(function () { $('#@(id)').on('change', $.debounce(500, save_@(Model.Key))); });
-            save_@(Model.Key) = function (event) { saveDiscordSetting('@(Model.Key)', $('#@(id)').val().join(',')); }
+                save_@(Model.Key) = function (event) { saveDiscordSetting('@(Model.Key)', $('#@(id)').val().join(',')); }
         </script>
     }
 </div>

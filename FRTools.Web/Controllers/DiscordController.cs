@@ -270,7 +270,7 @@ namespace FRTools.Web.Controllers
                 foreach (var match in matches.Cast<Match>().Where(x => x.Success))
                 {
                     var refSetting = GetRefSetting(match.Groups[1].Value, match.Groups[2].Value);
-                    description = description.Replace(match.Groups[0].Value, $"<span class=\"text-warning\"><b>{refSetting.Name}</b> ({(match.Groups[1].Value == "GUILD" ? "Server" : match.Groups[2].Value)} settings)</span>");
+                    description = description.Replace(match.Groups[0].Value, $"<span class=\"text-warning\"><b>{refSetting.Name}</b>{(match.Groups[1].Value == "GUILD" ? " (Server settings)" : "")}</span>");
                 }
             }
             return description;
@@ -280,7 +280,7 @@ namespace FRTools.Web.Controllers
         {
             var settings = module == "GUILD"
                 ? DiscordMetadata.BotSettings
-                : DiscordMetadata.Modules.First(x => x.Name.ToUpper() == module).Settings;
+                : DiscordMetadata.Modules.First(x => x.Name.ToUpper() == module).Settings.Concat(DiscordMetadata.Modules.First(x => x.Name.ToUpper() == module).Commands.SelectMany(x => x.Settings));
             return settings.First(x => x.Key == key);
         }
 

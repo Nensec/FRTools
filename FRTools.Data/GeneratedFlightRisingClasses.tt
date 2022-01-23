@@ -260,6 +260,35 @@ namespace FRTools.Data
 	}
 	#>
 
+	public enum AllBodyGene
+	{
+	<#
+	var bodyGeneCounter = 0;
+	foreach(var gene in page.PrimaryGenes.Where(x => x.Type == "all" || x.Type == "modern").OrderBy(x => x.Value)) 
+	{
+	#>
+	[Description("<#= gene.Name #>")]
+		[Order(<#= bodyGeneCounter #>)]
+		<#= gene.Name.Replace(" ", "") #> = <#= gene.Value #>,		
+	<#
+	bodyGeneCounter++;
+	}
+	foreach(var ancientBreedGenes in page.PrimaryGenes.Where(x => x.Type == "ancient").GroupBy(x => x.Breeds[0]))
+	{
+		var breed = page.Breeds.First(x => x.Value == ancientBreedGenes.Key);#>
+<#
+		foreach(var ancientGene in ancientBreedGenes)
+		{
+	#>
+	[Description("<#= ancientGene.Name #>")]
+		[Order(<#= bodyGeneCounter #>)]
+		<#= $"{breed.Name}_{ancientGene.Name.Replace($" ({breed.Name})", "").Replace(" ", "")}" #> = <#= ancientGene.Value #>,
+	<#
+	bodyGeneCounter++;
+		}
+	#>
+<#}#>}
+
 	public enum WingGene
 	{
 	<#
@@ -295,6 +324,36 @@ namespace FRTools.Data
 	<#
 	}
 	#>
+
+	public enum AllWingGene
+	{
+	<#
+	var wingGeneCounter = 0;
+	foreach(var gene in page.SecondaryGenes.Where(x => x.Type == "all" || x.Type == "modern").OrderBy(x => x.Value)) 
+	{
+	#>
+	[Description("<#= gene.Name #>")]
+		[Order(<#= wingGeneCounter #>)]
+		<#= gene.Name.Replace(" ", "") #> = <#= gene.Value #>,
+	<#
+	wingGeneCounter++;
+	}
+	#><#
+	foreach(var ancientBreedGenes in page.SecondaryGenes.Where(x => x.Type == "ancient").GroupBy(x => x.Breeds[0]))
+	{
+		var breed = page.Breeds.First(x => x.Value == ancientBreedGenes.Key);#>
+<#
+		foreach(var ancientGene in ancientBreedGenes)
+		{
+	#>
+	[Description("<#= ancientGene.Name #>")]
+		[Order(<#= wingGeneCounter #>)]
+		<#= $"{breed.Name}_{ancientGene.Name.Replace($" ({breed.Name})", "").Replace(" ", "")}" #> = <#= ancientGene.Value #>,
+	<#
+	wingGeneCounter++;
+		}
+	#>
+<#}#>}
 	
 	public enum TertiaryGene
 	{
@@ -331,6 +390,36 @@ namespace FRTools.Data
 	<#
 	}
 	#>
+
+	public enum AllTertiaryGene
+	{
+	<#
+	var tertGeneCounter = 0;
+	foreach(var gene in page.TertiaryGenes.Where(x => x.Type == "all" || x.Type == "modern").OrderBy(x => x.Value)) 
+	{
+	#>
+	[Description("<#= gene.Name #>")]
+		[Order(<#= tertGeneCounter #>)]
+		<#= gene.Name.Replace(" ", "") #> = <#= gene.Value #>,
+	<#
+	tertGeneCounter++;
+	}
+	#><#
+	foreach(var ancientBreedGenes in page.TertiaryGenes.Where(x => x.Type == "ancient").GroupBy(x => x.Breeds[0]))
+	{
+		var breed = page.Breeds.First(x => x.Value == ancientBreedGenes.Key);#>
+<#
+		foreach(var ancientGene in ancientBreedGenes)
+		{
+	#>
+	[Description("<#= ancientGene.Name #>")]
+		[Order(<#= tertGeneCounter #>)]
+		<#= $"{breed.Name}_{ancientGene.Name.Replace($" ({breed.Name})", "").Replace(" ", "")}" #> = <#= ancientGene.Value #>,
+	<#
+		tertGeneCounter++;
+		}
+	#>
+<#}#>}
 
 	public static class GeneratedFREnumExtentions
 	{
