@@ -59,7 +59,7 @@ namespace FRTools.Discord.Infrastructure
                             if (setting.DefaultValue == "ALL" && guild != null)
                             {
                                 if (arrayType.IsEnum)                                
-                                    val = string.Join(",", Enum.GetValues(arrayType));                                
+                                    val = string.Join(",", Enum.GetValues(arrayType).Cast<Enum>().Select(x => x));                                
                                 else
                                 {
                                     var channels = (await guild.GetChannelsAsync()).ToList();
