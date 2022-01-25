@@ -31,6 +31,9 @@ namespace FRTools.Discord.Modules
         [DiscordSetting("LOOKUP_DRAGON_SHOW_IMAGE_PRIMARY_GENES", typeof(AllBodyGene[]), "Show primary genes", "This will allow you to filter which primary genes will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", DefaultValue = "ALL", Order = 2)]
         [DiscordSetting("LOOKUP_DRAGON_SHOW_IMAGE_SECONDARY_GENES", typeof(AllWingGene[]), "Show secondary genes", "This will allow you to filter which secondary genes will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", DefaultValue = "ALL", Order = 3)]
         [DiscordSetting("LOOKUP_DRAGON_SHOW_IMAGE_TERTIARY_GENES", typeof(AllTertiaryGene[]), "Show tertiary genes", "This will allow you to filter which tertiary genes will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", DefaultValue = "ALL", Order = 4)]
+        [DiscordSetting("LOOKUP_DRAGON_SHOW_IMAGE_PRIMARY_COLORS", typeof(Data.Color[]), "Show primary colors", "This will allow you to filter which primary colors will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", DefaultValue = "ALL", Order = 5)]
+        [DiscordSetting("LOOKUP_DRAGON_SHOW_IMAGE_SECONDARY_COLORS", typeof(Data.Color[]), "Show secondary colors", "This will allow you to filter which secondary colors will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", DefaultValue = "ALL", Order = 6)]
+        [DiscordSetting("LOOKUP_DRAGON_SHOW_IMAGE_TERTIARY_COLORS", typeof(Data.Color[]), "Show tertiary colors", "This will allow you to filter which tertiary colors will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", DefaultValue = "ALL", Order = 7)]
         [Command("dragon"), Name("Dragon"), Alias("d")]
         [DiscordHelp("LookupDragon")]
         public async Task DragonLookup(int id)
@@ -45,8 +48,9 @@ namespace FRTools.Discord.Modules
                 await lookingUpMessage.ModifyAsync(x => x.Content = "This dragon does not exist");
                 return;
             }
-
             var isExalted = dragonProfileDoc.GetElementbyId("exalted-content") != null;
+
+            var imageHideReason = "Display of dragon images is disabled in bot settings";
             bool.TryParse(await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGES", Context.Guild), out var showImages);
 
             var embed = new EmbedBuilder()
@@ -111,12 +115,12 @@ namespace FRTools.Discord.Modules
                 embed.AddField(x => x.WithIsInline(true).WithName("General info").WithValue($"**Eye type:** {eyeColor} {eyeType}\n**Eggday:** {eggbreakday}\n**ID:** {id}"));
 
                 var geneticsNode = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-physical""]/div/div[1]/div[2]");
-                var primaryGene = geneticsNode.ChildNodes[1].ChildNodes[1].ChildNodes[3].ChildNodes[3].InnerHtml;
-                var primaryColor = geneticsNode.ChildNodes[1].ChildNodes[1].ChildNodes[3].ChildNodes[0].InnerHtml.Replace("\\n", "").Trim();
-                var secondaryGene = geneticsNode.ChildNodes[3].ChildNodes[1].ChildNodes[3].ChildNodes[3].InnerHtml;
-                var secondaryColor = geneticsNode.ChildNodes[3].ChildNodes[1].ChildNodes[3].ChildNodes[0].InnerHtml.Replace("\\n", "").Trim();
-                var tertiaryGene = geneticsNode.ChildNodes[5].ChildNodes[1].ChildNodes[3].ChildNodes[3].InnerHtml;
-                var tertiaryColor = geneticsNode.ChildNodes[5].ChildNodes[1].ChildNodes[3].ChildNodes[0].InnerHtml.Replace("\\n", "").Trim();
+                var frPrimaryGene = geneticsNode.ChildNodes[1].ChildNodes[1].ChildNodes[3].ChildNodes[3].InnerHtml;
+                var frPrimaryColor = geneticsNode.ChildNodes[1].ChildNodes[1].ChildNodes[3].ChildNodes[0].InnerHtml.Replace("\\n", "").Trim();
+                var frSecondaryGene = geneticsNode.ChildNodes[3].ChildNodes[1].ChildNodes[3].ChildNodes[3].InnerHtml;
+                var frSecondaryColor = geneticsNode.ChildNodes[3].ChildNodes[1].ChildNodes[3].ChildNodes[0].InnerHtml.Replace("\\n", "").Trim();
+                var frTertiaryGene = geneticsNode.ChildNodes[5].ChildNodes[1].ChildNodes[3].ChildNodes[3].InnerHtml;
+                var frTertiaryColor = geneticsNode.ChildNodes[5].ChildNodes[1].ChildNodes[3].ChildNodes[0].InnerHtml.Replace("\\n", "").Trim();
 
                 if (showImages)
                 {
@@ -124,15 +128,45 @@ namespace FRTools.Discord.Modules
                     var allowedSecondaryGenes = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_SECONDARY_GENES", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(AllWingGene), x));
                     var allowedTertiaryGenes = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_TERTIARY_GENES", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(AllTertiaryGene), x));
 
-                    if ((Enum.TryParse<AllBodyGene>(primaryGene, out var primary) && !allowedPrimaryGenes.Contains(primary)) ||
-                        (Enum.TryParse<AllWingGene>(secondaryGene, out var secondary) && !allowedSecondaryGenes.Contains(secondary)) ||
-                        (Enum.TryParse<AllTertiaryGene>(tertiaryGene, out var tertiary) && !allowedTertiaryGenes.Contains(tertiary)))
+                    var allowedPrimaryColors = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_PRIMARY_COLORS", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(Data.Color), x));
+                    var allowedSecondaryColors = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_SECONDARY_COLORS", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(Data.Color), x));
+                    var allowedTertiaryColors = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_TERTIARY_COLORS", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(Data.Color), x));
+
+                    if (Enum.TryParse<AllBodyGene>(frPrimaryGene, out var primaryGene) && !allowedPrimaryGenes.Contains(primaryGene))
+                    {
                         showImages = false;
+                        imageHideReason = $"Display of this image is disabled in bot settings due to it containing the primary gene **{primaryGene}**";
+                    }
+                    else if (Enum.TryParse<AllWingGene>(frSecondaryGene, out var secondaryGeme) && !allowedSecondaryGenes.Contains(secondaryGeme))
+                    {
+                        showImages = false;
+                        imageHideReason = $"Display of this image is disabled in bot settings due to it containing the secondary gene **{secondaryGeme}**";
+                    }
+                    else if (Enum.TryParse<AllTertiaryGene>(frTertiaryGene, out var tertiaryGene) && !allowedTertiaryGenes.Contains(tertiaryGene))
+                    {
+                        showImages = false;
+                        imageHideReason = $"Display of this image is disabled in bot settings due to it containing the tertiary gene **{tertiaryGene}**";
+                    }
+                    else if (Enum.TryParse<Data.Color>(frPrimaryColor, out var primaryColor) && !allowedPrimaryColors.Contains(primaryColor))
+                    {
+                        showImages = false;
+                        imageHideReason = $"Display of this image is disabled in bot settings due to it containing the primary color **{primaryColor}**";
+                    }
+                    else if (Enum.TryParse<Data.Color>(frSecondaryColor, out var secondaryColor) && !allowedSecondaryColors.Contains(secondaryColor))
+                    {
+                        showImages = false;
+                        imageHideReason = $"Display of this image is disabled in bot settings due to it containing the secondary color **{secondaryColor}**";
+                    }
+                    else if (Enum.TryParse<Data.Color>(frTertiaryColor, out var tertiaryColor) && !allowedTertiaryColors.Contains(tertiaryColor))
+                    {
+                        showImages = false;
+                        imageHideReason = $"Display of this image is disabled in bot settings due to it containing the tertiary color **{tertiaryColor}**";
+                    }
                 }
 
                 if (!showImages)
                     embed.AddField(x => x.WithIsInline(true).WithName("\u200B").WithValue("\u200B"));
-                embed.AddField(x => x.WithIsInline(true).WithName("Genetics").WithValue($"**Primary:** {primaryColor} {primaryGene}\n**Secondary:** {secondaryColor} {secondaryGene}\n**Tertiary:** {tertiaryColor} {tertiaryGene}\n"));
+                embed.AddField(x => x.WithIsInline(true).WithName("Genetics").WithValue($"**Primary:** {frPrimaryColor} {frPrimaryGene}\n**Secondary:** {frSecondaryColor} {frSecondaryGene}\n**Tertiary:** {frTertiaryColor} {frTertiaryGene}\n"));
 
                 var parentsField = new EmbedFieldBuilder().WithName("Parents").WithIsInline(true);
                 var siblingsField = new EmbedFieldBuilder().WithName("Offspring").WithIsInline(true);
@@ -173,7 +207,7 @@ namespace FRTools.Discord.Modules
 
             if (!showImages)
             {
-                embed.AddField("Image", $"[Display of this image is disabled in bot settings, click here to open image]({FRHelpers.GetRenderUrl(id)})");
+                embed.AddField("Image", $"[{imageHideReason}, click here to open image]({FRHelpers.GetRenderUrl(id)})");
             }
 
             if (showImages)

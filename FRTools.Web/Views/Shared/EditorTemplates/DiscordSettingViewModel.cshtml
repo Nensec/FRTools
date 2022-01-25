@@ -136,16 +136,20 @@
                 foreach (var option in values)
                 {
                     var descriptionAttribute = (option as Enum).GetAttributeOfType<System.ComponentModel.DescriptionAttribute>();
+                    var readOnlyAttribute = (option as Enum).GetAttributeOfType<ReadOnlyAttribute>();
                     if (descriptionAttribute != null)
                     {
                         <option @(currentValue?.Contains(Convert.ToInt32(option).ToString()) == true ? "selected" : "") value="@(Convert.ToInt32(option))">@descriptionAttribute.Description</option>
                         continue;
                     }
-                    var readOnlyAttribute = (option as Enum).GetAttributeOfType<ReadOnlyAttribute>();
-                    if (readOnlyAttribute != null)
+                    else if (readOnlyAttribute != null)
                     {
                         <option disabled @(currentValue?.Contains(Convert.ToInt32(option).ToString()) == true ? "selected" : "") value="@(Convert.ToInt32(option))">@readOnlyAttribute.Description</option>
                         continue;
+                    }
+                    else
+                    {
+                        <option @(currentValue?.Contains(Convert.ToInt32(option).ToString()) == true ? "selected" : "") value="@(Convert.ToInt32(option))">@option.ToString()</option>
                     }
                 }
             }
