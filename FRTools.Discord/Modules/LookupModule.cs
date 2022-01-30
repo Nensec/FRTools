@@ -124,6 +124,10 @@ namespace FRTools.Discord.Modules
 
                 if (showImages)
                 {
+                    var primaryGeneSanitized = frPrimaryGene.Split(' ').First();
+                    var secondaryGeneSanitized = frSecondaryGene.Split(' ').First();
+                    var tertiaryGeneSanitized = frTertiaryGene.Split(' ').First();
+
                     var allowedPrimaryGenes = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_PRIMARY_GENES", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(AllBodyGene), x));
                     var allowedSecondaryGenes = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_SECONDARY_GENES", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(AllWingGene), x));
                     var allowedTertiaryGenes = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_TERTIARY_GENES", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(AllTertiaryGene), x));
@@ -132,20 +136,22 @@ namespace FRTools.Discord.Modules
                     var allowedSecondaryColors = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_SECONDARY_COLORS", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(Data.Color), x));
                     var allowedTertiaryColors = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_TERTIARY_COLORS", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(Data.Color), x));
 
-                    if (Enum.TryParse<AllBodyGene>(frPrimaryGene, out var primaryGene) && !allowedPrimaryGenes.Contains(primaryGene))
+                    var dragonType = (DragonType)Enum.Parse(typeof(DragonType), dragonBreed);
+
+                    if ((Enum.TryParse<AllBodyGene>(primaryGeneSanitized, out var primaryGene) || (dragonType.IsAncientBreed() && Enum.TryParse($"{dragonType}_{primaryGeneSanitized}", out primaryGene))) && !allowedPrimaryGenes.Contains(primaryGene))
                     {
                         showImages = false;
-                        imageHideReason = $"Display of this image is disabled in bot settings due to it containing the primary gene **{primaryGene}**";
+                        imageHideReason = $"Display of this image is disabled in bot settings due to it containing the primary gene **{frPrimaryGene}**";
                     }
-                    else if (Enum.TryParse<AllWingGene>(frSecondaryGene, out var secondaryGeme) && !allowedSecondaryGenes.Contains(secondaryGeme))
+                    else if ((Enum.TryParse<AllWingGene>(secondaryGeneSanitized, out var secondaryGene) || (dragonType.IsAncientBreed() && Enum.TryParse($"{dragonType}_{secondaryGeneSanitized}", out secondaryGene)))  && !allowedSecondaryGenes.Contains(secondaryGene))
                     {
                         showImages = false;
-                        imageHideReason = $"Display of this image is disabled in bot settings due to it containing the secondary gene **{secondaryGeme}**";
+                        imageHideReason = $"Display of this image is disabled in bot settings due to it containing the secondary gene **{frSecondaryGene}**";
                     }
-                    else if (Enum.TryParse<AllTertiaryGene>(frTertiaryGene, out var tertiaryGene) && !allowedTertiaryGenes.Contains(tertiaryGene))
+                    else if ((Enum.TryParse<AllTertiaryGene>(tertiaryGeneSanitized, out var tertiaryGene) || (dragonType.IsAncientBreed() && Enum.TryParse($"{dragonType}_{tertiaryGeneSanitized}", out tertiaryGene))) && !allowedTertiaryGenes.Contains(tertiaryGene))
                     {
                         showImages = false;
-                        imageHideReason = $"Display of this image is disabled in bot settings due to it containing the tertiary gene **{tertiaryGene}**";
+                        imageHideReason = $"Display of this image is disabled in bot settings due to it containing the tertiary gene **{frTertiaryGene}**";
                     }
                     else if (Enum.TryParse<Data.Color>(frPrimaryColor, out var primaryColor) && !allowedPrimaryColors.Contains(primaryColor))
                     {
