@@ -112,7 +112,7 @@ namespace FRTools.Tools.SkinTester
 
         private static async Task<PreviewResult> GenerateOrFetchPreview(PreviewResult result, string skinId, int? version, DragonCache dragon, bool isDressingRoom, bool swapSilhouette, bool force)
         {
-            var azureImageService = new AzureImageService();
+            var azureImageService = new AzureFileService();
             using (var ctx = new DataContext())
             {
                 Skin skin;
@@ -170,7 +170,7 @@ namespace FRTools.Tools.SkinTester
                 }
 
                 Image skinImage;
-                using (var skinImageStream = await new AzureImageService().GetImage($@"skins\{skinId}.png"))
+                using (var skinImageStream = await new AzureFileService().GetFile($@"skins\{skinId}.png"))
                     skinImage = Image.FromStream(skinImageStream);
 
                 var fixPixelFormat = FixPixelFormat((Bitmap)skinImage);
@@ -182,7 +182,7 @@ namespace FRTools.Tools.SkinTester
                         skinImage.Save(memStream, ImageFormat.Png);
                         memStream.Position = 0;
 
-                        _ = await new AzureImageService().WriteImage($@"skins\{skinId}.png", memStream);
+                        _ = await new AzureFileService().WriteFile($@"skins\{skinId}.png", memStream);
                     }
                 }
 
@@ -222,7 +222,7 @@ namespace FRTools.Tools.SkinTester
                     dragonImage.Save(saveImageStream, ImageFormat.Png);
                     saveImageStream.Position = 0;
 
-                    previewUrl = await new AzureImageService().WriteImage(azureImagePreviewPath, saveImageStream);
+                    previewUrl = await new AzureFileService().WriteFile(azureImagePreviewPath, saveImageStream);
 
                     if (dragon.PreviewUrls.ContainsKey((skinId, version ?? 1)))
                         dragon.PreviewUrls[(skinId, version ?? 1)] = previewUrl;
@@ -240,7 +240,7 @@ namespace FRTools.Tools.SkinTester
             async Task<string> GenerateApparelPreview(Bitmap invisibleDragon, string cacheUrl)
             {
                 if (dragonImage == null)
-                    dragonImage = (Bitmap)Image.FromStream(await new AzureImageService().GetImage(azureImagePreviewPath));
+                    dragonImage = (Bitmap)Image.FromStream(await new AzureFileService().GetFile(azureImagePreviewPath));
 
                 using (var graphics = Graphics.FromImage(dragonImage))
                 {
@@ -252,7 +252,7 @@ namespace FRTools.Tools.SkinTester
                     dragonImage.Save(saveApparelImageStream, ImageFormat.Png);
                     saveApparelImageStream.Position = 0;
 
-                    return await new AzureImageService().WriteImage(cacheUrl, saveApparelImageStream);
+                    return await new AzureFileService().WriteFile(cacheUrl, saveApparelImageStream);
                 }
             }
 
@@ -304,10 +304,10 @@ namespace FRTools.Tools.SkinTester
         {
             Bitmap invisibleDwagon;
             var azureUrl = $@"dragoncache\{dragon.FRDragonId}_{dragon.Gender}_invisible.png";
-            var cacheUrl = await new AzureImageService().Exists(azureUrl);
+            var cacheUrl = await new AzureFileService().Exists(azureUrl);
             if (!force && cacheUrl != null)
             {
-                using (var stream = await new AzureImageService().GetImage(azureUrl))
+                using (var stream = await new AzureFileService().GetFile(azureUrl))
                     invisibleDwagon = (Bitmap)Image.FromStream(stream);
                 return invisibleDwagon;
             }
@@ -328,7 +328,7 @@ namespace FRTools.Tools.SkinTester
                     var invisibleDwagonImageBytes = await invisibleDragonBytesTask;
 
                     using (var memStream = new MemoryStream(invisibleDwagonImageBytes, false))
-                        await new AzureImageService().WriteImage(azureUrl, memStream);
+                        await new AzureFileService().WriteFile(azureUrl, memStream);
 
                     using (var memStream = new MemoryStream(invisibleDwagonImageBytes, false))
                     {

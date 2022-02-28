@@ -72,10 +72,10 @@ namespace FRTools.Web.Controllers
                     .Include(x => x.Pinglists)
                     .First();
 
-                var azureImageService = new AzureImageService();
+                var azureImageService = new AzureFileService();
                 foreach (var skin in user.Skins)
                 {
-                    await azureImageService.DeleteImage($@"skins\{skin.GeneratedId}.png");
+                    await azureImageService.DeleteFile($@"skins\{skin.GeneratedId}.png");
                     skin.Previews.Clear();
                 }
                 ctx.Skins.RemoveRange(user.Skins);

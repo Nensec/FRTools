@@ -40,7 +40,7 @@ namespace FRTools.Web.Controllers
                 return RedirectToRoute("ScryerDresser");
             }
 
-            var azureImageService = new AzureImageService();
+            var azureImageService = new AzureFileService();
 
             var azureImagePreviewPath = $@"previews\dresser\{scryerDragon.ToString().Trim('_')}\{dressingRoomDragon.Apparel?.Replace(',', '-').ToString()}.png";
             var previewUrl = await azureImageService.Exists(azureImagePreviewPath);
@@ -59,7 +59,7 @@ namespace FRTools.Web.Controllers
                     baseDragon.Save(memStream, ImageFormat.Png);
                     memStream.Position = 0;
 
-                    previewUrl = await azureImageService.WriteImage(azureImagePreviewPath, memStream);
+                    previewUrl = await azureImageService.WriteFile(azureImagePreviewPath, memStream);
                 }
             }
 

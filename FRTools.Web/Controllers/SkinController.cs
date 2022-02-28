@@ -146,7 +146,7 @@ namespace FRTools.Web.Controllers
         [HttpPost]
         public async Task<ActionResult> Upload(UploadModelPost model)
         {
-            var azureImageService = new AzureImageService();
+            var azureImageService = new AzureFileService();
 
             var randomizedId = CodeHelpers.GenerateId(5, DataContext.Skins.Select(x => x.GeneratedId).ToList());
             var secretKey = CodeHelpers.GenerateId(7);
@@ -172,7 +172,7 @@ namespace FRTools.Web.Controllers
                     skinImage = fixPixelFormat;
 
                 model.Skin.InputStream.Position = 0;
-                var url = await azureImageService.WriteImage($@"skins\{randomizedId}.png", model.Skin.InputStream);
+                var url = await azureImageService.WriteFile($@"skins\{randomizedId}.png", model.Skin.InputStream);
 
                 Bitmap dragonImage = null;
                 using (var client = new WebClient())
@@ -289,8 +289,8 @@ namespace FRTools.Web.Controllers
 
                 if (skin.GenderType != (int)model.Gender || skin.DragonType != (int)model.DragonType)
                 {
-                    var azureImageService = new AzureImageService();
-                    await azureImageService.DeleteImage($@"previews\{model.SkinId}\{(skin.Version == 1 ? "" : $@"{skin.Version}\")}preview.png");
+                    var azureImageService = new AzureFileService();
+                    await azureImageService.DeleteFile($@"previews\{model.SkinId}\{(skin.Version == 1 ? "" : $@"{skin.Version}\")}preview.png");
                 }
 
                 skin.Title = model.Title;
@@ -327,7 +327,7 @@ namespace FRTools.Web.Controllers
         [HttpPost]
         public async Task<ActionResult> UpdateSkin(UpdateSkinPost model)
         {
-            var azureImageService = new AzureImageService();
+            var azureImageService = new AzureFileService();
 
             var skin = DataContext.Skins.FirstOrDefault(x => x.GeneratedId == model.SkinId && x.SecretKey == model.SecretKey);
             if (skin == null)
@@ -372,7 +372,7 @@ namespace FRTools.Web.Controllers
             try
             {
                 model.Skin.InputStream.Position = 0;
-                var url = await azureImageService.WriteImage($@"skins\{model.SkinId}.png", model.Skin.InputStream);
+                var url = await azureImageService.WriteFile($@"skins\{model.SkinId}.png", model.Skin.InputStream);
 
                 Bitmap dragonImage = null;
                 using (var client = new WebClient())
@@ -421,8 +421,8 @@ namespace FRTools.Web.Controllers
             }
             else
             {
-                var azureImageService = new AzureImageService();
-                await azureImageService.DeleteImage($@"skins\{model.SkinId}.png");
+                var azureImageService = new AzureFileService();
+                await azureImageService.DeleteFile($@"skins\{model.SkinId}.png");
                 skin.Previews.Clear();
                 DataContext.Skins.Remove(skin);
                 await DataContext.SaveChangesAsync();
@@ -542,8 +542,8 @@ namespace FRTools.Web.Controllers
         {
             Bitmap skinImage, dummyImage;
 
-            var azureImageService = new AzureImageService();
-            using (var stream = await azureImageService.GetImage($@"skins\{skin.GeneratedId}.png"))
+            var azureImageService = new AzureFileService();
+            using (var stream = await azureImageService.GetFile($@"skins\{skin.GeneratedId}.png"))
                 skinImage = (Bitmap)Image.FromStream(stream);
 
             try

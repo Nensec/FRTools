@@ -37,7 +37,7 @@ namespace FRTools.Common
 
         public static async Task<Bitmap> GetInvisibleDressingRoomDragon(DragonCache dragon)
         {
-            var azureImageService = new AzureImageService();
+            var azureImageService = new AzureFileService();
             var apparelIds = dragon.GetApparel();
 
             if (!apparelIds.Contains(22046))
@@ -52,7 +52,7 @@ namespace FRTools.Common
 
                 var invisibleDwagonImageBytes = await invisibleDragonBytesTask;
                 using (var memStream = new MemoryStream(invisibleDwagonImageBytes, false))
-                    await azureImageService.WriteImage(azureUrl, memStream);
+                    await azureImageService.WriteFile(azureUrl, memStream);
 
                 using (var memStream = new MemoryStream(invisibleDwagonImageBytes, false))
                 {
@@ -188,13 +188,13 @@ namespace FRTools.Common
         {
             Bitmap dwagonImage;
             string azureUrl = $@"dragoncache\{dragon.SHA1Hash}.png";
-            var azureImageService = new AzureImageService();
+            var azureImageService = new AzureFileService();
 
             if (await azureImageService.Exists(azureUrl) != null)
             {
                 try
                 {
-                    using (var stream = await azureImageService.GetImage(azureUrl))
+                    using (var stream = await azureImageService.GetFile(azureUrl))
                         dwagonImage = (Bitmap)Image.FromStream(stream);
                     return dwagonImage;
                 }
@@ -207,7 +207,7 @@ namespace FRTools.Common
             {
                 var dwagonImageBytes = await client.DownloadDataTaskAsync(dragon.ConstructImageString() ?? string.Format(DressingRoomDummyUrl, (int)dragon.DragonType, (int)dragon.Gender));
                 using (var memStream = new MemoryStream(dwagonImageBytes, false))
-                    await azureImageService.WriteImage(azureUrl, memStream);
+                    await azureImageService.WriteFile(azureUrl, memStream);
 
                 using (var memStream = new MemoryStream(dwagonImageBytes, false))
                 {

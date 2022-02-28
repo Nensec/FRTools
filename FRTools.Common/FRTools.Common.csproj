@@ -176,7 +176,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AzureImageService.cs" />
+    <Compile Include="AzureFileService.cs" />
     <Compile Include="CodeHelpers.cs" />
     <Compile Include="DiscordHelpers.cs" />
     <Compile Include="DiscordModels.cs" />

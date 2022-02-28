@@ -9,9 +9,9 @@ using System.Web;
 
 namespace FRTools.Common
 {
-    public class AzureImageService
+    public class AzureFileService
     {
-        public async Task DeleteImage(string path)
+        public async Task DeleteFile(string path)
         {
             var container = GetStorageContainer(path);
 
@@ -23,7 +23,7 @@ namespace FRTools.Common
             }
         }
 
-        public async Task<Stream> GetImage(string path, bool cache = true)
+        public async Task<Stream> GetFile(string path, bool cache = true)
         {
             var resultStream = new MemoryStream();
 
@@ -42,7 +42,7 @@ namespace FRTools.Common
             throw new FileNotFoundException($"'{path}' was not found");
         }
 
-        public async Task<string> WriteImage(string path, Stream stream)
+        public async Task<string> WriteFile(string path, Stream stream)
         {
             var directory = GetStorageContainer(path);
 
