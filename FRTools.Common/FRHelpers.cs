@@ -376,9 +376,11 @@ namespace FRTools.Common
                     switch (item.ItemCategory)
                     {
                         case FRItemCategory.Food:
-                            item.TreasureValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText);
-                            item.FoodValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[4]").InnerText);
-                            item.FoodType = (FRFoodType)Enum.Parse(typeof(FRFoodType), item.ItemType, true);
+                            {
+                                item.TreasureValue = int.TryParse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText, out var treasureValue) ? (int?)treasureValue : null;
+                                item.FoodValue = int.TryParse(itemDoc.DocumentNode.SelectSingleNode("/div/div[4]").InnerText, out var foodValue) ? (int?)foodValue : null;
+                                item.FoodType = (FRFoodType)Enum.Parse(typeof(FRFoodType), item.ItemType, true);
+                            }
                             break;
                         case FRItemCategory.Skins:
                             item.AssetUrl = itemDoc.DocumentNode.SelectSingleNode("/div/div[2]/div/img").GetAttributeValue("src", "");
@@ -387,21 +389,29 @@ namespace FRTools.Common
                                 item.Creator = await GetOrUpdateFRUser(username.Groups[1].Value, ctx);
                             break;
                         case FRItemCategory.Equipment:
-                            item.TreasureValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText);
-                            item.AssetUrl = string.Format(DressingRoomDummyUrl, (int)DragonType.Fae, (int)Gender.Male) + $"&apparel=22046,{item.FRId}";
+                            {
+                                item.TreasureValue = int.TryParse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText, out var treasureValue) ? (int?)treasureValue : null;
+                                item.AssetUrl = string.Format(DressingRoomDummyUrl, (int)DragonType.Fae, (int)Gender.Male) + $"&apparel=22046,{item.FRId}";
+                            }
                             break;
                         case FRItemCategory.Familiar:
-                            item.TreasureValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText);
-                            item.AssetUrl = string.Format(FamiliarArtUrl, item.FRId);
+                            {
+                                item.TreasureValue = int.TryParse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText, out var treasureValue) ? (int?)treasureValue : null;
+                                item.AssetUrl = string.Format(FamiliarArtUrl, item.FRId);
+                            }
                             break;
                         case FRItemCategory.Battle_Items:
-                            item.TreasureValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText);
-                            item.RequiredLevel = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[4]/strong").InnerText);
+                            {
+                                item.TreasureValue = int.TryParse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText, out var treasureValue) ? (int?)treasureValue : null;
+                                item.RequiredLevel = int.TryParse(itemDoc.DocumentNode.SelectSingleNode("/div/div[4]/strong").InnerText, out var requiredLevelValue) ? (int?)requiredLevelValue : null;
+                            }
                             break;
                         case FRItemCategory.Trinket:
-                            item.TreasureValue = int.Parse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText);
-                            if (item.ItemType == "Scene")
-                                item.AssetUrl = string.Format(SceneArtUrl, item.FRId);
+                            {
+                                item.TreasureValue = int.TryParse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText, out var treasureValue) ? (int?)treasureValue : null;
+                                if (item.ItemType == "Scene")
+                                    item.AssetUrl = string.Format(SceneArtUrl, item.FRId);
+                            }
                             break;
                     }
 

@@ -41,6 +41,7 @@ namespace FRTools.MS.ItemFetcher
             }
             else
                 Console.WriteLine($"No last run found, max tries is {maxTries} attempts");
+
             _serviceBus = new QueueClient(ConfigurationManager.AppSettings["AzureSBConnString"], ConfigurationManager.AppSettings["AzureSBQueueName"]);
             await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new GenericMessage(MessageCategory.ItemFetcher, "Started")))));
 
@@ -66,7 +67,6 @@ namespace FRTools.MS.ItemFetcher
                 }
 
                 Console.WriteLine($"Done for now, saving {count} items.");
-                await ctx.SaveChangesAsync();
 
                 if (count > 0)
                 {
@@ -84,6 +84,22 @@ namespace FRTools.MS.ItemFetcher
                     Console.WriteLine($"Since skins were found, saving last success at {DateTime.UtcNow}");
                 }
             }
+
+            if (DateTime.UtcNow.Date.Day == DateTime.DaysInMonth(DateTime.UtcNow.Year, DateTime.UtcNow.Month) && DateTime.UtcNow.Hour == 23 && DateTime.UtcNow.Minute >= 45)
+            {
+                Console.WriteLine("Once a month checking for missing ids");
+                using(var ctx = new DataContext())
+                {
+                    var missingIds = ctx.Database.SqlQuery<int>("SELECT FRId + 1 FROM FRItems [first] WHERE NOT EXISTS (SELECT NULL FROM FRItems [second] WHERE [second].FRId = [first].FRId + 1) ORDER BY FRId").ToList();
+                    foreach(var missingId in missingIds)
+                    {
+                        var item = await FRHelpers.FetchItem(missingId);
+                        if (item != null)
+                            await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NewItemMessage(MessageCategory.ItemFetcher, item)))));
+                    }
+                }
+            }
+
             await _serviceBus.CloseAsync();
         }
     }
