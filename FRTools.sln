@@ -55,6 +55,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owin.Security.Providers.Dis
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools.MS.LogCleaner", "FRTools.MS.LogCleaner\FRTools.MS.LogCleaner.csproj", "{CFA57000-5DC6-4483-B0B5-CC25CEF49B16}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FRTools.MaskGenerator", "FRTools.MaskGenerator\FRTools.MaskGenerator.csproj", "{A3F75051-FE4D-4990-A0F1-15940661A105}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +131,10 @@ Global
 		{CFA57000-5DC6-4483-B0B5-CC25CEF49B16}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFA57000-5DC6-4483-B0B5-CC25CEF49B16}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CFA57000-5DC6-4483-B0B5-CC25CEF49B16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3F75051-FE4D-4990-A0F1-15940661A105}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3F75051-FE4D-4990-A0F1-15940661A105}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3F75051-FE4D-4990-A0F1-15940661A105}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3F75051-FE4D-4990-A0F1-15940661A105}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -146,6 +152,7 @@ Global
 		{979C29D0-FFB9-40A2-8DD5-ED75566326F8} = {6FF57E80-6712-4E3A-812A-4BE1D09285EB}
 		{4BE728EB-778A-41AF-8DEA-0C7159711D44} = {4E4FCD45-DAFF-4095-8271-177D18ADA256}
 		{CFA57000-5DC6-4483-B0B5-CC25CEF49B16} = {6FF57E80-6712-4E3A-812A-4BE1D09285EB}
+		{A3F75051-FE4D-4990-A0F1-15940661A105} = {717F4F05-C6A5-43BE-9C81-4B25A18B9955}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {394695AE-5734-4F1A-96A2-774FEB7DF305}
