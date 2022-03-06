@@ -41,149 +41,42 @@ namespace FRTools.Discord.Modules
             var lookingUpMessage = await ReplyAsync($"Looking up dragon {id}, gimme a moment..");
 
             var client = new HtmlWeb();
-            var dragonProfileDoc = client.Load(string.Format(FRHelpers.DragonProfileUrl, id));
-
-            if (dragonProfileDoc.GetElementbyId("error-404") != null)
+            try
             {
-                await lookingUpMessage.ModifyAsync(x => x.Content = "This dragon does not exist");
-                return;
-            }
-            var isExalted = dragonProfileDoc.GetElementbyId("exalted-content") != null;
+                var dragonProfileDoc = client.Load(string.Format(FRHelpers.DragonProfileUrl, id));
 
-            var imageHideReason = "Display of dragon images is disabled in bot settings";
-            bool.TryParse(await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGES", Context.Guild), out var showImages);
+                if (dragonProfileDoc.GetElementbyId("error-404") != null)
+                {
+                    await lookingUpMessage.ModifyAsync(x => x.Content = "This dragon does not exist");
+                    return;
+                }
+                var isExalted = dragonProfileDoc.GetElementbyId("exalted-content") != null;
 
-            var embed = new EmbedBuilder()
-                .WithUrl(string.Format(FRHelpers.DragonProfileUrl, id));
+                var imageHideReason = "Display of dragon images is disabled in bot settings";
+                bool.TryParse(await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGES", Context.Guild), out var showImages);
 
-            if (showImages)
-            {
-                embed.WithThumbnailUrl($"attachment://{id}_350.png")
-                    .WithImageUrl($"attachment://{id}_350.png");
-            }
-
-            if (isExalted)
-            {
-                var name = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""content""]/div/div[2]/div/div/div[2]/span").InnerHtml;
-                var exaltedToFlight = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""exalted-content""]/div/div[2]/div/p[1]/strong[2]").InnerHtml;
-
-                embed.Title = name;
-                embed.Description = $"**{name}** has been exalted to the {FRHelpers.GetFlightFromGodName(exaltedToFlight)} flight.\nThe only info available is lineage.";
-
-                var parentsField = new EmbedFieldBuilder().WithName("Parents").WithIsInline(true);
-                var siblingsField = new EmbedFieldBuilder().WithName("Offspring").WithIsInline(true);
-
-                var parentsNodes = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""exalted-content""]/div/div[2]/div/fieldset/div/ul[1]").SelectNodes("li");
-                var siblingsNodes = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""exalted-content""]/div/div[2]/div/fieldset/div/ul[2]").SelectNodes("li");
-
-                if (parentsNodes[0].FirstChild.Name == "em")
-                    parentsField.Value = "_none_";
-                else
-                    parentsField.Value = string.Join("\n", parentsNodes.Select(x => $"[{x.FirstChild.InnerHtml}]({x.FirstChild.Attributes["href"].Value})"));
-
-                if (siblingsNodes[0].FirstChild.Name == "em")
-                    siblingsField.Value = "_none_";
-                else
-                    if (siblingsNodes.Count <= 5)
-                    siblingsField.Value = string.Join("\n", siblingsNodes.Select(x => $"[{x.FirstChild.InnerHtml}]({x.FirstChild.Attributes["href"].Value})"));
-                else
-                    siblingsField.Value = string.Join("\n", siblingsNodes.Take(5).Select(x => $"[{x.FirstChild.InnerHtml}]({x.FirstChild.Attributes["href"].Value})")) + $"\n_{siblingsNodes.Count - 5} more.._";
-
-                embed.AddField(parentsField);
-                embed.AddField(siblingsField);
-            }
-            else
-            {
-                var name = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-header""]/div[1]/span[1]").InnerHtml;
-                var ownerNode = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""content""]/div/div[2]/div/div/div[2]/a[1]");
-                var level = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-battle""]/div[1]/strong").InnerText.Replace("&infin;", "∞");
-
-                var eggbreakday = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-physical""]/div/div[2]/div[1]/div/div/div[2]/strong").InnerText;
-                var dragonAge = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-physical""]/div/div[2]/div[2]/div/div/div[2]").ChildNodes[0].InnerText.Replace("\\n", "").Trim().ToLower();
-                var dragonBreed = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-physical""]/div/div[2]/div[2]/div/div/div[2]/strong").InnerText;
-
-                var badges = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-secondary""]/div[2]/div[3]").ChildNodes.Nodes().Where(x => x.Name == "img");
-                var gender = badges.First(x => x.ParentNode.Attributes.FirstOrDefault(a => a.Name == "data-tooltip-source")?.Value == "#dragon-profile-icon-sex-tooltip").Attributes["src"].Value.EndsWith("female.png") ? "female" : "male";
-                var permaBaby = badges.Any(x => x.Attributes["src"].Value.EndsWith("eternal-youth.png"));
-
-                embed.Title = name;
-                embed.Description = $"**{name}** is a level {level}, {(permaBaby ? "**eternal youth**" : dragonAge)} {gender} {dragonBreed} in [{ownerNode.InnerHtml}]({ownerNode.Attributes["href"].Value})'{(ownerNode.InnerHtml.EndsWith("s") ? "" : "s")} lair.";
-
-                var eyeColor = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-physical""]/div/div[2]/div[3]/div/div/div[2]").ChildNodes[0].InnerText.Replace("\\n", "").Trim();
-                var eyeType = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-physical""]/div/div[2]/div[3]/div/div/div[2]/strong").InnerText;
-
-                embed.AddField(x => x.WithIsInline(true).WithName("General info").WithValue($"**Eye type:** {eyeColor} {eyeType}\n**Eggday:** {eggbreakday}\n**ID:** {id}"));
-
-                var frPrimaryGene = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-primary-gene""]").FirstChild.InnerText.Trim();
-                var frPrimaryColor = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-primary-gene""]/strong").InnerText.Trim();
-                var frSecondaryGene = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-secondary-gene""]").FirstChild.InnerText.Trim();
-                var frSecondaryColor = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-secondary-gene""]/strong").InnerText.Trim();
-                var frTertiaryGene = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-tertiary-gene""]").FirstChild.InnerText.Trim();
-                var frTertiaryColor = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-tertiary-gene""]/strong").InnerText.Trim();
+                var embed = new EmbedBuilder()
+                    .WithUrl(string.Format(FRHelpers.DragonProfileUrl, id));
 
                 if (showImages)
                 {
-                    var primaryGeneSanitized = frPrimaryGene.Split(' ').First();
-                    var secondaryGeneSanitized = frSecondaryGene.Split(' ').First();
-                    var tertiaryGeneSanitized = frTertiaryGene.Split(' ').First();
-
-                    var allowedPrimaryGenes = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_PRIMARY_GENES", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(AllBodyGene), x));
-                    var allowedSecondaryGenes = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_SECONDARY_GENES", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(AllWingGene), x));
-                    var allowedTertiaryGenes = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_TERTIARY_GENES", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(AllTertiaryGene), x));
-
-                    var allowedPrimaryColors = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_PRIMARY_COLORS", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(Data.Color), x));
-                    var allowedSecondaryColors = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_SECONDARY_COLORS", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(Data.Color), x));
-                    var allowedTertiaryColors = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_TERTIARY_COLORS", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(Data.Color), x));
-
-                    var dragonType = (DragonType)Enum.Parse(typeof(DragonType), dragonBreed);
-
-                    if ((Enum.TryParse<AllBodyGene>(primaryGeneSanitized, out var primaryGene) || (dragonType.IsAncientBreed() && Enum.TryParse($"{dragonType}_{primaryGeneSanitized}", out primaryGene))) && !allowedPrimaryGenes.Contains(primaryGene))
-                    {
-                        showImages = false;
-                        imageHideReason = $"Display of this image is disabled in bot settings due to it containing the primary gene **{frPrimaryGene}**";
-                    }
-                    else if ((Enum.TryParse<AllWingGene>(secondaryGeneSanitized, out var secondaryGene) || (dragonType.IsAncientBreed() && Enum.TryParse($"{dragonType}_{secondaryGeneSanitized}", out secondaryGene)))  && !allowedSecondaryGenes.Contains(secondaryGene))
-                    {
-                        showImages = false;
-                        imageHideReason = $"Display of this image is disabled in bot settings due to it containing the secondary gene **{frSecondaryGene}**";
-                    }
-                    else if ((Enum.TryParse<AllTertiaryGene>(tertiaryGeneSanitized, out var tertiaryGene) || (dragonType.IsAncientBreed() && Enum.TryParse($"{dragonType}_{tertiaryGeneSanitized}", out tertiaryGene))) && !allowedTertiaryGenes.Contains(tertiaryGene))
-                    {
-                        showImages = false;
-                        imageHideReason = $"Display of this image is disabled in bot settings due to it containing the tertiary gene **{frTertiaryGene}**";
-                    }
-                    else if (Enum.TryParse<Data.Color>(frPrimaryColor, out var primaryColor) && !allowedPrimaryColors.Contains(primaryColor))
-                    {
-                        showImages = false;
-                        imageHideReason = $"Display of this image is disabled in bot settings due to it containing the primary color **{primaryColor}**";
-                    }
-                    else if (Enum.TryParse<Data.Color>(frSecondaryColor, out var secondaryColor) && !allowedSecondaryColors.Contains(secondaryColor))
-                    {
-                        showImages = false;
-                        imageHideReason = $"Display of this image is disabled in bot settings due to it containing the secondary color **{secondaryColor}**";
-                    }
-                    else if (Enum.TryParse<Data.Color>(frTertiaryColor, out var tertiaryColor) && !allowedTertiaryColors.Contains(tertiaryColor))
-                    {
-                        showImages = false;
-                        imageHideReason = $"Display of this image is disabled in bot settings due to it containing the tertiary color **{tertiaryColor}**";
-                    }
+                    embed.WithThumbnailUrl($"attachment://{id}_350.png")
+                        .WithImageUrl($"attachment://{id}_350.png");
                 }
 
-                if (!showImages)
-                    embed.AddField(x => x.WithIsInline(true).WithName("\u200B").WithValue("\u200B"));
-                embed.AddField(x => x.WithIsInline(true).WithName("Genetics").WithValue($"**Primary:** {frPrimaryColor} {frPrimaryGene}\n**Secondary:** {frSecondaryColor} {frSecondaryGene}\n**Tertiary:** {frTertiaryColor} {frTertiaryGene}\n"));
-
-                var parentsField = new EmbedFieldBuilder().WithName("Parents").WithIsInline(true);
-                var siblingsField = new EmbedFieldBuilder().WithName("Offspring").WithIsInline(true);
-
-                if (dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-details-lineage""]/div/div") != null)
+                if (isExalted)
                 {
-                    embed.AddField(x => x.WithIsInline(true).WithName("God").WithValue("This is one of the **eleven elemental deities**; it has no parents or offspring."));
-                }
-                else
-                {
-                    var parentsNodes = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-details-lineage""]/div/ul[1]").SelectNodes("li");
-                    var siblingsNodes = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-details-lineage""]/div/ul[2]").SelectNodes("li");
+                    var name = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""content""]/div/div[2]/div/div/div[2]/span").InnerHtml;
+                    var exaltedToFlight = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""exalted-content""]/div/div[2]/div/p[1]/strong[2]").InnerHtml;
+
+                    embed.Title = name;
+                    embed.Description = $"**{name}** has been exalted to the {FRHelpers.GetFlightFromGodName(exaltedToFlight)} flight.\nThe only info available is lineage.";
+
+                    var parentsField = new EmbedFieldBuilder().WithName("Parents").WithIsInline(true);
+                    var siblingsField = new EmbedFieldBuilder().WithName("Offspring").WithIsInline(true);
+
+                    var parentsNodes = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""exalted-content""]/div/div[2]/div/fieldset/div/ul[1]").SelectNodes("li");
+                    var siblingsNodes = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""exalted-content""]/div/div[2]/div/fieldset/div/ul[2]").SelectNodes("li");
 
                     if (parentsNodes[0].FirstChild.Name == "em")
                         parentsField.Value = "_none_";
@@ -193,40 +86,158 @@ namespace FRTools.Discord.Modules
                     if (siblingsNodes[0].FirstChild.Name == "em")
                         siblingsField.Value = "_none_";
                     else
-                    {
                         if (siblingsNodes.Count <= 5)
-                            siblingsField.Value = string.Join("\n", siblingsNodes.Select(x => $"[{x.FirstChild.InnerHtml}]({x.FirstChild.Attributes["href"].Value})"));
-                        else
-                            siblingsField.Value = string.Join("\n", siblingsNodes.Take(5).Select(x => $"[{x.FirstChild.InnerHtml}]({x.FirstChild.Attributes["href"].Value})")) + $"\n_{siblingsNodes.Count - 5} more.._";
-                    }
+                        siblingsField.Value = string.Join("\n", siblingsNodes.Select(x => $"[{x.FirstChild.InnerHtml}]({x.FirstChild.Attributes["href"].Value})"));
+                    else
+                        siblingsField.Value = string.Join("\n", siblingsNodes.Take(5).Select(x => $"[{x.FirstChild.InnerHtml}]({x.FirstChild.Attributes["href"].Value})")) + $"\n_{siblingsNodes.Count - 5} more.._";
 
                     embed.AddField(parentsField);
-                    if (!showImages)
-                        embed.AddField(x => x.WithIsInline(true).WithName("\u200B").WithValue("\u200B"));
                     embed.AddField(siblingsField);
                 }
-            }
-
-            if (Context.AutomatedCommand)
-                embed.WithFooter("This command was executed automatically. Don't want this? Have an administrator change the settings.");
-
-            if (!showImages)
-            {
-                embed.AddField("Image", $"[{imageHideReason}, click here to open image]({FRHelpers.GetRenderUrl(id)})");
-            }
-
-            if (showImages)
-            {
-                using (var webClient = new WebClient())
+                else
                 {
-                    var dragonImage = webClient.OpenRead(FRHelpers.GetRenderUrl(id));
-                    await Context.Channel.SendFileAsync(dragonImage, $"{id}_350.png", embed: embed.Build());
-                }
-            }
-            else
-                await Context.Channel.SendMessageAsync(embed: embed.Build());
+                    var name = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-header""]/div[1]/span[1]").InnerHtml;
+                    var ownerNode = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""content""]/div/div[2]/div/div/div[2]/a[1]");
+                    var level = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-battle""]/div[1]/strong").InnerText.Replace("&infin;", "∞");
 
-            await lookingUpMessage.DeleteAsync();
+                    var eggbreakday = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-physical""]/div/div[2]/div[1]/div/div/div[2]/strong").InnerText;
+                    var dragonAge = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-physical""]/div/div[2]/div[2]/div/div/div[2]").ChildNodes[0].InnerText.Replace("\\n", "").Trim().ToLower();
+                    var dragonBreed = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-physical""]/div/div[2]/div[2]/div/div/div[2]/strong").InnerText;
+
+                    var badges = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-secondary""]/div[2]/div[3]").ChildNodes.Nodes().Where(x => x.Name == "img");
+                    var gender = badges.First(x => x.ParentNode.Attributes.FirstOrDefault(a => a.Name == "data-tooltip-source")?.Value == "#dragon-profile-icon-sex-tooltip").Attributes["src"].Value.EndsWith("female.png") ? "female" : "male";
+                    var permaBaby = badges.Any(x => x.Attributes["src"].Value.EndsWith("eternal-youth.png"));
+
+                    embed.Title = name;
+                    embed.Description = $"**{name}** is a level {level}, {(permaBaby ? "**eternal youth**" : dragonAge)} {gender} {dragonBreed} in [{ownerNode.InnerHtml}]({ownerNode.Attributes["href"].Value})'{(ownerNode.InnerHtml.EndsWith("s") ? "" : "s")} lair.";
+
+                    var eyeColor = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-physical""]/div/div[2]/div[3]/div/div/div[2]").ChildNodes[0].InnerText.Replace("\\n", "").Trim();
+                    var eyeType = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-physical""]/div/div[2]/div[3]/div/div/div[2]/strong").InnerText;
+
+                    embed.AddField(x => x.WithIsInline(true).WithName("General info").WithValue($"**Eye type:** {eyeColor} {eyeType}\n**Eggday:** {eggbreakday}\n**ID:** {id}"));
+
+                    var frPrimaryGene = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-primary-gene""]").FirstChild.InnerText.Trim();
+                    var frPrimaryColor = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-primary-gene""]/strong").InnerText.Trim();
+                    var frSecondaryGene = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-secondary-gene""]").FirstChild.InnerText.Trim();
+                    var frSecondaryColor = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-secondary-gene""]/strong").InnerText.Trim();
+                    var frTertiaryGene = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-tertiary-gene""]").FirstChild.InnerText.Trim();
+                    var frTertiaryColor = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-tertiary-gene""]/strong").InnerText.Trim();
+
+                    if (showImages)
+                    {
+                        var primaryGeneSanitized = frPrimaryGene.Split(' ').First();
+                        var secondaryGeneSanitized = frSecondaryGene.Split(' ').First();
+                        var tertiaryGeneSanitized = frTertiaryGene.Split(' ').First();
+
+                        var allowedPrimaryGenes = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_PRIMARY_GENES", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(AllBodyGene), x));
+                        var allowedSecondaryGenes = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_SECONDARY_GENES", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(AllWingGene), x));
+                        var allowedTertiaryGenes = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_TERTIARY_GENES", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(AllTertiaryGene), x));
+
+                        var allowedPrimaryColors = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_PRIMARY_COLORS", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(Data.Color), x));
+                        var allowedSecondaryColors = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_SECONDARY_COLORS", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(Data.Color), x));
+                        var allowedTertiaryColors = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_TERTIARY_COLORS", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(Data.Color), x));
+
+                        var dragonType = (DragonType)Enum.Parse(typeof(DragonType), dragonBreed);
+
+                        if ((Enum.TryParse<AllBodyGene>(primaryGeneSanitized, out var primaryGene) || (dragonType.IsAncientBreed() && Enum.TryParse($"{dragonType}_{primaryGeneSanitized}", out primaryGene))) && !allowedPrimaryGenes.Contains(primaryGene))
+                        {
+                            showImages = false;
+                            imageHideReason = $"Display of this image is disabled in bot settings due to it containing the primary gene **{frPrimaryGene}**";
+                        }
+                        else if ((Enum.TryParse<AllWingGene>(secondaryGeneSanitized, out var secondaryGene) || (dragonType.IsAncientBreed() && Enum.TryParse($"{dragonType}_{secondaryGeneSanitized}", out secondaryGene))) && !allowedSecondaryGenes.Contains(secondaryGene))
+                        {
+                            showImages = false;
+                            imageHideReason = $"Display of this image is disabled in bot settings due to it containing the secondary gene **{frSecondaryGene}**";
+                        }
+                        else if ((Enum.TryParse<AllTertiaryGene>(tertiaryGeneSanitized, out var tertiaryGene) || (dragonType.IsAncientBreed() && Enum.TryParse($"{dragonType}_{tertiaryGeneSanitized}", out tertiaryGene))) && !allowedTertiaryGenes.Contains(tertiaryGene))
+                        {
+                            showImages = false;
+                            imageHideReason = $"Display of this image is disabled in bot settings due to it containing the tertiary gene **{frTertiaryGene}**";
+                        }
+                        else if (Enum.TryParse<Data.Color>(frPrimaryColor, out var primaryColor) && !allowedPrimaryColors.Contains(primaryColor))
+                        {
+                            showImages = false;
+                            imageHideReason = $"Display of this image is disabled in bot settings due to it containing the primary color **{primaryColor}**";
+                        }
+                        else if (Enum.TryParse<Data.Color>(frSecondaryColor, out var secondaryColor) && !allowedSecondaryColors.Contains(secondaryColor))
+                        {
+                            showImages = false;
+                            imageHideReason = $"Display of this image is disabled in bot settings due to it containing the secondary color **{secondaryColor}**";
+                        }
+                        else if (Enum.TryParse<Data.Color>(frTertiaryColor, out var tertiaryColor) && !allowedTertiaryColors.Contains(tertiaryColor))
+                        {
+                            showImages = false;
+                            imageHideReason = $"Display of this image is disabled in bot settings due to it containing the tertiary color **{tertiaryColor}**";
+                        }
+                    }
+
+                    if (!showImages)
+                        embed.AddField(x => x.WithIsInline(true).WithName("\u200B").WithValue("\u200B"));
+                    embed.AddField(x => x.WithIsInline(true).WithName("Genetics").WithValue($"**Primary:** {frPrimaryColor} {frPrimaryGene}\n**Secondary:** {frSecondaryColor} {frSecondaryGene}\n**Tertiary:** {frTertiaryColor} {frTertiaryGene}\n"));
+
+                    var parentsField = new EmbedFieldBuilder().WithName("Parents").WithIsInline(true);
+                    var siblingsField = new EmbedFieldBuilder().WithName("Offspring").WithIsInline(true);
+
+                    if (dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-details-lineage""]/div/div") != null)
+                    {
+                        embed.AddField(x => x.WithIsInline(true).WithName("God").WithValue("This is one of the **eleven elemental deities**; it has no parents or offspring."));
+                    }
+                    else
+                    {
+                        var parentsNodes = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-details-lineage""]/div/ul[1]").SelectNodes("li");
+                        var siblingsNodes = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-details-lineage""]/div/ul[2]").SelectNodes("li");
+
+                        if (parentsNodes[0].FirstChild.Name == "em")
+                            parentsField.Value = "_none_";
+                        else
+                            parentsField.Value = string.Join("\n", parentsNodes.Select(x => $"[{x.FirstChild.InnerHtml}]({x.FirstChild.Attributes["href"].Value})"));
+
+                        if (siblingsNodes[0].FirstChild.Name == "em")
+                            siblingsField.Value = "_none_";
+                        else
+                        {
+                            if (siblingsNodes.Count <= 5)
+                                siblingsField.Value = string.Join("\n", siblingsNodes.Select(x => $"[{x.FirstChild.InnerHtml}]({x.FirstChild.Attributes["href"].Value})"));
+                            else
+                                siblingsField.Value = string.Join("\n", siblingsNodes.Take(5).Select(x => $"[{x.FirstChild.InnerHtml}]({x.FirstChild.Attributes["href"].Value})")) + $"\n_{siblingsNodes.Count - 5} more.._";
+                        }
+
+                        embed.AddField(parentsField);
+                        if (!showImages)
+                            embed.AddField(x => x.WithIsInline(true).WithName("\u200B").WithValue("\u200B"));
+                        embed.AddField(siblingsField);
+                    }
+                }
+
+
+                if (Context.AutomatedCommand)
+                    embed.WithFooter("This command was executed automatically. Don't want this? Have an administrator change the settings.");
+
+                if (!showImages)
+                {
+                    embed.AddField("Image", $"[{imageHideReason}, click here to open image]({FRHelpers.GetRenderUrl(id)})");
+                }
+
+                if (showImages)
+                {
+                    using (var webClient = new WebClient())
+                    {
+                        var dragonImage = webClient.OpenRead(FRHelpers.GetRenderUrl(id));
+                        await Context.Channel.SendFileAsync(dragonImage, $"{id}_350.png", embed: embed.Build());
+                    }
+                }
+                else
+                    await Context.Channel.SendMessageAsync(embed: embed.Build());
+            }
+            catch
+            {
+                await ReplyAsync("Something went wrong parsing the dragon's profile page, maybe something changed on the page and I need to be updated. Please let <@107155889563115520> know!");
+                return;
+            }
+            finally
+            {
+                await lookingUpMessage.DeleteAsync();
+            }
         }
 
         [Group("item"), Name("Item"), Alias("i")]
