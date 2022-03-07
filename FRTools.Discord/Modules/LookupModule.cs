@@ -116,12 +116,12 @@ namespace FRTools.Discord.Modules
 
                     embed.AddField(x => x.WithIsInline(true).WithName("General info").WithValue($"**Eye type:** {eyeColor} {eyeType}\n**Eggday:** {eggbreakday}\n**ID:** {id}"));
 
-                    var frPrimaryGene = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-primary-gene""]/strong").FirstChild.InnerText.Trim();
-                    var frPrimaryColor = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-primary-gene""]").InnerText.Trim();
-                    var frSecondaryGene = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-secondary-gene""]/strong").FirstChild.InnerText.Trim();
-                    var frSecondaryColor = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-secondary-gene""]").InnerText.Trim();
-                    var frTertiaryGene = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-tertiary-gene""]/strong").FirstChild.InnerText.Trim();
-                    var frTertiaryColor = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-tertiary-gene""]").InnerText.Trim();
+                    var frPrimaryGene = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-primary-gene""]/strong").InnerText.Trim();
+                    var frPrimaryColor = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-primary-gene""]").FirstChild.InnerText.Trim();
+                    var frSecondaryGene = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-secondary-gene""]/strong").InnerText.Trim();
+                    var frSecondaryColor = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-secondary-gene""]").FirstChild.InnerText.Trim();
+                    var frTertiaryGene = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-tertiary-gene""]/strong").InnerText.Trim();
+                    var frTertiaryColor = dragonProfileDoc.DocumentNode.SelectSingleNode(@"//*[@id=""dragon-profile-tertiary-gene""]").FirstChild.InnerText.Trim();
 
                     if (showImages)
                     {
