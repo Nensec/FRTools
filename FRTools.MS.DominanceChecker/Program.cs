@@ -6,16 +6,14 @@ using FRTools.Common.Jobs;
 using FRTools.Data;
 using FRTools.Data.DataModels.FlightRisingModels;
 using FRTools.Data.Messages;
+using HtmlAgilityPack;
 using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace FRTools.MS.DominanceChecker
@@ -32,29 +30,16 @@ namespace FRTools.MS.DominanceChecker
             {
                 try
                 {
+                    var client = new HtmlWeb();
+                    var domTexts = client.Load("https://www1.flightrising.com/dominance").DocumentNode.QuerySelectorAll("#domtext > div");
+
                     Flight[] positions = new Flight[3];
                     for (var i = 0; i <= 2; i++)
                     {
-                        var request = (HttpWebRequest)WebRequest.Create("https://flightrising.com/includes/ol/dom_text.php");
-                        var data = Encoding.ASCII.GetBytes($"position={i + 1}");
-                        request.Method = "POST";
-                        request.ContentType = "application/x-www-form-urlencoded";
-                        request.ContentLength = data.Length;
-
-                        using (var stream = request.GetRequestStream())
-                            stream.Write(data, 0, data.Length);
-
-                        var response = (HttpWebResponse)request.GetResponse();
-
-                        using (var streamReader = new StreamReader(response.GetResponseStream()))
-                        {
-                            var responseString = streamReader.ReadToEnd();
-
-                            var parse = Regex.Match(responseString, @"<span[\s\S]*>([a-zA-Z]+)</span>");
-                            positions[i] = (Flight)Enum.Parse(typeof(Flight), parse.Groups[1].Value);
-                            Console.WriteLine($"Position: {i + 1} = {positions[i]}");
-                        }
+                        positions[i] = (Flight)Enum.Parse(typeof(Flight), domTexts[i].QuerySelector(".domglow").InnerText);
+                        Console.WriteLine($"{i + 1}: {positions[i]}");
                     }
+
                     using (var ctx = new DataContext())
                     {
                         var previousDom = ctx.FRDominances.OrderByDescending(x => x.Timestamp).FirstOrDefault();
@@ -70,40 +55,28 @@ namespace FRTools.MS.DominanceChecker
                             ConfigurationManager.AppSettings["TumblrOAuthToken"],
                             ConfigurationManager.AppSettings["TumblrOAuthSecret"])))
                             {
-                                var body = $"Dominance has been calculated and the winner of this week is <b>{positions[0]}</b>!";
-
-                                body += "</br>";
-                                body += "</br>";
-                                body += "The top 3 standings were as follows:";
+                                var body = $"<p>Dominance has been calculated and the winner of this week is <b>{positions[0]}</b>!</p>";
+                                body += "<p>The top 3 standings were as follows:";
                                 body += "<ol>";
                                 body += $"<li>{positions[0]}</li>";
                                 body += $"<li>{positions[1]}</li>";
                                 body += $"<li>{positions[2]}</li>";
-                                body += "</ol>";
-
-                                body += "</br>";
-                                body += "</br>";
+                                body += "</ol></p>";
 
                                 if (positions[0] != Flight.Beastclans)
                                 {
-                                    body += "First place gets a nice 15% discount on the treasure market place and a 5% discount on lair upgrades.";
-                                    body += "</br>Additionally, they get +1500 treasure a day and +3 gathering turns.";
+                                    body += "<p>First place gets a nice 15% discount on the treasure market place and a 5% discount on lair upgrades. Additionally, they get +1500 treasure a day and +3 gathering turns.</p>";
                                 }
                                 else
                                 {
-                                    body += "Wait.. Beastclans won!? Why did Earth not win at least..?";
-                                    body += "</br>Alright.. well, instead of first place we'll just list the second place benefits then I suppose..";
-
-                                    body += "</br>";
-                                    body += "</br>";
-
-                                    body += "Second place gets a nice 7% discount on the treasure market place and a 1% discount on lair upgrades..";
-                                    body += "</br>They also get +750 treasure a day and +2 gathering turns..";
+                                    body += "<p>Wait.. Beastclans won!? Why did Earth not win at least..? Alright.. well, instead of first place we'll just list the second place benefits then I suppose..<br/>";
+                                    body += "Second place gets a nice 7% discount on the treasure market place and a 1% discount on lair upgrades..<br/>";
+                                    body += "They also get +750 treasure a day and +2 gathering turns..</p>";
                                 }
 
                                 var tags = new List<string> { "frtools", "fr tools", "flight rising", "flightrising", "fr", "dominance", positions[0].ToString(), positions[1].ToString(), positions[2].ToString() };
 
-                                var post = PostData.CreateText(body, $"Congratulations to {positions[0]}!", tags);
+                                var post = PostData.CreateText(body, $"Congratulations to {positions[0]}!", tags, PostCreationState.Private);
                                 await tumblrClient.CreatePostAsync("frtools", post);
                             }
 
