@@ -76,7 +76,7 @@ namespace FRTools.MS.DominanceChecker
 
                                 var tags = new List<string> { "frtools", "fr tools", "flight rising", "flightrising", "fr", "dominance", positions[0].ToString(), positions[1].ToString(), positions[2].ToString() };
 
-                                var post = PostData.CreateText(body, $"Congratulations to {positions[0]}!", tags, PostCreationState.Private);
+                                var post = PostData.CreateText(body, $"Congratulations to {positions[0]}!", tags);
                                 await tumblrClient.CreatePostAsync("frtools", post);
                             }
 
