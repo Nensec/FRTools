@@ -146,6 +146,9 @@ namespace FRTools.Common
             if ((regexParse = Regex.Match(dragonUrl, @"apparel=([\d,]*)")).Success)
                 dragon.Apparel = regexParse.Groups[1].Value;
 
+            if ((regexParse = Regex.Match(dragonUrl, @"skin=([\d]*)")).Success)
+                dragon.Skin = int.Parse(regexParse.Groups[1].Value);
+
             return dragon;
         }
 

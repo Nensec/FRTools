@@ -55,6 +55,15 @@ namespace FRTools.Web.Controllers
                 TempData["Error"] += error;
             }
         }
+        protected void AddWarningNotification(string info)
+        {
+            if (info != null)
+            {
+                if (!string.IsNullOrEmpty(TempData["Warning"] as string))
+                    TempData["Warning"] += "<br/>";
+                TempData["Warning"] += info;
+            }
+        }
 
         protected void AddInfoNotification(string info)
         {

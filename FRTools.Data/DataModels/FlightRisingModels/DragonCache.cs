@@ -24,6 +24,8 @@ namespace FRTools.Data.DataModels.FlightRisingModels
         public Age Age { get; set; } = Age.Dragon;
         [NotMapped]
         public string Apparel { get; set; }
+        [NotMapped]
+        public int? Skin { get; set; }
         [StringLength(40)]
         [Index]
         public string SHA1Hash { get; set; }

@@ -1,5 +1,4 @@
 ﻿using FRTools.Common;
-using FRTools.Web.Infrastructure;
 using FRTools.Web.Models;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -39,6 +38,9 @@ namespace FRTools.Web.Controllers
                 AddErrorNotification($"The genders of the two images do not match. Scryer image is a <b>{scryerDragon.Gender}</b> while the dressing room is a <b>{dressingRoomDragon.Gender}</b>!");
                 return RedirectToRoute("ScryerDresser");
             }
+
+            if (dressingRoomDragon.Skin.HasValue)
+                AddWarningNotification("The dressing room image you picked had a skin selected. Skins are not supported due to the process of how the end result is generated in this tool, namely Marva's Cloak hiding the dragon and thus the skin. The end result might not be what you expect.");
 
             var azureImageService = new AzureFileService();
 
