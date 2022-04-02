@@ -1,7 +1,7 @@
 ﻿@model PreviewModelViewModel
 
 @{
-    
+
     ViewBag.Title = "Preview";
 }
 
@@ -78,6 +78,13 @@
         <div class="card mt-3">
             <div class="card-body">
                 <div class="text-center">
+                    @if (Model.DragonType == DragonType.Aberration)
+                    {
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            Aberration dressing room dummy's are currently too big, the actual preview on your dragon/scry will not show the fringing you see below. <a href="https://frtools.tumblr.com/post/678240236765118464/flightrising-also-has-the-exact-same-issue-the">More info here.</a>
+                        </div>
+                    }
                     <img class="img-fluid" src="@(Model.CDNBasePath + Model.PreviewUrl)" />
                 </div>
             </div>
