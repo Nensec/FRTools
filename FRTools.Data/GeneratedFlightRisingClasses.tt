@@ -269,6 +269,7 @@ namespace FRTools.Data
 	#>
 	[Description("<#= gene.Name #>")]
 		[Order(<#= bodyGeneCounter #>)]
+		[Gene(<#= string.Join(", ", page.Breeds.Where(x => x.Type == "modern" || gene.Value == 0).Select(x => $"DragonType.{x.Name}")) #>)]
 		<#= gene.Name.Replace(" ", "") #> = <#= gene.Value #>,		
 	<#
 	bodyGeneCounter++;
@@ -282,6 +283,7 @@ namespace FRTools.Data
 	#>
 	[Description("<#= ancientGene.Name #>")]
 		[Order(<#= bodyGeneCounter #>)]
+		[Gene(<#= $"DragonType.{breed.Name}" #>)]
 		<#= $"{breed.Name}_{ancientGene.Name.Replace($" ({breed.Name})", "").Replace(" ", "")}" #> = <#= ancientGene.Value #>,
 	<#
 	bodyGeneCounter++;
@@ -334,6 +336,7 @@ namespace FRTools.Data
 	#>
 	[Description("<#= gene.Name #>")]
 		[Order(<#= wingGeneCounter #>)]
+		[Gene(<#= string.Join(", ", page.Breeds.Where(x => x.Type == "modern" || gene.Value == 0).Select(x => $"DragonType.{x.Name}")) #>)]
 		<#= gene.Name.Replace(" ", "") #> = <#= gene.Value #>,
 	<#
 	wingGeneCounter++;
@@ -348,6 +351,7 @@ namespace FRTools.Data
 	#>
 	[Description("<#= ancientGene.Name #>")]
 		[Order(<#= wingGeneCounter #>)]
+		[Gene(<#= $"DragonType.{breed.Name}" #>)]
 		<#= $"{breed.Name}_{ancientGene.Name.Replace($" ({breed.Name})", "").Replace(" ", "")}" #> = <#= ancientGene.Value #>,
 	<#
 	wingGeneCounter++;
@@ -400,6 +404,7 @@ namespace FRTools.Data
 	#>
 	[Description("<#= gene.Name #>")]
 		[Order(<#= tertGeneCounter #>)]
+		[Gene(<#= string.Join(", ", page.Breeds.Where(x => x.Type == "modern" || gene.Value == 0).Select(x => $"DragonType.{x.Name}")) #>)]
 		<#= gene.Name.Replace(" ", "") #> = <#= gene.Value #>,
 	<#
 	tertGeneCounter++;
@@ -414,6 +419,7 @@ namespace FRTools.Data
 	#>
 	[Description("<#= ancientGene.Name #>")]
 		[Order(<#= tertGeneCounter #>)]
+		[Gene(<#= $"DragonType.{breed.Name}" #>)]
 		<#= $"{breed.Name}_{ancientGene.Name.Replace($" ({breed.Name})", "").Replace(" ", "")}" #> = <#= ancientGene.Value #>,
 	<#
 		tertGeneCounter++;

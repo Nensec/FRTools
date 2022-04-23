@@ -21,6 +21,7 @@ namespace FRTools.Web.Controllers
         private static readonly Dictionary<int, byte[]> _iconCache = new Dictionary<int, byte[]>();
         private static readonly Dictionary<int, byte[]> _sceneCache = new Dictionary<int, byte[]>();
         private static readonly Dictionary<int, byte[]> _familiarCache = new Dictionary<int, byte[]>();
+        private static readonly Dictionary<string, byte[]> _scryCache = new Dictionary<string, byte[]>();
 
         [Route("dummy/{dragonType}/{gender}", Name = "GetDummyDragon")]
         [Route("dummy", Name = "GetDummyDragonQueryString")]
@@ -152,6 +153,24 @@ namespace FRTools.Web.Controllers
             byte[] bytes;
             using (var client = new WebClient())
                 bytes = await client.DownloadDataTaskAsync(int.TryParse(id, out var dragonId) ? FRHelpers.GetRenderUrl(dragonId) : id);
+
+            return File(bytes, "image/png");
+        }
+
+        [Route("scry", Name = "GetScryQueryString")]
+        public async Task<ActionResult> GetScry(int breed, int gender, int age, int bodygene, int body, int winggene, int wings, int tertgene, int tert, int element, int eyetype)
+        {
+            var key = $"{breed}_{gender}_{age}_{bodygene}_{body}_{winggene}_{wings}_{tertgene}_{tert}_{element}_{eyetype}";
+
+            if (!_scryCache.TryGetValue(key, out byte[] bytes))
+            {
+                var scryImageUrl = GeneratedFRHelpers.GenerateDragonImageUrl(breed, gender, age, bodygene, body, winggene, wings, tertgene, tert, element, eyetype);
+
+                using (var client = new WebClient())
+                    bytes = await client.DownloadDataTaskAsync(scryImageUrl);
+
+                _scryCache[key] = bytes;
+            }
 
             return File(bytes, "image/png");
         }

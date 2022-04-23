@@ -76,6 +76,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GeneAttribute.cs" />
+    <Compile Include="Migrations\202204231426510_More coverage checker preferences.cs" />
+    <Compile Include="Migrations\202204231426510_More coverage checker preferences.designer.cs">
+      <DependentUpon>202204231426510_More coverage checker preferences.cs</DependentUpon>
+    </Compile>
     <Compile Include="OrderAttribute.cs" />
     <Compile Include="ReadOnlyAttribute.cs" />
     <Compile Include="ColorAttribute.cs" />
@@ -393,6 +398,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202201150239093_FRItem Creator.resx">
       <DependentUpon>202201150239093_FRItem Creator.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202204231426510_More coverage checker preferences.resx">
+      <DependentUpon>202204231426510_More coverage checker preferences.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

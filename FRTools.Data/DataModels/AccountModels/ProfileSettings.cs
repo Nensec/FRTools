@@ -22,6 +22,9 @@ namespace FRTools.Data.DataModels
         public int DefaultAdvancedCoverageDummyOpacity { get; set; } = 40;
         public int DefaultAdvancedCoverageSkinOpacity { get; set; } = 40;
         public int DefaultAdvancedCoveragePercentagePrecision { get; set; } = 2;
+        public bool DefaultAdvancedCoverageUseDressingRoomBase { get; set; } = true;
+        public string DefaultAdvancedCoverageScry { get; set; } = "";
+
 
         public virtual User User { get; set; }
 

@@ -1,4 +1,25 @@
 ﻿@model SkinCoverageScriptModel
+@{
+    int primaryColor = 1, secondaryColor = 1, tertiaryColor = 1, primaryGene = 0, secondaryGene = 0, tertiaryGene = 0, element = 1, eyeType = 0;
+    if (CurrentUser != null && !string.IsNullOrEmpty(CurrentUser.ProfileSettings.DefaultAdvancedCoverageScry))
+    {
+        var scrySettingSplit = CurrentUser.ProfileSettings.DefaultAdvancedCoverageScry.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+        primaryColor = scrySettingSplit[0];
+        secondaryColor = scrySettingSplit[1];
+        tertiaryColor = scrySettingSplit[2];
+        primaryGene = scrySettingSplit[3];
+        secondaryGene = scrySettingSplit[4];
+        tertiaryGene = scrySettingSplit[5];
+        element = scrySettingSplit[6];
+        eyeType = scrySettingSplit[7];
+    }
+
+    string GetForegroundColor(Color backgroundColor)
+    {
+        var backgroundBrightness = System.Drawing.Color.FromArgb(Convert.ToInt32(backgroundColor.GetHex().Substring(1), 16)).GetBrightness();
+        return backgroundBrightness < 0.4 ? "ffffff" : "000000";
+    }
+}
 
 <div class="form-group">
     <select class="form-control" name="DragonType" id="DragonType">
@@ -23,6 +44,78 @@
     </select>
 </div>
 <div class="form-group">
+    <div class="d-flex justify-content-start align-items-start">
+        <div class="custom-control custom-switch">
+            <input onchange="swapBaseImage()" type="checkbox" checked="@((CurrentUser?.ProfileSettings.DefaultAdvancedCoverageUseDressingRoomBase ?? true) ? null : "checked")" class="custom-control-input" id="UseDressingRoomDummy">
+            <label class="custom-control-label" for="UseDressingRoomDummy"><span class="fa fa-info-circle text-info" title="Some dressing room dummies are not the same size as actual dragons resulting in 'outside pixels' where there aren't any, toggle this to use a scry image as your base image to compare coverage against" data-toggle="tooltip"></span> Switch between dressing room dummy and scry as base image</label>
+        </div>
+    </div>
+</div>
+<div class="scry-picker form-group" style="@((CurrentUser?.ProfileSettings.DefaultAdvancedCoverageUseDressingRoomBase ?? true) ? "display:none" : null)">
+    <div class="form-group">
+        <div class="d-flex">
+            <select onchange="updateDummy()" class="form-control" name="Element" id="Element">
+                @foreach (var ele in Enum.GetValues(typeof(Element)).Cast<Element>())
+                {
+                    <option selected="@(((int)ele) == element)" value="@((int)ele)">@(ele.GetDescription())</option>
+                }
+            </select>
+            <select onchange="updateDummy()" class="form-control" name="EyeType" id="EyeType">
+                @foreach (var eye in Enum.GetValues(typeof(EyeType)).Cast<EyeType>())
+                {
+                    <option selected="@(((int)eye) == eyeType)" value="@((int)eye)">@(eye.GetDescription())</option>
+                }
+            </select>
+        </div>
+        <div class="d-flex">
+            <select onchange="updateDummy()" class="form-control" name="PrimaryColor" id="PrimaryColor">
+                @foreach (var color in Enum.GetValues(typeof(Color)).Cast<Color>().Where(x => x != Color.Unknown))
+                {
+                    <option selected="@(((int)color) == primaryColor)" style="background-color:@(color.GetAttributeOfType<ColorAttribute>().ColorHexCode);color:#@(GetForegroundColor(color))" value="@((int)color)">@(color.GetDescription())</option>
+                }
+            </select>
+            <select onchange="updateDummy()" class="form-control" name="SecondaryColor" id="SecondaryColor">
+                @foreach (var color in Enum.GetValues(typeof(Color)).Cast<Color>().Where(x => x != Color.Unknown))
+                {
+                    <option selected="@(((int)color) == secondaryColor)" style="background-color:@(color.GetAttributeOfType<ColorAttribute>().ColorHexCode);color:#@(GetForegroundColor(color))" value="@((int)color)">@(color.GetDescription())</option>
+                }
+            </select>
+            <select onchange="updateDummy()" class="form-control" name="TertiaryColor" id="TertiaryColor">
+                @foreach (var color in Enum.GetValues(typeof(Color)).Cast<Color>().Where(x => x != Color.Unknown))
+                {
+                    <option selected="@(((int)color) == tertiaryColor)" style="background-color:@(color.GetAttributeOfType<ColorAttribute>().ColorHexCode);color:#@(GetForegroundColor(color))" value="@((int)color)">@(color.GetDescription())</option>
+                }
+            </select>
+        </div>
+        <div class="d-flex">
+            <select onchange="updateDummy()" class="form-control" name="PrimaryGene" id="PrimaryGene">
+                @foreach (var gene in Enum.GetValues(typeof(AllBodyGene)).Cast<AllBodyGene>())
+                {
+                    <option breeds="@(string.Join(",", gene.GetAttributeOfType<GeneAttribute>().ValidFor))" selected="@(((int)gene) == primaryGene)" value="@((int)gene)">@(gene.GetDescription())</option>
+                }
+            </select>
+            <select onchange="updateDummy()" class="form-control" name="SecondaryGene" id="SecondaryGene">
+                @foreach (var gene in Enum.GetValues(typeof(AllWingGene)).Cast<AllWingGene>())
+                {
+                    <option breeds="@(string.Join(",", gene.GetAttributeOfType<GeneAttribute>().ValidFor))" selected="@(((int)gene) == secondaryGene)" value="@((int)gene)">@(gene.GetDescription())</option>
+                }
+            </select>
+            <select onchange="updateDummy()" class="form-control" name="TertiaryGene" id="TertiaryGene">
+                @foreach (var gene in Enum.GetValues(typeof(AllTertiaryGene)).Cast<AllTertiaryGene>())
+                {
+                    <option breeds="@(string.Join(",", gene.GetAttributeOfType<GeneAttribute>().ValidFor))" selected="@(((int)gene) == tertiaryGene)" value="@((int)gene)">@(gene.GetDescription())</option>
+                }
+            </select>
+        </div>
+    </div>
+    @if (Request.IsAuthenticated)
+    {
+        <div class="form-group">
+            <button id="@(nameof(ProfileSettings.DefaultAdvancedCoverageScry))_status" class="btn btn-success w-100" data-placement="bottom" data-toggle="tooltip" title="Save this as a preset for your next visit" onclick="saveProfileSetting('@(nameof(ProfileSettings.DefaultAdvancedCoverageScry))', `${$('#PrimaryColor').val()};${$('#SecondaryColor').val()};${$('#TertiaryColor').val()};${$('#PrimaryGene').val()};${$('#SecondaryGene').val()};${$('#TertiaryGene').val()};${$('#Element').val()};${$('#EyeType').val()};`)" )>Save scry preset</button>
+        </div>
+    }
+</div>
+<div class="form-group">
     <span class="control-fileupload">
         <label for="file" class="text-left">Please choose a file on your computer.</label>
         <input type="file" accept=".png" name="Skin" id="Skin" />
@@ -34,7 +127,7 @@
     Outside: <b><span id="Outside">--.--</span>%</b>
 </p>
 <div style="margin-top:5px; margin-bottom:-15px">
-    <div id="advancedcoverage" >
+    <div id="advancedcoverage">
         <dib class="d-flex justify-content-center">
             <div id="imagecontainer" style="width:350px;height:350px;background-color:@(CurrentUser?.ProfileSettings.DefaultAdvancedCoverageBackgroundColor ?? "#000000")">
                 <img class="dummyDragon" style="z-index:1;position:absolute;display:none;opacity:@((CurrentUser?.ProfileSettings.DefaultAdvancedCoverageDummyOpacity ?? 40) / 100d)" />
@@ -97,7 +190,7 @@
 <script type="text/javascript">
     snippetActivation['@Model.SanitizedName'] = () => {
         dragonImg = new Image();
-        setDummySource();
+        updateDummy();
     };
 
     snippetDeactivation['@Model.SanitizedName'] = () => {
@@ -107,11 +200,71 @@
         outside = null;
     };
 
+    swapBaseImage = () => {
+        if ($('#UseDressingRoomDummy:checked').val()) {
+            $('.scry-picker').show();
+        } else {
+            $('.scry-picker').hide();
+        }
+        updateDummy();
+        @if (Request.IsAuthenticated)
+        {
+            @:saveProfileSetting('@(nameof(ProfileSettings.DefaultAdvancedCoverageUseDressingRoomBase))', !$('#UseDressingRoomDummy:checked').val());
+        }
+    };
+
+    updateDummy = () => {
+        if ($('#UseDressingRoomDummy:checked').val()) {
+            $('#PrimaryColor').css('background-color', $('#PrimaryColor option:selected').css('background-color'));
+            $('#PrimaryColor').css('color', $('#PrimaryColor option:selected').css('color'));
+            $('#SecondaryColor').css('background-color', $('#SecondaryColor option:selected').css('background-color'));
+            $('#SecondaryColor').css('color', $('#SecondaryColor option:selected').css('color'));
+            $('#TertiaryColor').css('background-color', $('#TertiaryColor option:selected').css('background-color'));
+            $('#TertiaryColor').css('color', $('#TertiaryColor option:selected').css('color'));
+
+            var dragonType = $('#DragonType option:selected').text()
+
+            $('#PrimaryGene option').hide();
+            $(`#PrimaryGene option[breeds*="${dragonType}"]`).show();
+            if ($('#PrimaryGene option:selected').css('display') == 'none') {
+                $('#PrimaryGene').val(0);
+            }
+
+            $('#SecondaryGene option').hide();
+            $(`#SecondaryGene option[breeds*="${dragonType}"]`).show();
+            if ($('#SecondaryGene option:selected').css('display') == 'none') {
+                $('#SecondaryGene').val(0);
+            }
+
+            $('#TertiaryGene option').hide();
+            $(`#TertiaryGene option[breeds*="${dragonType}"]`).show();
+            if ($('#TertiaryGene option:selected').css('display') == 'none') {
+                $('#TertiaryGene').val(0);
+            }
+        }
+
+        setDummySource();
+    };
+
     setDummySource = () => {
         var dragonType = $('#DragonType').val();
         var gender = $('#Gender').val();
 
-        $('.dummyDragon').show().attr('src', `@Url.RouteUrl("GetDummyDragonQueryString")?dragonType=${dragonType}&gender=${gender}`);
+        if (!$('#UseDressingRoomDummy:checked').val()) {
+            $('.dummyDragon').show().attr('src', `@Url.RouteUrl("GetDummyDragonQueryString")?dragonType=${dragonType}&gender=${gender}`);
+        }
+        else {
+            var primaryGene = $('#PrimaryGene').val();
+            var secondaryGene = $('#SecondaryGene').val();
+            var tertiaryGene = $('#TertiaryGene').val();
+            var primaryColor = $('#PrimaryColor').val();
+            var secondaryColor = $('#SecondaryColor').val();
+            var tertiaryColor = $('#TertiaryColor').val();
+            var element = $('#Element').val();
+            var eyeType = $('#EyeType').val();
+            $('.dummyDragon').show().attr('src', `@Url.RouteUrl("GetScryQueryString")?breed=${dragonType}&gender=${gender}&age=1&bodygene=${primaryGene}&body=${primaryColor}&winggene=${secondaryGene}&wings=${secondaryColor}&tertgene=${tertiaryGene}&tert=${tertiaryColor}&element=${element}&eyetype=${eyeType}`);
+        }
+
         var dragonImage = new Image();
         dragonImage.onload = () => {
             updateCoverage(undefined, dragonImage);
@@ -119,7 +272,7 @@
         dragonImage.src = $('.dummyDragon').attr('src');
     };
 
-    $('#DragonType, #Gender').change(setDummySource);
+    $('#DragonType, #Gender').change(updateDummy);
 
     $('#Skin').change(function() {
         var t = $(this).val();
