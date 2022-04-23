@@ -716,6 +716,8 @@ namespace FRTools.Data
 		Jaguar = 44,
 		[Description("Laced (Banescale)")]
 		Laced = 48,
+		[Description("Leopard (Banescale)")]
+		Leopard = 109,
 		[Description("Marble (Banescale)")]
 		Marble = 47,
 		[Description("Metallic (Banescale)")]
@@ -1036,38 +1038,41 @@ namespace FRTools.Data
 		[Description("Laced (Banescale)")]
 		[Order(97)]
 		Banescale_Laced = 48,
-		[Description("Marble (Banescale)")]
+		[Description("Leopard (Banescale)")]
 		[Order(98)]
+		Banescale_Leopard = 109,
+		[Description("Marble (Banescale)")]
+		[Order(99)]
 		Banescale_Marble = 47,
 		[Description("Metallic (Banescale)")]
-		[Order(99)]
+		[Order(100)]
 		Banescale_Metallic = 49,
 		[Description("Petals (Banescale)")]
-		[Order(100)]
+		[Order(101)]
 		Banescale_Petals = 51,
 		[Description("Pinstripe (Banescale)")]
-		[Order(101)]
+		[Order(102)]
 		Banescale_Pinstripe = 45,
 		[Description("Poison (Banescale)")]
-		[Order(102)]
+		[Order(103)]
 		Banescale_Poison = 53,
 		[Description("Ragged (Banescale)")]
-		[Order(103)]
+		[Order(104)]
 		Banescale_Ragged = 56,
 		[Description("Ripple (Banescale)")]
-		[Order(104)]
+		[Order(105)]
 		Banescale_Ripple = 79,
 		[Description("Savannah (Banescale)")]
-		[Order(105)]
+		[Order(106)]
 		Banescale_Savannah = 50,
 		[Description("Skink (Banescale)")]
-		[Order(106)]
+		[Order(107)]
 		Banescale_Skink = 52,
 		[Description("Tapir (Banescale)")]
-		[Order(107)]
+		[Order(108)]
 		Banescale_Tapir = 74,
 		[Description("Tiger (Banescale)")]
-		[Order(108)]
+		[Order(109)]
 		Banescale_Tiger = 46,
 	}
 
@@ -1161,6 +1166,8 @@ namespace FRTools.Data
 		Blend = 85,
 		[Description("Butterfly (Banescale)")]
 		Butterfly = 51,
+		[Description("Clouded (Banescale)")]
+		Clouded = 109,
 		[Description("Current (Banescale)")]
 		Current = 79,
 		[Description("Edged (Banescale)")]
@@ -1442,209 +1449,212 @@ namespace FRTools.Data
 		[Description("Butterfly (Banescale)")]
 		[Order(40)]
 		Banescale_Butterfly = 51,
-		[Description("Current (Banescale)")]
+		[Description("Clouded (Banescale)")]
 		[Order(41)]
+		Banescale_Clouded = 109,
+		[Description("Current (Banescale)")]
+		[Order(42)]
 		Banescale_Current = 79,
 		[Description("Edged (Banescale)")]
-		[Order(42)]
+		[Order(43)]
 		Banescale_Edged = 48,
 		[Description("Eye Spots (Banescale)")]
-		[Order(43)]
+		[Order(44)]
 		Banescale_EyeSpots = 75,
 		[Description("Hex (Banescale)")]
-		[Order(44)]
+		[Order(45)]
 		Banescale_Hex = 81,
 		[Description("Mottle (Banescale)")]
-		[Order(45)]
+		[Order(46)]
 		Banescale_Mottle = 47,
 		[Description("Peregrine (Banescale)")]
-		[Order(46)]
+		[Order(47)]
 		Banescale_Peregrine = 80,
 		[Description("Rosette (Banescale)")]
-		[Order(47)]
+		[Order(48)]
 		Banescale_Rosette = 44,
 		[Description("Safari (Banescale)")]
-		[Order(48)]
+		[Order(49)]
 		Banescale_Safari = 50,
 		[Description("Seraph (Banescale)")]
-		[Order(49)]
+		[Order(50)]
 		Banescale_Seraph = 43,
 		[Description("Spinner (Banescale)")]
-		[Order(50)]
+		[Order(51)]
 		Banescale_Spinner = 52,
 		[Description("Striation (Banescale)")]
-		[Order(51)]
+		[Order(52)]
 		Banescale_Striation = 74,
 		[Description("Stripes (Banescale)")]
-		[Order(52)]
+		[Order(53)]
 		Banescale_Stripes = 46,
 		[Description("Sugarplum (Banescale)")]
-		[Order(53)]
+		[Order(54)]
 		Banescale_Sugarplum = 55,
 		[Description("Tear (Banescale)")]
-		[Order(54)]
+		[Order(55)]
 		Banescale_Tear = 56,
 		[Description("Toxin (Banescale)")]
-		[Order(55)]
+		[Order(56)]
 		Banescale_Toxin = 53,
 		[Description("Trail (Banescale)")]
-		[Order(56)]
+		[Order(57)]
 		Banescale_Trail = 45,
 		[Description("Bee (Aberration)")]
-		[Order(57)]
+		[Order(58)]
 		Aberration_Bee = 108,
 		[Description("Blend (Aberration)")]
-		[Order(58)]
+		[Order(59)]
 		Aberration_Blend = 91,
 		[Description("Daub (Aberration)")]
-		[Order(59)]
+		[Order(60)]
 		Aberration_Daub = 89,
 		[Description("Eel (Aberration)")]
-		[Order(60)]
+		[Order(61)]
 		Aberration_Eel = 105,
 		[Description("Facet (Aberration)")]
-		[Order(61)]
+		[Order(62)]
 		Aberration_Facet = 90,
 		[Description("Fissure (Aberration)")]
-		[Order(62)]
+		[Order(63)]
 		Aberration_Fissure = 97,
 		[Description("Freckle (Aberration)")]
-		[Order(63)]
+		[Order(64)]
 		Aberration_Freckle = 98,
 		[Description("Hex (Aberration)")]
-		[Order(64)]
+		[Order(65)]
 		Aberration_Hex = 94,
 		[Description("Hypnotic (Aberration)")]
-		[Order(65)]
+		[Order(66)]
 		Aberration_Hypnotic = 96,
 		[Description("Marbled (Aberration)")]
-		[Order(66)]
+		[Order(67)]
 		Aberration_Marbled = 103,
 		[Description("Noxtide (Aberration)")]
-		[Order(67)]
+		[Order(68)]
 		Aberration_Noxtide = 100,
 		[Description("Patchwork (Aberration)")]
-		[Order(68)]
+		[Order(69)]
 		Aberration_Patchwork = 107,
 		[Description("Peregrine (Aberration)")]
-		[Order(69)]
+		[Order(70)]
 		Aberration_Peregrine = 92,
 		[Description("Rosette (Aberration)")]
-		[Order(70)]
+		[Order(71)]
 		Aberration_Rosette = 99,
 		[Description("Safari (Aberration)")]
-		[Order(71)]
+		[Order(72)]
 		Aberration_Safari = 104,
 		[Description("Sarcophagus (Aberration)")]
-		[Order(72)]
+		[Order(73)]
 		Aberration_Sarcophagus = 101,
 		[Description("Sludge (Aberration)")]
-		[Order(73)]
+		[Order(74)]
 		Aberration_Sludge = 106,
 		[Description("Spade (Aberration)")]
-		[Order(74)]
+		[Order(75)]
 		Aberration_Spade = 93,
 		[Description("Striation (Aberration)")]
-		[Order(75)]
+		[Order(76)]
 		Aberration_Striation = 95,
 		[Description("Weaver (Aberration)")]
-		[Order(76)]
+		[Order(77)]
 		Aberration_Weaver = 102,
 		[Description("Bee (Gaoler)")]
-		[Order(77)]
+		[Order(78)]
 		Gaoler_Bee = 28,
 		[Description("Blend (Gaoler)")]
-		[Order(78)]
+		[Order(79)]
 		Gaoler_Blend = 86,
 		[Description("Breakup (Gaoler)")]
-		[Order(79)]
+		[Order(80)]
 		Gaoler_Breakup = 38,
 		[Description("Current (Gaoler)")]
-		[Order(80)]
+		[Order(81)]
 		Gaoler_Current = 78,
 		[Description("Daub (Gaoler)")]
-		[Order(81)]
+		[Order(82)]
 		Gaoler_Daub = 34,
 		[Description("Edged (Gaoler)")]
-		[Order(82)]
+		[Order(83)]
 		Gaoler_Edged = 73,
 		[Description("Eye Spots (Gaoler)")]
-		[Order(83)]
+		[Order(84)]
 		Gaoler_EyeSpots = 77,
 		[Description("Facet (Gaoler)")]
-		[Order(84)]
+		[Order(85)]
 		Gaoler_Facet = 37,
 		[Description("Hex (Gaoler)")]
-		[Order(85)]
+		[Order(86)]
 		Gaoler_Hex = 27,
 		[Description("Paint (Gaoler)")]
-		[Order(86)]
+		[Order(87)]
 		Gaoler_Paint = 31,
 		[Description("Peregrine (Gaoler)")]
-		[Order(87)]
+		[Order(88)]
 		Gaoler_Peregrine = 30,
 		[Description("Rosette (Gaoler)")]
-		[Order(88)]
+		[Order(89)]
 		Gaoler_Rosette = 33,
 		[Description("Spirit (Gaoler)")]
-		[Order(89)]
+		[Order(90)]
 		Gaoler_Spirit = 39,
 		[Description("Streak (Gaoler)")]
-		[Order(90)]
+		[Order(91)]
 		Gaoler_Streak = 29,
 		[Description("Striation (Gaoler)")]
-		[Order(91)]
+		[Order(92)]
 		Gaoler_Striation = 35,
 		[Description("Stripes (Gaoler)")]
-		[Order(92)]
+		[Order(93)]
 		Gaoler_Stripes = 36,
 		[Description("Trail (Gaoler)")]
-		[Order(93)]
+		[Order(94)]
 		Gaoler_Trail = 32,
 		[Description("Bee (Veilspun)")]
-		[Order(94)]
+		[Order(95)]
 		Veilspun_Bee = 60,
 		[Description("Blend (Veilspun)")]
-		[Order(95)]
+		[Order(96)]
 		Veilspun_Blend = 61,
 		[Description("Constellation (Veilspun)")]
-		[Order(96)]
+		[Order(97)]
 		Veilspun_Constellation = 66,
 		[Description("Edged (Veilspun)")]
-		[Order(97)]
+		[Order(98)]
 		Veilspun_Edged = 62,
 		[Description("Eye Spots (Veilspun)")]
-		[Order(98)]
+		[Order(99)]
 		Veilspun_EyeSpots = 76,
 		[Description("Hawkmoth (Veilspun)")]
-		[Order(99)]
+		[Order(100)]
 		Veilspun_Hawkmoth = 72,
 		[Description("Hex (Veilspun)")]
-		[Order(100)]
+		[Order(101)]
 		Veilspun_Hex = 83,
 		[Description("Hypnotic (Veilspun)")]
-		[Order(101)]
+		[Order(102)]
 		Veilspun_Hypnotic = 64,
 		[Description("Loop (Veilspun)")]
-		[Order(102)]
+		[Order(103)]
 		Veilspun_Loop = 70,
 		[Description("Patchwork (Veilspun)")]
-		[Order(103)]
+		[Order(104)]
 		Veilspun_Patchwork = 67,
 		[Description("Saturn (Veilspun)")]
-		[Order(104)]
+		[Order(105)]
 		Veilspun_Saturn = 65,
 		[Description("Spinner (Veilspun)")]
-		[Order(105)]
+		[Order(106)]
 		Veilspun_Spinner = 68,
 		[Description("Striation (Veilspun)")]
-		[Order(106)]
+		[Order(107)]
 		Veilspun_Striation = 63,
 		[Description("Vivid (Veilspun)")]
-		[Order(107)]
+		[Order(108)]
 		Veilspun_Vivid = 69,
 		[Description("Web (Veilspun)")]
-		[Order(108)]
+		[Order(109)]
 		Veilspun_Web = 71,
 	}
 	
