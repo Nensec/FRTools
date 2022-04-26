@@ -6,7 +6,11 @@ using FRTools.Data;
 using FRTools.Data.Messages;
 using FRTools.Discord.Handlers;
 using FRTools.Discord.Infrastructure;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.ServiceBus;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -24,26 +28,23 @@ namespace FRTools.Discord
     class Program
     {
         private static DiscordSocketClient _client;
-        private static IUnityContainer _container = new UnityContainer();
+        private static readonly IUnityContainer _container = new UnityContainer();
         private static CommandService _commandService;
         private static readonly Dictionary<ulong, GuildHandler> _handlers = new Dictionary<ulong, GuildHandler>();
         private static readonly UnityServiceProvider _unityServiceProvider = new UnityServiceProvider(_container);
         private static IQueueClient _serviceBus;
+#if DEBUG
+        private static readonly bool _isDebug = true;
+#else
+        private static readonly bool _isDebug = false;
+#endif
 
         static async Task Main()
         {
             using (var ctx = new DataContext())
                 ctx.Database.Initialize(false);
 
-            _client = new DiscordSocketClient(new DiscordSocketConfig
-            {
-                LogLevel =
-#if DEBUG
-                LogSeverity.Debug
-#else
-                LogSeverity.Warning
-#endif
-            });
+            _client = new DiscordSocketClient(new DiscordSocketConfig { LogLevel = _isDebug ? LogSeverity.Debug : LogSeverity.Info });
             _client.Log += Client_Log;
             _serviceBus = new QueueClient(ConfigurationManager.AppSettings["AzureSBConnString"], ConfigurationManager.AppSettings["AzureSBQueueName"]);
 
@@ -55,6 +56,7 @@ namespace FRTools.Discord
             _container.RegisterInstance(new InteractiveService(_client, new InteractiveServiceConfig { DefaultTimeout = TimeSpan.FromSeconds(15) }));
             _container.RegisterInstance(_serviceBus);
             _container.RegisterType<DataContext>();
+            _container.RegisterInstance<ILogger>(new ApplicationInsightsLogger($"Discord{(_isDebug ? " (DEBUG)" : "")}", new TelemetryClient(new TelemetryConfiguration(ConfigurationManager.AppSettings["APPINSIGHTS_INSTRUMENTATIONKEY"])), new ApplicationInsightsLoggerOptions { TrackExceptionsAsExceptionTelemetry = true }));
 
             await _commandService.AddModulesAsync(Assembly.GetEntryAssembly(), _unityServiceProvider);
 
@@ -116,7 +118,7 @@ namespace FRTools.Discord
                         if (customMessage is FlashSaleMessage flashSaleMessage)
                             await handler.HandleFlashSaleUpdate(flashSaleMessage).ConfigureAwait(false);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Console.WriteLine($"Failed to handle {genericMessage.MessageType} for server {handler.Guild.Id} event: {ex}");
                     }
@@ -135,7 +137,7 @@ namespace FRTools.Discord
                         if (genericMessage.Source == MessageCategory.DiscordTestMessage && (long)handler.Guild.Id == genericMessage.DiscordServer)
                             await handler.HandleTestMessage(genericMessage).ConfigureAwait(false);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Console.WriteLine($"Failed to handle {genericMessage.MessageType} for server {handler.Guild.Id} event: {ex}");
                     }
@@ -147,7 +149,13 @@ namespace FRTools.Discord
 
         private static Task Client_Log(LogMessage msg)
         {
-            return Task.Run(() => Console.WriteLine($"[{msg.Severity}] {msg.Message}"));
+            var logger = _container.Resolve<ILogger>();
+            if (msg.Exception != null)
+                logger.LogError(msg.Exception, msg.Message);
+            else
+                logger.Log(msg.Severity.ToLogLevel(), msg.Message);
+            Console.WriteLine($"[{msg.Severity}] {msg.Message}");
+            return Task.CompletedTask;
         }
 
         private static async Task Client_MessageReceived(SocketMessage msg)

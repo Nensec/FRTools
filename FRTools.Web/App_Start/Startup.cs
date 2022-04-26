@@ -3,6 +3,8 @@ using FRTools.Data.DataModels;
 using FRTools.Web.Infrastructure.Managers;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.MicrosoftAccount;
@@ -88,6 +90,11 @@ namespace FRTools.App_Start
             discordOptions.Scope.Add("guilds");
             discordOptions.Scope.Add("guilds.members.read");
             app.UseDiscordAuthentication(discordOptions);
+
+            IServiceCollection services = new ServiceCollection();
+            services.AddLogging(x => x.AddApplicationInsights());
+
+            IServiceProvider serviceProvider = services.BuildServiceProvider();
 
             using (var ctx = new DataContext())
             {

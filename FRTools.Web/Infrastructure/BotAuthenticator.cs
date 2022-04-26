@@ -1,6 +1,6 @@
 ﻿using RestSharp;
 using RestSharp.Authenticators;
-using RestSharp.Validation;
+using System.Threading.Tasks;
 
 namespace FRTools.Web.Infrastructure
 {
@@ -10,13 +10,8 @@ namespace FRTools.Web.Infrastructure
 
         public BotAuthenticator(string botToken) => SetBearerToken(botToken);
 
-        public void SetBearerToken(string botToken)
-        {
-            Ensure.NotEmpty(botToken, nameof(botToken));
+        public void SetBearerToken(string botToken) => _authHeader = $"Bot {botToken}";
 
-            _authHeader = $"Bot {botToken}";
-        }
-
-        public void Authenticate(IRestClient client, IRestRequest request) => request.AddOrUpdateParameter("Authorization", _authHeader, ParameterType.HttpHeader);
+        public ValueTask Authenticate(RestClient client, RestRequest request) => new ValueTask(Task.FromResult(request.AddOrUpdateParameter("Authorization", _authHeader, ParameterType.HttpHeader)));
     }
 }
