@@ -33,6 +33,7 @@ namespace FRTools.Discord
         private static readonly Dictionary<ulong, GuildHandler> _handlers = new Dictionary<ulong, GuildHandler>();
         private static readonly UnityServiceProvider _unityServiceProvider = new UnityServiceProvider(_container);
         private static IQueueClient _serviceBus;
+        private static ILogger _logger;
 #if DEBUG
         private static readonly bool _isDebug = true;
 #else
@@ -41,6 +42,8 @@ namespace FRTools.Discord
 
         static async Task Main()
         {
+            _logger = new ApplicationInsightsLogger($"Discord{(_isDebug ? " (DEBUG)" : "")}", new TelemetryClient(new TelemetryConfiguration(ConfigurationManager.AppSettings["APPINSIGHTS_INSTRUMENTATIONKEY"])), new ApplicationInsightsLoggerOptions { TrackExceptionsAsExceptionTelemetry = true });
+
             using (var ctx = new DataContext())
                 ctx.Database.Initialize(false);
 
@@ -56,7 +59,7 @@ namespace FRTools.Discord
             _container.RegisterInstance(new InteractiveService(_client, new InteractiveServiceConfig { DefaultTimeout = TimeSpan.FromSeconds(15) }));
             _container.RegisterInstance(_serviceBus);
             _container.RegisterType<DataContext>();
-            _container.RegisterInstance<ILogger>(new ApplicationInsightsLogger($"Discord{(_isDebug ? " (DEBUG)" : "")}", new TelemetryClient(new TelemetryConfiguration(ConfigurationManager.AppSettings["APPINSIGHTS_INSTRUMENTATIONKEY"])), new ApplicationInsightsLoggerOptions { TrackExceptionsAsExceptionTelemetry = true }));
+            _container.RegisterInstance(_logger);
 
             await _commandService.AddModulesAsync(Assembly.GetEntryAssembly(), _unityServiceProvider);
 
@@ -82,11 +85,10 @@ namespace FRTools.Discord
             _client.ReactionRemoved += async (message, channel, reaction) => await (channel is SocketGuildChannel guildChannel && _handlers.TryGetValue(guildChannel.Guild.Id, out var handler) ? handler.HandleReactionRemoved(message, guildChannel, reaction) : Task.CompletedTask).ConfigureAwait(false);
             _client.ReactionsCleared += async (message, channel) => await (channel is SocketGuildChannel guildChannel && _handlers.TryGetValue(guildChannel.Guild.Id, out var handler) ? handler.HandleReactionsCleared(message, guildChannel) : Task.CompletedTask).ConfigureAwait(false);
             _client.UserVoiceStateUpdated += async (user, stateOld, stateNew) => await ((user is SocketGuildUser guildUser) ? _handlers.TryGetValue(guildUser.Guild.Id, out var handler) ? handler.HandlerUserVoiceUpdated(guildUser, stateOld, stateNew) : Task.CompletedTask : Task.CompletedTask).ConfigureAwait(false);
+            _client.Ready += () => Task.Run(() => _serviceBus.RegisterMessageHandler(ServiceBusMessageHandler, new MessageHandlerOptions(ServiceBusExceptionHandler) { AutoComplete = false, MaxConcurrentCalls = 1 }));
 
             await _client.LoginAsync(TokenType.Bot, ConfigurationManager.AppSettings["DiscordToken"]);
             await _client.StartAsync();
-
-            _serviceBus.RegisterMessageHandler(ServiceBusMessageHandler, new MessageHandlerOptions(ServiceBusExceptionHandler) { AutoComplete = false, MaxConcurrentCalls = 1 });
 
             await Task.Delay(-1);
         }
@@ -99,48 +101,46 @@ namespace FRTools.Discord
         }
 
 
-        private static Task ServiceBusExceptionHandler(ExceptionReceivedEventArgs ex) => Task.Run(() => Console.WriteLine(ex.Exception.ToString()));
+        private static Task ServiceBusExceptionHandler(ExceptionReceivedEventArgs ex) => Task.Run(() => _logger.LogError(ex.Exception, ex.Exception.Message));
 
         private static async Task ServiceBusMessageHandler(Message msg, CancellationToken cancellationToken)
         {
-            Console.WriteLine($"SB message received: {msg.MessageId}");
-            var genericMessage = JsonConvert.DeserializeObject<GenericMessage>(Encoding.UTF8.GetString(msg.Body));
-            if (genericMessage.MessageType != nameof(GenericMessage))
+            _logger.Log(LogLevel.Information, $"SB message received: {msg.MessageId}");
+            var message = JsonConvert.DeserializeObject<GenericMessage>(Encoding.UTF8.GetString(msg.Body));
+            if (message.MessageType != nameof(GenericMessage))
+                message = (GenericMessage)JsonConvert.DeserializeObject(Encoding.UTF8.GetString(msg.Body), Assembly.GetAssembly(typeof(GenericMessage)).DefinedTypes.FirstOrDefault(x => x.Name == message.MessageType));
+
+            using (var ctx = new DataContext())
             {
-                var customMessage = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(msg.Body), Assembly.GetAssembly(typeof(GenericMessage)).DefinedTypes.FirstOrDefault(x => x.Name == genericMessage.MessageType));
-                foreach (var handler in _handlers.Values)
+                try
                 {
-                    try
+                    foreach (var handler in _handlers.Values.ToList())
                     {
-                        // Handle custom message
-                        if (customMessage is NewItemMessage newItemMessage)
-                            await handler.HandleNewItemUpdate(newItemMessage).ConfigureAwait(false);
-                        if (customMessage is FlashSaleMessage flashSaleMessage)
-                            await handler.HandleFlashSaleUpdate(flashSaleMessage).ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Failed to handle {genericMessage.MessageType} for server {handler.Guild.Id} event: {ex}");
+                        try
+                        {
+                            if (message is NewItemMessage newItemMessage)
+                                await handler.HandleNewItemUpdate(newItemMessage, ctx);
+                            if (message is FlashSaleMessage flashSaleMessage)
+                                await handler.HandleFlashSaleUpdate(flashSaleMessage, ctx);
+                            else
+                            {
+                                if (message.Source == MessageCategory.DominanceTracker)
+                                    await handler.HandleDominanceUpdate(message);
+                                if (message.Source == MessageCategory.SettingUpdated && (long)handler.Guild.Id == message.DiscordServer)
+                                    await handler.HandleSettingUpdate(message);
+                                if (message.Source == MessageCategory.DiscordTestMessage && (long)handler.Guild.Id == message.DiscordServer)
+                                    await handler.HandleTestMessage(message);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, $"Failed to handle {message.MessageType} for server {handler.Guild.Id} event");
+                        }
                     }
                 }
-            }
-            else
-            {
-                foreach (var handler in _handlers.Values)
+                finally
                 {
-                    try
-                    {
-                        if (genericMessage.Source == MessageCategory.DominanceTracker)
-                            await handler.HandleDominanceUpdate(genericMessage).ConfigureAwait(false);
-                        if (genericMessage.Source == MessageCategory.SettingUpdated && (long)handler.Guild.Id == genericMessage.DiscordServer)
-                            await handler.HandleSettingUpdate(genericMessage).ConfigureAwait(false);
-                        if (genericMessage.Source == MessageCategory.DiscordTestMessage && (long)handler.Guild.Id == genericMessage.DiscordServer)
-                            await handler.HandleTestMessage(genericMessage).ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Failed to handle {genericMessage.MessageType} for server {handler.Guild.Id} event: {ex}");
-                    }
+                    await ctx.SaveChangesAsync();
                 }
             }
 

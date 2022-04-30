@@ -16,9 +16,9 @@ namespace FRTools.Discord.Handlers
 {
     public static class ItemHandler
     {
-        public static async Task<(EmbedBuilder Embed, IEnumerable<KeyValuePair<string, Stream>> Files)> CreateItemEmbed(FRItem item, FRToolsSocketCommandContext context, SettingManager settingManager, bool flashSale = false)
+        public static async Task<(EmbedBuilder Embed, IEnumerable<KeyValuePair<string, Stream>> Files)> CreateItemEmbed(FRItem item, FRToolsSocketCommandContext context, SettingManager settingManager, DataContext ctx, bool flashSale = false)
         {
-            var embedResult = await CreateItemEmbed(item, context.Guild, settingManager, flashSale);
+            var embedResult = await CreateItemEmbed(item, context.Guild, settingManager, ctx, flashSale);
 
             if (context.AutomatedCommand)
                 embedResult.Embed.WithFooter("This command was executed automatically. Don't want this? Have an administrator change the settings.");
@@ -26,7 +26,7 @@ namespace FRTools.Discord.Handlers
             return embedResult;
         }
 
-        public static async Task<(EmbedBuilder Embed, IEnumerable<KeyValuePair<string, Stream>> Files)> CreateItemEmbed(FRItem item, SocketGuild guild, SettingManager settingManager, bool flashSale = false)
+        public static async Task<(EmbedBuilder Embed, IEnumerable<KeyValuePair<string, Stream>> Files)> CreateItemEmbed(FRItem item, SocketGuild guild, SettingManager settingManager, DataContext ctx, bool flashSale = false)
         {
             var files = new List<KeyValuePair<string, Stream>>();
             var externalEmojis = guild.CurrentUser.GuildPermissions.UseExternalEmojis;
@@ -78,7 +78,7 @@ namespace FRTools.Discord.Handlers
                         var username = Regex.Match(item.Description, @"Designed by ([^.]+)[.|\)]");
                         if (username.Success)
                         {
-                            var frUser = await FRHelpers.GetOrUpdateFRUser(username.Groups[1].Value);
+                            var frUser = await FRHelpers.GetOrUpdateFRUser(username.Groups[1].Value, ctx);
                             if (frUser != null)
                             {
                                 embed.AddField(x =>

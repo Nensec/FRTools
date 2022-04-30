@@ -242,7 +242,7 @@ namespace FRTools.Web.Controllers
             {
                 AddErrorNotification($"Could not find user '{(model.UserId?.ToString() ?? model.Username)}' on Flight Rising. Verify the name or id is correct.");
             }
-            DataContext.SaveChanges();
+            await DataContext.SaveChangesAsync();
 
             return RedirectToRoute("PinglistDirect", new { model.ListId, model.SecretKey });
         }
@@ -283,7 +283,7 @@ namespace FRTools.Web.Controllers
             {
                 AddErrorNotification($"Could not validate the existence of user '{currentUser.FRUser.FRId}.'");
             }
-            DataContext.SaveChanges();
+            await DataContext.SaveChangesAsync();
 
             return RedirectToRoute("PinglistDirect", new { model.ListId, model.SecretKey });
         }

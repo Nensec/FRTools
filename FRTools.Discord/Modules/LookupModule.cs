@@ -364,7 +364,7 @@ namespace FRTools.Discord.Modules
                 else if (searchResult.Count == 1)
                 {
                     await plsWait.ModifyAsync(x => x.Content = "I found your item! Please give me a moment while I fetch the data..");
-                    var embed = await ItemHandler.CreateItemEmbed(searchResult[0], Context, SettingManager);
+                    var embed = await ItemHandler.CreateItemEmbed(searchResult[0], Context, SettingManager, null);
                     await Context.Channel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
                 }
                 else
@@ -408,7 +408,7 @@ namespace FRTools.Discord.Modules
                 if (item != null)
                 {
                     var plsWait = await Context.Channel.SendMessageAsync("I found your item! Please give me a moment while I fetch the data..");
-                    var embed = await ItemHandler.CreateItemEmbed(item, Context, SettingManager);
+                    var embed = await ItemHandler.CreateItemEmbed(item, Context, SettingManager, null);
                     await Context.Channel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
                     await plsWait.DeleteAsync();
                 }

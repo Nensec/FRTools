@@ -41,7 +41,7 @@ namespace FRTools.Common.Jobs
                         ReportError(ex.Message);
                     }
                 }
-                ctx.SaveChanges();
+                await ctx.SaveChangesAsync();
             }
         }
     }

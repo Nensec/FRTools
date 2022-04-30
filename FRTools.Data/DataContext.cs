@@ -3,7 +3,6 @@ using FRTools.Data.DataModels.DiscordModels;
 using FRTools.Data.DataModels.FlightRisingModels;
 using FRTools.Data.DataModels.NewsReaderModels;
 using FRTools.Data.DataModels.PinglistModels;
-using FRTools.Data.Migrations;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Data.Entity;
 
@@ -15,7 +14,7 @@ namespace FRTools.Data
     {
         static DataContext()
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<DataContext, Configuration>());
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<DataContext, Migrations.Configuration>());
         }
 
         public DataContext() : base("defaultConnection")

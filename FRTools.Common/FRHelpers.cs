@@ -220,56 +220,55 @@ namespace FRTools.Common
             }
         }
 
-        public static Task<FRUser> GetOrUpdateFRUser(string username, DataContext ctx = null) => GetOrUpdateFRUser(username, null, ctx);
-        public static Task<FRUser> GetOrUpdateFRUser(int userId, DataContext ctx = null) => GetOrUpdateFRUser(null, userId, ctx);
+        public static async Task<FRUser> GetOrUpdateFRUser(string username, DataContext ctx = null) => await GetOrUpdateFRUser(username, null, ctx);
+        public static async Task<FRUser> GetOrUpdateFRUser(int userId, DataContext ctx = null) => await GetOrUpdateFRUser(null, userId, ctx);
 
-        private static Task<FRUser> GetOrUpdateFRUser(string username, int? userId, DataContext ctx = null)
+
+        private static async Task<FRUser> GetOrUpdateFRUser(string username, int? userId, DataContext ctx = null)
         {
-            async Task<FRUser> getFRUser()
+            var dispose = false;
+            if (dispose = ctx == null)
+                ctx = new DataContext();
+
+            Console.WriteLine($"Checking if we know {username ?? userId.ToString()}");
+
+            var frUser = ctx.FRUsers.FirstOrDefault(x => x.Username == username || x.FRId == userId);
+
+            if (frUser == null)
             {
-                var dispose = false;
-                if (dispose = ctx == null)
-                    ctx = new DataContext();
+                Console.WriteLine("We do not, fetching user info");
+                var (frName, frId) = await GetFRUserInfo(username, userId);
 
-                Console.WriteLine($"Checking if we know {username ?? userId.ToString()}");
-                var frUser = ctx.FRUsers.FirstOrDefault(x => x.Username == username || x.FRId == userId);
-
-                if (frUser == null)
+                if (frName == null)
                 {
-                    Console.WriteLine("We do not, fetching user info");
-                    var (frName, frId) = GetFRUserInfo(username, userId);
-
-                    if (frName == null)
-                    {
-                        var prev = Console.ForegroundColor;
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("User cannot be found");
-                        Console.ForegroundColor = prev;
-                        return null;
-                    }
-
-                    frUser = ctx.FRUsers.FirstOrDefault(x => x.Username == frName || x.FRId == frId) ?? ctx.FRUsers.Add(new FRUser());
-                    frUser.Username = frName;
-                    frUser.FRId = frId;
-                    frUser.LastUpdated = DateTime.UtcNow;
-
-                    ctx.SaveChanges();
-                    if (dispose)
-                        ctx.Dispose();
-                }
-                else
-                {
-                    Console.WriteLine("We do, updating user");
-                    frUser = await frUser.UpdateFRUser();
-                    await ctx.SaveChangesAsync();
+                    var prev = Console.ForegroundColor;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("User cannot be found");
+                    Console.ForegroundColor = prev;
+                    return null;
                 }
 
+                frUser = ctx.FRUsers.FirstOrDefault(x => x.Username == frName || x.FRId == frId) ?? ctx.FRUsers.Add(new FRUser());
+                frUser.Username = frName;
+                frUser.FRId = frId;
+                frUser.LastUpdated = DateTime.UtcNow;
+
+                ctx.SaveChanges();
                 if (dispose)
                     ctx.Dispose();
-
-                return frUser;
             }
-            return getFRUser();
+            else
+            {
+                Console.WriteLine("We do, updating user");
+                frUser = await frUser.UpdateFRUser();
+            }
+
+            if (dispose)
+                ctx.Dispose();
+            else
+                await ctx.SaveChangesAsync();
+
+            return frUser;
         }
 
         public static async Task<FRUser> UpdateFRUser(this FRUser frUser)
@@ -281,7 +280,7 @@ namespace FRTools.Common
                 return frUser;
             }
 
-            var (frName, frId) = GetFRUserInfo(null, frUser.FRId);
+            var (frName, frId) = await GetFRUserInfo(null, frUser.FRId);
 
             if (frName == null)
                 return null;
@@ -293,12 +292,13 @@ namespace FRTools.Common
             return frUser;
         }
 
-        private static (string Username, int UserId) GetFRUserInfo(string username, int? userId)
+
+        private static async Task<(string Username, int UserId)> GetFRUserInfo(string username, int? userId)
         {
             string url = $"https://www1.flightrising.com/clan-profile/{(userId?.ToString() ?? $"n/{username}")}";
             using (var client = new WebClient())
             {
-                var userProfilePage = client.DownloadString(url);
+                var userProfilePage = await client.DownloadStringTaskAsync(url);
                 if (userProfilePage.Contains("404 - Page Not Found") || userProfilePage.Contains("404: User not found"))
                     return default;
 
@@ -419,7 +419,7 @@ namespace FRTools.Common
                     }
 
                     item.AssetUrl = item.AssetUrl?.Replace("https://flightrising.com", "").Replace("https://www1.flightrising.com", "");
-                    ctx.SaveChanges();
+                    await ctx.SaveChangesAsync();
                     return item;
                 }
             }

@@ -76,6 +76,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration.cs" />
     <Compile Include="GeneAttribute.cs" />
     <Compile Include="Migrations\202204231426510_More coverage checker preferences.cs" />
     <Compile Include="Migrations\202204231426510_More coverage checker preferences.designer.cs">

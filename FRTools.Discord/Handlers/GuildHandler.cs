@@ -119,7 +119,7 @@ namespace FRTools.Discord.Handlers
             }
         }
 
-        internal async Task HandleFlashSaleUpdate(FlashSaleMessage flashSaleMessage)
+        internal async Task HandleFlashSaleUpdate(FlashSaleMessage flashSaleMessage, DataContext ctx)
         {
             // Check if setting is turned on
             if (bool.TryParse(await _settingManager.GetSettingValue("GUILDCONFIG_FLASHSALE_ANNNEWITEM", Guild), out var shouldAnnounce) && shouldAnnounce)
@@ -132,7 +132,7 @@ namespace FRTools.Discord.Handlers
 
                 if (annChannel != null)
                 {
-                    var embed = await ItemHandler.CreateItemEmbed(flashSaleMessage.Item, Guild, _settingManager, true);
+                    var embed = await ItemHandler.CreateItemEmbed(flashSaleMessage.Item, Guild, _settingManager, ctx, true);
                     embed.Embed.Title = "New flash sale found! - " + embed.Embed.Title;
                     embed.Embed.Color = new global::Discord.Color(243, 181, 144);
                     await annChannel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
@@ -200,7 +200,7 @@ namespace FRTools.Discord.Handlers
             }
         }
 
-        internal async Task HandleNewItemUpdate(NewItemMessage newItemMessage)
+        internal async Task HandleNewItemUpdate(NewItemMessage newItemMessage, DataContext ctx)
         {
             // Check if setting is turned on
             if (bool.TryParse(await _settingManager.GetSettingValue("GUILDCONFIG_ITEMDB_ANNNEWITEM", Guild), out var shouldAnnounce) && shouldAnnounce)
@@ -241,7 +241,7 @@ namespace FRTools.Discord.Handlers
 
                         if (annChannel != null)
                         {
-                            var embed = await ItemHandler.CreateItemEmbed(newItemMessage.Item, Guild, _settingManager);
+                            var embed = await ItemHandler.CreateItemEmbed(newItemMessage.Item, Guild, _settingManager, ctx).ConfigureAwait(false);
                             embed.Embed.Title = "New item found! - " + embed.Embed.Title;
                             await annChannel.SendFilesAsync(embed.Files, embed: embed.Embed.Build());
                         }
