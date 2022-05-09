@@ -28,12 +28,12 @@ namespace FRTools.Discord.Modules
         }
 
         [DiscordSetting("LOOKUP_DRAGON_SHOW_IMAGES", typeof(bool), "Show dragon images", "Display images in the lookup embed, set this to hide if your server members get easily triggered", "Show", "Hide", DefaultValue = "true", Order = 1)]
-        [DiscordSetting("LOOKUP_DRAGON_SHOW_IMAGE_PRIMARY_GENES", typeof(AllBodyGene[]), "Show primary genes", "This will allow you to filter which primary genes will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", DefaultValue = "ALL", Order = 2)]
-        [DiscordSetting("LOOKUP_DRAGON_SHOW_IMAGE_SECONDARY_GENES", typeof(AllWingGene[]), "Show secondary genes", "This will allow you to filter which secondary genes will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", DefaultValue = "ALL", Order = 3)]
-        [DiscordSetting("LOOKUP_DRAGON_SHOW_IMAGE_TERTIARY_GENES", typeof(AllTertiaryGene[]), "Show tertiary genes", "This will allow you to filter which tertiary genes will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", DefaultValue = "ALL", Order = 4)]
-        [DiscordSetting("LOOKUP_DRAGON_SHOW_IMAGE_PRIMARY_COLORS", typeof(Data.Color[]), "Show primary colors", "This will allow you to filter which primary colors will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", DefaultValue = "ALL", Order = 5)]
-        [DiscordSetting("LOOKUP_DRAGON_SHOW_IMAGE_SECONDARY_COLORS", typeof(Data.Color[]), "Show secondary colors", "This will allow you to filter which secondary colors will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", DefaultValue = "ALL", Order = 6)]
-        [DiscordSetting("LOOKUP_DRAGON_SHOW_IMAGE_TERTIARY_COLORS", typeof(Data.Color[]), "Show tertiary colors", "This will allow you to filter which tertiary colors will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", DefaultValue = "ALL", Order = 7)]
+        [DiscordSetting("LOOKUP_DRAGON_HIDE_IMAGE_PRIMARY_GENES", typeof(AllBodyGene[]), "Hide primary genes", "This will allow you to filter which primary genes will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", Order = 2)]
+        [DiscordSetting("LOOKUP_DRAGON_HIDE_IMAGE_SECONDARY_GENES", typeof(AllWingGene[]), "Hide secondary genes", "This will allow you to filter which secondary genes will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", Order = 3)]
+        [DiscordSetting("LOOKUP_DRAGON_HIDE_IMAGE_TERTIARY_GENES", typeof(AllTertiaryGene[]), "Hide tertiary genes", "This will allow you to filter which tertiary genes will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", Order = 4)]
+        [DiscordSetting("LOOKUP_DRAGON_HIDE_IMAGE_PRIMARY_COLORS", typeof(Data.Color[]), "Hide primary colors", "This will allow you to filter which primary colors will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", Order = 5)]
+        [DiscordSetting("LOOKUP_DRAGON_HIDE_IMAGE_SECONDARY_COLORS", typeof(Data.Color[]), "Hide secondary colors", "This will allow you to filter which secondary colors will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", Order = 6)]
+        [DiscordSetting("LOOKUP_DRAGON_HIDE_IMAGE_TERTIARY_COLORS", typeof(Data.Color[]), "Hide tertiary colors", "This will allow you to filter which tertiary colors will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", Order = 7)]
         [Command("dragon"), Name("Dragon"), Alias("d")]
         [DiscordHelp("LookupDragon")]
         public async Task DragonLookup(int id)
@@ -129,42 +129,42 @@ namespace FRTools.Discord.Modules
                         var secondaryGeneSanitized = frSecondaryGene.Split(' ').First();
                         var tertiaryGeneSanitized = frTertiaryGene.Split(' ').First();
 
-                        var allowedPrimaryGenes = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_PRIMARY_GENES", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(AllBodyGene), x));
-                        var allowedSecondaryGenes = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_SECONDARY_GENES", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(AllWingGene), x));
-                        var allowedTertiaryGenes = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_TERTIARY_GENES", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(AllTertiaryGene), x));
+                        var blacklistedPrimaryGenes = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_PRIMARY_GENES", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(AllBodyGene), x));
+                        var blacklistedSecondaryGenes = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_SECONDARY_GENES", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(AllWingGene), x));
+                        var blacklistedTertiaryGenes = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_TERTIARY_GENES", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(AllTertiaryGene), x));
 
-                        var allowedPrimaryColors = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_PRIMARY_COLORS", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(Data.Color), x));
-                        var allowedSecondaryColors = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_SECONDARY_COLORS", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(Data.Color), x));
-                        var allowedTertiaryColors = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_TERTIARY_COLORS", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(Data.Color), x));
+                        var blacklistedPrimaryColors = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_PRIMARY_COLORS", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(Data.Color), x));
+                        var blacklistedSecondaryColors = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_SECONDARY_COLORS", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(Data.Color), x));
+                        var blacklistedTertiaryColors = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_TERTIARY_COLORS", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(Data.Color), x));
 
                         var dragonType = (DragonType)Enum.Parse(typeof(DragonType), dragonBreed);
 
-                        if ((Enum.TryParse<AllBodyGene>(primaryGeneSanitized, out var primaryGene) || (dragonType.IsAncientBreed() && Enum.TryParse($"{dragonType}_{primaryGeneSanitized}", out primaryGene))) && !allowedPrimaryGenes.Contains(primaryGene))
+                        if ((Enum.TryParse<AllBodyGene>(primaryGeneSanitized, out var primaryGene) || (dragonType.IsAncientBreed() && Enum.TryParse($"{dragonType}_{primaryGeneSanitized}", out primaryGene))) && blacklistedPrimaryGenes.Contains(primaryGene))
                         {
                             showImages = false;
                             imageHideReason = $"Display of this image is disabled in bot settings due to it containing the primary gene **{frPrimaryGene}**";
                         }
-                        else if ((Enum.TryParse<AllWingGene>(secondaryGeneSanitized, out var secondaryGene) || (dragonType.IsAncientBreed() && Enum.TryParse($"{dragonType}_{secondaryGeneSanitized}", out secondaryGene))) && !allowedSecondaryGenes.Contains(secondaryGene))
+                        else if ((Enum.TryParse<AllWingGene>(secondaryGeneSanitized, out var secondaryGene) || (dragonType.IsAncientBreed() && Enum.TryParse($"{dragonType}_{secondaryGeneSanitized}", out secondaryGene))) && blacklistedSecondaryGenes.Contains(secondaryGene))
                         {
                             showImages = false;
                             imageHideReason = $"Display of this image is disabled in bot settings due to it containing the secondary gene **{frSecondaryGene}**";
                         }
-                        else if ((Enum.TryParse<AllTertiaryGene>(tertiaryGeneSanitized, out var tertiaryGene) || (dragonType.IsAncientBreed() && Enum.TryParse($"{dragonType}_{tertiaryGeneSanitized}", out tertiaryGene))) && !allowedTertiaryGenes.Contains(tertiaryGene))
+                        else if ((Enum.TryParse<AllTertiaryGene>(tertiaryGeneSanitized, out var tertiaryGene) || (dragonType.IsAncientBreed() && Enum.TryParse($"{dragonType}_{tertiaryGeneSanitized}", out tertiaryGene))) && blacklistedTertiaryGenes.Contains(tertiaryGene))
                         {
                             showImages = false;
                             imageHideReason = $"Display of this image is disabled in bot settings due to it containing the tertiary gene **{frTertiaryGene}**";
                         }
-                        else if (Enum.TryParse<Data.Color>(frPrimaryColor, out var primaryColor) && !allowedPrimaryColors.Contains(primaryColor))
+                        else if (Enum.TryParse<Data.Color>(frPrimaryColor, out var primaryColor) && blacklistedPrimaryColors.Contains(primaryColor))
                         {
                             showImages = false;
                             imageHideReason = $"Display of this image is disabled in bot settings due to it containing the primary color **{primaryColor}**";
                         }
-                        else if (Enum.TryParse<Data.Color>(frSecondaryColor, out var secondaryColor) && !allowedSecondaryColors.Contains(secondaryColor))
+                        else if (Enum.TryParse<Data.Color>(frSecondaryColor, out var secondaryColor) && blacklistedSecondaryColors.Contains(secondaryColor))
                         {
                             showImages = false;
                             imageHideReason = $"Display of this image is disabled in bot settings due to it containing the secondary color **{secondaryColor}**";
                         }
-                        else if (Enum.TryParse<Data.Color>(frTertiaryColor, out var tertiaryColor) && !allowedTertiaryColors.Contains(tertiaryColor))
+                        else if (Enum.TryParse<Data.Color>(frTertiaryColor, out var tertiaryColor) && blacklistedTertiaryColors.Contains(tertiaryColor))
                         {
                             showImages = false;
                             imageHideReason = $"Display of this image is disabled in bot settings due to it containing the tertiary color **{tertiaryColor}**";
