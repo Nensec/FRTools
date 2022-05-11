@@ -55,11 +55,11 @@ namespace FRTools.Discord.Infrastructure
                         if (type.IsArray)
                         {
                             var arrayType = type.GetElementType();
-
+                            IEnumerable<string> vals = new string[] { };
                             if (setting.DefaultValue == "ALL" && guild != null)
                             {
-                                if (arrayType.IsEnum)                                
-                                    val = string.Join(",", Enum.GetValues(arrayType).Cast<Enum>().Select(x => x));                                
+                                if (arrayType.IsEnum)
+                                    vals = Enum.GetValues(arrayType).Cast<Enum>().Select(x => x.ToString());
                                 else
                                 {
                                     var channels = (await guild.GetChannelsAsync()).ToList();
@@ -75,11 +75,16 @@ namespace FRTools.Discord.Infrastructure
                                             channels = channels.Where(x => x is ICategoryChannel).ToList();
                                             goto case "IChannel";
                                         case "IChannel":
-                                            val = string.Join(",", channels.Select(x => x.Id.ToString()));
-                                            break;                                            
+                                            vals = channels.Select(x => x.Id.ToString());
+                                            break;
                                     }
                                 }
                             }
+
+                            if (setting.ExtraArgs != null)
+                                vals = setting.ExtraArgs.Concat(vals);
+
+                            val = string.Join(",", vals);
                         }
                         else
                             val = setting.DefaultValue;
@@ -119,6 +124,17 @@ namespace FRTools.Discord.Infrastructure
         {
             _settingCache.Remove((guild, key));
             await GetSettingValue(key, guild);
+        }
+
+        public static IEnumerable<T> EnumSettingParserHelper<T>(string settingValue) where T : struct
+        {
+            var split = settingValue.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var item in split)
+            {
+                var parse = Enum.TryParse<T>(item, out var result);
+                if (parse)
+                    yield return result;
+            }
         }
     }
 }

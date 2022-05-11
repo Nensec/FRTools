@@ -114,18 +114,21 @@
     else
     {
         // array
-        string[] currentValue = new string[] { };
+        string[] currentValue = Model.Value?.Split(',') ?? new string[] { };
         var arrayType = settingType?.GetElementType();
         <select id="@(id)" name="@(name)" configKey="@(Model.Key)" multiple class="form-control" title="Hold <span class='text-warning'><b>CTRL</b></span> to select multiple or to deselect a single value<br/>Hit <span class='text-warning'><b>CTRL-A</b></span> to select all after you focus the list" data-toggle="tooltip">
+            @if (Model.ExtraArgs != null)
+            {
+                foreach (var option in Model.ExtraArgs)
+                {
+                    <option @(currentValue.Length == 1 && currentValue[0] == option ? "selected" : "") value="@option">@option</option>
+                }
+            }
             @if (arrayType?.IsEnum == true)
             {
                 if (Model.Value == "ALL")
                 {
                     currentValue = Enum.GetValues(arrayType).Cast<Enum>().Select(x => Convert.ToInt32(x).ToString()).ToArray();
-                }
-                else
-                {
-                    currentValue = Model.Value?.Split(',') ?? new string[] { };
                 }
                 var values = Enum.GetValues(arrayType).Cast<Enum>();
                 if (values.All(x => x.GetAttributeOfType<OrderAttribute>() != null))
@@ -139,17 +142,17 @@
                     var readOnlyAttribute = (option as Enum).GetAttributeOfType<ReadOnlyAttribute>();
                     if (descriptionAttribute != null)
                     {
-                        <option @(currentValue?.Contains(Convert.ToInt32(option).ToString()) == true ? "selected" : "") value="@(Convert.ToInt32(option))">@descriptionAttribute.Description</option>
+                        <option @(currentValue.Contains(Convert.ToInt32(option).ToString()) == true ? "selected" : "") value="@(Convert.ToInt32(option))">@descriptionAttribute.Description</option>
                         continue;
                     }
                     else if (readOnlyAttribute != null)
                     {
-                        <option disabled @(currentValue?.Contains(Convert.ToInt32(option).ToString()) == true ? "selected" : "") value="@(Convert.ToInt32(option))">@readOnlyAttribute.Description</option>
+                        <option disabled @(currentValue.Contains(Convert.ToInt32(option).ToString()) == true ? "selected" : "") value="@(Convert.ToInt32(option))">@readOnlyAttribute.Description</option>
                         continue;
                     }
                     else
                     {
-                        <option @(currentValue?.Contains(Convert.ToInt32(option).ToString()) == true ? "selected" : "") value="@(Convert.ToInt32(option))">@option.ToString()</option>
+                        <option @(currentValue.Contains(Convert.ToInt32(option).ToString()) == true ? "selected" : "") value="@(Convert.ToInt32(option))">@option.ToString()</option>
                     }
                 }
             }
@@ -167,7 +170,7 @@
                     }
                     foreach (var option in Model.ExtraArgs)
                     {
-                        <option @(currentValue?.Contains(option) == true ? "selected" : "") value="@option">@option</option>
+                        <option @(currentValue.Contains(option) == true ? "selected" : "") value="@option">@option</option>
                     }
                 }
                 else

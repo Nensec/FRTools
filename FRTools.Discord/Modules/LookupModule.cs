@@ -7,6 +7,7 @@ using FRTools.Discord.Handlers;
 using FRTools.Discord.Infrastructure;
 using HtmlAgilityPack;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
@@ -28,12 +29,12 @@ namespace FRTools.Discord.Modules
         }
 
         [DiscordSetting("LOOKUP_DRAGON_SHOW_IMAGES", typeof(bool), "Show dragon images", "Display images in the lookup embed, set this to hide if your server members get easily triggered", "Show", "Hide", DefaultValue = "true", Order = 1)]
-        [DiscordSetting("LOOKUP_DRAGON_HIDE_IMAGE_PRIMARY_GENES", typeof(AllBodyGene[]), "Hide primary genes", "This will allow you to filter which primary genes will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", Order = 2)]
-        [DiscordSetting("LOOKUP_DRAGON_HIDE_IMAGE_SECONDARY_GENES", typeof(AllWingGene[]), "Hide secondary genes", "This will allow you to filter which secondary genes will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", Order = 3)]
-        [DiscordSetting("LOOKUP_DRAGON_HIDE_IMAGE_TERTIARY_GENES", typeof(AllTertiaryGene[]), "Hide tertiary genes", "This will allow you to filter which tertiary genes will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", Order = 4)]
-        [DiscordSetting("LOOKUP_DRAGON_HIDE_IMAGE_PRIMARY_COLORS", typeof(Data.Color[]), "Hide primary colors", "This will allow you to filter which primary colors will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", Order = 5)]
-        [DiscordSetting("LOOKUP_DRAGON_HIDE_IMAGE_SECONDARY_COLORS", typeof(Data.Color[]), "Hide secondary colors", "This will allow you to filter which secondary colors will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", Order = 6)]
-        [DiscordSetting("LOOKUP_DRAGON_HIDE_IMAGE_TERTIARY_COLORS", typeof(Data.Color[]), "Hide tertiary colors", "This will allow you to filter which tertiary colors will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", Order = 7)]
+        [DiscordSetting("LOOKUP_DRAGON_HIDE_IMAGE_PRIMARY_GENES", typeof(AllBodyGene[]), "Hide primary genes", "This will allow you to filter which primary genes will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", "None", Order = 2, DefaultValue = "None")]
+        [DiscordSetting("LOOKUP_DRAGON_HIDE_IMAGE_SECONDARY_GENES", typeof(AllWingGene[]), "Hide secondary genes", "This will allow you to filter which secondary genes will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", "None", Order = 3, DefaultValue = "None")]
+        [DiscordSetting("LOOKUP_DRAGON_HIDE_IMAGE_TERTIARY_GENES", typeof(AllTertiaryGene[]), "Hide tertiary genes", "This will allow you to filter which tertiary genes will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", "None", Order = 4, DefaultValue = "None")]
+        [DiscordSetting("LOOKUP_DRAGON_HIDE_IMAGE_PRIMARY_COLORS", typeof(Data.Color[]), "Hide primary colors", "This will allow you to filter which primary colors will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", "None", Order = 5, DefaultValue = "None")]
+        [DiscordSetting("LOOKUP_DRAGON_HIDE_IMAGE_SECONDARY_COLORS", typeof(Data.Color[]), "Hide secondary colors", "This will allow you to filter which secondary colors will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", "None", Order = 6, DefaultValue = "None")]
+        [DiscordSetting("LOOKUP_DRAGON_HIDE_IMAGE_TERTIARY_COLORS", typeof(Data.Color[]), "Hide tertiary colors", "This will allow you to filter which tertiary colors will show. Does nothing if $<LOOKUP:LOOKUP_DRAGON_SHOW_IMAGES> is false", "None", Order = 7, DefaultValue = "None")]
         [Command("dragon"), Name("Dragon"), Alias("d")]
         [DiscordHelp("LookupDragon")]
         public async Task DragonLookup(int id)
@@ -129,13 +130,13 @@ namespace FRTools.Discord.Modules
                         var secondaryGeneSanitized = frSecondaryGene.Split(' ').First();
                         var tertiaryGeneSanitized = frTertiaryGene.Split(' ').First();
 
-                        var blacklistedPrimaryGenes = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_PRIMARY_GENES", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(AllBodyGene), x));
-                        var blacklistedSecondaryGenes = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_SECONDARY_GENES", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(AllWingGene), x));
-                        var blacklistedTertiaryGenes = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_TERTIARY_GENES", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(AllTertiaryGene), x));
+                        var blacklistedPrimaryGenes = SettingManager.EnumSettingParserHelper<AllBodyGene>(await SettingManager.GetSettingValue("LOOKUP_DRAGON_HIDE_IMAGE_PRIMARY_GENES", Context.Guild));
+                        var blacklistedSecondaryGenes = SettingManager.EnumSettingParserHelper<AllWingGene>(await SettingManager.GetSettingValue("LOOKUP_DRAGON_HIDE_IMAGE_SECONDARY_GENES", Context.Guild));
+                        var blacklistedTertiaryGenes = SettingManager.EnumSettingParserHelper<AllTertiaryGene>(await SettingManager.GetSettingValue("LOOKUP_DRAGON_HIDE_IMAGE_TERTIARY_GENES", Context.Guild));
 
-                        var blacklistedPrimaryColors = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_PRIMARY_COLORS", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(Data.Color), x));
-                        var blacklistedSecondaryColors = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_SECONDARY_COLORS", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(Data.Color), x));
-                        var blacklistedTertiaryColors = (await SettingManager.GetSettingValue("LOOKUP_DRAGON_SHOW_IMAGE_TERTIARY_COLORS", Context.Guild)).Split(',').Select(x => Enum.Parse(typeof(Data.Color), x));
+                        var blacklistedPrimaryColors = SettingManager.EnumSettingParserHelper<Data.Color>(await SettingManager.GetSettingValue("LOOKUP_DRAGON_HIDE_IMAGE_PRIMARY_COLORS", Context.Guild));
+                        var blacklistedSecondaryColors = SettingManager.EnumSettingParserHelper<Data.Color>(await SettingManager.GetSettingValue("LOOKUP_DRAGON_HIDE_IMAGE_SECONDARY_COLORS", Context.Guild));
+                        var blacklistedTertiaryColors = SettingManager.EnumSettingParserHelper<Data.Color>(await SettingManager.GetSettingValue("LOOKUP_DRAGON_HIDE_IMAGE_TERTIARY_COLORS", Context.Guild));
 
                         var dragonType = (DragonType)Enum.Parse(typeof(DragonType), dragonBreed);
 
