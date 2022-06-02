@@ -48,9 +48,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BitlyAPI, Version=4.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BitlyAPI.4.0.1\lib\net45\BitlyAPI.dll</HintPath>
-    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -368,7 +365,6 @@
     <Compile Include="Controllers\ProxyController.cs" />
     <Compile Include="Controllers\SnippetController.cs" />
     <Compile Include="Controllers\ScryerController.cs" />
-    <Compile Include="Infrastructure\BitlyHelper.cs" />
     <Compile Include="Infrastructure\BotAuthenticator.cs" />
     <Compile Include="Infrastructure\ChallengeResult.cs" />
     <Compile Include="Controllers\HomeController.cs" />
