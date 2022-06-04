@@ -109,7 +109,7 @@ namespace FRTools.Web.Controllers
                     var skin = DataContext.Skins.FirstOrDefault(x => x.GeneratedId == id);
                     if (skin != null)
                     {
-                        skin.ShareUrl = $"[url={Url.RouteUrl("Preview", new { skinId = id }, "https")}]Click to Preview![/url]";
+                        skin.ShareUrl = $"[url={Url.RouteUrl("Preview", new { skinId = id }, "https").Replace("frtools", "flightrising")}]Click to Preview![/url]";
                         DataContext.SaveChanges();
                         return Json(skin.ShareUrl, JsonRequestBehavior.AllowGet);
                     }
@@ -118,7 +118,7 @@ namespace FRTools.Web.Controllers
                     var pinglist = DataContext.Pinglists.FirstOrDefault(x => x.GeneratedId == id);
                     if (pinglist != null)
                     {
-                        pinglist.ShareUrl = $"[url={Url.RouteUrl("PinglistDirect", new { listId = id }, "https")}]Click for Pinglist![/url]";
+                        pinglist.ShareUrl = $"[url={Url.RouteUrl("PinglistDirect", new { listId = id }, "https").Replace("frtools", "flightrising")}]Click for Pinglist![/url]";
                         DataContext.SaveChanges();
                         return Json(pinglist.ShareUrl, JsonRequestBehavior.AllowGet);
                     }
