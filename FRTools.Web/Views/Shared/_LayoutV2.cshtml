@@ -12,9 +12,9 @@
     <link rel="stylesheet" href="~/Content/bootstrap.min.css" />
     <link rel="stylesheet" href="~/Content/v2.css" />
     <link rel="stylesheet" href="~/Content/dark-mode.css" />
-    <link rel="stylesheet" href="~/Content/font-awesome.min.css"
-          @Scripts.Render("~/bundles/modernizr")
-          @Scripts.Render("~/bundles/jquery")
+    <link rel="stylesheet" href="~/Content/font-awesome.min.css" />
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
     <script src="~/Scripts/bootstrap.bundle.min.js"></script>
     @RenderSection("head", false)
     <script type="text/javascript">
@@ -236,20 +236,6 @@
         $(() => {
             $('[data-toggle="tooltip"]').tooltip({ html: true });
         })
-
-        copyOrGenerateUrl = (e, b, t, id) => {
-            if (e.value != '') {
-                copyText(e, b);
-            }
-            else {
-                b.innerHTML = 'Fetching..';
-                $.get({
-                    url: '@Url.RouteUrl("GetShareUrl")',
-                    data: { type: t, id: id },
-                    success: d => { e.value = d; copyText(e, b); }
-                }).fail(() => b.innerHTML = 'Error!');
-            }
-        }
 
         copyText = (e, b) => {
             e.select();

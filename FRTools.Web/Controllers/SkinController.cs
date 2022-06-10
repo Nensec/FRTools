@@ -256,7 +256,6 @@ namespace FRTools.Web.Controllers
                     Skin = skin,
                     PreviewImageUrl = (await SkinTester.GenerateOrFetchDummyPreview(skin.GeneratedId, skin.Version)).Urls[0],
                     PreviewUrl = Url.RouteUrl("Preview", new { SkinId = skin.GeneratedId }, "https"),
-                    ShareUrl = skin.ShareUrl
                 });
             }
         }

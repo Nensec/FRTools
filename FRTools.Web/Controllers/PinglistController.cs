@@ -161,7 +161,6 @@ namespace FRTools.Web.Controllers
                 ownerModel.AvailableCategories.Add(new PinglistCategory { Id = -1 });
                 ownerModel.AvailableCategories.AddRange(DataContext.PinglistCategories.Where(x => x.Owner.Id == ownerModel.Owner.Id).ToList());
                 ownerModel.PinglistCategory = list.PinglistCategory;
-                ownerModel.ShareUrl = list.ShareUrl;
                 ownerModel.FinishedJobs = JobManager.GetUnconfirmedFinishedJobs(model.ListId);
                 var activeJobs = JobManager.GetActiveJobs(list.GeneratedId.ToString());
                 foreach (var job in activeJobs)

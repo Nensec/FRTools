@@ -31,8 +31,8 @@ namespace FRTools.Web.Infrastructure.Helpers
             var buttonTag = new TagBuilder("button");
             buttonTag.MergeAttribute("class", "btn btn-success");
             buttonTag.MergeAttribute("type", "button");
-            buttonTag.MergeAttribute("onclick", $"copyOrGenerateUrl(document.getElementById('{inputTag.Attributes["id"]}'), this, '{type}', '{id}')");
-            buttonTag.InnerHtml = text == null ? "Generate!" : "Copy!";
+            buttonTag.MergeAttribute("onclick", $"document.getElementById('{inputTag.Attributes["id"]}').select(); document.execCommand('copy'); this.innerHTML = 'Copied!'");
+            buttonTag.InnerHtml = "Copy!";
 
             spanTag.InnerHtml = buttonTag.ToString();
             outerTag.InnerHtml = inputTag.ToString() + spanTag.ToString();

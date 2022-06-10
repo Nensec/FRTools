@@ -25,14 +25,6 @@
                         @Html.CopyTextBox(Url.RouteUrl("Preview", new { skinId = Model.SkinId }, "https"), "PreviewLink", "skin", Model.SkinId)
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label style="padding-top:7px; text-align:left" class="col-md-4 col-form-label" for="PreviewShareLink">
-                        <span class="fa fa-warning text-warning" data-toggle="tooltip" title="Generating a share link allows you to post links on the Flight Rising forums."></span> Share link
-                    </label>
-                    <div class="col-md-8">
-                        @Html.CopyTextBox(Model.ShareUrl, "PreviewShareLink", "skin", Model.SkinId)
-                    </div>
-                </div>
 
                 @if (Request.IsAuthenticated)
                 {

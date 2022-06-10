@@ -89,14 +89,6 @@
                                     @Html.CopyTextBox(Url.RouteUrl("PinglistDirect", new { listId = Model.ListId }, "https"), "PinglistLink", "pinglist", Model.ListId)
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label class="col-md-3" for="PinglistShareLink">
-                                    <span class="fa fa-warning text-warning" data-toggle="tooltip" title="Generating a share link allows you to post links on the Flight Rising forums."></span> Share link
-                                </label>
-                                <div class="col-md-9">
-                                    @Html.CopyTextBox(Model.ShareUrl, "PinglistShareLink", "pinglist", Model.ListId)
-                                </div>
-                            </div>
                             <hr />
                             <div class="form-group row">
                                 @Html.LabelFor(model => model.Name, new { @class = "col-md-3" })

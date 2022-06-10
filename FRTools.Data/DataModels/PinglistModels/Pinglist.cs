@@ -14,7 +14,6 @@ namespace FRTools.Data.DataModels.PinglistModels
         public string Name { get; set; }
         public bool IsPublic { get; set; }
         public string Format { get; set; }
-        public string ShareUrl { get; set; }
         public virtual User Creator { get; set; }
 
         public virtual ICollection<PingListEntry> Entries { get; set; } = new HashSet<PingListEntry>();
