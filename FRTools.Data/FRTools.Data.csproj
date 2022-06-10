@@ -82,6 +82,10 @@
     <Compile Include="Migrations\202204231426510_More coverage checker preferences.designer.cs">
       <DependentUpon>202204231426510_More coverage checker preferences.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202206101836067_Remove share url.cs" />
+    <Compile Include="Migrations\202206101836067_Remove share url.designer.cs">
+      <DependentUpon>202206101836067_Remove share url.cs</DependentUpon>
+    </Compile>
     <Compile Include="OrderAttribute.cs" />
     <Compile Include="ReadOnlyAttribute.cs" />
     <Compile Include="ColorAttribute.cs" />
@@ -402,6 +406,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202204231426510_More coverage checker preferences.resx">
       <DependentUpon>202204231426510_More coverage checker preferences.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202206101836067_Remove share url.resx">
+      <DependentUpon>202206101836067_Remove share url.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
