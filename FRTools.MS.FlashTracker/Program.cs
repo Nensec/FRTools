@@ -22,6 +22,8 @@ namespace FRTools.MS.FlashTracker
     {
         private static IQueueClient _serviceBus;
 
+        private static string[] _tabs = { "apparel", "familiars", "specialty", "genes", "scenes", "skins", "battle", "bundles" };
+
         static async Task Main()
         {
             _serviceBus = new QueueClient(ConfigurationManager.AppSettings["AzureSBConnString"], ConfigurationManager.AppSettings["AzureSBQueueName"]);
@@ -33,7 +35,23 @@ namespace FRTools.MS.FlashTracker
 
             var itemsDoc = client.Load(string.Format(FRHelpers.MarketplaceFetchUrl, link.Split('/').Last()));
             var items = itemsDoc.DocumentNode.SelectNodes("//*[@id=\"market-result-items-content\"]/span");
-            var flashSaleItem = items.First(x => x.HasClass("market-flash-result"));
+            var flashSaleItem = items.FirstOrDefault(x => x.HasClass("market-flash-result"));
+
+            if (flashSaleItem == null)
+            {
+                foreach (var tab in _tabs)
+                {
+                    itemsDoc = client.Load(string.Format(FRHelpers.MarketplaceFetchUrl, tab));
+                    items = itemsDoc.DocumentNode.SelectNodes("//*[@id=\"market-result-items-content\"]/span");
+                    flashSaleItem = items.FirstOrDefault(x => x.HasClass("market-flash-result"));
+                    if (flashSaleItem != null)
+                        break;
+                }
+            }
+
+            if (flashSaleItem == null)
+                return;
+
             var itemId = int.Parse(flashSaleItem.ChildNodes.First(x => x.GetAttributes().Any(a => a.Name == "data-itemid")).GetAttributeValue("data-itemid", null));
             using (var ctx = new DataContext())
             {
