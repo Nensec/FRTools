@@ -1,17 +1,20 @@
 ﻿using FRTools.Common;
 using FRTools.Data;
 using FRTools.Data.DataModels;
+using FRTools.Data.DataModels.FlightRisingModels;
 using FRTools.Tools.SkinTester;
 using FRTools.Web.Infrastructure;
 using FRTools.Web.Models;
 using Microsoft.AspNet.Identity;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.Caching;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -22,6 +25,8 @@ namespace FRTools.Web.Controllers
     [RoutePrefix("skintester")]
     public class SkinController : BaseController
     {
+        static MemoryCache _sceneCache = new MemoryCache("scenes");
+
         public SkinController()
         {
             ViewBag.Logo = "/Content/frskintester.svg";
@@ -101,11 +106,20 @@ namespace FRTools.Web.Controllers
 
             await SavePreviewStatistics(result);
 
+            var scenes = _sceneCache.Cast<KeyValuePair<string, object>>().Select(x => x.Value).Cast<FRItem>().ToList();
+
+            if (!scenes.Any())
+            {
+                scenes = DataContext.FRItems.Where(x => x.ItemCategory == FRItemCategory.Trinket && x.ItemType == "Scene").ToList();
+                scenes.ForEach(x => _sceneCache.Add($"{x.FRId}", x, DateTimeOffset.UtcNow.AddMinutes(15)));
+            }
+
             return View("PreviewResult", new PreviewModelPostViewModel
             {
                 SkinId = model.SkinId,
                 Result = result,
-                Dragon = result.Dragon
+                Dragon = result.Dragon,
+                Scenes = scenes
             });
         }
 

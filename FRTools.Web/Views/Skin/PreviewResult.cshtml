@@ -1,8 +1,7 @@
 ﻿@model PreviewModelPostViewModel
 
 @{
-    ViewBag.Title = "Preview";
-
+    ViewBag.Title = "Preview result";
 }
 
 <div class="card mt-3">
@@ -12,6 +11,23 @@
         </h5>
     </div>
     <div class="card-body">
+        <div class="text-center">
+            <div class="form-group row">
+                <div class="col-auto">
+                    <label class="col-form-label" for="Scene">Select scene: </label>
+                </div>
+                <div class="col">
+                    <select id="SceneSelect" class="form-control">
+                        <option selected>None</option>
+                        <option disabled>------------------</option>
+                        @foreach (var scene in Model.Scenes.OrderBy(x => x.FRId))
+                        {
+                            <option value="@scene.FRId">@scene.Name.Replace("Scene: ", "")</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
         @if (Model.Dragon.EyeType == EyeType.Primal || Model.Dragon.EyeType == EyeType.Glowing || (Model.Dragon.EyeType == EyeType.MultiGaze && Model.Dragon.DragonType.IsAncientBreed()))
         {
             <div class="alert alert-warning">
@@ -31,16 +47,43 @@
             </div>
         }
         <div class="text-center">
-            @if (Model.Result.Urls.Length == 1)
-            {
-                <img class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[0])" />
-            }
-            else
-            {
-                <img class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[0])" />
-                <img class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[1])" />
+            <div id="NoScene">
+                @if (Model.Result.Urls.Length == 1)
+                {
+                    <img class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[0])" />
+                }
+                else
+                {
+                    <img class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[0])" />
+                    <img class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[1])" />
+                }
+            </div>
+        </div>
+        <div id="Scene" style="display: none">
+            <div class="d-flex flex-column">
+                @if (Model.Result.Urls.Length == 1)
+                {
+                    <div class="sceneBg">
+                        <img style="position: relative; left: 327px; top: 104px;" class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[0])" />
+                    </div>
+                }
+                else
+                {
+                    <div class="align-self-center">
+                        <div class="sceneBg">
+                            <img style="position: relative; left: 327px; top: 104px;" class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[0])" />
+                        </div>
+                    </div>
 
-            }
+                    <div class="align-self-center mt-3">
+                        <div class="sceneBg">
+                            <img style="position: relative; left: 327px; top: 104px;" class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[1])" />
+                        </div>
+                    </div>
+
+
+                }
+            </div>
         </div>
         @if (Model.Result.Cached)
         {
@@ -86,3 +129,28 @@
         }
     </div>
 </div>
+
+@section scripts {
+    <script>
+        $('#SceneSelect').change(function (e) {
+            var sceneId = e.target.value;
+            if (sceneId == 'None') {
+                $('#Scene').hide();
+                $('#NoScene').show();
+            }
+            else {
+                $('#Scene').show();
+                $('#NoScene').hide();
+                $('.sceneBg').css('background-image', `url('@(Url.RouteUrl("GetSceneQueryString"))?id=${sceneId}')`);
+            }
+        });
+    </script>
+}
+<style>
+    .sceneBg {
+        width: 1024px;
+        height: 521px;
+        background-image: none;
+        background-position: center
+    }
+</style>
