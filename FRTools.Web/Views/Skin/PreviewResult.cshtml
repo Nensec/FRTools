@@ -302,12 +302,14 @@
 
         clearScene = () => {
             $("#SceneSelect-input").focus().val('');
+            $('.scene .dragon-profile-export-scene').attr('data-url', '');
             scene = false;
             updateDisplay();
         }
 
         clearFamiliar = () => {
             $("#FamiliarSelect-input").focus().val('');
+            $('.scene .dragon-profile-export-familiar').attr('data-url', '');
             familiar = false;
             updateDisplay();
         }
