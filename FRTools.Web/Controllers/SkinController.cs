@@ -26,6 +26,7 @@ namespace FRTools.Web.Controllers
     public class SkinController : BaseController
     {
         static MemoryCache _sceneCache = new MemoryCache("scenes");
+        static MemoryCache _familiarCache = new MemoryCache("familiars");
 
         public SkinController()
         {
@@ -107,6 +108,7 @@ namespace FRTools.Web.Controllers
             await SavePreviewStatistics(result);
 
             var scenes = _sceneCache.Cast<KeyValuePair<string, object>>().Select(x => x.Value).Cast<FRItem>().ToList();
+            var familiars = _familiarCache.Cast<KeyValuePair<string, object>>().Select(x => x.Value).Cast<FRItem>().ToList();
 
             if (!scenes.Any())
             {
@@ -114,12 +116,19 @@ namespace FRTools.Web.Controllers
                 scenes.ForEach(x => _sceneCache.Add($"{x.FRId}", x, DateTimeOffset.UtcNow.AddMinutes(15)));
             }
 
+            if(!familiars.Any())
+            {
+                familiars = DataContext.FRItems.Where(x => x.ItemCategory == FRItemCategory.Familiar).ToList();
+                familiars.ForEach(x => _familiarCache.Add($"{x.FRId}", x, DateTimeOffset.UtcNow.AddMinutes(15)));
+            }
+
             return View("PreviewResult", new PreviewModelPostViewModel
             {
                 SkinId = model.SkinId,
                 Result = result,
                 Dragon = result.Dragon,
-                Scenes = scenes
+                Scenes = scenes,
+                Familiars = familiars
             });
         }
 

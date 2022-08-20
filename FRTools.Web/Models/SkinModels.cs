@@ -94,6 +94,7 @@ namespace FRTools.Web.Models
         public string SkinId { get; set; }
         public DragonCache Dragon { get; set; }
         public List<FRItem> Scenes { get; set; }
+        public List<FRItem> Familiars { get; set; }
     }
 
     public class DeleteSkinPost : BaseSkinModel

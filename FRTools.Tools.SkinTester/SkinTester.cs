@@ -289,9 +289,9 @@ namespace FRTools.Tools.SkinTester
             if (apparelPreviewUrl != null)
             {
                 if (dragon.PreviewUrls.ContainsKey((skinId + "apparel", version ?? 1)))
-                    dragon.PreviewUrls[(skinId + "apparel", version ?? 1)] = previewUrl;
+                    dragon.PreviewUrls[(skinId + "apparel", version ?? 1)] = apparelPreviewUrl;
                 else
-                    dragon.PreviewUrls.Add((skinId + "apparel", version ?? 1), previewUrl);
+                    dragon.PreviewUrls.Add((skinId + "apparel", version ?? 1), apparelPreviewUrl);
 
                 result.Urls = new[] { previewUrl, apparelPreviewUrl };
             }

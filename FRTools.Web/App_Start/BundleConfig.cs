@@ -21,6 +21,14 @@ namespace FRTools
             bundles.Add(new ScriptBundle("~/bundles/chartjs").Include(
                 "~/Scripts/Chart.bundle.min.js",
                 "~/Scripts/chartjs-plugin-colorschemes.min.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
+                "~/Scripts/jquery-ui.min.js"));
+
+            bundles.Add(new StyleBundle("~/styles/jqueryui").Include(
+                "~/Content/jquery-ui.min.css",
+                "~/Content/jquery-ui.structure.min.css",
+                "~/Content/jquery-ui.theme.min.css"));
         }
     }
 }

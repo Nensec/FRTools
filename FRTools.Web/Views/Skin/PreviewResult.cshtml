@@ -4,6 +4,11 @@
     ViewBag.Title = "Preview result";
 }
 
+@section head{
+    @Scripts.Render("~/bundles/jqueryui")
+    @Styles.Render("~/styles/jqueryui")
+}
+
 <div class="card mt-3">
     <div class="card-header">
         <h5>
@@ -11,21 +16,28 @@
         </h5>
     </div>
     <div class="card-body">
-        <div class="text-center">
-            <div class="form-group row">
-                <div class="col-auto">
-                    <label class="col-form-label" for="Scene">Select scene: </label>
-                </div>
-                <div class="col">
-                    <select id="SceneSelect" class="form-control">
-                        <option selected>None</option>
-                        <option disabled>------------------</option>
-                        @foreach (var scene in Model.Scenes.OrderBy(x => x.FRId))
-                        {
-                            <option value="@scene.FRId">@scene.Name.Replace("Scene: ", "")</option>
-                        }
-                    </select>
-                </div>
+        <div class="form-group">
+            <div class="ui-widget d-flex align-items-baseline">
+                <select id="SceneSelect">
+                    <option value>Select one...</option>
+                    @foreach (var scene in Model.Scenes)
+                    {
+                        <option value="@scene.FRId">@scene.Name.Replace("Scene: ", "")</option>
+                    }
+                </select>
+                <button class="btn btn-outline-secondary ml-2" onclick="clearScene()">Clear</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="ui-widget d-flex">
+                <select id="FamiliarSelect">
+                    <option value>Select one...</option>
+                    @foreach (var familiar in Model.Familiars)
+                    {
+                        <option value="@familiar.FRId">@familiar.Name</option>
+                    }
+                </select>
+                <button class="btn btn-outline-secondary ml-2" onclick="clearFamiliar()">Clear</button>
             </div>
         </div>
         @if (Model.Dragon.EyeType == EyeType.Primal || Model.Dragon.EyeType == EyeType.Glowing || (Model.Dragon.EyeType == EyeType.MultiGaze && Model.Dragon.DragonType.IsAncientBreed()))
@@ -48,40 +60,32 @@
         }
         <div class="text-center">
             <div id="NoScene">
-                @if (Model.Result.Urls.Length == 1)
+                <img class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[0])" />
+                @if (Model.Result.Urls.Length != 1)
                 {
-                    <img class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[0])" />
-                }
-                else
-                {
-                    <img class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[0])" />
                     <img class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[1])" />
                 }
             </div>
         </div>
         <div id="Scene" style="display: none">
             <div class="d-flex flex-column">
-                @if (Model.Result.Urls.Length == 1)
+                <div class="d-flex justify-content-center overflow-hidden preview scene">
+                    <canvas id="dragon-profile-export" width="1024" height="521"></canvas>
+                    <div class="dragon-profile-export-scene" data-url=""></div>
+                    <div class="dragon-profile-export-dragon" data-url="@(Model.CDNBasePath + Model.Result.Urls[0])"></div>
+                    <div class="dragon-profile-export-familiar" data-url=""></div>
+                </div>
+                <button onclick="download($('.scene'))" style="width:1024px" class="btn btn-success align-self-center mt-2">Download scene preview</button>
+
+                @if (Model.Result.Urls.Length != 1)
                 {
-                    <div class="sceneBg">
-                        <img style="position: relative; left: 327px; top: 104px;" class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[0])" />
+                    <div class="d-flex justify-content-center overflow-hidden preview apparelScene mt-3">
+                        <canvas id="dragon-profile-export" width="1024" height="521"></canvas>
+                        <div class="dragon-profile-export-scene" data-url=""></div>
+                        <div class="dragon-profile-export-dragon" data-url="@(Model.CDNBasePath + Model.Result.Urls[1])"></div>
+                        <div class="dragon-profile-export-familiar" data-url=""></div>
                     </div>
-                }
-                else
-                {
-                    <div class="align-self-center">
-                        <div class="sceneBg">
-                            <img style="position: relative; left: 327px; top: 104px;" class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[0])" />
-                        </div>
-                    </div>
-
-                    <div class="align-self-center mt-3">
-                        <div class="sceneBg">
-                            <img style="position: relative; left: 327px; top: 104px;" class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[1])" />
-                        </div>
-                    </div>
-
-
+                    <button onclick="download($('.apparelScene'))" style="width:1024px" class="btn btn-success align-self-center mt-2">Download scene preview</button>
                 }
             </div>
         </div>
@@ -129,28 +133,262 @@
         }
     </div>
 </div>
+<style>
+    .custom-combobox {
+        position: relative;
+        display: inline-block;
+    }
 
+    .custom-combobox-toggle {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin-left: -1px;
+        padding: 0;
+    }
+</style>
 @section scripts {
     <script>
-        $('#SceneSelect').change(function (e) {
-            var sceneId = e.target.value;
-            if (sceneId == 'None') {
+        $(function () {
+            $.widget("custom.combobox", {
+                options: {
+                    placeholderText: 'Select',
+                    onSelectEvent: undefined
+                },
+                _create: function () {
+                    this.wrapper = $("<span>")
+                        .addClass("custom-combobox flex-grow-1")
+                        .insertAfter(this.element);
+
+                    this.element.hide();
+                    this._createAutocomplete();
+                    this._createShowAllButton();
+                },
+
+                _createAutocomplete: function () {
+                    var selected = this.element.children(":selected"),
+                        value = selected.val() ? selected.text() : "";
+
+                    this.input = $("<input>")
+                        .appendTo(this.wrapper)
+                        .val(value)
+                        .attr('id', this.element.attr('id') + '-input')
+                        .attr("title", "")
+                        .attr("placeholder", this.options.placeholderText)
+                        .addClass("form-control pl-5 ui-widget ui-widget-content ui-state-default ui-corner-left")
+                        .autocomplete({
+                            delay: 0,
+                            minLength: 0,
+                            source: this._source.bind(this)
+                        })
+                        .tooltip({
+                            classes: {
+                                "ui-tooltip": "ui-state-highlight"
+                            }
+                        });
+
+                    this._on(this.input, {
+                        autocompleteselect: function (event, ui) {
+                            ui.item.option.selected = true;
+                            this._trigger("select", event, {
+                                item: ui.item.option
+                            });
+                            this.options.onSelectEvent(ui.item.realValue);
+                        },
+
+                        autocompletechange: "_removeIfInvalid"
+                    });
+                },
+
+                _createShowAllButton: function () {
+                    var input = this.input,
+                        wasOpen = false;
+
+                    $("<a>")
+                        .attr("tabIndex", -1)
+                        .attr("title", "Show All Items")
+                        .tooltip()
+                        .appendTo(this.wrapper)
+                        .button({
+                            icons: {
+                                primary: "ui-icon-triangle-1-s"
+                            },
+                            text: false
+                        })
+                        .removeClass("ui-corner-all")
+                        .addClass("custom-combobox-toggle ui-corner-right")
+                        .on("mousedown", function () {
+                            wasOpen = input.autocomplete("widget").is(":visible");
+                        })
+                        .on("click", function () {
+                            input.trigger("focus");
+
+                            // Close if already visible
+                            if (wasOpen) {
+                                return;
+                            }
+
+                            // Pass empty string as value to search for, displaying all results
+                            input.autocomplete("search", "");
+                        });
+                },
+
+                _source: function (request, response) {
+                    var matcher = new RegExp($.ui.autocomplete.escapeRegex(request.term), "i");
+                    response(this.element.children("option").map(function () {
+                        var text = $(this).text();
+                        if (this.value && (!request.term || matcher.test(text)))
+                            return {
+                                label: text,
+                                value: text,
+                                realValue: $(this).val(),
+                                option: this
+                            };
+                    }));
+                },
+
+                _removeIfInvalid: function (event, ui) {
+
+                    // Selected an item, nothing to do
+                    if (ui.item) {
+                        return;
+                    }
+
+                    // Search for a match (case-insensitive)
+                    var value = this.input.val(),
+                        valueLowerCase = value.toLowerCase(),
+                        valid = false;
+                    this.element.children("option").each(function () {
+                        if ($(this).text().toLowerCase() === valueLowerCase) {
+                            this.selected = valid = true;
+                            return false;
+                        }
+                    });
+                },
+
+                _destroy: function () {
+                    this.wrapper.remove();
+                    this.element.show();
+                }
+            });
+
+            $("#SceneSelect").combobox({ placeholderText: 'Select a scene (type to filter)', onSelectEvent: fetchScene });
+            $("#FamiliarSelect").combobox({ placeholderText: 'Select a familiar (type to filter)', onSelectEvent: fetchFamiliar });
+        });
+
+        var scene, sceneSource = new Image(), dragon, dragonSource = new Image(), dragonApparel, dragonApparelSource = new Image(), familiar, familiarSource = new Image();
+        sceneSource.crossOrigin = 'anonymous';
+        dragonSource.crossOrigin = 'anonymous';
+        dragonApparelSource.crossOrigin = 'anonymous';
+        familiarSource.crossOrigin = 'anonymous';
+
+        updateScene = function () {
+            sceneSource.src = $('.scene .dragon-profile-export-scene').attr('data-url');
+            familiarSource.src = $('.scene .dragon-profile-export-familiar').attr('data-url')
+            dragonSource.src = $('.scene .dragon-profile-export-dragon').attr('data-url');
+            dragonApparelSource.src = $('.apparelScene .dragon-profile-export-dragon').attr('data-url');
+        }
+
+        fetchScene = id => {
+            var url = "";
+            if (!id)
+                scene = false;
+            else
+                url = `@Url.RouteUrl("GetSceneQueryString")?id=${id}`;
+
+            $('.dragon-profile-export-scene').attr('data-url', url);
+            updateScene();
+        }
+
+        clearScene = () => {
+            $("#SceneSelect-input").focus().val('');
+            scene = false;
+            updateDisplay();
+        }
+
+        clearFamiliar = () => {
+            $("#FamiliarSelect-input").focus().val('');
+            familiar = false;
+            updateDisplay();
+        }
+
+        fetchFamiliar = id => {
+            var url = "";
+            if (!id)
+                familiar = false;
+            else
+                url = `@Url.RouteUrl("GetFamiliarQueryString")?id=${id}`;
+
+            $('.dragon-profile-export-familiar').attr('data-url', url);
+            updateScene();
+        }
+
+        sceneSource.onload = function () {
+            scene = sceneSource;
+            updateDisplay();
+        };
+
+        dragonSource.onload = function () {
+            dragon = dragonSource;
+            updateDisplay();
+        };
+
+        dragonApparelSource.onload = function () {
+            dragonApparel = dragonApparelSource;
+            updateDisplay();
+        };
+
+        familiarSource.onload = function () {
+            familiar = familiarSource;
+            updateDisplay();
+        };
+
+        updateDisplay = function () {
+            if (scene || familiar) {
+                $('#Scene').show();
+                $('#NoScene').hide();
+            }
+            else {
                 $('#Scene').hide();
                 $('#NoScene').show();
             }
-            else {
-                $('#Scene').show();
-                $('#NoScene').hide();
-                $('.sceneBg').css('background-image', `url('@(Url.RouteUrl("GetSceneQueryString"))?id=${sceneId}')`);
+
+            var canvas = $('.scene canvas')[0].getContext('2d');
+
+            canvas.setTransform(1, 0, 0, 1, 0, 0);
+            canvas.clearRect(0, 0, 1024, 521);
+            if (scene)
+                canvas.drawImage(scene, 0, 0, 1024, 521);
+            if (dragon)
+                canvas.drawImage(dragon, 327, 104, 350, 350);
+            if (familiar)
+                canvas.drawImage(familiar, 677, 244, 200, 200)
+
+            if (dragonApparel) {
+                var apparelCanvas = $('.apparelScene canvas')[0].getContext('2d');
+
+                apparelCanvas.setTransform(1, 0, 0, 1, 0, 0);
+                apparelCanvas.clearRect(0, 0, 1024, 521);
+                if (scene)
+                    apparelCanvas.drawImage(scene, 0, 0, 1024, 521);
+                if (dragonApparel)
+                    apparelCanvas.drawImage(dragonApparel, 327, 104, 350, 350);
+                if (familiar)
+                    apparelCanvas.drawImage(familiar, 677, 244, 200, 200)
             }
-        });
+        }
+
+        download = (elm) => {
+            var canvas = $('canvas', elm)[0];
+
+            let downloadLink = document.createElement('a');
+            downloadLink.setAttribute('download', 'ScenePreview.png');
+
+            canvas.toBlob(function (blob) {
+                let url = URL.createObjectURL(blob);
+                downloadLink.setAttribute('href', url);
+                downloadLink.click();
+            });
+        }
     </script>
 }
-<style>
-    .sceneBg {
-        width: 1024px;
-        height: 521px;
-        background-image: none;
-        background-position: center
-    }
-</style>
