@@ -75,7 +75,7 @@
                     <div class="dragon-profile-export-dragon" data-url="@(Model.CDNBasePath + Model.Result.Urls[0])"></div>
                     <div class="dragon-profile-export-familiar" data-url=""></div>
                 </div>
-                <button onclick="download($('.scene'))" style="width:1024px" class="btn btn-success align-self-center mt-2">Download scene preview</button>
+                <button onclick="download($('.scene'))" style="max-width:1024px" class="btn btn-success align-self-center mt-2 w-100">Download scene preview</button>
 
                 @if (Model.Result.Urls.Length != 1)
                 {
@@ -85,7 +85,7 @@
                         <div class="dragon-profile-export-dragon" data-url="@(Model.CDNBasePath + Model.Result.Urls[1])"></div>
                         <div class="dragon-profile-export-familiar" data-url=""></div>
                     </div>
-                    <button onclick="download($('.apparelScene'))" style="width:1024px" class="btn btn-success align-self-center mt-2">Download scene preview</button>
+                    <button onclick="download($('.apparelScene'))" style="max-width:1024px" class="btn btn-success align-self-center mt-2 w-100">Download scene preview</button>
                 }
             </div>
         </div>
