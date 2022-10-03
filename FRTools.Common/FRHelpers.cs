@@ -296,19 +296,18 @@ namespace FRTools.Common
         private static async Task<(string Username, int UserId)> GetFRUserInfo(string username, int? userId)
         {
             string url = $"https://www1.flightrising.com/clan-profile/{(userId?.ToString() ?? $"n/{username}")}";
-            using (var client = new WebClient())
-            {
-                var userProfilePage = await client.DownloadStringTaskAsync(url);
-                if (userProfilePage.Contains("404 - Page Not Found") || userProfilePage.Contains("404: User not found"))
-                    return default;
+            var client = new HtmlWeb();
+            var userProfilePage = client.Load(url);
 
-                var userBio = Regex.Match(userProfilePage, @"<div class=""userdata-section"" style=""height:136px;"">[\s\S]+?<span style=""position:absolute; top:8px; left:8px; color:#731d08; font-weight:bold; font-size:16px;"">\s+([\s\S]+?)\s+</span>[\s\S]+?<span>([\d]+?)</span>[\s\S]+?</div>");
-                var frName = userBio.Groups[1].Value;
-                var frId = int.Parse(userBio.Groups[2].Value);
-                Console.WriteLine($"Found info:\n\tUsername: {frName}\n\tID: {frId}");
+            if (userProfilePage.ParsedText.Contains("404 - Page Not Found") || userProfilePage.ParsedText.Contains("404: User not found"))
+                return default;
 
-                return (frName, frId);
-            }
+            var userBio = userProfilePage.DocumentNode.QuerySelector(".clan-profile-user-frame");
+            var frId = int.Parse(userBio.QuerySelectorAll(".clan-profile-stats .clan-profile-stat").First(x => x.QuerySelector("strong").InnerText == "Player ID").LastChild.InnerText.Trim());
+            var frName = userBio.QuerySelector(".clan-profile-username").InnerText.Trim();
+            Console.WriteLine($"Found info:\n\tUsername: {frName}\n\tID: {frId}");
+
+            return (frName, frId);
         }
 
         public static Flight GetFlightFromGodName(string godName)
