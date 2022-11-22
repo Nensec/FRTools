@@ -230,8 +230,9 @@ namespace FRTools.Discord.Modules
                 else
                     await Context.Channel.SendMessageAsync(embed: embed.Build());
             }
-            catch
+            catch(Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 await ReplyAsync("Something went wrong parsing the dragon's profile page, maybe something changed on the page and I need to be updated. Please let <@107155889563115520> know!");
                 return;
             }
