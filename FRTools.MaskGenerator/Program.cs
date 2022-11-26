@@ -29,7 +29,7 @@ namespace FRTools.MaskGenerator
                             }
                         }
                         else
-                            GenerateMask(breed, gender, eyeType, 1);
+                            GenerateMask(breed, gender, eyeType, 0);
                     }
 
         }
