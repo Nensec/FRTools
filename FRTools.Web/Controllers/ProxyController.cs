@@ -59,15 +59,15 @@ namespace FRTools.Web.Controllers
                 switch (itemSplit[0])
                 {
                     case "Primary Gene":
-                        primary = (int)Enum.Parse(GeneratedFREnumExtentions.PrimaryGeneType((DragonType)dragonType), itemSplit[1]);
+                        primary = (int)Enum.Parse(GeneratedFREnumExtentions.PrimaryGeneType((DragonType)dragonType), itemSplit[1].Replace("-","").Replace(" ", ""));
                         primaryColor = random.Next(0, Enum.GetValues(typeof(Color)).Length + 1);
                         break;
                     case "Secondary Gene":
-                        secondary = (int)Enum.Parse(GeneratedFREnumExtentions.SecondaryGeneType((DragonType)dragonType), itemSplit[1]);
+                        secondary = (int)Enum.Parse(GeneratedFREnumExtentions.SecondaryGeneType((DragonType)dragonType), itemSplit[1].Replace("-", "").Replace(" ", ""));
                         secondaryColor = random.Next(0, Enum.GetValues(typeof(Color)).Length + 1);
                         break;
                     case "Tertiary Gene":
-                        tertiary = (int)Enum.Parse(GeneratedFREnumExtentions.TertiaryGeneType((DragonType)dragonType), itemSplit[1]);
+                        tertiary = (int)Enum.Parse(GeneratedFREnumExtentions.TertiaryGeneType((DragonType)dragonType), itemSplit[1].Replace("-", "").Replace(" ", ""));
                         tertiaryColor = random.Next(0, Enum.GetValues(typeof(Color)).Length + 1);
                         break;
                 }

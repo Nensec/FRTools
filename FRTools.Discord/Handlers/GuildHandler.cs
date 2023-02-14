@@ -70,7 +70,7 @@ namespace FRTools.Discord.Handlers
             {
                 var context = new FRToolsSocketCommandContext(_client, msg as SocketUserMessage);
 
-                if (message.HasStringPrefix(prefix, ref argPos) && !char.IsNumber(message.Content[argPos]) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))
+                if ((message.HasStringPrefix(prefix, ref argPos) && !char.IsNumber(message.Content[argPos])) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))
                 {
                     if (message.Content.Substring(argPos) == "help")
                     {
