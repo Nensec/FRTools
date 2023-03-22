@@ -13,7 +13,7 @@ namespace FRTools.MaskGenerator
         {
             // To generate specific masks, remove the unwanted ones from the array
 
-            int[] breeds = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21 };
+            int[] breeds = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22 };
             int[] genders = { 0, 1 };
             int[] eyetypes = { 0, 5, 6, 11 }; // common = 0, multi gaze = 5, primal = 6, innocent = 11
 
