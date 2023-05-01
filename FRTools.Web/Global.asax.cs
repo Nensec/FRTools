@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
+using System.Diagnostics;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using FRTools.Web.Infrastructure;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Extensions.Logging;
 
 namespace FRTools
 {
@@ -22,8 +24,14 @@ namespace FRTools
         {
             var ex = Server.GetLastError();
 
-            var logger = Context.GetOwinContext().Get<ILogger>();
-            logger.LogError(ex, ex.Message);
+            var logger = Context.GetOwinContext().Get<LoggerWrapper>();
+
+            if (logger.IsEnabled(LogLevel.Error))
+                logger.LogError(ex, ex.Message);
+
+#if DEBUG
+            Trace.WriteLine(ex.Message);
+#endif
         }
     }
 }

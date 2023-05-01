@@ -1,5 +1,9 @@
-﻿using FRTools.Data;
+﻿using System;
+using System.Configuration;
+using System.Linq;
+using FRTools.Data;
 using FRTools.Data.DataModels;
+using FRTools.Web.Infrastructure;
 using FRTools.Web.Infrastructure.Managers;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -14,9 +18,6 @@ using Owin.Security.Providers.DeviantArt;
 using Owin.Security.Providers.Discord;
 using Owin.Security.Providers.Google;
 using Owin.Security.Providers.Tumblr;
-using System;
-using System.Configuration;
-using System.Linq;
 
 [assembly: OwinStartup(typeof(FRTools.App_Start.Startup))]
 namespace FRTools.App_Start
@@ -25,6 +26,16 @@ namespace FRTools.App_Start
     {
         public void Configuration(IAppBuilder app)
         {
+            IServiceCollection services = new ServiceCollection();
+            services.AddLogging(logging =>
+            {
+                logging.AddApplicationInsights();
+            });
+
+            IServiceProvider serviceProvider = services.BuildServiceProvider();
+
+            app.CreatePerOwinContext<LoggerWrapper>((o, c) => new LoggerWrapper(serviceProvider.GetService<ILogger>()));
+
             app.CreatePerOwinContext(() => new DataContext());
             app.CreatePerOwinContext<UserManager<User, int>>((o, c) =>
             {
@@ -90,11 +101,6 @@ namespace FRTools.App_Start
             discordOptions.Scope.Add("guilds");
             discordOptions.Scope.Add("guilds.members.read");
             app.UseDiscordAuthentication(discordOptions);
-
-            IServiceCollection services = new ServiceCollection();
-            services.AddLogging(x => x.AddApplicationInsights());
-
-            IServiceProvider serviceProvider = services.BuildServiceProvider();
 
             using (var ctx = new DataContext())
             {
