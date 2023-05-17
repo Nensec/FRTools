@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using Color = FRTools.Data.Color;
 
 namespace FRTools.Common
@@ -366,8 +367,8 @@ namespace FRTools.Common
                     if (existingItem != null)
                         ctx.FRItems.Remove(existingItem);
                     var item = ctx.FRItems.Add(new FRItem { FRId = itemId, IconUrl = iconUrl, ItemCategory = (FRItemCategory)Enum.Parse(typeof(FRItemCategory), category, true) });
-                    item.Name = itemDoc.DocumentNode.SelectSingleNode("/div/div[1]/div[1]").InnerText.Trim();
-                    item.Description = CleanupFRHtmlText(itemDoc.DocumentNode.SelectSingleNode("/div/div[2]").InnerText);
+                    item.Name = HttpUtility.HtmlDecode(itemDoc.DocumentNode.SelectSingleNode("/div/div[1]/div[1]").InnerText.Trim());
+                    item.Description = HttpUtility.HtmlDecode(CleanupFRHtmlText(itemDoc.DocumentNode.SelectSingleNode("/div/div[2]").InnerText));
                     item.ItemType = itemDoc.DocumentNode.SelectSingleNode("/div/div[1]/div[2]").InnerText.Trim();
                     var rarityUrl = itemDoc.DocumentNode.SelectSingleNode("/div/div[1]/img[1]").GetAttributeValue("src", "");
                     var rarityMatch = Regex.Match(rarityUrl, @"../images/layout/tooltips/star-(?<Rarity>\d).png");
