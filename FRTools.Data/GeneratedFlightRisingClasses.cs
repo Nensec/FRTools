@@ -4541,7 +4541,8 @@ namespace FRTools.Data
 				DragonType.Coatl,
 				DragonType.Skydancer,
 				DragonType.Bogsneak,
-				DragonType.Obelisk,				
+				DragonType.Obelisk,
+				
 			};
 		}
 
