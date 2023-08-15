@@ -1,11 +1,4 @@
-﻿using FRTools.Common;
-using FRTools.Data;
-using FRTools.Data.DataModels.NewsReaderModels;
-using FRTools.Data.Messages;
-using HtmlAgilityPack;
-using Microsoft.Azure.ServiceBus;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
@@ -13,6 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using FRTools.Common;
+using FRTools.Data;
+using FRTools.Data.DataModels.FlightRisingModels;
+using FRTools.Data.DataModels.NewsReaderModels;
+using FRTools.Data.Messages;
+using HtmlAgilityPack;
+using Microsoft.Azure.ServiceBus;
+using Newtonsoft.Json;
 
 namespace FRTools.MS.NewsReader
 {
@@ -239,11 +240,20 @@ namespace FRTools.MS.NewsReader
                         if (items.Any())
                         {
                             var unknownItems = items.Except(ctx.FRItems.Where(x => items.Contains(x.FRId)).ToList().Select(x => x.FRId));
+                            var newItems = new List<FRItem>();
                             foreach (var unknownItem in unknownItems)
                             {
                                 var item = await FRHelpers.FetchItem(unknownItem);
                                 if (item != null)
+                                {
+                                    newItems.Add(item);
                                     await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NewItemMessage(MessageCategory.NewsReader, item)))));
+                                }
+                            }
+
+                            if (FRHelpers.CheckForUnknownGenesOrRace(newItems))
+                            {
+                                AzurePipeLineService.TriggerRegenerateClassesPipeline();
                             }
                         }
                     }

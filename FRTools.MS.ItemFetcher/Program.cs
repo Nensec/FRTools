@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using FRTools.Common;
@@ -89,7 +86,7 @@ namespace FRTools.MS.ItemFetcher
                     Console.WriteLine($"Since items were found, saving last success at {DateTime.UtcNow}");
 
                     Console.WriteLine("Checking if we got any new genes or breeds");
-                    if (CheckForUnknownGenesOrRace(items))
+                    if (FRHelpers.CheckForUnknownGenesOrRace(items))
                     {
                         AzurePipeLineService.TriggerRegenerateClassesPipeline();
                     }
@@ -112,57 +109,6 @@ namespace FRTools.MS.ItemFetcher
             }
 
             await _serviceBus.CloseAsync();
-        }
-
-        private static bool CheckForUnknownGenesOrRace(List<FRItem> items)
-        {
-            bool CheckIfDragonTypeIsKnown(string breed)
-            {
-                try
-                {
-                    var _ = FRHelpers.GetDragonType(breed);
-                }
-                catch (ArgumentException)
-                {
-                    return false;
-                }
-                return true;
-            }
-
-            // Checking skins is more a sanity check, but it could be the case if a new modern is introduced and no genes were added in the same newspost
-            foreach (var item in items.Where(x => x.ItemCategory == FRItemCategory.Skins))
-            {
-                var breed = item.ItemType.Split(' ')[0];
-                return !CheckIfDragonTypeIsKnown(breed);
-            }
-
-            foreach (var item in items.Where(x => x.ItemType == "Specialty Item" && (x.Name.StartsWith("Primary") || x.Name.StartsWith("Secondary") || x.Name.StartsWith("Tertiary"))))
-            {
-                // First check if the breed is known
-                var breed = item.Name.Split('(', ')')[1];
-                if (!CheckIfDragonTypeIsKnown(breed))
-                {
-                    return true;
-                }
-
-                // Check if the gene is known
-                var geneName = item.Name.Split(':', '(')[0].Trim();
-                try
-                {
-                    if (item.Name.StartsWith("Primary"))
-                        FRHelpers.GetBodyGene(geneName);
-                    if (item.Name.StartsWith("Secondary"))
-                        FRHelpers.GetWingGene(geneName);
-                    if (item.Name.StartsWith("Tertiary"))
-                        FRHelpers.GetTertiaryGene(geneName);
-                }
-                catch (ArgumentException)
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
     }
 }
