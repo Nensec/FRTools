@@ -1,16 +1,16 @@
-﻿using Discord;
-using Discord.WebSocket;
-using FRTools.Common;
-using FRTools.Data;
-using FRTools.Data.DataModels.FlightRisingModels;
-using FRTools.Discord.Infrastructure;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Discord;
+using Discord.WebSocket;
+using FRTools.Common;
+using FRTools.Data;
+using FRTools.Data.DataModels.FlightRisingModels;
+using FRTools.Discord.Infrastructure;
 
 namespace FRTools.Discord.Handlers
 {
@@ -60,9 +60,9 @@ namespace FRTools.Discord.Handlers
                     {
                         showImages = bool.TryParse(await settingManager.GetSettingValue("LOOKUP_SKIN_SHOW_IMAGES", guild), out var showSkinImages) && showSkinImages;
 
-                        var skinType = item.ItemType.Split(' ');
-                        var dragonType = (DragonType)Enum.Parse(typeof(DragonType), skinType[0]);
-                        var gender = (Gender)Enum.Parse(typeof(Gender), skinType[1]);
+                        var breed = item.ItemType.Split(' ');
+                        var dragonType = FRHelpers.GetDragonType(breed[0]);
+                        var gender = (Gender)Enum.Parse(typeof(Gender), breed[1]);
 
                         if (showImages)
                             using (var client = new WebClient())
@@ -108,11 +108,19 @@ namespace FRTools.Discord.Handlers
 
                         if (showImages)
                         {
-                            var ancientBreed = GeneratedFRHelpers.GetAncientBreeds().Where(x => item.Name.EndsWith($"({x})"));
-                            if (ancientBreed.Any())
+                            if (item.Name.Contains('('))
                             {
-                                using (var client = new WebClient())
-                                    assetStream = await client.OpenReadTaskAsync(string.Format(SiteHelpers.DummyDragonGeneProxyUrl, (int)ancientBreed.First(), random.Next(0, 2), $"{item.FRId}"));
+                                if (FRHelpers.TryGetDragonType(item.Name.Split('(', ')')[1], out var dragonType))
+                                {
+                                    using (var client = new WebClient())
+                                        assetStream = await client.OpenReadTaskAsync(string.Format(SiteHelpers.DummyDragonGeneProxyUrl, (int)dragonType, random.Next(0, 2), $"{item.FRId}"));
+                                }
+                                else
+                                {
+                                    // If I have more motivation I can fix this by temporarily loading the new data into memory and not rely on the generated classes, should we encounter this issue.
+                                    // Alas, I have run out of motivation so this stopgap error message it is.
+                                    embed.Description += "\n\r\nBreed is not found in my data so image is unavailable, try again once I am updated!";
+                                }
                             }
                             else
                             {

@@ -4,6 +4,8 @@ namespace FRTools.Data
 {
 	public enum DragonType
 	{
+		[Description("Unknown")]
+		Unknown = -1,
 		[Description("Fae")]
 		Fae = 1,
 		[Description("Guardian")]
@@ -4541,7 +4543,8 @@ namespace FRTools.Data
 				DragonType.Coatl,
 				DragonType.Skydancer,
 				DragonType.Bogsneak,
-				DragonType.Obelisk,				
+				DragonType.Obelisk,
+				
 			};
 		}
 

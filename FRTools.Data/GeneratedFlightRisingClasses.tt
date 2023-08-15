@@ -133,6 +133,8 @@ namespace FRTools.Data
 {
 	public enum DragonType
 	{
+		[Description("Unknown")]
+		Unknown = -1,
 	<#
 	foreach(var breed in page.Breeds.OrderBy(x => x.Value)) 
 	{

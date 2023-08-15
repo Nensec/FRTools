@@ -1,7 +1,4 @@
-﻿using FRTools.Data;
-using FRTools.Data.DataModels.FlightRisingModels;
-using HtmlAgilityPack;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -11,6 +8,9 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
+using FRTools.Data;
+using FRTools.Data.DataModels.FlightRisingModels;
+using HtmlAgilityPack;
 using Color = FRTools.Data.Color;
 
 namespace FRTools.Common
@@ -443,5 +443,27 @@ namespace FRTools.Common
                 .Replace('\u000D', '\u0020')
                 .Trim();
         }
+
+        public static DragonType GetDragonType(string dragonType) => (DragonType)Enum.Parse(typeof(DragonType), dragonType, true);
+
+        public static bool TryGetDragonType(string dragontype, out DragonType result)
+        {
+            try
+            {
+                result = GetDragonType(dragontype);
+                return true;
+            }
+            catch
+            {
+                result = DragonType.Unknown;
+                return false;
+            }
+        }
+
+        public static AllBodyGene GetBodyGene(string bodyGene) => (AllBodyGene)Enum.Parse(typeof(AllBodyGene), bodyGene, true);
+
+        public static AllWingGene GetWingGene(string wingGene) => (AllWingGene)Enum.Parse(typeof(AllWingGene), wingGene, true);
+
+        public static AllTertiaryGene GetTertiaryGene(string tertiaryGene) => (AllTertiaryGene)Enum.Parse(typeof(AllTertiaryGene), tertiaryGene, true);
     }
 }

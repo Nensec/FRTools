@@ -1,18 +1,16 @@
-﻿using Discord;
+﻿using System.Configuration;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using FRTools.Common;
 using FRTools.Data;
 using FRTools.Data.Messages;
-using FRTools.Discord.Handlers;
 using FRTools.Discord.Infrastructure;
 using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
-using System;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FRTools.Discord.Modules
 {
@@ -137,6 +135,13 @@ namespace FRTools.Discord.Modules
             item.AssetUrl = assetUrl;
             DbContext.SaveChanges();
             await ReplyAsync("Updated item");
+        }
+
+        [Name("Triggers the pipeline to regenerate FR classes"), Command("generatefrclasses")]
+        public async Task RegenerateFRClasses()
+        {
+            AzurePipeLineService.TriggerRegenerateClassesPipeline();
+            await ReplyAsync("Request send");
         }
     }
 }

@@ -1,11 +1,13 @@
-﻿using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
+﻿using System;
 using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace FRTools.Common
 {
@@ -75,6 +77,29 @@ namespace FRTools.Common
 
             var container = blobClient.GetContainerReference(path.Split(Path.DirectorySeparatorChar)[0]);
             return container.GetDirectoryReference(directoryPath);
+        }
+    }
+
+    public class AzurePipeLineService
+    {
+        public static void TriggerRegenerateClassesPipeline()
+        {
+            var azureDevOpsAccount = ConfigurationManager.AppSettings["AzureDevOpsAccount"];
+            var azureDevOpsProject = ConfigurationManager.AppSettings["AzureDevOpsProject"];
+            var azureDevOpsPipeline = ConfigurationManager.AppSettings["AzureDevOpsPipeline"];
+            var azureDevOpsBasicAuth = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{azureDevOpsAccount}:{ConfigurationManager.AppSettings["AzureDevOpsPipelinesPAT"]}"));
+
+            if (!string.IsNullOrEmpty(azureDevOpsBasicAuth) && !string.IsNullOrEmpty(azureDevOpsAccount) && !string.IsNullOrEmpty(azureDevOpsProject) && !string.IsNullOrEmpty(azureDevOpsPipeline))
+            {
+                using (var client = new WebClient())
+                {
+                    var body = $"{{\"definition\":{{\"id\":{azureDevOpsPipeline}}}}}";
+                    var url = $"https://dev.azure.com/{azureDevOpsAccount}/{azureDevOpsProject}/_apis/build/builds?api-version=7.0";
+                    client.Headers.Add("Authorization", $"Basic {azureDevOpsBasicAuth}");
+                    client.Headers.Add("Content-Type", "application/json");
+                    client.UploadData(url, Encoding.UTF8.GetBytes(body));
+                }
+            }
         }
     }
 }

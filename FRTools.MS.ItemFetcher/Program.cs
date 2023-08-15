@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Buffers.Text;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using FRTools.Common;
 using FRTools.Data;
+using FRTools.Data.DataModels.FlightRisingModels;
 using FRTools.Data.Messages;
 using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
@@ -49,7 +54,7 @@ namespace FRTools.MS.ItemFetcher
             using (var ctx = new DataContext())
             {
                 var highestItemId = ctx.FRItems.Any() ? ctx.FRItems.Max(x => x.FRId) : 0;
-                var count = 0;
+                var items = new List<FRItem>();
                 while (_noItemFoundCounter < maxTries)
                 {
                     ++highestItemId;
@@ -58,7 +63,7 @@ namespace FRTools.MS.ItemFetcher
                     if (item != null)
                     {
                         _noItemFoundCounter = 0;
-                        count++;
+                        items.Add(item);
                         await _serviceBus.SendAsync(new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new NewItemMessage(MessageCategory.ItemFetcher, item)))));
                     }
                     else
@@ -66,32 +71,38 @@ namespace FRTools.MS.ItemFetcher
                     await Task.Delay(100);
                 }
 
-                Console.WriteLine($"Done for now, saving {count} items.");
+                Console.WriteLine($"Done for now, saving {items.Count} items.");
 
-                if (count > 0)
+                if (items.Any())
                 {
                     using (var stream = new MemoryStream())
                     using (var textWriter = new StreamWriter(stream))
                     using (var writer = new JsonTextWriter(textWriter))
                     {
                         var serializer = new JsonSerializer();
-                        serializer.Serialize(writer, new { Count = count, LastSuccess = DateTime.UtcNow });
+                        serializer.Serialize(writer, new { Count = items.Count, LastSuccess = DateTime.UtcNow });
                         await writer.FlushAsync();
                         stream.Position = 0;
                         await azureFileService.WriteFile(lastRunPath, stream);
                     }
 
-                    Console.WriteLine($"Since skins were found, saving last success at {DateTime.UtcNow}");
+                    Console.WriteLine($"Since items were found, saving last success at {DateTime.UtcNow}");
+
+                    Console.WriteLine("Checking if we got any new genes or breeds");
+                    if (CheckForUnknownGenesOrRace(items))
+                    {
+                        AzurePipeLineService.TriggerRegenerateClassesPipeline();
+                    }
                 }
             }
 
             if (DateTime.UtcNow.Date.Day == DateTime.DaysInMonth(DateTime.UtcNow.Year, DateTime.UtcNow.Month) && DateTime.UtcNow.Hour == 23 && DateTime.UtcNow.Minute >= 45)
             {
                 Console.WriteLine("Once a month checking for missing ids");
-                using(var ctx = new DataContext())
+                using (var ctx = new DataContext())
                 {
                     var missingIds = ctx.Database.SqlQuery<int>("SELECT FRId + 1 FROM FRItems [first] WHERE NOT EXISTS (SELECT NULL FROM FRItems [second] WHERE [second].FRId = [first].FRId + 1) ORDER BY FRId").ToList();
-                    foreach(var missingId in missingIds)
+                    foreach (var missingId in missingIds)
                     {
                         var item = await FRHelpers.FetchItem(missingId);
                         if (item != null)
@@ -101,6 +112,57 @@ namespace FRTools.MS.ItemFetcher
             }
 
             await _serviceBus.CloseAsync();
+        }
+
+        private static bool CheckForUnknownGenesOrRace(List<FRItem> items)
+        {
+            bool CheckIfDragonTypeIsKnown(string breed)
+            {
+                try
+                {
+                    var _ = FRHelpers.GetDragonType(breed);
+                }
+                catch (ArgumentException)
+                {
+                    return false;
+                }
+                return true;
+            }
+
+            // Checking skins is more a sanity check, but it could be the case if a new modern is introduced and no genes were added in the same newspost
+            foreach (var item in items.Where(x => x.ItemCategory == FRItemCategory.Skins))
+            {
+                var breed = item.ItemType.Split(' ')[0];
+                return !CheckIfDragonTypeIsKnown(breed);
+            }
+
+            foreach (var item in items.Where(x => x.ItemType == "Specialty Item" && (x.Name.StartsWith("Primary") || x.Name.StartsWith("Secondary") || x.Name.StartsWith("Tertiary"))))
+            {
+                // First check if the breed is known
+                var breed = item.Name.Split('(', ')')[1];
+                if (!CheckIfDragonTypeIsKnown(breed))
+                {
+                    return true;
+                }
+
+                // Check if the gene is known
+                var geneName = item.Name.Split(':', '(')[0].Trim();
+                try
+                {
+                    if (item.Name.StartsWith("Primary"))
+                        FRHelpers.GetBodyGene(geneName);
+                    if (item.Name.StartsWith("Secondary"))
+                        FRHelpers.GetWingGene(geneName);
+                    if (item.Name.StartsWith("Tertiary"))
+                        FRHelpers.GetTertiaryGene(geneName);
+                }
+                catch (ArgumentException)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

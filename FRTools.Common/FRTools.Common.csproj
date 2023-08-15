@@ -179,7 +179,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AzureFileService.cs" />
+    <Compile Include="AzureServices.cs" />
     <Compile Include="CodeHelpers.cs" />
     <Compile Include="DiscordHelpers.cs" />
     <Compile Include="DiscordModels.cs" />
