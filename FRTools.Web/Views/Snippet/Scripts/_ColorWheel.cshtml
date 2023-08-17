@@ -3,6 +3,7 @@
     var colors = Enum.GetValues(typeof(Color)).Cast<Color>().Skip(1).ToList(); // Value sorting
     var frSort = colors.OrderBy(x => x.FROrder()).ToList(); // FR Sorting
     var brightnessSort = colors.OrderByDescending(x => System.Drawing.Color.FromArgb(Convert.ToInt32(x.GetHex().Substring(1), 16)).GetBrightness()).ToList(); // Brightness sorting
+    var abcSort = colors.OrderBy(x => x).ToList(); // Alphabetical sorting
 }
 
 <div class="row">
@@ -18,6 +19,7 @@
         <select class="form-control" onchange="Sort(this.value)">
             <option value="fr">Flight Rising sorting</option>
             <option value="brightness">Brightness sorting</option>
+            <option value="abc">Alphabetical sorting</option>
         </select>
     </div>
     <div class="clearfix"></div>
@@ -27,7 +29,7 @@
     @foreach (var color in frSort)
     {
         var hex = color.GetHex();
-        <div class="grid-item col-3" style="padding:5px" data-fr="@frSort.IndexOf(color)" data-brightness="@brightnessSort.IndexOf(color)">
+        <div class="grid-item col-3" style="padding:5px" data-fr="@frSort.IndexOf(color)" data-brightness="@brightnessSort.IndexOf(color)" data-abc="@abcSort.IndexOf(color)">
             <div style="background-color:@hex; width:100%; height:20px; border:1px solid black; margin-bottom:1px"></div>
             <div class="d-flex justify-content-between">
                 <div class="align-items-center text-truncate">
