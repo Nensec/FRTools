@@ -3,7 +3,7 @@
     var colors = Enum.GetValues(typeof(Color)).Cast<Color>().Skip(1).ToList(); // Value sorting
     var frSort = colors.OrderBy(x => x.FROrder()).ToList(); // FR Sorting
     var brightnessSort = colors.OrderByDescending(x => System.Drawing.Color.FromArgb(Convert.ToInt32(x.GetHex().Substring(1), 16)).GetBrightness()).ToList(); // Brightness sorting
-    var abcSort = colors.OrderBy(x => x).ToList(); // Alphabetical sorting
+    var abcSort = colors.OrderBy(x => x.ToString()).ToList(); // Alphabetical sorting
 }
 
 <div class="row">
