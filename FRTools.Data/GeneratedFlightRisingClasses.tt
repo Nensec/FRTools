@@ -497,10 +497,8 @@ return typeof(TertiaryGene);
 				<#
 				foreach(var breed in page.Breeds.Where(x => x.Type == "modern").OrderBy(x => x.Value))
 				{
-				#>DragonType.<#= breed.Name #>,
-				<#
-				}
-				#>
+				#>DragonType.<#= breed.Name #>, <#
+				}#>
 
 			};
 		}
@@ -512,10 +510,8 @@ return typeof(TertiaryGene);
 				<#
 				foreach(var breed in page.Breeds.Where(x => x.Type == "ancient").OrderBy(x => x.Value))
 				{
-				#>DragonType.<#= breed.Name #>,
-				<#
-				}
-				#>
+				#>DragonType.<#= breed.Name #>, <#
+				}#>
 
 			};
 		}

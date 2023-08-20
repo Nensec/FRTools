@@ -4529,22 +4529,7 @@ namespace FRTools.Data
 		{
 			return new[]
 			{
-				DragonType.Fae,
-				DragonType.Guardian,
-				DragonType.Mirror,
-				DragonType.Pearlcatcher,
-				DragonType.Ridgeback,
-				DragonType.Tundra,
-				DragonType.Spiral,
-				DragonType.Imperial,
-				DragonType.Snapper,
-				DragonType.Wildclaw,
-				DragonType.Nocturne,
-				DragonType.Coatl,
-				DragonType.Skydancer,
-				DragonType.Bogsneak,
-				DragonType.Obelisk,
-				
+				DragonType.Fae, DragonType.Guardian, DragonType.Mirror, DragonType.Pearlcatcher, DragonType.Ridgeback, DragonType.Tundra, DragonType.Spiral, DragonType.Imperial, DragonType.Snapper, DragonType.Wildclaw, DragonType.Nocturne, DragonType.Coatl, DragonType.Skydancer, DragonType.Bogsneak, DragonType.Obelisk, 
 			};
 		}
 
@@ -4552,14 +4537,7 @@ namespace FRTools.Data
 		{
 			return new[]
 			{
-				DragonType.Gaoler,
-				DragonType.Banescale,
-				DragonType.Veilspun,
-				DragonType.Aberration,
-				DragonType.Undertide,
-				DragonType.Aether,
-				DragonType.Sandsurge,
-				
+				DragonType.Gaoler, DragonType.Banescale, DragonType.Veilspun, DragonType.Aberration, DragonType.Undertide, DragonType.Aether, DragonType.Sandsurge, 
 			};
 		}
 
