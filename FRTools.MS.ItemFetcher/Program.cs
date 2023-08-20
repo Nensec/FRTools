@@ -86,7 +86,7 @@ namespace FRTools.MS.ItemFetcher
                     Console.WriteLine($"Since items were found, saving last success at {DateTime.UtcNow}");
 
                     Console.WriteLine("Checking if we got any new genes or breeds");
-                    if (FRHelpers.CheckForUnknownGenesOrRace(items))
+                    if (FRHelpers.CheckForUnknownGenesOrBreed(items))
                     {
                         AzurePipeLineService.TriggerRegenerateClassesPipeline();
                     }

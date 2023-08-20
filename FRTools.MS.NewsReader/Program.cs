@@ -251,7 +251,7 @@ namespace FRTools.MS.NewsReader
                                 }
                             }
 
-                            if (FRHelpers.CheckForUnknownGenesOrRace(newItems))
+                            if (FRHelpers.CheckForUnknownGenesOrBreed(newItems))
                             {
                                 AzurePipeLineService.TriggerRegenerateClassesPipeline();
                             }

@@ -361,6 +361,7 @@ namespace FRTools.Common
                     Console.WriteLine($"Item {itemId} is not {category}, but is actually {categoryMatch.Groups["Category"]}. Fetching that item instead.");
                     return await FetchItem(itemId, categoryMatch.Groups["Category"].Value);
                 }
+
                 using (var ctx = new DataContext())
                 {
                     var existingItem = ctx.FRItems.FirstOrDefault(x => x.FRId == itemId);
@@ -466,13 +467,13 @@ namespace FRTools.Common
 
         public static AllTertiaryGene GetTertiaryGene(string tertiaryGene) => (AllTertiaryGene)Enum.Parse(typeof(AllTertiaryGene), tertiaryGene, true);
 
-        public static bool CheckForUnknownGenesOrRace(List<FRItem> items)
+        public static bool CheckForUnknownGenesOrBreed(List<FRItem> items)
         {
-            bool CheckIfDragonTypeIsKnown(string breed)
+            static bool CheckIfDragonTypeIsKnown(string breed)
             {
                 try
                 {
-                    var _ = FRHelpers.GetDragonType(breed);
+                    var _ = GetDragonType(breed);
                 }
                 catch (ArgumentException)
                 {
@@ -490,14 +491,17 @@ namespace FRTools.Common
 
             foreach (var item in items.Where(x => x.ItemType == "Specialty Item" && (x.Name.StartsWith("Primary") || x.Name.StartsWith("Secondary") || x.Name.StartsWith("Tertiary"))))
             {
-                // First check if the breed is known
-                var breed = item.Name.Split('(', ')')[1];
-                if (!CheckIfDragonTypeIsKnown(breed))
+                // First check if the breed is known in case of an ancient breed
+                if (item.Name.Contains("("))
                 {
-                    return true;
+                    var breed = item.Name.Split('(', ')')[1];
+                    if (!CheckIfDragonTypeIsKnown(breed))
+                    {
+                        return true;
+                    }
                 }
 
-                // Check if the gene is known
+                // Check if the gene itself is known
                 var geneName = item.Name.Split(':', '(')[0].Trim();
                 try
                 {
