@@ -313,21 +313,32 @@ namespace FRTools.Common
 
         public static Flight GetFlightFromGodName(string godName)
         {
-            return godName.ToLower() switch
+            switch (godName.ToLower())
             {
-                "earthshaker" => Flight.Earth,
-                "plaguebringer" => Flight.Plague,
-                "windsinger" => Flight.Wind,
-                "tidelord" => Flight.Water,
-                "stormcatcher" => Flight.Lightning,
-                "icewarden" => Flight.Ice,
-                "shadowbinder" => Flight.Shadow,
-                "lightweaver" => Flight.Light,
-                "arcanist" => Flight.Arcane,
-                "gladekeeper" => Flight.Nature,
-                "flamecaller" => Flight.Fire,
-                _ => throw new Exception("Unknown god."),
-            };
+                default:
+                case "earthshaker":
+                    return Flight.Earth;
+                case "plaguebringer":
+                    return Flight.Plague;
+                case "windsinger":
+                    return Flight.Wind;
+                case "tidelord":
+                    return Flight.Water;
+                case "stormcatcher":
+                    return Flight.Lightning;
+                case "icewarden":
+                    return Flight.Ice;
+                case "shadowbinder":
+                    return Flight.Shadow;
+                case "lightweaver":
+                    return Flight.Light;
+                case "arcanist":
+                    return Flight.Arcane;
+                case "gladekeeper":
+                    return Flight.Nature;
+                case "flamecaller":
+                    return Flight.Fire;
+            }
         }
 
         public static async Task<FRItem> FetchItem(int itemId, string category = "skins")
@@ -458,7 +469,7 @@ namespace FRTools.Common
 
         public static bool CheckForUnknownGenesOrBreed(List<FRItem> items)
         {
-            static bool CheckIfDragonTypeIsKnown(string breed)
+            bool CheckIfDragonTypeIsKnown(string breed)
             {
                 try
                 {
