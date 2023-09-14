@@ -58,6 +58,25 @@
                 Eyes might not look right compared to the final, but they should still give a good indication of what will be. This is a work in progress!
             </div>
         }
+        @if (!Request.IsAuthenticated || (ViewContext.Controller as FRTools.Web.Controllers.BaseController).LoggedInUser?.ProfileSettings.ShowAds == true)
+        {
+
+            <div style="height:120px; max-width:600px;">
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8678366601617718"
+                        crossorigin="anonymous"></script>
+                <!-- Preview page -->
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-8678366601617718"
+                     data-ad-slot="5225411179"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+                <a class="d-flex justify-content-center text-muted" title="It's just an option in your profile, no hidden premium stuff or anything!" data-placement="bottom" data-toggle="tooltip" href="@(Url.RouteUrl("EditProfile"))"><small>- disable ads -</small></a>
+            </div>
+        }
         <div class="text-center">
             <div id="NoScene">
                 <img class="dragonImage" src="@(Model.CDNBasePath + Model.Result.Urls[0])" />

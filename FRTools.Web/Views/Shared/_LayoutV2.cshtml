@@ -171,7 +171,17 @@
     <div class="container-wrapper d-flex flex-column">
         <div class="container-fluid flex-grow-1">
             <div class="row justify-content-center">
-                <div class="col-lg-2"></div>
+                <div class="col-lg-2">
+                    @if (!Request.IsAuthenticated || (ViewContext.Controller as FRTools.Web.Controllers.BaseController).LoggedInUser?.ProfileSettings.ShowAds == true)
+                    {
+                        <div id="ad" class="d-none d-lg-block mt-3">
+                            <a target="_blank" href="https://www.patreon.com/frtools">
+                                <img src="~/Content/patreon_banner.png" />
+                            </a>
+                            <a class="d-flex justify-content-center text-muted" title="It's just an option in your profile, no hidden premium stuff or anything!" data-placement="bottom" data-toggle="tooltip" href="@(Url.RouteUrl("EditProfile"))"><small>- disable ads -</small></a>
+                        </div>
+                    }
+                </div>
                 <div class="col">
                     @if (HasMessage)
                     {
@@ -212,9 +222,15 @@
                     @if (!Request.IsAuthenticated || (ViewContext.Controller as FRTools.Web.Controllers.BaseController).LoggedInUser?.ProfileSettings.ShowAds == true)
                     {
                         <div id="ad" class="d-none d-lg-block mt-3">
-                            <a target="_blank" href="https://www.patreon.com/frtools">
-                                <img src="~/Content/patreon_banner.png" />
-                            </a>
+                            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8678366601617718"
+                                    crossorigin="anonymous"></script>
+                            <ins class="adsbygoogle"
+                                 style="display:inline-block;width:120px;height:600px"
+                                 data-ad-client="ca-pub-8678366601617718"
+                                 data-ad-slot="1602146342"></ins>
+                            <script>
+                                (adsbygoogle = window.adsbygoogle || []).push({});
+                            </script>
                             <a class="d-flex justify-content-center text-muted" title="It's just an option in your profile, no hidden premium stuff or anything!" data-placement="bottom" data-toggle="tooltip" href="@(Url.RouteUrl("EditProfile"))"><small>- disable ads -</small></a>
                         </div>
                     }
