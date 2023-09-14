@@ -26,6 +26,10 @@
 
         window.appInsights=appInsights,appInsights.queue&&0===appInsights.queue.length&&appInsights.trackPageView();
     </script>
+    @if (!Request.IsAuthenticated || (ViewContext.Controller as FRTools.Web.Controllers.BaseController).LoggedInUser?.ProfileSettings.ShowAds == true)
+    {
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8678366601617718" crossorigin="anonymous"></script>
+    }
 </head>
 <body class="text-dark">
     <nav class="navbar navbar-expand-xl fixed-top navbar-dark bg-dark d-flex">
