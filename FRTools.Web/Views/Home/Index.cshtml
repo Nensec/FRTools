@@ -10,15 +10,28 @@
     <meta property="og:description" content="This site will host various tools aimed at making your Flight Rising experience better!" />
 }
 
-<div class="card mt-3">
-    <div class="card-header">
-        <h5>Latest blog post</h5>
+<div class="row">
+    <div class="col-xl-8 col-lg-12">
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5>Latest blog post</h5>
+            </div>
+            <div class="card-body">
+                <div class="blogPost newsPost"></div>
+            </div>
+        </div>
     </div>
-    <div class="card-body">
-        <div id="blogPost"></div>
+    <div class="col-xl-4 d-none d-xl-block">
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5>Current flash sale</h5>
+            </div>
+            <div class="card-body">
+                <div class="blogPost flashSale"></div>
+            </div>
+        </div>
     </div>
 </div>
-
 <div class="card mt-3">
     <div class="card-header">
         <h5>Contact</h5>
@@ -36,13 +49,23 @@
             dataType: "JSON",
             success: b => {
                 p = b.response.posts[0];
-                $('#blogPost').html($(`<h5>${p.title}${p.title ? ' - ' : ''}${p.date}</h5><hr/>${p.body_abstract || p.caption || p.body}<a href="${p.post_url}">Read full post</a>`));
+                $('.newsPost').html($(`<h5>${p.title}${p.title ? ' - ' : ''}${p.date}</h5><hr/>${p.body_abstract || p.caption || p.body}<a href="${p.post_url}">Read full post</a>`));
+            }
+        }));
+
+        $($.ajax({
+            type: "GET",
+            url: "https://api.tumblr.com/v2/blog/frtools.tumblr.com/posts?api_key=@(System.Configuration.ConfigurationManager.AppSettings["TumblrClientId"])&limit=1&filter=raw&tag[0]=frtools&tag[1]=flashsale",
+            dataType: "JSON",
+            success: b => {
+                p = b.response.posts[0];
+                $('.flashSale').html($(`<h5>${p.title}</h5><hr/>${p.body_abstract || p.caption || p.body}`));
             }}));
     </script>
 }
 
 <style>
-    #blogPost img {
+    .blogPost img {
         max-width: 100%;
         box-shadow: 3px 3px 3px grey;
         margin-bottom: 10px;
