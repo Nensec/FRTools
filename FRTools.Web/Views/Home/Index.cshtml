@@ -18,6 +18,12 @@
             </div>
             <div class="card-body">
                 <div class="blogPost newsPost"></div>
+                <div>
+                    <hr/>
+                    <h5>Older posts</h5>
+                    <hr/>
+                    <div class="olderPosts"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -45,11 +51,22 @@
     <script>
         $($.ajax({
             type: "GET",
-            url: "https://api.tumblr.com/v2/blog/frtools.tumblr.com/posts?api_key=@(System.Configuration.ConfigurationManager.AppSettings["TumblrClientId"])&limit=1&filter=raw&tag=fr+tools+news",
+            url: "https://api.tumblr.com/v2/blog/frtools.tumblr.com/posts?api_key=@(System.Configuration.ConfigurationManager.AppSettings["TumblrClientId"])&limit=10&filter=raw&tag=fr+tools+news",
             dataType: "JSON",
             success: b => {
                 p = b.response.posts[0];
-                $('.newsPost').html($(`<h5>${p.title}${p.title ? ' - ' : ''}${p.date}</h5><hr/>${p.body_abstract || p.caption || p.body}<a href="${p.post_url}">Read full post</a>`));
+                title = p.title == true ? p.title : p.summary;
+                title = title.length > 75 ? title.substring(0, 75 - 3) + '...' : title;
+                $('.newsPost').html($(`<h5>${title}${title ? ' - ' : ''}${p.date}</h5><hr/>${p.body_abstract || p.caption || p.body}<a href="${p.post_url}">Read full post</a>`));
+
+                olderPosts = b.response.posts.slice(1);
+                olderContent = '';
+                olderPosts.forEach(olderPost => {
+                    olderPostTitle = olderPost.title == true ? olderPost.title : olderPost.summary;
+                    olderPostTitle = olderPostTitle.length > 75 ? olderPostTitle.substring(0, 75 - 3) + '...' : olderPostTitle;
+                    olderContent += $(`<div><b>${olderPostTitle}</b> ${olderPostTitle ? ' - ' : ''}${olderPost.date}- <a href="${olderPost.post_url}">Read full post</a><div>`).html();
+                });
+                $('.olderPosts').html(olderContent)
             }
         }));
 
