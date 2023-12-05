@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using FRTools.Core.Common;
 using FRTools.Core.Data;
 using FRTools.Core.Services;
 using FRTools.Core.Services.Interfaces;
@@ -23,20 +22,15 @@ namespace FRTools.Core.Functions
             builder.Services.AddTransient<IAzureStorageService, AzureStorageService>();
             builder.Services.AddTransient<IFRUserService, FRUserService>();
             builder.Services.AddTransient<IFRItemService, FRItemService>();
-
-            builder.Services.AddOptions();
         }
 
         public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
         {
-            var config = builder.ConfigurationBuilder
+            builder.ConfigurationBuilder
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables()
                 .Build();
-
-            //var tumblrConfig = new TumblrConfig();
-            //config.Bind(nameof(TumblrConfig), tumblrConfig);
         }
     }
 }

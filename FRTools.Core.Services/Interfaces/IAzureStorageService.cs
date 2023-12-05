@@ -1,7 +1,4 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-
-namespace FRTools.Core.Services.Interfaces
+﻿namespace FRTools.Core.Services.Interfaces
 {
     public interface IAzureStorageService
     {

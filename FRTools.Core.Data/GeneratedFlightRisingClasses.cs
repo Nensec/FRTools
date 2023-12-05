@@ -5474,6 +5474,7 @@ namespace FRTools.Core.Data
 
 		public static string GenerateDragonImageUrl(int breed, int gender, int age, int bodygene, int body, int winggene, int wings, int tertgene, int tert, int element, int eyetype)
 		{
+#pragma warning disable SYSLIB0014 // Type or member is obsolete
 			using (var client = new System.Net.WebClient())
 			{
 				var result = client.UploadValues("https://www1.flightrising.com/scrying/ajax-predict", new System.Collections.Specialized.NameValueCollection
@@ -5495,5 +5496,6 @@ namespace FRTools.Core.Data
 				return "https://www1.flightrising.com" + dragonUrl;
 			}
 		}
+#pragma warning restore SYSLIB0014 // Type or member is obsolete
 	}
 }

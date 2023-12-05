@@ -1,40 +1,40 @@
 ﻿using FRTools.Core.Data;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
 using FRTools.Core.Services.Interfaces;
-using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
+using Microsoft.Extensions.Logging;
 
 namespace FRTools.Core.Services
 {
     public class FRUserService : IFRUserService
     {
         private readonly DataContext _dataContext;
+        private readonly ILogger<FRUserService> _logger;
 
-        public FRUserService(DataContext dataContext)
+        public FRUserService(DataContext dataContext, ILogger<FRUserService> logger)
         {
             _dataContext = dataContext;
+            _logger = logger;
         }
 
-        public async Task<FRUser> GetOrUpdateFRUser(string username, DataContext _dataContext = null) => await GetOrUpdateFRUser(username, userId: null);
-        public async Task<FRUser> GetOrUpdateFRUser(int userId, DataContext _dataContext = null) => await GetOrUpdateFRUser(null, userId);
+        public async Task<FRUser?> GetOrUpdateFRUser(string? username) => await GetOrUpdateFRUser(username, userId: null);
+        public async Task<FRUser?> GetOrUpdateFRUser(int? userId) => await GetOrUpdateFRUser(null, userId);
 
-        private async Task<FRUser> GetOrUpdateFRUser(string username, int? userId)
+        private async Task<FRUser?> GetOrUpdateFRUser(string? username, int? userId)
         {
-            Console.WriteLine($"Checking if we know {username ?? userId.ToString()}");
+            _logger.LogInformation($"Checking if we know {username ?? userId.ToString()}");
 
             var frUser = _dataContext.FRUsers.FirstOrDefault(x => x.Username == username || x.FRId == userId);
 
             if (frUser == null)
             {
-                Console.WriteLine("We do not, fetching user info");
+                _logger.LogInformation("We do not, fetching user info");
                 var (frName, frId) = await GetFRUserInfo(username, userId);
 
                 if (frName == null)
                 {
                     var prev = Console.ForegroundColor;
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("User cannot be found");
-                    Console.ForegroundColor = prev;
+                    _logger.LogWarning("User cannot be found");
                     return null;
                 }
 
@@ -52,7 +52,7 @@ namespace FRTools.Core.Services
             }
             else
             {
-                Console.WriteLine("We do, updating user");
+                _logger.LogInformation("We do, updating user");
                 frUser = await UpdateFRUser(frUser);
             }
 
@@ -62,12 +62,12 @@ namespace FRTools.Core.Services
         }
 
 
-        public async Task<FRUser> UpdateFRUser(FRUser frUser)
+        public async Task<FRUser?> UpdateFRUser(FRUser frUser)
         {
             // Only update if it hasn't been a day to avoid spamming FR server
             if (DateTime.UtcNow < frUser.LastUpdated.AddDays(1))
             {
-                Console.WriteLine("User recently updated, skipping");
+                _logger.LogInformation("User recently updated, skipping");
                 return frUser;
             }
 
@@ -83,11 +83,10 @@ namespace FRTools.Core.Services
             return frUser;
         }
 
-        private static async Task<(string Username, int UserId)> GetFRUserInfo(string username, int? userId)
+        private async Task<(string Username, int UserId)> GetFRUserInfo(string? username, int? userId)
         {
             string url = $"https://www1.flightrising.com/clan-profile/{(userId?.ToString() ?? $"n/{username}")}";
-            var client = new HtmlWeb();
-            var userProfilePage = client.Load(url);
+            var userProfilePage = await Common.Helpers.LoadHtmlPage(url);
 
             if (userProfilePage.ParsedText.Contains("404 - Page Not Found") || userProfilePage.ParsedText.Contains("404: User not found"))
                 return default;
@@ -95,7 +94,7 @@ namespace FRTools.Core.Services
             var userBio = userProfilePage.DocumentNode.QuerySelector(".clan-profile-user-frame");
             var frId = int.Parse(userBio.QuerySelectorAll(".clan-profile-stats .clan-profile-stat").First(x => x.QuerySelector("strong").InnerText == "Player ID").LastChild.InnerText.Trim());
             var frName = userBio.QuerySelector(".clan-profile-username").InnerText.Trim();
-            Console.WriteLine($"Found info:\n\tUsername: {frName}\n\tID: {frId}");
+            _logger.LogInformation($"Found info:\n\tUsername: {frName}\n\tID: {frId}");
 
             return (frName, frId);
         }

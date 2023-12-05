@@ -59,7 +59,7 @@ namespace FRTools.Core.Services
         private BlobContainerClient GetBlobContainerClient(string path, out string filePath)
         {
             var containerName = path.Split(Path.DirectorySeparatorChar)[0];
-            filePath = Path.GetDirectoryName(string.Join(Path.DirectorySeparatorChar.ToString(), path.Split(Path.DirectorySeparatorChar).Skip(1)));
+            filePath = Path.GetDirectoryName(string.Join(Path.DirectorySeparatorChar.ToString(), path.Split(Path.DirectorySeparatorChar).Skip(1))) ?? string.Empty;
 
             return _client.GetBlobContainerClient(containerName);
         }

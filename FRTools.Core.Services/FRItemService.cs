@@ -5,6 +5,7 @@ using FRTools.Core.Data.DataModels.FlightRisingModels;
 using FRTools.Core.Helpers;
 using FRTools.Core.Services.Interfaces;
 using HtmlAgilityPack;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace FRTools.Core.Services
@@ -13,16 +14,16 @@ namespace FRTools.Core.Services
     {
         private readonly DataContext _dataContext;
         private readonly IFRUserService _userService;
-        private readonly ILogger _logger;
+        private readonly ILogger<FRItemService> _logger;
 
-        public FRItemService(DataContext dataContext, IFRUserService userService, ILogger logger)
+        public FRItemService(DataContext dataContext, IFRUserService userService, ILogger<FRItemService> logger)
         {
             _dataContext = dataContext;
             _userService = userService;
             _logger = logger;
         }
 
-        public async Task<FRItem> FetchItem(int itemId, string category = "skins")
+        public async Task<FRItem?> FetchItemFromFR(int itemId, string category = "skins")
         {
             var client = new HtmlWeb();
             var itemDoc = client.Load(string.Format(FRHelpers.ItemFetchUrl, itemId, category));
@@ -30,7 +31,7 @@ namespace FRTools.Core.Services
 
             if (iconUrl == "/images/cms//.png")
             {
-                Console.WriteLine($"Item {itemId} does not exist.");
+                _logger.LogInformation($"Item {itemId} does not exist.");
                 return null;
             }
 
@@ -39,22 +40,20 @@ namespace FRTools.Core.Services
                 var categoryMatch = Regex.Match(iconUrl, @"/images/cms/(?<Category>.*)/(\d*).png");
                 if (categoryMatch.Groups["Category"].Value != category)
                 {
-                    Console.WriteLine($"Item {itemId} is not {category}, but is actually {categoryMatch.Groups["Category"]}. Fetching that item instead.");
-                    return await FetchItem(itemId, categoryMatch.Groups["Category"].Value);
+                    _logger.LogInformation($"Item {itemId} is not {category}, but is actually {categoryMatch.Groups["Category"]}. Fetching that item instead.");
+                    return await FetchItemFromFR(itemId, categoryMatch.Groups["Category"].Value);
                 }
 
                 var existingItem = _dataContext.FRItems.FirstOrDefault(x => x.FRId == itemId);
-                if (existingItem != null)
-                    _dataContext.FRItems.Remove(existingItem);
-                var item = new FRItem
-                {
-                    FRId = itemId,
-                    IconUrl = iconUrl,
-                    ItemCategory = (FRItemCategory)Enum.Parse(typeof(FRItemCategory), category, true),
-                    Name = HttpUtility.HtmlDecode(itemDoc.DocumentNode.SelectSingleNode("/div/div[1]/div[1]").InnerText.Trim()),
-                    Description = HttpUtility.HtmlDecode(CleanupFRHtmlText(itemDoc.DocumentNode.SelectSingleNode("/div/div[2]").InnerText)),
-                    ItemType = itemDoc.DocumentNode.SelectSingleNode("/div/div[1]/div[2]").InnerText.Trim()
-                };
+                var item = existingItem ?? new FRItem();
+
+                item.FRId = itemId;
+                item.IconUrl = iconUrl;
+                item.ItemCategory = Enum.Parse<FRItemCategory>(category, true);
+                item.Name = HttpUtility.HtmlDecode(itemDoc.DocumentNode.SelectSingleNode("/div/div[1]/div[1]").InnerText.Trim());
+                item.Description = HttpUtility.HtmlDecode(CleanupFRHtmlText(itemDoc.DocumentNode.SelectSingleNode("/div/div[2]").InnerText));
+                item.ItemType = itemDoc.DocumentNode.SelectSingleNode("/div/div[1]/div[2]").InnerText.Trim();
+
                 var rarityUrl = itemDoc.DocumentNode.SelectSingleNode("/div/div[1]/img[1]").GetAttributeValue("src", "");
                 var rarityMatch = Regex.Match(rarityUrl, @"../images/layout/tooltips/star-(?<Rarity>\d).png");
 
@@ -67,14 +66,14 @@ namespace FRTools.Core.Services
                         {
                             item.TreasureValue = int.TryParse(itemDoc.DocumentNode.SelectSingleNode("/div/div[3]").InnerText, out var treasureValue) ? (int?)treasureValue : null;
                             item.FoodValue = int.TryParse(itemDoc.DocumentNode.SelectSingleNode("/div/div[4]").InnerText, out var foodValue) ? (int?)foodValue : null;
-                            item.FoodType = (FRFoodType)Enum.Parse(typeof(FRFoodType), item.ItemType, true);
+                            item.FoodType = Enum.Parse<FRFoodType>(item.ItemType, true);
                         }
                         break;
                     case FRItemCategory.Skins:
                         item.AssetUrl = itemDoc.DocumentNode.SelectSingleNode("/div/div[2]/div/img").GetAttributeValue("src", "");
                         var username = Regex.Match(item.Description, @"Designed by ([^.]+)[.|\)]");
                         if (username.Success)
-                            item.Creator = await _userService.GetOrUpdateFRUser(username.Groups[1].Value, _dataContext);
+                            item.Creator = await _userService.GetOrUpdateFRUser(username.Groups[1].Value);
                         break;
                     case FRItemCategory.Equipment:
                         {
@@ -110,15 +109,29 @@ namespace FRTools.Core.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Item {itemId} threw error, possible deleted?");
-                Console.WriteLine(ex.ToString());
+                _logger.LogWarning($"Item {itemId} threw error, possible deleted?");
+                _logger.LogWarning(ex.ToString());
                 return null;
             }
             finally
             {
-                Console.WriteLine($"Finished parsing item {itemId}");
-                Console.WriteLine("--------------");
+                _logger.LogInformation($"Finished parsing item {itemId}");
             }
+        }
+
+        public async Task<int> GetHighestItemId()
+        {
+            return await _dataContext.FRItems.AnyAsync() ? await _dataContext.FRItems.MaxAsync(x => x.FRId) : 0;
+        }
+
+        public Task<List<int>> FindMissingIds()
+        {
+            return Task.Run(() => _dataContext.FRItems.FromSqlRaw("SELECT * FROM FRItems [first] WHERE NOT EXISTS (SELECT NULL FROM FRItems [second] WHERE [second].FRId = [first].FRId + 1) ORDER BY FRId").Select(x => x.FRId + 1).ToList());
+        }
+
+        public async Task<FRItem?> GetItem(int itemId)
+        {
+            return await _dataContext.FRItems.FirstOrDefaultAsync(x => x.FRId == itemId);
         }
 
         private static string CleanupFRHtmlText(string input)

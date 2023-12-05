@@ -5,8 +5,8 @@ namespace FRTools.Core.Services.Interfaces
 {
     public interface IFRUserService
     {
-        Task<FRUser> GetOrUpdateFRUser(int userId, DataContext ctx = null);
-        Task<FRUser> GetOrUpdateFRUser(string username, DataContext ctx = null);
-        Task<FRUser> UpdateFRUser(FRUser frUser);
+        Task<FRUser?> GetOrUpdateFRUser(int? userId);
+        Task<FRUser?> GetOrUpdateFRUser(string? username);
+        Task<FRUser?> UpdateFRUser(FRUser frUser);
     }
 }
