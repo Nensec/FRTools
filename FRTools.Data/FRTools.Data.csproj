@@ -37,6 +37,24 @@
   <PropertyGroup>
     <packagesFolder>$(MSBuildProjectDirectory)\..\packages</packagesFolder>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug - Core|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug - Core\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release - Core|AnyCPU'">
+    <OutputPath>bin\Release - Core\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <T4ParameterValues Include="packagesFolder">
       <Value>$(packagesFolder)</Value>
@@ -91,11 +109,8 @@
     <Compile Include="ColorAttribute.cs" />
     <Compile Include="DataContext.cs" />
     <Compile Include="DataModels\AccountModels\ProfileSettings.cs" />
-    <Compile Include="DataModels\AccountModels\Role.cs" />
     <Compile Include="DataModels\AccountModels\User.cs" />
-    <Compile Include="DataModels\AccountModels\UserClaim.cs" />
     <Compile Include="DataModels\AccountModels\UserLogin.cs" />
-    <Compile Include="DataModels\AccountModels\UserRole.cs" />
     <Compile Include="DataModels\DataModelEnums.cs" />
     <Compile Include="DataModels\DiscordModels\DiscordLog.cs" />
     <Compile Include="DataModels\DiscordModels\DiscordServer.cs" />

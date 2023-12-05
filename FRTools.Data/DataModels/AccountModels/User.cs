@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace FRTools.Data.DataModels
 {
 
-    public class User : IdentityUser<int, UserLogin, UserRole, UserClaim>
+    public class User : IdentityUser<int, UserLogin, IdentityUserRole<int>, IdentityUserClaim<int>>
     {
         public virtual ProfileSettings ProfileSettings { get; set; }
         public virtual FRUser FRUser { get; set; }
