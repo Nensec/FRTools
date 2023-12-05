@@ -1,4 +1,4 @@
-﻿namespace FRTools.Core.Functions
+﻿namespace FRTools.Core.Functions.Workers
 {
     public abstract class FunctionBase
     {

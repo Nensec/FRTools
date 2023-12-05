@@ -13,7 +13,7 @@ using FRTools.Core.Services.Interfaces;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 
-namespace FRTools.Core.Functions
+namespace FRTools.Core.Functions.Workers
 {
     public class FlashSaleTrackerFunction : FunctionBase
     {

@@ -10,7 +10,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 
-namespace FRTools.Core.Functions
+namespace FRTools.Core.Functions.Workers
 {
     public class ProxyFunctions : FunctionBase
     {
@@ -48,15 +48,15 @@ namespace FRTools.Core.Functions
             switch (itemSplit[0])
             {
                 case "Primary Gene":
-                    primary = (int)Enum.Parse(GeneratedFREnumExtentions.PrimaryGeneType((DragonType)dragonType), itemSplit[1].Replace("-", "").Replace(" ", ""));
+                    primary = (int)Enum.Parse(((DragonType)dragonType).PrimaryGeneType(), itemSplit[1].Replace("-", "").Replace(" ", ""));
                     primaryColor = random.Next(0, Enum.GetValues(typeof(Color)).Length + 1);
                     break;
                 case "Secondary Gene":
-                    secondary = (int)Enum.Parse(GeneratedFREnumExtentions.SecondaryGeneType((DragonType)dragonType), itemSplit[1].Replace("-", "").Replace(" ", ""));
+                    secondary = (int)Enum.Parse(((DragonType)dragonType).SecondaryGeneType(), itemSplit[1].Replace("-", "").Replace(" ", ""));
                     secondaryColor = random.Next(0, Enum.GetValues(typeof(Color)).Length + 1);
                     break;
                 case "Tertiary Gene":
-                    tertiary = (int)Enum.Parse(GeneratedFREnumExtentions.TertiaryGeneType((DragonType)dragonType), itemSplit[1].Replace("-", "").Replace(" ", ""));
+                    tertiary = (int)Enum.Parse(((DragonType)dragonType).TertiaryGeneType(), itemSplit[1].Replace("-", "").Replace(" ", ""));
                     tertiaryColor = random.Next(0, Enum.GetValues(typeof(Color)).Length + 1);
                     break;
             }

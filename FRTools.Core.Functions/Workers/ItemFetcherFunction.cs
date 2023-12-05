@@ -9,7 +9,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace FRTools.Core.Functions
+namespace FRTools.Core.Functions.Workers
 {
     public class ItemFetcherFunction : FunctionBase
     {
@@ -79,7 +79,7 @@ namespace FRTools.Core.Functions
                 using (var writer = new JsonTextWriter(textWriter))
                 {
                     var serializer = new JsonSerializer();
-                    serializer.Serialize(writer, new { Count = items.Count, LastSuccess = DateTime.UtcNow });
+                    serializer.Serialize(writer, new { items.Count, LastSuccess = DateTime.UtcNow });
                     await writer.FlushAsync();
                     stream.Position = 0;
                     await _azureStorage.CreateFile(lastRunPath, stream);
