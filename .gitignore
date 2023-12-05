@@ -264,3 +264,6 @@ debug.config
 Web.Release.config
 Web.Debug.config
 /DiscordMetadata.json
+/FRTools.Core.Functions/Properties/ServiceDependencies
+/FRTools.Core.Functions/Properties/serviceDependencies.FRTools - Zip Deploy.json
+/EmptyBins.bat
