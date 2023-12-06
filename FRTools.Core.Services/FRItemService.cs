@@ -51,7 +51,7 @@ namespace FRTools.Core.Services
                 item.IconUrl = iconUrl;
                 item.ItemCategory = Enum.Parse<FRItemCategory>(category, true);
                 item.Name = HttpUtility.HtmlDecode(itemDoc.DocumentNode.SelectSingleNode("/div/div[1]/div[1]").InnerText.Trim());
-                item.Description = HttpUtility.HtmlDecode(CleanupFRHtmlText(itemDoc.DocumentNode.SelectSingleNode("/div/div[2]").InnerText));
+                item.Description = HttpUtility.HtmlDecode(FRHelpers.CleanupFRHtmlText(itemDoc.DocumentNode.SelectSingleNode("/div/div[2]").InnerText));
                 item.ItemType = itemDoc.DocumentNode.SelectSingleNode("/div/div[1]/div[2]").InnerText.Trim();
 
                 var rarityUrl = itemDoc.DocumentNode.SelectSingleNode("/div/div[1]/img[1]").GetAttributeValue("src", "");
@@ -132,14 +132,6 @@ namespace FRTools.Core.Services
         public async Task<FRItem?> GetItem(int itemId)
         {
             return await _dataContext.FRItems.FirstOrDefaultAsync(x => x.FRId == itemId);
-        }
-
-        private static string CleanupFRHtmlText(string input)
-        {
-            return input.Replace('\u000A', '\u0020')
-                .Replace('\u0009', '\u0020')
-                .Replace('\u000D', '\u0020')
-                .Trim();
         }
     }
 }

@@ -16,5 +16,13 @@
         public const string GameDatabaseUrl = "https://www1.flightrising.com/game-database/item/{0}";
         public const string MarketplaceUrl = "https://www1.flightrising.com/market/treasure/";
         public const string MarketplaceFetchUrl = "https://www1.flightrising.com/market/ajax/get-items?mode=treasure&tab={0}";
+
+        public static string CleanupFRHtmlText(string input)
+        {
+            return input.Replace('\u000A', '\u0020')
+                .Replace('\u0009', '\u0020')
+                .Replace('\u000D', '\u0020')
+                .Trim();
+        }
     }
 }
