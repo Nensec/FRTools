@@ -1,7 +1,4 @@
-﻿using System;
-using FRTools.Core.Data.DataModels.AccountModels;
-
-namespace FRTools.Core.Data.DataModels.FlightRisingModels
+﻿namespace FRTools.Core.Data.DataModels.FlightRisingModels
 {
     public class FRUser
     {

@@ -16,10 +16,12 @@ namespace FRTools.Core.Functions
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(Environment.GetEnvironmentVariable("SQLAZURECONNSTR_defaultConnection")));
+            builder.Services.AddDbContext<DataContext>(options => options.UseLazyLoadingProxies().UseSqlServer(Environment.GetEnvironmentVariable("SQLAZURECONNSTR_defaultConnection")));
             builder.Services.AddTransient<DataContext>();
 
             builder.Services.AddTransient<IAzureStorageService, AzureStorageService>();
+            builder.Services.AddTransient<IAzurePipelineService, AzurePipelineService>();
+
             builder.Services.AddTransient<IFRUserService, FRUserService>();
             builder.Services.AddTransient<IFRItemService, FRItemService>();
         }

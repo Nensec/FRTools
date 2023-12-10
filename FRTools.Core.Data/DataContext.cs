@@ -13,7 +13,7 @@ namespace FRTools.Core.Data
     public class DataContext : IdentityDbContext<User, Role, int, UserClaim, UserRole, UserLogin, IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
-        {
+        {            
         }
 
         // FRTools tables

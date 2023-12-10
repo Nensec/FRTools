@@ -12,6 +12,7 @@
     <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.25" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="6.0.25" />
     <PackageReference Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="7.0.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.1" />
     <PackageReference Include="NewTumblrSharp" Version="1.2.0.156" />

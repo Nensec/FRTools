@@ -5,7 +5,7 @@ namespace FRTools.Core.Data.DataModels
     public class Preview
     {
         public int Id { get; set; }
-        public Skin Skin { get; set; }
+        public virtual Skin Skin { get; set; }
         public int? DragonId { get; set; }
         public string ScryerUrl { get; set; }
         public string PreviewImage { get; set; }
@@ -13,6 +13,6 @@ namespace FRTools.Core.Data.DataModels
         public DateTime? PreviewTime { get; set; }
         public int Version { get; set; }
 
-        public User Requestor { get; set; }
+        public virtual User Requestor { get; set; }
     }
 }

@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
+using FRTools.Core.Helpers;
+using FRTools.Core.Services;
 using FRTools.Core.Services.Interfaces;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
@@ -16,12 +18,14 @@ namespace FRTools.Core.Functions.Workers
         private readonly IAzureStorageService _azureStorage;
         private readonly IFRUserService _userService;
         private readonly IFRItemService _itemService;
+        private readonly IAzurePipelineService _pipelineService;
 
-        public ItemFetcherFunction(IAzureStorageService azureStorage, IFRUserService userService, IFRItemService itemService)
+        public ItemFetcherFunction(IAzureStorageService azureStorage, IFRUserService userService, IFRItemService itemService, IAzurePipelineService pipelineService)
         {
             _azureStorage = azureStorage;
             _userService = userService;
             _itemService = itemService;
+            _pipelineService = pipelineService;
         }
 
         [FunctionName(nameof(ItemFetcher))]
@@ -87,11 +91,12 @@ namespace FRTools.Core.Functions.Workers
 
                 log.LogInformation($"Since items were found, saving last success at {DateTime.UtcNow}");
 
-                //Console.WriteLine("Checking if we got any new genes or breeds");
-                //if (FRHelpers.CheckForUnknownGenesOrBreed(items))
-                //{
-                //    AzurePipeLineService.TriggerRegenerateClassesPipeline();
-                //}
+                log.LogInformation("Checking if we got any new genes or breeds");
+                if (FRHelpers.CheckForUnknownGenesOrBreed(items))
+                {
+                    if(!DEBUG)
+                        await _pipelineService.TriggerPipeline(Environment.GetEnvironmentVariable("AzureDevOpsPipeline"));
+                }
             }
 
             if (DateTime.UtcNow.Date.Day == DateTime.DaysInMonth(DateTime.UtcNow.Year, DateTime.UtcNow.Month) && DateTime.UtcNow.Hour == 23 && DateTime.UtcNow.Minute >= 45)

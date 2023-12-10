@@ -22,8 +22,8 @@
     <PackageReference Include="ExCSS" Version="4.2.4" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.54" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.25" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.25" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.25" />
+	<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
