@@ -1,4 +1,0 @@
-{
-    // Runs at 9:00 AM every sunday
-    "schedule": "0 0 9 * * 0"
-}

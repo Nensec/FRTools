@@ -1,34 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <AzureFunctionsVersion>v4</AzureFunctionsVersion>
-    <UserSecretsId>30ba2713-09fa-43fc-bb75-534bb9003903</UserSecretsId>
-    <Configurations>Debug - Core;Release - Core</Configurations>
+	<TargetFramework>net6.0</TargetFramework>
+	<AzureFunctionsVersion>v4</AzureFunctionsVersion>
+	<UserSecretsId>30ba2713-09fa-43fc-bb75-534bb9003903</UserSecretsId>
+	  <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug - Core|AnyCPU'">
-    <DefineConstants>$(DefineConstants);TRACE;DEBUG</DefineConstants>
+	<DefineConstants>$(DefineConstants);TRACE;DEBUG</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
-    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.25" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="6.0.25" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="7.0.0" />
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.1" />
-    <PackageReference Include="NewTumblrSharp" Version="1.2.0.156" />
+	<PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
+	<PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.25" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="6.0.25" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="7.0.0" />
+	<PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.1" />
+	<PackageReference Include="NewTumblrSharp" Version="1.2.0.156" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FRTools.Core.Common\FRTools.Core.Common.csproj" />
-    <ProjectReference Include="..\FRTools.Core.Data\FRTools.Core.Data.csproj" />
-    <ProjectReference Include="..\FRTools.Core.Services\FRTools.Core.Services.csproj" />
+	<ProjectReference Include="..\FRTools.Core.Common\FRTools.Core.Common.csproj" />
+	<ProjectReference Include="..\FRTools.Core.Data\FRTools.Core.Data.csproj" />
+	<ProjectReference Include="..\FRTools.Core.Services\FRTools.Core.Services.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="host.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="local.settings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
-    </None>
+	<None Update="host.json">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+	<None Update="local.settings.json">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+	</None>
   </ItemGroup>
 </Project>
