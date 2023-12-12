@@ -5,9 +5,6 @@
 	<UserSecretsId>30ba2713-09fa-43fc-bb75-534bb9003903</UserSecretsId>
 	  <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug - Core|AnyCPU'">
-	<DefineConstants>$(DefineConstants);TRACE;DEBUG</DefineConstants>
-  </PropertyGroup>
   <ItemGroup>
 	<PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
 	<PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
