@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
 using FRTools.Core.Helpers;
-using FRTools.Core.Services;
 using FRTools.Core.Services.Interfaces;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;

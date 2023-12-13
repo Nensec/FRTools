@@ -1,4 +1,4 @@
-﻿namespace FRTools.Core.Services
+﻿namespace FRTools.Core.Services.Interfaces
 {
     public interface IAzurePipelineService
     {

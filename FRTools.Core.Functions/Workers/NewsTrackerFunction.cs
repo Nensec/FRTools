@@ -8,7 +8,6 @@ using FRTools.Core.Data;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
 using FRTools.Core.Data.DataModels.NewsReaderModels;
 using FRTools.Core.Helpers;
-using FRTools.Core.Services;
 using FRTools.Core.Services.Interfaces;
 using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
