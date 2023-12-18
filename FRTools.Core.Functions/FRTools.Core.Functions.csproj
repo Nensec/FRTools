@@ -13,10 +13,12 @@
 	<PackageReference Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="7.0.0" />
 	<PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.1" />
 	<PackageReference Include="NewTumblrSharp" Version="1.2.0.156" />
+	<PackageReference Include="NSec.Cryptography" Version="22.4.0" />
   </ItemGroup>
   <ItemGroup>
 	<ProjectReference Include="..\FRTools.Core.Common\FRTools.Core.Common.csproj" />
 	<ProjectReference Include="..\FRTools.Core.Data\FRTools.Core.Data.csproj" />
+	<ProjectReference Include="..\FRTools.Core.Services.Discord\FRTools.Core.Services.Discord.csproj" />
 	<ProjectReference Include="..\FRTools.Core.Services\FRTools.Core.Services.csproj" />
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using FRTools.Core.Data;
 using FRTools.Core.Services;
+using FRTools.Core.Services.Discord.Commands;
 using FRTools.Core.Services.Interfaces;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +27,12 @@ namespace FRTools.Core.Functions
 
             builder.Services.AddTransient<IFRUserService, FRUserService>();
             builder.Services.AddTransient<IFRItemService, FRItemService>();
+
+            builder.Services.AddTransient<IDiscordService, DiscordService>();
+
+            var discordCommandClasses = Assembly.GetAssembly(typeof(DiscordCommand)).GetTypes().Where(x => typeof(DiscordCommand).IsAssignableFrom(x));
+            foreach (var discordCommandClass in discordCommandClasses)
+                builder.Services.AddSingleton(discordCommandClass);
         }
 
         public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
