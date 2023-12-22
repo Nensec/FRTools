@@ -42,7 +42,7 @@ namespace FRTools.Core.Functions.Workers
 
             var topicInfos = new List<TopicInfo>();
 
-            foreach(var topic in topics)
+            foreach (var topic in topics)
             {
                 topicInfos.Add(await GetHomeTopicInfo(topic));
             }
@@ -233,11 +233,8 @@ namespace FRTools.Core.Functions.Workers
                                 }
                             }
 
-                            if (FRHelpers.CheckForUnknownGenesOrBreed(newItems))
-                            {
-                                if (!DEBUG)
-                                    await _pipelineService.TriggerPipeline(Environment.GetEnvironmentVariable("AzureDevOpsPipeline"));
-                            }
+                            if (!DEBUG && FRHelpers.CheckForUnknownGenesOrBreed(newItems))
+                                await _pipelineService.TriggerPipeline(Environment.GetEnvironmentVariable("AzureDevOpsPipeline"));
                         }
                     }
                     (await _dataContext.Topics.FirstOrDefaultAsync(x => x.FRTopicId == topicInfo.FRId)).Posts.Add(new Post

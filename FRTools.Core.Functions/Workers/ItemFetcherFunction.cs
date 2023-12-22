@@ -91,11 +91,8 @@ namespace FRTools.Core.Functions.Workers
                 log.LogInformation($"Since items were found, saving last success at {DateTime.UtcNow}");
 
                 log.LogInformation("Checking if we got any new genes or breeds");
-                if (FRHelpers.CheckForUnknownGenesOrBreed(items))
-                {
-                    if(!DEBUG)
-                        await _pipelineService.TriggerPipeline(Environment.GetEnvironmentVariable("AzureDevOpsPipeline"));
-                }
+                if (!DEBUG && FRHelpers.CheckForUnknownGenesOrBreed(items))
+                    await _pipelineService.TriggerPipeline(Environment.GetEnvironmentVariable("AzureDevOpsPipeline"));
             }
 
             if (DateTime.UtcNow.Date.Day == DateTime.DaysInMonth(DateTime.UtcNow.Year, DateTime.UtcNow.Month) && DateTime.UtcNow.Hour == 23 && DateTime.UtcNow.Minute >= 45)
@@ -105,7 +102,7 @@ namespace FRTools.Core.Functions.Workers
                 var missingIds = await _itemService.FindMissingIds();
                 foreach (var missingId in missingIds)
                 {
-                    var item = await _itemService.FetchItemFromFR(missingId);
+                    await _itemService.FetchItemFromFR(missingId);
                 }
             }
         }
