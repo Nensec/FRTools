@@ -71,7 +71,7 @@ namespace FRTools.Core.Functions.Workers
         }
 
         [FunctionName(nameof(ProcessCommand))]
-        public async Task ProcessCommand([ServiceBusTrigger("discordcommandqueue", AutoCompleteMessages = false, Connection = "ServiceBusConnection")] DiscordInteractionRequest interaction, ILogger log)
+        public async Task ProcessCommand([ServiceBusTrigger("discordcommandqueue", AutoCompleteMessages = false, Connection = "AZURESBCONNSTR_defaultConnection")] DiscordInteractionRequest interaction, ILogger log)
         {
             log.LogInformation($"C# ServiceBus queue trigger function processed command: {interaction.Data.Name}");
 
