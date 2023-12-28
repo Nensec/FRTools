@@ -1,66 +1,173 @@
-﻿using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Reflection;
-using FRTools.Core.Data;
-using FRTools.Core.Services.Discord.Commands;
-using FRTools.Core.Services.DiscordModels;
-using FRTools.Core.Services.Interfaces;
+﻿using FRTools.Core.Common.Extentions;
+using FRTools.Core.Services.Discord.DiscordModels.WebhookModels;
+using FRTools.Core.Services.Discord.Interfaces;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace FRTools.Core.Services
+namespace FRTools.Core.Services.Discord
 {
     public class DiscordService : IDiscordService
     {
-        private string _commandsUrl = $"https://discord.com/api/v10/applications/{Environment.GetEnvironmentVariable("DiscordApplicationId")}/commands";
+        private const string INTERACTIONURL = "/webhooks/{0}/{1}";
+        private const string ORIGINALINTERACTIONURL = "/webhooks/{0}/{1}/messages/@original";
 
-        private readonly DataContext _dataContext;
         private readonly ILogger<DiscordService> _logger;
 
-        private List<DiscordCommand> _commands;
-
-        public DiscordService(DataContext dataContext, IServiceProvider serviceProvider, ILogger<DiscordService> logger)
+        public DiscordService(ILogger<DiscordService> logger)
         {
-            _dataContext = dataContext;
             _logger = logger;
-
-            var commands = Assembly.GetAssembly(typeof(DiscordCommand))!.GetTypes().Where(x => typeof(DiscordCommand).IsAssignableFrom(x)).ToList();
-            _commands = commands.Select(x => (DiscordCommand)serviceProvider.GetService(x)!).ToList();
         }
 
-        public AppCommand? ParseJson(string json) => JsonConvert.DeserializeObject<AppCommand>(json);
+        public async Task EditInitialInteraction(string token, DiscordWebhook response) => await ProcessMessageToWebhook(response, CreateUrl(ORIGINALINTERACTIONURL, token), SendPatchRequest);
 
-        public async Task RegisterCommand(AppCommand command)
+        public async Task ReplyToInteraction(string token, DiscordWebhook response) => await ProcessMessageToWebhook(response, CreateUrl(INTERACTIONURL, token), SendPostRequest);
+
+        public async Task DeleteInteraction(string token)
         {
             using (var client = new HttpClient())
             {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bot", Environment.GetEnvironmentVariable("DiscordBotToken"));
-                await client.PostAsJsonAsync(_commandsUrl, command);
+                var url = CreateUrl(ORIGINALINTERACTIONURL, token);
+                await client.DeleteAsync(url);
             }
         }
 
-        public async Task RegisterAllCommands()
+        public async Task PostMessageToWebhook(DiscordWebhook webhook, string webhookUrl) => await ProcessMessageToWebhook(webhook, webhookUrl, SendPostRequest);
+
+        public async Task PostFilesToWebhook(DiscordWebhookFiles webhook, string webhookUrl) => await ProcessFilesToWebhook(webhook, webhookUrl, SendPostRequest);
+
+        public async Task PatchMessageToWebhook(DiscordWebhook webhook, string webhookUrl) => await ProcessMessageToWebhook(webhook, webhookUrl, SendPatchRequest);
+
+        public async Task PatchFilesToWebhook(DiscordWebhookFiles webhook, string webhookUrl) => await ProcessFilesToWebhook(webhook, webhookUrl, SendPatchRequest);
+
+        private string CreateUrl(string url, string token) => string.Format(url, Environment.GetEnvironmentVariable("DiscordApplicationId"), token);
+
+        private async Task ProcessMessageToWebhook(DiscordWebhook webhook, string webhookUrl, Func<DiscordWebhook, string, Task> sendAction)
+        {
+            // Webhooks can (only) have 10 embeds
+            if (webhook.Embeds.Count() > 10)
+            {
+                foreach (var batch in webhook.Embeds.Select((e, i) => new { e, i }).GroupBy(x => x.i / 10))
+                {
+                    var webhookBatch = new DiscordWebhook
+                    {
+                        Content = webhook.Content,
+                        Username = webhook.Username,
+                        AvatarUrl = webhook.AvatarUrl,
+                        Embeds = batch.Select(x => x.e).ToArray()
+                    };
+
+                    await sendAction(webhookBatch, webhookUrl);
+                }
+            }
+            else
+                await sendAction(webhook, webhookUrl);
+        }
+
+        private async Task ProcessFilesToWebhook(DiscordWebhookFiles webhook, string webhookUrl, Func<DiscordWebhookFiles, string, Task> sendAction)
         {
             using (var client = new HttpClient())
             {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bot", Environment.GetEnvironmentVariable("DiscordBotToken"));
-                await client.PutAsJsonAsync(_commandsUrl, _commands.Select(x => x.Command).ToArray());
+                client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "multipart/form-data");
+
+                // Webhooks can (only) have 10 embeds
+                if (webhook.PayloadJson.Embeds.Count() > 10)
+                {
+                    foreach (var batch in webhook.PayloadJson.Embeds.Select((e, i) => new { e, i }).GroupBy(x => x.i / 10))
+                    {
+                        var webhookBatch = new DiscordWebhookFiles
+                        {
+                            PayloadJson = new DiscordWebhook
+                            {
+                                Content = webhook.PayloadJson.Content,
+                                Username = webhook.PayloadJson.Username,
+                                AvatarUrl = webhook.PayloadJson.AvatarUrl,
+                                Embeds = batch.Select(x => x.e).ToArray()
+                            }
+                        };
+
+                        var filesBelongingToEmbeds = webhookBatch.PayloadJson.Embeds.Where(x => x.Image?.Url.StartsWith("attachment://") == true).Select(x => x.Image.Url.Replace("attachment://", "")).ToArray()
+                            .Concat(webhookBatch.PayloadJson.Embeds.Where(x => x.Auhor?.IconUrl.StartsWith("attachment://") == true).Select(x => x.Auhor.IconUrl.Replace("attachment://", "")).ToArray())
+                            .Concat(webhookBatch.PayloadJson.Embeds.Where(x => x.Thumbnail?.Url.StartsWith("attachment://") == true).Select(x => x.Thumbnail.Url.Replace("attachment://", "")).ToArray())
+                            .Distinct();
+
+                        webhookBatch.Files = webhook.Files.Where(x => filesBelongingToEmbeds.Contains(x.name)).ToArray();
+
+                        // Max 10 files as well
+                        if (webhookBatch.Files.Count() > 10)
+                        {
+                            foreach (var fileBatch in webhookBatch.Files.Select((f, i) => new { f, i }).GroupBy(x => x.i / 10))
+                            {
+                                var webhookFileBatch = new DiscordWebhookFiles
+                                {
+                                    PayloadJson = new DiscordWebhook
+                                    {
+                                        Content = webhookBatch.PayloadJson.Content,
+                                        Username = webhookBatch.PayloadJson.Username,
+                                        AvatarUrl = webhookBatch.PayloadJson.AvatarUrl
+                                    },
+                                    Files = fileBatch.Select(x => x.f).ToArray()
+                                };
+
+                                webhookFileBatch.PayloadJson.Embeds = webhookBatch.PayloadJson.Embeds.Where(x => webhookFileBatch.Files.Select(f => f.name).Any(f => filesBelongingToEmbeds.Contains(f))).ToArray();
+
+                                await sendAction(webhookFileBatch, webhookUrl);
+                            }
+                        }
+                        else
+                            await sendAction(webhookBatch, webhookUrl);
+                    }
+                }
+                else
+                    await sendAction(webhook, webhookUrl);
             }
         }
 
-        public async Task ExecuteInteraction(AppCommand command)
+        private async Task SendPatchRequest(DiscordWebhook webhookObject, string url)
         {
-            await _commands.First(x => x.CommandName == command.name).ExecuteAsync(command);
+            using (var client = new HttpClient())
+            {
+                var response = await client.PatchAsJsonAsync(url, webhookObject);
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError("Error posting to webhook, response code: {0}\n\tUrl: {1}\n\tData: {2}", response.StatusCode, url, JsonConvert.SerializeObject(webhookObject));
+                }
+            }
         }
 
-        public async Task ReplyToInteraction(AppCommand command)
+        private async Task SendPatchRequest(DiscordWebhookFiles webhookObject, string url)
         {
-
+            using (var client = new HttpClient())
+            {
+                var response = await client.PatchAsJsonAsync(url, webhookObject);
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError("Error posting to webhook, response code: {0}\n\tUrl: {1}\n\tData: {2}", response.StatusCode, url, JsonConvert.SerializeObject(webhookObject));
+                }
+            }
         }
 
-        public async Task DeferReplyToInteraction(AppCommand command)
+        private async Task SendPostRequest(DiscordWebhook webhookObject, string url)
         {
+            using (var client = new HttpClient())
+            {
+                var response = await client.PostAsJsonAsync(url, webhookObject);
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError("Error posting to webhook, response code: {0}\n\tUrl: {1}\n\tData: {2}", response.StatusCode, url, JsonConvert.SerializeObject(webhookObject));
+                }
+            }
+        }
 
+        private async Task SendPostRequest(DiscordWebhookFiles webhookObject, string url)
+        {
+            using (var client = new HttpClient())
+            {
+                var response = await client.PostAsJsonAsync(url, webhookObject);
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError("Error posting to webhook, response code: {0}\n\tUrl: {1}\n\tData: {2}", response.StatusCode, url, JsonConvert.SerializeObject(webhookObject));
+                }
+            }
         }
     }
 }

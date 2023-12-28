@@ -4,10 +4,10 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using FRTools.Core.Common;
 using FRTools.Core.Data;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
 using FRTools.Core.Data.DataModels.NewsReaderModels;
-using FRTools.Core.Helpers;
 using FRTools.Core.Services.Interfaces;
 using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
@@ -35,7 +35,7 @@ namespace FRTools.Core.Functions.Workers
         public async Task NewsTracker([TimerTrigger("0 */5 * * * *", RunOnStartup = DEBUG)] TimerInfo timer, ILogger log)
         {
             _logger = log;
-            var mainNewsForum = await Common.Helpers.LoadHtmlPage("https://www1.flightrising.com/forums/ann");
+            var mainNewsForum = await Helpers.LoadHtmlPage("https://www1.flightrising.com/forums/ann");
             var topics = mainNewsForum.GetElementbyId("postlist").SelectNodes("tr");
 
             _logger.LogInformation($"Found {topics.Count} topics");

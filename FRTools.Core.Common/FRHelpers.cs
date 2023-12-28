@@ -1,7 +1,10 @@
-﻿using FRTools.Core.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using FRTools.Core.Data;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
 
-namespace FRTools.Core.Helpers
+namespace FRTools.Core.Common
 {
     public static class FRHelpers
     {
@@ -72,11 +75,11 @@ namespace FRTools.Core.Helpers
                 try
                 {
                     if (item.Name.StartsWith("Primary"))
-                        FRHelpers.GetBodyGene(geneName);
+                        GetBodyGene(geneName);
                     if (item.Name.StartsWith("Secondary"))
-                        FRHelpers.GetWingGene(geneName);
+                        GetWingGene(geneName);
                     if (item.Name.StartsWith("Tertiary"))
-                        FRHelpers.GetTertiaryGene(geneName);
+                        GetTertiaryGene(geneName);
                 }
                 catch (ArgumentException)
                 {
@@ -87,5 +90,18 @@ namespace FRTools.Core.Helpers
             return false;
         }
 
+        public static bool TryGetDragonType(string dragontype, out DragonType result)
+        {
+            try
+            {
+                result = GetDragonType(dragontype);
+                return true;
+            }
+            catch
+            {
+                result = DragonType.Unknown;
+                return false;
+            }
+        }
     }
 }

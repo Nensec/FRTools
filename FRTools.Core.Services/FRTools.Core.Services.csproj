@@ -16,6 +16,7 @@
   <ItemGroup>
 	<ProjectReference Include="..\FRTools.Core.Common\FRTools.Core.Common.csproj" />
 	<ProjectReference Include="..\FRTools.Core.Data\FRTools.Core.Data.csproj" />
+	<ProjectReference Include="..\FRTools.Core.Services.Discord\FRTools.Core.Services.Discord.csproj" />
   </ItemGroup>
 
 </Project>

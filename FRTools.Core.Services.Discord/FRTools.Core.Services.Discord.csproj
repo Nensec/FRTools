@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.17.1" />
+    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FRTools.Core.Common\FRTools.Core.Common.csproj" />
     <ProjectReference Include="..\FRTools.Core.Data\FRTools.Core.Data.csproj" />
   </ItemGroup>
 

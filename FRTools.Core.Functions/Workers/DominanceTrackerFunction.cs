@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using FRTools.Core.Common;
 using FRTools.Core.Data;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
 using FRTools.Core.Services.Announce;
@@ -29,7 +30,7 @@ namespace FRTools.Core.Functions.Workers
             {
                 try
                 {
-                    var dominanceHtml = await Common.Helpers.LoadHtmlPage("https://www1.flightrising.com/dominance");
+                    var dominanceHtml = await Helpers.LoadHtmlPage("https://www1.flightrising.com/dominance");
                     var domTexts = dominanceHtml.DocumentNode.QuerySelectorAll("#domtext > div");
 
                     Flight[] positions = new Flight[3];

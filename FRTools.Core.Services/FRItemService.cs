@@ -1,8 +1,8 @@
 ﻿using System.Text.RegularExpressions;
 using System.Web;
+using FRTools.Core.Common;
 using FRTools.Core.Data;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
-using FRTools.Core.Helpers;
 using FRTools.Core.Services.Interfaces;
 using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;

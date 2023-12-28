@@ -2,9 +2,9 @@
 using DontPanic.TumblrSharp;
 using DontPanic.TumblrSharp.Client;
 using DontPanic.TumblrSharp.OAuth;
+using FRTools.Core.Common;
 using FRTools.Core.Data;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
-using FRTools.Core.Helpers;
 using FRTools.Core.Services.Interfaces;
 
 namespace FRTools.Core.Services.Announce.Announcers

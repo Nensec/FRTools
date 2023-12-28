@@ -1,40 +1,28 @@
-﻿using FRTools.Core.Services.DiscordModels;
+﻿using FRTools.Core.Services.Discord.DiscordModels.CommandModels;
+using FRTools.Core.Services.Discord.DiscordModels.RequestModels;
+using FRTools.Core.Services.Discord.DiscordModels.ResponseModels;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace FRTools.Core.Services.Discord.Commands
 {
     public abstract class DiscordCommand
     {
-        protected Dictionary<string, Action<AppCommandOption>> Registrations { get; } = new Dictionary<string, Action<AppCommandOption>>();
         protected ILogger Logger { get; }
+        protected Dictionary<string, Action> CommandActions = new Dictionary<string, Action>();
 
         protected DiscordCommand(ILogger logger)
         {
             Logger = logger;
+            Command = CreateCommand();
         }
 
-        public abstract AppCommand Command { get; }
+        public AppCommand Command { get; }
+        public string CommandName { get => Command.Name; }
 
-        public Task ExecuteAsync(AppCommand command)
-        {
-            return Task.Run(() => Logger.LogInformation($"Command received:\n{JsonConvert.SerializeObject(command)}"));
-        }
+        public abstract AppCommand CreateCommand();
 
-        public string CommandName { get => Command.name; }
+        public abstract Task<DiscordInteractionResponse> Execute(DiscordInteractionRequest interaction);
 
-        public void RegisterExecute(AppCommandOption command, Action<AppCommandOption> action)
-        {
-            Registrations.Add(command.name, action);
-        }
-    }
-
-    public static class DiscordCommandExtentions
-    {
-        public static AppCommandOption RegisterExecute(this AppCommandOption command, DiscordCommand discordCommand, Action<AppCommandOption> action)
-        {
-            discordCommand.RegisterExecute(command, action);
-            return command;
-        }
+        public virtual Task DeferedExecute(DiscordInteractionRequest interaction) => Task.CompletedTask;
     }
 }

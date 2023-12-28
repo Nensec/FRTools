@@ -28,4 +28,14 @@ namespace FRTools.Core.Services.Announce
             MarketplaceLink = marketplaceLink;
         }
     }
+
+    public class NewItemsData : AnnounceData
+    {
+        public FRItem[] FRItems { get; }
+
+        public NewItemsData(FRItem[] items)
+        {
+            FRItems = items;
+        }
+    }
 }

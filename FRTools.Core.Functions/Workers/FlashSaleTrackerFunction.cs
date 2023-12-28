@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using FRTools.Core.Common;
 using FRTools.Core.Data;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
-using FRTools.Core.Helpers;
 using FRTools.Core.Services.Announce;
 using FRTools.Core.Services.Interfaces;
 using Microsoft.Azure.WebJobs;
@@ -31,11 +31,11 @@ namespace FRTools.Core.Functions.Workers
         {
             string[] _tabs = { "apparel", "familiars", "specialty", "genes", "scenes", "skins", "battle", "bundles" };
 
-            var marketPlaceDoc = await Common.Helpers.LoadHtmlPage(FRHelpers.MarketplaceUrl);
+            var marketPlaceDoc = await Helpers.LoadHtmlPage(FRHelpers.MarketplaceUrl);
             var marketTabs = marketPlaceDoc.DocumentNode.SelectNodes("//*[@id=\"market-tabs\"]/div");
             var link = marketTabs.First(x => x.ChildNodes.Any(c => c.HasClass("flash_sale_tab_icon"))).SelectSingleNode("a").GetAttributeValue("href", null);
 
-            var itemsDoc = await Common.Helpers.LoadHtmlPage(string.Format(FRHelpers.MarketplaceFetchUrl, link.Split('/').Last()));
+            var itemsDoc = await Helpers.LoadHtmlPage(string.Format(FRHelpers.MarketplaceFetchUrl, link.Split('/').Last()));
             var items = itemsDoc.DocumentNode.SelectNodes("//*[@id=\"market-result-items-content\"]/span");
             var flashSaleItem = items.FirstOrDefault(x => x.HasClass("market-flash-result"));
 
@@ -43,7 +43,7 @@ namespace FRTools.Core.Functions.Workers
             {
                 foreach (var tab in _tabs)
                 {
-                    itemsDoc = await Common.Helpers.LoadHtmlPage(string.Format(FRHelpers.MarketplaceFetchUrl, tab));
+                    itemsDoc = await Helpers.LoadHtmlPage(string.Format(FRHelpers.MarketplaceFetchUrl, tab));
                     items = itemsDoc.DocumentNode.SelectNodes("//*[@id=\"market-result-items-content\"]/span");
                     flashSaleItem = items.FirstOrDefault(x => x.HasClass("market-flash-result"));
                     if (flashSaleItem != null)

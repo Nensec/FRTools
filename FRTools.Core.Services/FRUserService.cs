@@ -1,4 +1,5 @@
-﻿using FRTools.Core.Data;
+﻿using FRTools.Core.Common;
+using FRTools.Core.Data;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
 using FRTools.Core.Services.Interfaces;
 using HtmlAgilityPack.CssSelectors.NetCore;
@@ -86,7 +87,7 @@ namespace FRTools.Core.Services
         private async Task<(string Username, int UserId)> GetFRUserInfo(string? username, int? userId)
         {
             string url = $"https://www1.flightrising.com/clan-profile/{(userId?.ToString() ?? $"n/{username}")}";
-            var userProfilePage = await Common.Helpers.LoadHtmlPage(url);
+            var userProfilePage = await Helpers.LoadHtmlPage(url);
 
             if (userProfilePage.ParsedText.Contains("404 - Page Not Found") || userProfilePage.ParsedText.Contains("404: User not found"))
                 return default;

@@ -1,11 +1,15 @@
-﻿using FRTools.Core.Services.DiscordModels;
+﻿using FRTools.Core.Services.Discord.DiscordModels.WebhookModels;
 
-namespace FRTools.Core.Services.Interfaces
+namespace FRTools.Core.Services.Discord.Interfaces
 {
     public interface IDiscordService
     {
-        Task ExecuteInteraction(AppCommand command);
-        Task RegisterCommand(AppCommand command);
-        Task RegisterAllCommands();
+        Task DeleteInteraction(string token);
+        Task EditInitialInteraction(string token, DiscordWebhook response);
+        Task ReplyToInteraction(string token, DiscordWebhook response);
+        Task PatchFilesToWebhook(DiscordWebhookFiles webhook, string webhookUrl);
+        Task PatchMessageToWebhook(DiscordWebhook webhook, string webhookUrl);
+        Task PostFilesToWebhook(DiscordWebhookFiles webhook, string webhookUrl);
+        Task PostMessageToWebhook(DiscordWebhook webhook, string webhookUrl);
     }
 }
