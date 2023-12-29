@@ -3,7 +3,7 @@ using FRTools.Core.Services.DiscordModels;
 using Newtonsoft.Json;
 
 #pragma warning disable CS8618
-namespace FRTools.Core.Services.Discord.DiscordModels.ResponseModels
+namespace FRTools.Core.Services.Discord.DiscordModels.InteractionResponseModels
 {
     public abstract class DiscordInteractionResponse
     {

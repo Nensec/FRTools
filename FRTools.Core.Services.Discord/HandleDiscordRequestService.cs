@@ -3,8 +3,8 @@ using Azure.Messaging.ServiceBus;
 using FRTools.Core.Common.Extentions;
 using FRTools.Core.Services.Discord.Commands;
 using FRTools.Core.Services.Discord.DiscordModels.CommandModels;
-using FRTools.Core.Services.Discord.DiscordModels.RequestModels;
-using FRTools.Core.Services.Discord.DiscordModels.ResponseModels;
+using FRTools.Core.Services.Discord.DiscordModels.InteractionRequestModels;
+using FRTools.Core.Services.Discord.DiscordModels.InteractionResponseModels;
 using FRTools.Core.Services.Interfaces;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Logging;
@@ -48,7 +48,7 @@ namespace FRTools.Core.Services
         {
             var response = await _commands.First(x => x.CommandName == interaction.Data.Name).Execute(interaction);
             if (response is DiscordInteractionResponse.DefferedContentResponse)
-                await _serviceBusClient.SendMessageAsync(new ServiceBusMessage(JsonConvert.SerializeObject(interaction)));
+                await _serviceBusClient.SendMessageAsync(new ServiceBusMessage(JsonConvert.SerializeObject(interaction)) { ContentType = "application/json" });
             return response;
         }
 

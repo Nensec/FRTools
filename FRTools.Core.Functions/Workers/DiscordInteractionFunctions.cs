@@ -2,7 +2,8 @@
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using FRTools.Core.Services.Discord.DiscordModels.RequestModels;
+using FRTools.Core.Services.Discord.DiscordModels.InteractionRequestModels;
+using FRTools.Core.Services.Discord.DiscordModels.InteractionResponseModels;
 using FRTools.Core.Services.DiscordModels;
 using FRTools.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -71,7 +72,7 @@ namespace FRTools.Core.Functions.Workers
         }
 
         [FunctionName(nameof(ProcessCommand))]
-        public async Task ProcessCommand([ServiceBusTrigger("discordcommandqueue", AutoCompleteMessages = false, Connection = "AZURESBCONNSTR_defaultConnection")] DiscordInteractionRequest interaction, ILogger log)
+        public async Task ProcessCommand([ServiceBusTrigger("%AzureServiceBusCommandQueue%", AutoCompleteMessages = true, Connection = "AZURESBCONNSTR_defaultConnection")] DiscordInteractionRequest interaction, ILogger log)
         {
             log.LogInformation($"C# ServiceBus queue trigger function processed command: {interaction.Data.Name}");
 
@@ -94,7 +95,7 @@ namespace FRTools.Core.Functions.Workers
             return result;
         }
 
-        private IActionResult AckResult() => new ContentResult { Content = JsonConvert.SerializeObject(new { type = 1 }), ContentType = "application/json", StatusCode = 200 };
+        private IActionResult AckResult() => new ContentResult { Content = JsonConvert.SerializeObject(new DiscordInteractionResponse.PongResponse()), ContentType = "application/json", StatusCode = 200 };
 
         private string GetBody(HttpRequest req)
         {

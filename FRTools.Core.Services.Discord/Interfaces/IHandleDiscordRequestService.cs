@@ -1,6 +1,6 @@
 ﻿using FRTools.Core.Services.Discord.Commands;
-using FRTools.Core.Services.Discord.DiscordModels.RequestModels;
-using FRTools.Core.Services.Discord.DiscordModels.ResponseModels;
+using FRTools.Core.Services.Discord.DiscordModels.InteractionRequestModels;
+using FRTools.Core.Services.Discord.DiscordModels.InteractionResponseModels;
 
 namespace FRTools.Core.Services.Interfaces
 {

@@ -1,4 +1,6 @@
-﻿using FRTools.Core.Common.Extentions;
+﻿using System.Net.Http.Headers;
+using System.Text;
+using FRTools.Core.Common.Extentions;
 using FRTools.Core.Services.Discord.DiscordModels.WebhookModels;
 using FRTools.Core.Services.Discord.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -8,8 +10,8 @@ namespace FRTools.Core.Services.Discord
 {
     public class DiscordService : IDiscordService
     {
-        private const string INTERACTIONURL = "/webhooks/{0}/{1}";
-        private const string ORIGINALINTERACTIONURL = "/webhooks/{0}/{1}/messages/@original";
+        private const string INTERACTIONURL = "https://discord.com/api/v10/webhooks/{0}/{1}";
+        private const string ORIGINALINTERACTIONURL = "https://discord.com/api/v10/webhooks/{0}/{1}/messages/@original";
 
         private readonly ILogger<DiscordService> _logger;
 
@@ -19,8 +21,9 @@ namespace FRTools.Core.Services.Discord
         }
 
         public async Task EditInitialInteraction(string token, DiscordWebhook response) => await ProcessMessageToWebhook(response, CreateUrl(ORIGINALINTERACTIONURL, token), SendPatchRequest);
-
+        public async Task EditInitialInteraction(string token, DiscordWebhookFiles response) => await ProcessFilesToWebhook(response, CreateUrl(ORIGINALINTERACTIONURL, token), SendPatchRequest);
         public async Task ReplyToInteraction(string token, DiscordWebhook response) => await ProcessMessageToWebhook(response, CreateUrl(INTERACTIONURL, token), SendPostRequest);
+        public async Task ReplyToInteraction(string token, DiscordWebhookFiles response) => await ProcessFilesToWebhook(response, CreateUrl(INTERACTIONURL, token), SendPostRequest);
 
         public async Task DeleteInteraction(string token)
         {
@@ -90,7 +93,7 @@ namespace FRTools.Core.Services.Discord
                             .Concat(webhookBatch.PayloadJson.Embeds.Where(x => x.Thumbnail?.Url.StartsWith("attachment://") == true).Select(x => x.Thumbnail.Url.Replace("attachment://", "")).ToArray())
                             .Distinct();
 
-                        webhookBatch.Files = webhook.Files.Where(x => filesBelongingToEmbeds.Contains(x.name)).ToArray();
+                        webhookBatch.Files = new Dictionary<string, byte[]>(webhook.Files.Where(x => filesBelongingToEmbeds.Contains(x.Key)).ToArray());
 
                         // Max 10 files as well
                         if (webhookBatch.Files.Count() > 10)
@@ -105,10 +108,10 @@ namespace FRTools.Core.Services.Discord
                                         Username = webhookBatch.PayloadJson.Username,
                                         AvatarUrl = webhookBatch.PayloadJson.AvatarUrl
                                     },
-                                    Files = fileBatch.Select(x => x.f).ToArray()
+                                    Files = new Dictionary<string, byte[]>(fileBatch.Select(x => x.f).ToArray())
                                 };
 
-                                webhookFileBatch.PayloadJson.Embeds = webhookBatch.PayloadJson.Embeds.Where(x => webhookFileBatch.Files.Select(f => f.name).Any(f => filesBelongingToEmbeds.Contains(f))).ToArray();
+                                webhookFileBatch.PayloadJson.Embeds = webhookBatch.PayloadJson.Embeds.Where(x => webhookFileBatch.Files.Select(f => f.Key).Any(f => filesBelongingToEmbeds.Contains(f))).ToArray();
 
                                 await sendAction(webhookFileBatch, webhookUrl);
                             }
@@ -138,10 +141,18 @@ namespace FRTools.Core.Services.Discord
         {
             using (var client = new HttpClient())
             {
-                var response = await client.PatchAsJsonAsync(url, webhookObject);
-                if (!response.IsSuccessStatusCode)
+                using (var content = new MultipartFormDataContent("--boundary"))
                 {
-                    _logger.LogError("Error posting to webhook, response code: {0}\n\tUrl: {1}\n\tData: {2}", response.StatusCode, url, JsonConvert.SerializeObject(webhookObject));
+                    content.Add(new StringContent(JsonConvert.SerializeObject(webhookObject.PayloadJson), Encoding.UTF8, "application/json"), "payload_json");
+                    foreach (var file in webhookObject.Files.Select((Data, Index) => (Index, Data)))
+                        content.Add(CreateFileContent(file.Data.Value, "image/png"), $"files[{file.Index}]", file.Data.Key);
+
+                    var response = await client.PatchAsync(url, content);
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        _logger.LogError("Error posting to webhook, response code: {0}\n\tUrl: {1}\n\tData: {2}", response.StatusCode, url, JsonConvert.SerializeObject(webhookObject));
+                    }
                 }
             }
         }
@@ -162,12 +173,27 @@ namespace FRTools.Core.Services.Discord
         {
             using (var client = new HttpClient())
             {
-                var response = await client.PostAsJsonAsync(url, webhookObject);
-                if (!response.IsSuccessStatusCode)
+                using (var content = new MultipartFormDataContent("--boundary"))
                 {
-                    _logger.LogError("Error posting to webhook, response code: {0}\n\tUrl: {1}\n\tData: {2}", response.StatusCode, url, JsonConvert.SerializeObject(webhookObject));
+                    content.Add(new StringContent(JsonConvert.SerializeObject(webhookObject.PayloadJson), Encoding.UTF8, "application/json"), "payload_json");
+                    foreach (var file in webhookObject.Files.Select((Data, Index) => (Index, Data)))
+                        content.Add(CreateFileContent(file.Data.Value, "image/png"), $"files[{file.Index}]", file.Data.Key);
+
+                    var response = await client.PostAsync(url, content);
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        _logger.LogError("Error posting to webhook, response code: {0}\n\tUrl: {1}\n\tData: {2}", response.StatusCode, url, JsonConvert.SerializeObject(webhookObject));
+                    }
                 }
             }
+        }
+
+        private ByteArrayContent CreateFileContent(byte[] data, string contentType)
+        {
+            var fileContent = new ByteArrayContent(data);
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+            return fileContent;
         }
     }
 }

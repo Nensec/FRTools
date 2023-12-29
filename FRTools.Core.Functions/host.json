@@ -10,6 +10,5 @@
     "logLevel": {
       "FRTools": "Debug"
     }
-  },
-  "functions": [ "DiscordInteractionEndpoint", "RegisterCommands" ]
+  }
 }

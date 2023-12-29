@@ -60,7 +60,7 @@ namespace FRTools.Core.Services.Announce.Announcers
             var random = new Random();
 
             var webhook = new DiscordWebhookFiles();
-            var files = new List<KeyValuePair<string, byte[]>>();
+            var files = new Dictionary<string, byte[]>();
             var embeds = new List<DiscordEmbed>();
 
             var embed = new DiscordEmbed
@@ -89,18 +89,18 @@ namespace FRTools.Core.Services.Announce.Announcers
             {
                 var fileName = $"asset_{data.FRItem.FRId}.png";
 
-                files.Add(new KeyValuePair<string, byte[]>(fileName, itemAsset));
+                files.Add(fileName, itemAsset);
                 embed.Image = new DiscordEmbedImage { Url = $"attachment://{fileName}" };
 
             }
             using (var client = new HttpClient())
             {
                 var iconAsset = await client.GetByteArrayAsync($"https://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/api/proxy/dragon/icon/{data.FRItem.FRId}");
-                files.Add(new KeyValuePair<string, byte[]>($"icon_{data.FRItem.FRId}.png", iconAsset));
+                files.Add($"icon_{data.FRItem.FRId}.png", iconAsset);
             }
             embeds.Add(embed);
 
-            webhook.Files = (IEnumerable<(byte[], string)>)files;
+            webhook.Files = files;
             webhook.PayloadJson.Embeds = embeds;
 
             await _discordService.PostFilesToWebhook(webhook, Environment.GetEnvironmentVariable("TEST_Webhook")!);
@@ -111,7 +111,7 @@ namespace FRTools.Core.Services.Announce.Announcers
             var random = new Random();
 
             var webhook = new DiscordWebhookFiles();
-            var files = new List<KeyValuePair<string, byte[]>>();
+            var files = new Dictionary<string, byte[]>();
             var embeds = new List<DiscordEmbed>();
 
             foreach (var item in data.FRItems)
@@ -142,19 +142,19 @@ namespace FRTools.Core.Services.Announce.Announcers
                 {
                     var fileName = $"asset_{item.FRId}.png";
 
-                    files.Add(new KeyValuePair<string, byte[]>(fileName, itemAsset));
+                    files.Add(fileName, itemAsset);
                     embed.Image = new DiscordEmbedImage { Url = $"attachment://{fileName}" };
 
                 }
                 using (var client = new HttpClient())
                 {
                     var iconAsset = await client.GetByteArrayAsync($"https://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/api/proxy/dragon/icon/{item.FRId}");
-                    files.Add(new KeyValuePair<string, byte[]>($"icon_{item.FRId}.png", iconAsset));
+                    files.Add($"icon_{item.FRId}.png", iconAsset);
                 }
                 embeds.Add(embed);
             }
 
-            webhook.Files = (IEnumerable<(byte[], string)>)files;
+            webhook.Files = files;
             webhook.PayloadJson.Embeds = embeds;
 
             await _discordService.PostFilesToWebhook(webhook, Environment.GetEnvironmentVariable("TEST_Webhook")!);
@@ -192,8 +192,8 @@ namespace FRTools.Core.Services.Announce.Announcers
                         if (username.Success)
                         {
                             var frUser = await _userService.GetOrUpdateFRUser(username.Groups[1].Value);
-                            if (frUser != null)                            
-                                fields.Add(new DiscordEmbedField { Name = "Created by", Value = $"[FR: {frUser.Username}]({string.Format(FRHelpers.UserProfileUrl, frUser.FRId)})" });                            
+                            if (frUser != null)
+                                fields.Add(new DiscordEmbedField { Name = "Created by", Value = $"[FR: {frUser.Username}]({string.Format(FRHelpers.UserProfileUrl, frUser.FRId)})" });
                         }
 
                         break;

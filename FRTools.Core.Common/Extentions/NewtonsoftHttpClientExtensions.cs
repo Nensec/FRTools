@@ -20,7 +20,7 @@ namespace FRTools.Core.Common.Extentions
             return JsonConvert.DeserializeObject<T>(json, settings)!;
         }
 
-        public static async Task<HttpResponseMessage> PostAsJsonAsync<T>(this HttpClient httpClient, string uri, T value, JsonSerializerSettings? settings = null, CancellationToken cancellationToken = default)
+        public static async Task<HttpResponseMessage> PostAsJsonAsync<T>(this HttpClient httpClient, string uri, T value, JsonSerializerSettings? settings = null, string contentType = "application/json", CancellationToken cancellationToken = default)
         {
             ThrowIfInvalidParams(httpClient, uri);
 
@@ -31,12 +31,12 @@ namespace FRTools.Core.Common.Extentions
 
             var json = JsonConvert.SerializeObject(value, settings);
 
-            var response = await httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, "application/json"), cancellationToken);
+            var response = await httpClient.PostAsync(uri, new StringContent(json, Encoding.UTF8, contentType), cancellationToken);
 
             return response;
         }
 
-        public static async Task<HttpResponseMessage> PutAsJsonAsync<T>(this HttpClient httpClient, string uri, T value, JsonSerializerSettings? settings = null, CancellationToken cancellationToken = default)
+        public static async Task<HttpResponseMessage> PutAsJsonAsync<T>(this HttpClient httpClient, string uri, T value, JsonSerializerSettings? settings = null, string contentType = "application/json", CancellationToken cancellationToken = default)
         {
             ThrowIfInvalidParams(httpClient, uri);
 
@@ -47,12 +47,12 @@ namespace FRTools.Core.Common.Extentions
 
             var json = JsonConvert.SerializeObject(value, settings);
 
-            var response = await httpClient.PutAsync(uri, new StringContent(json, Encoding.UTF8, "application/json"), cancellationToken);
+            var response = await httpClient.PutAsync(uri, new StringContent(json, Encoding.UTF8, contentType), cancellationToken);
 
             return response;
         }
 
-        public static async Task<HttpResponseMessage> PatchAsJsonAsync<T>(this HttpClient httpClient, string uri, T value, JsonSerializerSettings? settings = null, CancellationToken cancellationToken = default)
+        public static async Task<HttpResponseMessage> PatchAsJsonAsync<T>(this HttpClient httpClient, string uri, T value, JsonSerializerSettings? settings = null, string contentType = "application/json", CancellationToken cancellationToken = default)
         {
             ThrowIfInvalidParams(httpClient, uri);
 
@@ -63,7 +63,7 @@ namespace FRTools.Core.Common.Extentions
 
             var json = JsonConvert.SerializeObject(value, settings);
 
-            var response = await httpClient.PatchAsync(uri, new StringContent(json, Encoding.UTF8, "application/json"), cancellationToken);
+            var response = await httpClient.PatchAsync(uri, new StringContent(json, Encoding.UTF8, contentType), cancellationToken);
 
             return response;
         }

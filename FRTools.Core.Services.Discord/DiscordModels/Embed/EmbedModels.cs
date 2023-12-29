@@ -23,6 +23,8 @@ namespace FRTools.Core.Services.Discord.DiscordModels.Embed
         public DiscordEmbedFooter Footer { get; set; }
         [JsonProperty("timestamp")]
         public DateTime? Timestamp { get; set; }
+        [JsonProperty(propertyName: "url")]
+        public string Url { get; set; }
     }
 
     public class DiscordEmbedAuthor

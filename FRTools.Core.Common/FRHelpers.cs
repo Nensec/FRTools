@@ -103,5 +103,37 @@ namespace FRTools.Core.Common
                 return false;
             }
         }
+
+        public static Flight GetFlightFromGodName(string godName)
+        {
+            switch (godName.ToLower())
+            {
+                default:
+                case "earthshaker":
+                    return Flight.Earth;
+                case "plaguebringer":
+                    return Flight.Plague;
+                case "windsinger":
+                    return Flight.Wind;
+                case "tidelord":
+                    return Flight.Water;
+                case "stormcatcher":
+                    return Flight.Lightning;
+                case "icewarden":
+                    return Flight.Ice;
+                case "shadowbinder":
+                    return Flight.Shadow;
+                case "lightweaver":
+                    return Flight.Light;
+                case "arcanist":
+                    return Flight.Arcane;
+                case "gladekeeper":
+                    return Flight.Nature;
+                case "flamecaller":
+                    return Flight.Fire;
+            }
+        }
+
+        public static string GetRenderUrl(long dragonId) => $"https://www1.flightrising.com/rendern/350/{(Math.Floor(dragonId / 100d) + 1)}/{dragonId}_350.png";
     }
 }
