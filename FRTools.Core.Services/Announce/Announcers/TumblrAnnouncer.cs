@@ -131,7 +131,7 @@ namespace FRTools.Core.Services.Announce.Announcers
                         tags.Add("fr familiar");
                         tags.Add("familiar");
                         break;
-                    case FRItemCategory.Trinket when data.FRItem.ItemType == "Specialty item" && (data.FRItem.Name.StartsWith("Primary") || data.FRItem.Name.StartsWith("Secondary") || data.FRItem.Name.StartsWith("Tertiary")):
+                    case FRItemCategory.Trinket when data.FRItem.ItemType == "Specialty Item" && (data.FRItem.Name.StartsWith("Primary") || data.FRItem.Name.StartsWith("Secondary") || data.FRItem.Name.StartsWith("Tertiary")):
                         tags.Add($"{(data.FRItem.Name.StartsWith("Primary") ? "primary" : data.FRItem.Name.StartsWith("Secondary") ? "secondary" : "tertiarty")} gene");
                         tags.Add("gene");
                         tags.Add(data.FRItem.Name.Split(':')[1].ToLower());
