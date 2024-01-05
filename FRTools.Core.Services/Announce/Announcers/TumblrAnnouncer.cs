@@ -6,16 +6,19 @@ using FRTools.Core.Data;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
 using FRTools.Core.Helpers;
 using FRTools.Core.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace FRTools.Core.Services.Announce.Announcers
 {
-    public class TumblrAnnouncer : IAnnouncer
+    public class TumblrAnnouncer : IDominanceAnnouncer, IFlashSaleAnnouncer
     {
         private readonly IFRUserService _userService;
+        private readonly ILogger<TumblrAnnouncer> _logger;
 
-        public TumblrAnnouncer(IFRUserService userService)
+        public TumblrAnnouncer(IFRUserService userService, ILogger<TumblrAnnouncer> logger)
         {
             _userService = userService;
+            _logger = logger;
         }
 
         public async Task Announce(AnnounceData announceData)
@@ -101,7 +104,7 @@ namespace FRTools.Core.Services.Announce.Announcers
                         var skinType = data.FRItem.ItemType.Split(' ');
                         var dragonType = (DragonType)Enum.Parse(typeof(DragonType), skinType[0]);
                         var gender = (Gender)Enum.Parse(typeof(Gender), skinType[1]);
-                        itemUrl = $"https://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/api/proxy/dragon/skin/{(int)dragonType}/{(int)gender}/{data.FRItem.FRId}";
+                        itemUrl = Common.Helpers.GetProxyDummyDragonSkinUrl(dragonType, gender, data.FRItem.Id);
                         body += $"For: {dragonType} {gender}<br/>";
 
                         var username = Regex.Match(data.FRItem.Description, @"Designed by ([^.]+)[.|\)]");
@@ -122,7 +125,7 @@ namespace FRTools.Core.Services.Announce.Announcers
                     case FRItemCategory.Equipment:
                         {
                             var modernBreeds = GeneratedFRHelpers.GetModernBreeds();
-                            itemUrl = $"https://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/api/proxy/dragon/apparel/{(int)modernBreeds[random.Next(1, modernBreeds.Length)]}/{random.Next(0, 2)}/{data.FRItem.FRId}";
+                            itemUrl = Common.Helpers.GetProxyDummyDragonApparelUrl(modernBreeds[random.Next(1, modernBreeds.Length)], random.Next(0, 2), data.FRItem.FRId);
                             tags.Add(data.FRItem.ItemType.ToLower());
                             break;
                         }
@@ -135,38 +138,35 @@ namespace FRTools.Core.Services.Announce.Announcers
                         tags.Add($"{(data.FRItem.Name.StartsWith("Primary") ? "primary" : data.FRItem.Name.StartsWith("Secondary") ? "secondary" : "tertiarty")} gene");
                         tags.Add("gene");
                         tags.Add(data.FRItem.Name.Split(':')[1].ToLower());
-                        var ancientBreed = GeneratedFRHelpers.GetAncientBreeds().Where(x => data.FRItem.Name.EndsWith($"({x})"));
-                        if (ancientBreed.Any())
+                        var ancientBreed = GeneratedFRHelpers.GetAncientBreeds().Cast<DragonType?>().FirstOrDefault(x => data.FRItem.Name.EndsWith($"({x})"));
+                        if (ancientBreed.HasValue)
                         {
-                            itemUrl = $"https://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/api/proxy/dragon/gene/{(int)ancientBreed.First()}/{random.Next(0, 2)}/{data.FRItem.FRId}";
+                            itemUrl = Common.Helpers.GetProxyDummyDragonGeneUrl(ancientBreed.Value, random.Next(0, 2), data.FRItem.FRId);
                             tags.Add("ancient gene");
-                            tags.Add(ancientBreed.First().ToString().ToLower());
+                            tags.Add(ancientBreed.Value.ToString().ToLower());
                         }
                         else
                         {
                             var modernBreeds = GeneratedFRHelpers.GetModernBreeds();
-                            itemUrl = $"https://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/api/proxy/dragon/gene/{(int)modernBreeds[random.Next(1, modernBreeds.Length)]}/{random.Next(0, 2)}/{data.FRItem.FRId}";
+                            itemUrl = Common.Helpers.GetProxyDummyDragonGeneUrl((int)modernBreeds[random.Next(1, modernBreeds.Length)], random.Next(0, 2), data.FRItem.FRId);
                         }
                         break;
+                    case FRItemCategory.Trinket when data.FRItem.ItemType == "Scene":
+                        itemUrl = string.Format(FRHelpers.SceneArtUrl, data.FRItem.FRId);
+                        tags.Add("scene");
+                        break;
                     default:
-                        if (data.FRItem.ItemType == "Scene")
+                        if (data.FRItem.AssetUrl != null)
                         {
-                            itemUrl = string.Format(FRHelpers.SceneArtUrl, data.FRItem.FRId);
-                            tags.Add("scene");
-                        }
-                        else
-                        {
-                            if (data.FRItem.AssetUrl != null)
-                            {
-                                Console.WriteLine("Unknown art type, attempting AssetURL");
+                            _logger.LogWarning("Unknown type for item {0}", data.FRItem.FRId);
+                            if(data.FRItem.AssetUrl != null)
                                 itemUrl = $"https://www1.flightrising.com{data.FRItem.AssetUrl}";
-                                tags.Add(data.FRItem.ItemType.ToLower());
-                            }
+                            tags.Add(data.FRItem.ItemType.ToLower());
                         }
                         break;
                 }
 
-                body += $"<img src=\"{itemUrl ?? $"https://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/api/proxy/icon/{data.FRItem.FRId}"}\"/>";
+                body += $"<img src=\"{itemUrl ?? Common.Helpers.GetProxyIconUrl(data.FRItem.FRId)}";
 
                 var post = PostData.CreateText(body, $"New Flash Sale: {data.FRItem.Name}", tags);
 #if DEBUG
