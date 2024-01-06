@@ -15,5 +15,6 @@
     "logLevel": {
       "FRTools": "Debug"
     }
-  }
+  },
+  "functions": [ "DiscordInteractionEndpoint", "RegisterCommands", "ProcessCommand", "ProxyDummyDragonSkin", "ProxyDummyDragonGene", "ProxyDummyDragonApparel", "ProxyIcon" ]
 }

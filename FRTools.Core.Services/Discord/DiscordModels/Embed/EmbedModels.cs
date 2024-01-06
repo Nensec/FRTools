@@ -14,7 +14,7 @@ namespace FRTools.Core.Services.Discord.DiscordModels.Embed
         [JsonProperty("color")]
         public int Color { get; set; }
         [JsonProperty("fields")]
-        public IEnumerable<DiscordEmbedField> Fields { get; set; } = Enumerable.Empty<DiscordEmbedField>();
+        public IList<DiscordEmbedField> Fields { get; set; } = new List<DiscordEmbedField>();
         [JsonProperty("thumbnail")]
         public DiscordEmbedThumbnail Thumbnail { get; set; }
         [JsonProperty("image")]

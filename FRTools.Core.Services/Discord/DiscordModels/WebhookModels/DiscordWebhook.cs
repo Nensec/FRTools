@@ -25,6 +25,6 @@ namespace FRTools.Core.Services.Discord.DiscordModels.WebhookModels
         public DiscordWebhook PayloadJson { get; set; } = new DiscordWebhook();
 
         [JsonProperty("files")]
-        public Dictionary<string, byte[]> Files { get; set; }
+        public Dictionary<string, byte[]> Files { get; set; } = new Dictionary<string, byte[]>();
     }
 }

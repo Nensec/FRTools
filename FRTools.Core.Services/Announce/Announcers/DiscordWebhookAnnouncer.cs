@@ -1,7 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using FRTools.Core.Common;
-using FRTools.Core.Data;
-using FRTools.Core.Data.DataModels.FlightRisingModels;
+﻿using FRTools.Core.Common;
 using FRTools.Core.Services.Discord.DiscordModels.Embed;
 using FRTools.Core.Services.Discord.DiscordModels.WebhookModels;
 using FRTools.Core.Services.Interfaces;
@@ -9,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace FRTools.Core.Services.Announce.Announcers
 {
-    public class DiscordWebhookAnnouncer : IAnnouncer
+    public class DiscordWebhookAnnouncer : IFlashSaleAnnouncer, IDominanceAnnouncer, INewItemAnnouncer
     {
         private readonly IDiscordService _discordService;
         private readonly IFRUserService _userService;
@@ -80,7 +77,7 @@ namespace FRTools.Core.Services.Announce.Announcers
             if (data.FRItem.TreasureValue > 0)
                 fields.Add(new DiscordEmbedField { Name = "Treasure value", Value = $"~~{data.FRItem.TreasureValue * 10}~~ ***{data.FRItem.TreasureValue * .8 * 10}***", Inline = true });
 
-            byte[]? itemAsset = await ParseItemForEmbed(random, data.FRItem, embed, fields);
+            byte[]? itemAsset = await embed.ParseItemForEmbed(random, data.FRItem, _userService, _logger);
 
             embed.Fields = fields;
 
@@ -94,7 +91,7 @@ namespace FRTools.Core.Services.Announce.Announcers
             }
             using (var client = new HttpClient())
             {
-                var iconAsset = await client.GetByteArrayAsync($"https://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/api/proxy/dragon/icon/{data.FRItem.FRId}");
+                var iconAsset = await client.GetByteArrayAsync(Helpers.GetProxyIconUrl(data.FRItem.FRId));
                 files.Add($"icon_{data.FRItem.FRId}.png", iconAsset);
             }
             embeds.Add(embed);
@@ -110,7 +107,6 @@ namespace FRTools.Core.Services.Announce.Announcers
             var random = new Random();
 
             var webhook = new DiscordWebhookFiles();
-            var files = new Dictionary<string, byte[]>();
             var embeds = new List<DiscordEmbed>();
 
             foreach (var item in data.FRItems)
@@ -133,120 +129,29 @@ namespace FRTools.Core.Services.Announce.Announcers
                 if (item.TreasureValue > 0)
                     fields.Add(new DiscordEmbedField { Name = "Treasure value", Value = $"{item.TreasureValue}", Inline = true });
 
-                byte[]? itemAsset = await ParseItemForEmbed(random, item, embed, fields);
-
                 embed.Fields = fields;
+
+                byte[]? itemAsset = await embed.ParseItemForEmbed(random, item, _userService, _logger);
 
                 if (itemAsset != null)
                 {
                     var fileName = $"asset_{item.FRId}.png";
 
-                    files.Add(fileName, itemAsset);
+                    webhook.Files.Add(fileName, itemAsset);
                     embed.Image = new DiscordEmbedImage { Url = $"attachment://{fileName}" };
 
                 }
                 using (var client = new HttpClient())
                 {
-                    var iconAsset = await client.GetByteArrayAsync($"https://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/api/proxy/dragon/icon/{item.FRId}");
-                    files.Add($"icon_{item.FRId}.png", iconAsset);
+                    var iconAsset = await client.GetByteArrayAsync(Helpers.GetProxyIconUrl(item.FRId));
+                    webhook.Files.Add($"icon_{item.FRId}.png", iconAsset);
                 }
                 embeds.Add(embed);
             }
 
-            webhook.Files = files;
             webhook.PayloadJson.Embeds = embeds;
 
             await _discordService.PostFilesToWebhook(webhook, Environment.GetEnvironmentVariable("TEST_Webhook")!);
-        }
-
-        private async Task<byte[]?> ParseItemForEmbed(Random random, FRItem item, DiscordEmbed embed, List<DiscordEmbedField> fields)
-        {
-            byte[]? itemAsset = null;
-
-            if (item.FoodValue > 0)
-                fields.Add(new DiscordEmbedField { Name = "Food value", Value = $"{item.FoodValue}", Inline = true });
-
-            switch (item.ItemCategory)
-            {
-                case FRItemCategory.Equipment:
-                    {
-                        var modernBreeds = GeneratedFRHelpers.GetModernBreeds();
-                        using (var client = new HttpClient())
-                            itemAsset = await client.GetByteArrayAsync($"https://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/api/proxy/dragon/apparel/{(int)modernBreeds[random.Next(1, modernBreeds.Length)]}/{random.Next(0, 2)}/{item.FRId}");
-
-                        break;
-                    }
-                case FRItemCategory.Skins:
-                    {
-                        var breed = item.ItemType.Split(' ');
-                        var dragonType = FRHelpers.GetDragonType(breed[0]);
-                        var gender = (Gender)Enum.Parse(typeof(Gender), breed[1]);
-
-                        using (var client = new HttpClient())
-                            itemAsset = await client.GetByteArrayAsync($"https://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/api/proxy/dragon/skin/{(int)dragonType}/{(int)gender}/{item.FRId}");
-
-                        fields.Add(new DiscordEmbedField { Name = "For", Value = $"{dragonType} {gender}", Inline = true });
-
-                        var username = Regex.Match(item.Description, @"Designed by ([^.]+)[.|\)]");
-                        if (username.Success)
-                        {
-                            var frUser = await _userService.GetOrUpdateFRUser(username.Groups[1].Value);
-                            if (frUser != null)
-                                fields.Add(new DiscordEmbedField { Name = "Created by", Value = $"[FR: {frUser.Username}]({string.Format(FRHelpers.UserProfileUrl, frUser.FRId)})" });
-                        }
-
-                        break;
-                    }
-                case FRItemCategory.Familiar:
-                    {
-                        using (var client = new HttpClient())
-                            itemAsset = await client.GetByteArrayAsync(string.Format(FRHelpers.FamiliarArtUrl, item.FRId));
-
-                        break;
-                    }
-                case FRItemCategory.Trinket when item.ItemType == "Specialty Item" && (item.Name.StartsWith("Primary") || item.Name.StartsWith("Secondary") || item.Name.StartsWith("Tertiary")):
-                    {
-                        if (item.Name.Contains('('))
-                        {
-                            if (FRHelpers.TryGetDragonType(item.Name.Split('(', ')')[1], out var dragonType))
-                            {
-                                using (var client = new HttpClient())
-                                    itemAsset = await client.GetByteArrayAsync($"https://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/api/proxy/dragon/gene/{(int)dragonType}/{random.Next(0, 2)}/{item.FRId}");
-                            }
-                            else
-                                embed.Description += "\n\r\nBreed is not (yet) found in my data so the image is unavailable!";
-                        }
-                        else
-                        {
-                            var modernBreeds = GeneratedFRHelpers.GetModernBreeds();
-                            using (var client = new HttpClient())
-                                itemAsset = await client.GetByteArrayAsync($"https://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/api/proxy/dragon/gene/{(int)modernBreeds[random.Next(1, modernBreeds.Length)]}/{random.Next(0, 2)}/{item.FRId}");
-                        }
-
-                        break;
-                    }
-                default:
-                    {
-                        if (item.ItemType == "Scene")
-                        {
-                            using (var client = new HttpClient())
-                                itemAsset = await client.GetByteArrayAsync(string.Format(FRHelpers.SceneArtUrl, item.FRId));
-                        }
-                        else
-                        {
-                            if (item.AssetUrl != null)
-                            {
-                                _logger.LogDebug("Unknown art type, attempting AssetURL");
-                                using (var client = new HttpClient())
-                                    itemAsset = await client.GetByteArrayAsync($"https://www1.flightrising.com{item.AssetUrl}");
-                            }
-                        }
-
-                        break;
-                    }
-            }
-
-            return itemAsset;
         }
     }
 }

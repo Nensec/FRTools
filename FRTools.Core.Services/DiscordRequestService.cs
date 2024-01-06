@@ -2,7 +2,6 @@
 using Azure.Messaging.ServiceBus;
 using FRTools.Core.Common.Extentions;
 using FRTools.Core.Services.Discord.Commands;
-using FRTools.Core.Services.Discord.DiscordModels.CommandModels;
 using FRTools.Core.Services.Discord.DiscordModels.InteractionRequestModels;
 using FRTools.Core.Services.Discord.DiscordModels.InteractionResponseModels;
 using FRTools.Core.Services.Interfaces;
@@ -14,7 +13,7 @@ namespace FRTools.Core.Services
 {
     public class DiscordRequestService : IDiscordRequestService
     {
-        private string _commandsUrl = $"https://discord.com/api/v10/applications/{Environment.GetEnvironmentVariable("DiscordApplicationId")}/commands";
+        private readonly string _commandsUrl = $"https://discord.com/api/v10/applications/{Environment.GetEnvironmentVariable("DiscordApplicationId")}/commands";
 
         private readonly ServiceBusSender _serviceBusClient;
         private readonly ILogger<DiscordRequestService> _logger;
@@ -26,8 +25,6 @@ namespace FRTools.Core.Services
             _serviceBusClient = azureClientFactory.CreateClient(Environment.GetEnvironmentVariable("AzureServiceBusCommandQueue"));
             _logger = logger;
         }
-
-        public AppCommand? ParseJson(string json) => JsonConvert.DeserializeObject<AppCommand>(json);
 
         public void RegisterCommand(DiscordCommand command)
         {

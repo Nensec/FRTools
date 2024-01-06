@@ -262,7 +262,7 @@ namespace FRTools.Core.Services.Discord.Commands
             {
                 var urlParse = Regex.Match(url, @"/(?<id>\d+)");
                 if (urlParse.Success)
-                    id = int.Parse(urlParse.Groups["id"].Value);
+                    id = long.Parse(urlParse.Groups["id"].Value);
             }
 
             return id;
