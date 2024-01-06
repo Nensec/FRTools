@@ -4,7 +4,6 @@ using FRTools.Core.Data;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
 using FRTools.Core.Services.Discord.DiscordModels.Embed;
 using FRTools.Core.Services.Discord.DiscordModels.WebhookModels;
-using FRTools.Core.Services.Discord.Interfaces;
 using FRTools.Core.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 

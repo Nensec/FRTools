@@ -2,11 +2,11 @@
 using System.Text;
 using FRTools.Core.Common.Extentions;
 using FRTools.Core.Services.Discord.DiscordModels.WebhookModels;
-using FRTools.Core.Services.Discord.Interfaces;
+using FRTools.Core.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace FRTools.Core.Services.Discord
+namespace FRTools.Core.Services
 {
     public class DiscordService : IDiscordService
     {

@@ -6,9 +6,7 @@ using Azure.Messaging.ServiceBus;
 using FRTools.Core.Data;
 using FRTools.Core.Services;
 using FRTools.Core.Services.Announce;
-using FRTools.Core.Services.Discord;
 using FRTools.Core.Services.Discord.Commands;
-using FRTools.Core.Services.Discord.Interfaces;
 using FRTools.Core.Services.Interfaces;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
@@ -81,10 +79,10 @@ namespace FRTools.Core.Functions
             foreach (var command in discordCommandClasses)
                 builder.Services.AddTransient(command);
 
-            builder.Services.AddTransient<HandleDiscordRequestService>();
-            builder.Services.AddSingleton<IHandleDiscordRequestService>(x =>
+            builder.Services.AddTransient<DiscordRequestService>();
+            builder.Services.AddSingleton<IDiscordRequestService>(x =>
             {
-                var service = x.GetRequiredService<HandleDiscordRequestService>();
+                var service = x.GetRequiredService<DiscordRequestService>();
                 foreach (var command in discordCommandClasses)
                     service.RegisterCommand((DiscordCommand)x.GetRequiredService(command));
 

@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 using System.Web;
 using FRTools.Core.Common;
 using FRTools.Core.Data;
@@ -119,19 +120,12 @@ namespace FRTools.Core.Services
             }
         }
 
-        public async Task<int> GetHighestItemId()
-        {
-            return await _dataContext.FRItems.AnyAsync() ? await _dataContext.FRItems.MaxAsync(x => x.FRId) : 0;
-        }
+        public async Task<int> GetHighestItemId() => await _dataContext.FRItems.AnyAsync() ? await _dataContext.FRItems.MaxAsync(x => x.FRId) : 0;
 
-        public Task<List<int>> FindMissingIds()
-        {
-            return Task.Run(() => _dataContext.FRItems.FromSqlRaw("SELECT * FROM FRItems [first] WHERE NOT EXISTS (SELECT NULL FROM FRItems [second] WHERE [second].FRId = [first].FRId + 1) ORDER BY FRId").Select(x => x.FRId + 1).ToList());
-        }
+        public Task<List<int>> FindMissingIds() => Task.Run(() => _dataContext.FRItems.FromSqlRaw("SELECT * FROM FRItems [first] WHERE NOT EXISTS (SELECT NULL FROM FRItems [second] WHERE [second].FRId = [first].FRId + 1) ORDER BY FRId").Select(x => x.FRId + 1).ToList());
 
-        public async Task<FRItem?> GetItem(int itemId)
-        {
-            return await _dataContext.FRItems.FirstOrDefaultAsync(x => x.FRId == itemId);
-        }
+        public async Task<FRItem?> GetItem(int itemId) => await _dataContext.FRItems.FirstOrDefaultAsync(x => x.FRId == itemId);
+
+        public async Task<IEnumerable<FRItem>> SearchItems(Expression<Func<FRItem, bool>> expression) => await _dataContext.FRItems.Where(expression).ToListAsync();
     }
 }

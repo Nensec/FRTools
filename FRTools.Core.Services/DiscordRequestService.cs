@@ -12,16 +12,16 @@ using Newtonsoft.Json;
 
 namespace FRTools.Core.Services
 {
-    public class HandleDiscordRequestService : IHandleDiscordRequestService
+    public class DiscordRequestService : IDiscordRequestService
     {
         private string _commandsUrl = $"https://discord.com/api/v10/applications/{Environment.GetEnvironmentVariable("DiscordApplicationId")}/commands";
 
         private readonly ServiceBusSender _serviceBusClient;
-        private readonly ILogger<HandleDiscordRequestService> _logger;
+        private readonly ILogger<DiscordRequestService> _logger;
 
         private readonly List<DiscordCommand> _commands = new List<DiscordCommand>();
 
-        public HandleDiscordRequestService(IAzureClientFactory<ServiceBusSender> azureClientFactory, ILogger<HandleDiscordRequestService> logger)
+        public DiscordRequestService(IAzureClientFactory<ServiceBusSender> azureClientFactory, ILogger<DiscordRequestService> logger)
         {
             _serviceBusClient = azureClientFactory.CreateClient(Environment.GetEnvironmentVariable("AzureServiceBusCommandQueue"));
             _logger = logger;

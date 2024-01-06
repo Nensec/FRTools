@@ -13,13 +13,11 @@ namespace FRTools.Core.Services.Discord.Commands
         protected DiscordCommand(ILogger logger)
         {
             Logger = logger;
-            Command = CreateCommand();
         }
 
-        public AppCommand Command { get; }
         public string CommandName { get => Command.Name; }
 
-        public abstract AppCommand CreateCommand();
+        public abstract AppCommand Command { get; }
 
         public abstract Task<DiscordInteractionResponse> Execute(DiscordInteractionRequest interaction);
 

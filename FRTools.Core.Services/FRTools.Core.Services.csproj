@@ -8,15 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+	<PackageReference Include="Azure.Messaging.ServiceBus" Version="7.17.1" />
 	<PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
 	<PackageReference Include="HtmlAgilityPack.CssSelectors.NetCore" Version="1.2.1" />
+	<PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.1" />
 	<PackageReference Include="NewTumblrSharp" Version="1.2.0.156" />
   </ItemGroup>
 
   <ItemGroup>
 	<ProjectReference Include="..\FRTools.Core.Common\FRTools.Core.Common.csproj" />
 	<ProjectReference Include="..\FRTools.Core.Data\FRTools.Core.Data.csproj" />
-	<ProjectReference Include="..\FRTools.Core.Services.Discord\FRTools.Core.Services.Discord.csproj" />
   </ItemGroup>
 
 </Project>

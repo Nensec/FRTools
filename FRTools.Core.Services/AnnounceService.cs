@@ -7,7 +7,7 @@ namespace FRTools.Core.Services
     public class AnnounceService : IAnnounceService
     {
         private readonly ILogger<AnnounceService> _logger;
-        private List<IAnnouncer> _announcers = new List<IAnnouncer>();
+        private readonly List<IAnnouncer> _announcers = new();
 
         public AnnounceService(ILogger<AnnounceService> logger)
         {
@@ -16,13 +16,13 @@ namespace FRTools.Core.Services
 
         public async Task Announce(AnnounceData announceData)
         {
-            foreach(var announcer in _announcers)
+            foreach (var announcer in _announcers.Where(x => announceData.AnnouncerType.IsAssignableFrom(x.GetType())))
             {
                 try
                 {
                     await announcer.Announce(announceData);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     _logger.LogError(ex, "Something went wrong attempting to announce {0} using {1}", announceData.GetType().Name, announcer.GetType().Name);
                 }

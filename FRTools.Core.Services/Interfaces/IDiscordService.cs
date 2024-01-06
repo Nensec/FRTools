@@ -1,6 +1,6 @@
 ﻿using FRTools.Core.Services.Discord.DiscordModels.WebhookModels;
 
-namespace FRTools.Core.Services.Discord.Interfaces
+namespace FRTools.Core.Services.Interfaces
 {
     public interface IDiscordService
     {

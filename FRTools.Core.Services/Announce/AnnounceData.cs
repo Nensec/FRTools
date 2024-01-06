@@ -1,14 +1,17 @@
-﻿using FRTools.Core.Data;
+﻿using System;
+using FRTools.Core.Data;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
 
 namespace FRTools.Core.Services.Announce
 {
     public abstract class AnnounceData
     {
+        public abstract Type AnnouncerType { get; }
     }
 
     public class DominanceAnnounceData : AnnounceData
     {
+        public override Type AnnouncerType => typeof(IDominanceAnnouncer);
         public Flight[] Flights { get; }
 
         public DominanceAnnounceData(Flight[] flights)
@@ -19,6 +22,7 @@ namespace FRTools.Core.Services.Announce
 
     public class FlashSaleData : AnnounceData
     {
+        public override Type AnnouncerType => typeof(IFlashSaleAnnouncer);
         public FRItem FRItem { get; }
         public string MarketplaceLink { get; }
 
@@ -31,6 +35,7 @@ namespace FRTools.Core.Services.Announce
 
     public class NewItemsData : AnnounceData
     {
+        public override Type AnnouncerType => typeof(INewItemAnnouncer);
         public FRItem[] FRItems { get; }
 
         public NewItemsData(FRItem[] items)

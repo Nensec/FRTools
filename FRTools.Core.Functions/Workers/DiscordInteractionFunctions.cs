@@ -18,9 +18,9 @@ namespace FRTools.Core.Functions.Workers
 {
     public class DiscordInteractionFunctions : FunctionBase
     {
-        private readonly IHandleDiscordRequestService _discordService;
+        private readonly IDiscordRequestService _discordService;
 
-        public DiscordInteractionFunctions(IHandleDiscordRequestService discordService)
+        public DiscordInteractionFunctions(IDiscordRequestService discordService)
         {
             _discordService = discordService;
         }
