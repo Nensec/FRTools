@@ -40,13 +40,13 @@ namespace FRTools.Core.Services.Discord.Commands
                 {
                     Name = "item",
                     Type = AppCommandOptionType.SUB_COMMAND,
-                    Description = "Looks up a item by it's name",
+                    Description = "Searches an item in all categories",
                     Options = new[]
                     {
                         new AppCommandOption
                         {
-                            Name = "name",
-                            Description = "The name of the item, this does a search where the given search parameter must exist within the item's name or description",
+                            Name = "query",
+                            Description = "Do a search with the given search parameter in an item's name or description",
                             Type = AppCommandOptionType.STRING,
                             Required = true,
                         }
@@ -88,13 +88,13 @@ namespace FRTools.Core.Services.Discord.Commands
             {
                 Name = x.ToString().ToLower(),
                 Type = AppCommandOptionType.SUB_COMMAND,
-                Description = $"Looks up a item by it's name in the {x} category",
+                Description = $"Searches an item in the {x} category",
                 Options = new[]
                 {
                     new AppCommandOption
                     {
-                        Name = "name",
-                        Description = "The name of the item, this does a search where the given search parameter must exist within the item's name or description",
+                        Name = "query",
+                        Description = "Do a search with the given search parameter in an item's name or description",
                         Type = AppCommandOptionType.STRING,
                         Required = true,
                     }
@@ -104,7 +104,9 @@ namespace FRTools.Core.Services.Discord.Commands
 
         public override Task<DiscordInteractionResponse> Execute(DiscordInteractionRequest interaction)
         {
-            if (interaction.Data.Options.First().Options.First().Name != "name" && GetIdFromInteraction(interaction) == null)
+            var command = interaction.Data.Options.First().Options.First();
+
+            if ((command.Name == "id" || command.Name == "url") && GetIdFromInteraction(interaction) == null)
                 return Task.FromResult<DiscordInteractionResponse>(new DiscordInteractionResponse.ContentResponse
                 {
                     Data = new DiscordInteractionResponseData
@@ -123,7 +125,7 @@ namespace FRTools.Core.Services.Discord.Commands
 
             await _discordService.EditInitialInteraction(interaction.Token, new DiscordWebhook
             {
-                Content = $"Searching for your item, this could take a {(command.Name == "name" ? "while" : "moment")}..",
+                Content = $"Searching for your item in my database, this could take a {(command.Name == "name" ? "while" : "moment")}..",
                 Flags = MessageFlags.EPHEMERAL
             });
 
@@ -135,7 +137,6 @@ namespace FRTools.Core.Services.Discord.Commands
                 case "id":
                     query = x => x.FRId == id;
                     break;
-
             }
 
             var searchResult = (await _itemService.SearchItems(query)).ToList();
@@ -153,7 +154,7 @@ namespace FRTools.Core.Services.Discord.Commands
 
                 if ((command.Name == "id" || command.Name == "url") && id.HasValue)
                 {
-                    var item = await _itemService.FetchItemFromFR(id.Value);
+                    var item = await _itemService.FetchItemFromFR((int)id.Value);
                     if (item != null)
                         searchResult = new() { item };
                     else
@@ -206,7 +207,11 @@ namespace FRTools.Core.Services.Discord.Commands
                     var iconAsset = await client.GetByteArrayAsync(Helpers.GetProxyIconUrl(searchResult[0].FRId));
                     webhook.Files.Add($"icon_{searchResult[0].FRId}.png", iconAsset);
                 }
-                await _discordService.ReplyToInteraction(interaction.Token, webhook);
+                var reply = (await _discordService.ReplyToInteraction(interaction.Token, webhook)).First();
+                await _discordService.EditInitialInteraction(interaction.Token, new DiscordWebhook
+                {
+                    Content = $"Your lookup result can be found here: https://discord.com/channels/{reply.MessageReference.GuildId}/{reply.ChannelId}/{reply.Id}"
+                });
             }
             else
             {
@@ -262,11 +267,11 @@ namespace FRTools.Core.Services.Discord.Commands
             }
         }
 
-        private int? GetIdFromInteraction(DiscordInteractionRequest interaction)
+        private long? GetIdFromInteraction(DiscordInteractionRequest interaction)
         {
-            int? id = 0;
+            long? id = null;
             var input = interaction.Data.Options.First().Options.First();
-            if (input.Value is int idParameter)
+            if (input.Value is long idParameter)
                 id = idParameter;
             else if (input.Name == "url" && input.Value is string url)
             {

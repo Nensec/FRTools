@@ -62,7 +62,7 @@ namespace FRTools.Core.Functions.Workers
             }
 
             using (var client = new HttpClient())
-                geneBytes = await client.GetByteArrayAsync(GeneratedFRHelpers.GenerateDragonImageUrl(dragonType, gender, 1, primary, primaryColor, secondary, secondaryColor, tertiary, tertiaryColor, random.Next(0, Enum.GetValues(typeof(Element)).Length + 1), random.Next(0, Enum.GetValues(typeof(EyeType)).Length + 1)));
+                geneBytes = await client.GetByteArrayAsync(await GeneratedFRHelpers.GenerateDragonImageUrl(dragonType, gender, 1, primary, primaryColor, secondary, secondaryColor, tertiary, tertiaryColor, random.Next(0, Enum.GetValues(typeof(Element)).Length + 1), random.Next(0, Enum.GetValues(typeof(EyeType)).Length + 1)));
 
             return new FileContentResult(geneBytes, "image/png");
         }

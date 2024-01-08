@@ -147,4 +147,12 @@
         SUPPRESS_NOTIFICATIONS = 1 << 12,
         IS_VOICE_MESSAGE = 1 << 13
     }
+
+    public enum MessageActivity
+    {
+        JOIN = 1,
+        SPECTATE = 2,
+        LISTEN = 3,
+        JOIN_REQUEST = 4
+    }
 }

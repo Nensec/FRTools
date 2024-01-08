@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace FRTools.Core.Data
 {
@@ -5409,7 +5410,7 @@ namespace FRTools.Core.Data
 			};
 		}
 
-		public static string GenerateDragonImageUrl(DataModels.FlightRisingModels.DragonCache dragon, bool swapSilhouette = false)
+		public static Task<string> GenerateDragonImageUrl(DataModels.FlightRisingModels.DragonCache dragon, bool swapSilhouette = false)
 		{
 			var gender = swapSilhouette ? (dragon.Gender == Gender.Male ? Gender.Female : Gender.Male) : dragon.Gender;
 			switch (dragon.DragonType)
@@ -5453,49 +5454,84 @@ namespace FRTools.Core.Data
 			}
 		}
 
-		public static string GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, GaolerBodyGene bodygene, Color body, GaolerWingGene winggene, Color wings, GaolerTertGene tertgene, Color tert, Element element, EyeType eyetype)
+		public static Task<string> GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, GaolerBodyGene bodygene, Color body, GaolerWingGene winggene, Color wings, GaolerTertGene tertgene, Color tert, Element element, EyeType eyetype)
 			=> GenerateDragonImageUrl((int)breed, (int)gender, (int)age, (int)bodygene, (int)body, (int)winggene, (int)wings, (int)tertgene, (int)tert, (int)element, (int)eyetype);
-		public static string GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, BanescaleBodyGene bodygene, Color body, BanescaleWingGene winggene, Color wings, BanescaleTertGene tertgene, Color tert, Element element, EyeType eyetype)
+		public static Task<string> GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, BanescaleBodyGene bodygene, Color body, BanescaleWingGene winggene, Color wings, BanescaleTertGene tertgene, Color tert, Element element, EyeType eyetype)
 			=> GenerateDragonImageUrl((int)breed, (int)gender, (int)age, (int)bodygene, (int)body, (int)winggene, (int)wings, (int)tertgene, (int)tert, (int)element, (int)eyetype);
-		public static string GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, VeilspunBodyGene bodygene, Color body, VeilspunWingGene winggene, Color wings, VeilspunTertGene tertgene, Color tert, Element element, EyeType eyetype)
+		public static Task<string> GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, VeilspunBodyGene bodygene, Color body, VeilspunWingGene winggene, Color wings, VeilspunTertGene tertgene, Color tert, Element element, EyeType eyetype)
 			=> GenerateDragonImageUrl((int)breed, (int)gender, (int)age, (int)bodygene, (int)body, (int)winggene, (int)wings, (int)tertgene, (int)tert, (int)element, (int)eyetype);
-		public static string GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, AberrationBodyGene bodygene, Color body, AberrationWingGene winggene, Color wings, AberrationTertGene tertgene, Color tert, Element element, EyeType eyetype)
+		public static Task<string> GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, AberrationBodyGene bodygene, Color body, AberrationWingGene winggene, Color wings, AberrationTertGene tertgene, Color tert, Element element, EyeType eyetype)
 			=> GenerateDragonImageUrl((int)breed, (int)gender, (int)age, (int)bodygene, (int)body, (int)winggene, (int)wings, (int)tertgene, (int)tert, (int)element, (int)eyetype);
-		public static string GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, UndertideBodyGene bodygene, Color body, UndertideWingGene winggene, Color wings, UndertideTertGene tertgene, Color tert, Element element, EyeType eyetype)
+		public static Task<string> GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, UndertideBodyGene bodygene, Color body, UndertideWingGene winggene, Color wings, UndertideTertGene tertgene, Color tert, Element element, EyeType eyetype)
 			=> GenerateDragonImageUrl((int)breed, (int)gender, (int)age, (int)bodygene, (int)body, (int)winggene, (int)wings, (int)tertgene, (int)tert, (int)element, (int)eyetype);
-		public static string GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, AetherBodyGene bodygene, Color body, AetherWingGene winggene, Color wings, AetherTertGene tertgene, Color tert, Element element, EyeType eyetype)
+		public static Task<string> GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, AetherBodyGene bodygene, Color body, AetherWingGene winggene, Color wings, AetherTertGene tertgene, Color tert, Element element, EyeType eyetype)
 			=> GenerateDragonImageUrl((int)breed, (int)gender, (int)age, (int)bodygene, (int)body, (int)winggene, (int)wings, (int)tertgene, (int)tert, (int)element, (int)eyetype);
-		public static string GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, SandsurgeBodyGene bodygene, Color body, SandsurgeWingGene winggene, Color wings, SandsurgeTertGene tertgene, Color tert, Element element, EyeType eyetype)
+		public static Task<string> GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, SandsurgeBodyGene bodygene, Color body, SandsurgeWingGene winggene, Color wings, SandsurgeTertGene tertgene, Color tert, Element element, EyeType eyetype)
 			=> GenerateDragonImageUrl((int)breed, (int)gender, (int)age, (int)bodygene, (int)body, (int)winggene, (int)wings, (int)tertgene, (int)tert, (int)element, (int)eyetype);
-		public static string GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, AuraboaBodyGene bodygene, Color body, AuraboaWingGene winggene, Color wings, AuraboaTertGene tertgene, Color tert, Element element, EyeType eyetype)
+		public static Task<string> GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, AuraboaBodyGene bodygene, Color body, AuraboaWingGene winggene, Color wings, AuraboaTertGene tertgene, Color tert, Element element, EyeType eyetype)
 			=> GenerateDragonImageUrl((int)breed, (int)gender, (int)age, (int)bodygene, (int)body, (int)winggene, (int)wings, (int)tertgene, (int)tert, (int)element, (int)eyetype);
-		public static string GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, BodyGene bodygene, Color body, WingGene winggene, Color wings, TertiaryGene tertgene, Color tert, Element element, EyeType eyetype)
+		public static Task<string> GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, BodyGene bodygene, Color body, WingGene winggene, Color wings, TertiaryGene tertgene, Color tert, Element element, EyeType eyetype)
 			=> GenerateDragonImageUrl((int)breed, (int)gender, (int)age, (int)bodygene, (int)body, (int)winggene, (int)wings, (int)tertgene, (int)tert, (int)element, (int)eyetype);
 
-		public static string GenerateDragonImageUrl(int breed, int gender, int age, int bodygene, int body, int winggene, int wings, int tertgene, int tert, int element, int eyetype)
+		public static async Task<string> GenerateDragonImageUrl(int breed, int gender, int age, int bodygene, int body, int winggene, int wings, int tertgene, int tert, int element, int eyetype)
 		{
-#pragma warning disable SYSLIB0014 // Type or member is obsolete
-			using (var client = new System.Net.WebClient())
+			using (var client = new HttpClient())
 			{
-				var result = client.UploadValues("https://www1.flightrising.com/scrying/ajax-predict", new System.Collections.Specialized.NameValueCollection
+				var response = await client.PostAsync("https://www1.flightrising.com/scrying/ajax-predict", new FormUrlEncodedContent(new KeyValuePair<string, string>[]
 				{
-					{ "breed", breed.ToString() },
-					{ "gender", gender.ToString() },
-					{ "age", age.ToString() },
-					{ "bodygene", bodygene.ToString() },
-					{ "body", body.ToString() },
-					{ "winggene", winggene.ToString() },
-					{ "wings", wings.ToString() },
-					{ "tertgene", tertgene.ToString() },
-					{ "tert", tert.ToString() },
-					{ "element", element.ToString() },
-					{ "eyetype", eyetype.ToString() },
-				});
-				var str = System.Text.Encoding.UTF8.GetString(result);
-				var dragonUrl = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(str).dragon_url;
+					new("breed", breed.ToString()),
+					new("gender", gender.ToString()),
+					new("age", age.ToString()),
+					new("bodygene", bodygene.ToString()),
+					new("body", body.ToString()),
+					new("winggene", winggene.ToString()),
+					new("wings", wings.ToString()),
+					new("tertgene", tertgene.ToString()),
+					new("tert", tert.ToString()),
+					new("element", element.ToString()),
+					new("eyetype", eyetype.ToString()),
+				}));
+
+				var str = await response.Content.ReadAsStringAsync();
+				var dragonUrl = JsonConvert.DeserializeObject<DragonPredict>(str).DragonUrl;
 				return "https://www1.flightrising.com" + dragonUrl;
 			}
 		}
-#pragma warning restore SYSLIB0014 // Type or member is obsolete
+	}
+
+	public class DragonPredict
+	{
+		[JsonProperty("ok")]
+		public bool Ok { get; set; }
+		[JsonProperty("dragon_url")]
+		public string DragonUrl { get; set; }
+		[JsonProperty("attributes")]
+		public Attributes Attributes { get; set; }
+	}
+
+	public class Attributes
+	{
+		[JsonProperty("breed")]
+		public string Breed { get; set; }
+		[JsonProperty("gender")]
+		public string Gender { get; set; }
+		[JsonProperty("age")]
+		public string Age { get; set; }
+		[JsonProperty("bodygene")]
+		public string BodyGene { get; set; }
+		[JsonProperty("body")]
+		public string Body { get; set; }
+		[JsonProperty("winggene")]
+		public string WingGene { get; set; }
+		[JsonProperty("wings")]
+		public string Wings { get; set; }
+		[JsonProperty("tertgene")]
+		public string TertGene { get; set; }
+		[JsonProperty("tert")]
+		public string Tert { get; set; }
+		[JsonProperty("element")]
+		public string Element { get; set; }
+		[JsonProperty("eyetype")]
+		public string Eyetype { get; set; }
 	}
 }

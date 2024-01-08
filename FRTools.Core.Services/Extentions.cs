@@ -14,6 +14,14 @@ namespace FRTools.Core.Services
         {
             byte[]? itemAsset = null;
 
+            embed.Title = item.Name;
+            embed.Description = item.Description;
+            embed.Thumbnail = new DiscordEmbedThumbnail { Url = $"attachment://icon_{item.FRId}.png" };
+            embed.Fields.Add(new DiscordEmbedField { Name = "Game database", Value = $"[#{item.FRId}]({string.Format(FRHelpers.GameDatabaseUrl, item.FRId)})", Inline = true });
+
+            if (item.TreasureValue > 0)
+                embed.Fields.Add(new DiscordEmbedField { Name = "Treasure value", Value = $"{item.TreasureValue}", Inline = true });
+
             if (item.FoodValue > 0)
                 embed.Fields.Add(new DiscordEmbedField { Name = "Food value", Value = $"{item.FoodValue}", Inline = true });
 
@@ -23,7 +31,7 @@ namespace FRTools.Core.Services
                     {
                         var modernBreeds = GeneratedFRHelpers.GetModernBreeds();
                         using (var client = new HttpClient())
-                            itemAsset = await client.GetByteArrayAsync($"https://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/api/proxy/dragon/apparel/{(int)modernBreeds[random.Next(1, modernBreeds.Length)]}/{random.Next(0, 2)}/{item.FRId}");
+                            itemAsset = await client.GetByteArrayAsync(Helpers.GetProxyDummyDragonApparelUrl((int)modernBreeds[random.Next(1, modernBreeds.Length)], random.Next(0, 2), item.FRId));
 
                         break;
                     }
@@ -34,7 +42,7 @@ namespace FRTools.Core.Services
                         var gender = (Gender)Enum.Parse(typeof(Gender), breed[1]);
 
                         using (var client = new HttpClient())
-                            itemAsset = await client.GetByteArrayAsync($"https://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/api/proxy/dragon/skin/{(int)dragonType}/{(int)gender}/{item.FRId}");
+                            itemAsset = await client.GetByteArrayAsync(Helpers.GetProxyDummyDragonSkinUrl((int)dragonType, (int)gender, item.FRId));
 
                         embed.Fields.Add(new DiscordEmbedField { Name = "For", Value = $"{dragonType} {gender}", Inline = true });
 
@@ -62,16 +70,16 @@ namespace FRTools.Core.Services
                             if (FRHelpers.TryGetDragonType(item.Name.Split('(', ')')[1], out var dragonType))
                             {
                                 using (var client = new HttpClient())
-                                    itemAsset = await client.GetByteArrayAsync($"https://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/api/proxy/dragon/gene/{(int)dragonType}/{random.Next(0, 2)}/{item.FRId}");
+                                    itemAsset = await client.GetByteArrayAsync(Helpers.GetProxyDummyDragonGeneUrl((int)dragonType, random.Next(0, 2), item.FRId));
                             }
                             else
-                                embed.Description += "\n\r\nBreed is not (yet) found in my data so the image is unavailable!";
+                                embed.Description += "\n\r\nBreed is not (yet) found in my data so the image is unavailable! If this breed was announced very recently it can take up to an hour or so for my systems to be auto-updated.";
                         }
                         else
                         {
                             var modernBreeds = GeneratedFRHelpers.GetModernBreeds();
                             using (var client = new HttpClient())
-                                itemAsset = await client.GetByteArrayAsync($"https://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/api/proxy/dragon/gene/{(int)modernBreeds[random.Next(1, modernBreeds.Length)]}/{random.Next(0, 2)}/{item.FRId}");
+                                itemAsset = await client.GetByteArrayAsync(Helpers.GetProxyDummyDragonGeneUrl((int)modernBreeds[random.Next(1, modernBreeds.Length)], random.Next(0, 2), item.FRId));
                         }
 
                         break;

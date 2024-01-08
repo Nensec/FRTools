@@ -127,6 +127,7 @@
 	}
 #>
 using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace FRTools.Core.Data
 {
@@ -515,7 +516,7 @@ return typeof(TertiaryGene);
 			};
 		}
 
-		public static string GenerateDragonImageUrl(DataModels.FlightRisingModels.DragonCache dragon, bool swapSilhouette = false)
+		public static Task<string> GenerateDragonImageUrl(DataModels.FlightRisingModels.DragonCache dragon, bool swapSilhouette = false)
 		{
 			var gender = swapSilhouette ? (dragon.Gender == Gender.Male ? Gender.Female : Gender.Male) : dragon.Gender;
 			switch (dragon.DragonType)
@@ -542,40 +543,75 @@ default:
 		foreach(var breed in page.Breeds.Where(x => x.Type == "ancient").OrderBy(x => x.Value))
 		{
 		#>
-public static string GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, <#= breed.Name #>BodyGene bodygene, Color body, <#= breed.Name #>WingGene winggene, Color wings, <#= breed.Name #>TertGene tertgene, Color tert, Element element, EyeType eyetype)
+public static Task<string> GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, <#= breed.Name #>BodyGene bodygene, Color body, <#= breed.Name #>WingGene winggene, Color wings, <#= breed.Name #>TertGene tertgene, Color tert, Element element, EyeType eyetype)
 			=> GenerateDragonImageUrl((int)breed, (int)gender, (int)age, (int)bodygene, (int)body, (int)winggene, (int)wings, (int)tertgene, (int)tert, (int)element, (int)eyetype);
 		<#
 		}
 
 		#>
-public static string GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, BodyGene bodygene, Color body, WingGene winggene, Color wings, TertiaryGene tertgene, Color tert, Element element, EyeType eyetype)
+public static Task<string> GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, BodyGene bodygene, Color body, WingGene winggene, Color wings, TertiaryGene tertgene, Color tert, Element element, EyeType eyetype)
 			=> GenerateDragonImageUrl((int)breed, (int)gender, (int)age, (int)bodygene, (int)body, (int)winggene, (int)wings, (int)tertgene, (int)tert, (int)element, (int)eyetype);
 
-		public static string GenerateDragonImageUrl(int breed, int gender, int age, int bodygene, int body, int winggene, int wings, int tertgene, int tert, int element, int eyetype)
+		public static async Task<string> GenerateDragonImageUrl(int breed, int gender, int age, int bodygene, int body, int winggene, int wings, int tertgene, int tert, int element, int eyetype)
 		{
-#pragma warning disable SYSLIB0014 // Type or member is obsolete
-			using (var client = new System.Net.WebClient())
+			using (var client = new HttpClient())
 			{
-				var result = client.UploadValues("https://www1.flightrising.com/scrying/ajax-predict", new System.Collections.Specialized.NameValueCollection
+				var response = await client.PostAsync("https://www1.flightrising.com/scrying/ajax-predict", new FormUrlEncodedContent(new KeyValuePair<string, string>[]
 				{
-					{ "breed", breed.ToString() },
-					{ "gender", gender.ToString() },
-					{ "age", age.ToString() },
-					{ "bodygene", bodygene.ToString() },
-					{ "body", body.ToString() },
-					{ "winggene", winggene.ToString() },
-					{ "wings", wings.ToString() },
-					{ "tertgene", tertgene.ToString() },
-					{ "tert", tert.ToString() },
-					{ "element", element.ToString() },
-					{ "eyetype", eyetype.ToString() },
-				});
-				var str = System.Text.Encoding.UTF8.GetString(result);
-				var dragonUrl = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(str).dragon_url;
+					new("breed", breed.ToString()),
+					new("gender", gender.ToString()),
+					new("age", age.ToString()),
+					new("bodygene", bodygene.ToString()),
+					new("body", body.ToString()),
+					new("winggene", winggene.ToString()),
+					new("wings", wings.ToString()),
+					new("tertgene", tertgene.ToString()),
+					new("tert", tert.ToString()),
+					new("element", element.ToString()),
+					new("eyetype", eyetype.ToString()),
+				}));
+
+				var str = await response.Content.ReadAsStringAsync();
+				var dragonUrl = JsonConvert.DeserializeObject<DragonPredict>(str).DragonUrl;
 				return "https://www1.flightrising.com" + dragonUrl;
 			}
 		}
-#pragma warning restore SYSLIB0014 // Type or member is obsolete
+	}
+
+	public class DragonPredict
+	{
+		[JsonProperty("ok")]
+		public bool Ok { get; set; }
+		[JsonProperty("dragon_url")]
+		public string DragonUrl { get; set; }
+		[JsonProperty("attributes")]
+		public Attributes Attributes { get; set; }
+	}
+
+	public class Attributes
+	{
+		[JsonProperty("breed")]
+		public string Breed { get; set; }
+		[JsonProperty("gender")]
+		public string Gender { get; set; }
+		[JsonProperty("age")]
+		public string Age { get; set; }
+		[JsonProperty("bodygene")]
+		public string BodyGene { get; set; }
+		[JsonProperty("body")]
+		public string Body { get; set; }
+		[JsonProperty("winggene")]
+		public string WingGene { get; set; }
+		[JsonProperty("wings")]
+		public string Wings { get; set; }
+		[JsonProperty("tertgene")]
+		public string TertGene { get; set; }
+		[JsonProperty("tert")]
+		public string Tert { get; set; }
+		[JsonProperty("element")]
+		public string Element { get; set; }
+		[JsonProperty("eyetype")]
+		public string Eyetype { get; set; }
 	}
 }
 <#+
