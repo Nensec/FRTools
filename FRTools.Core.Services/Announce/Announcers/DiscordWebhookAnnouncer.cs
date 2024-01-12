@@ -61,7 +61,7 @@ namespace FRTools.Core.Services.Announce.Announcers
 
             var embed = new DiscordEmbed
             {
-                Title = data.FRItem.Name,
+                Title = "New flash sale found! - " + data.FRItem.Name,
                 Description = data.FRItem.Description,
                 Thumbnail = new DiscordEmbedThumbnail { Url = $"attachment://icon_{data.FRItem.FRId}.png" }
             };

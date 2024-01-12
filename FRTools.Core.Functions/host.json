@@ -16,5 +16,14 @@
       "FRTools": "Debug"
     }
   },
-  "functions": [ "DiscordInteractionEndpoint", "RegisterCommands", "ProcessCommand", "ProxyDummyDragonSkin", "ProxyDummyDragonGene", "ProxyDummyDragonApparel", "ProxyIcon" ]
+  "functions": [
+    //"FlashTracker",
+    "DiscordInteractionEndpoint",
+    "RegisterCommands",
+    "ProcessCommand",
+    "ProxyDummyDragonSkin",
+    "ProxyDummyDragonGene",
+    "ProxyDummyDragonApparel",
+    "ProxyIcon"
+  ]
 }

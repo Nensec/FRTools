@@ -14,9 +14,9 @@ namespace FRTools.Core.Services
         {
             byte[]? itemAsset = null;
 
-            embed.Title = item.Name;
-            embed.Description = item.Description;
-            embed.Thumbnail = new DiscordEmbedThumbnail { Url = $"attachment://icon_{item.FRId}.png" };
+            embed.Title ??= item.Name;
+            embed.Description ??= item.Description;
+            embed.Thumbnail ??= new DiscordEmbedThumbnail { Url = $"attachment://icon_{item.FRId}.png" };
             embed.Fields.Add(new DiscordEmbedField { Name = "Game database", Value = $"[#{item.FRId}]({string.Format(FRHelpers.GameDatabaseUrl, item.FRId)})", Inline = true });
 
             if (item.TreasureValue > 0)
