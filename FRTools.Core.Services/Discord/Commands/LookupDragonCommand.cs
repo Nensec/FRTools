@@ -4,7 +4,6 @@ using FRTools.Core.Data;
 using FRTools.Core.Services.Discord.DiscordModels.CommandModels;
 using FRTools.Core.Services.Discord.DiscordModels.Embed;
 using FRTools.Core.Services.Discord.DiscordModels.InteractionRequestModels;
-using FRTools.Core.Services.Discord.DiscordModels.InteractionResponseModels;
 using FRTools.Core.Services.Discord.DiscordModels.WebhookModels;
 using FRTools.Core.Services.DiscordModels;
 using FRTools.Core.Services.Interfaces;
@@ -14,16 +13,13 @@ using Microsoft.Extensions.Logging;
 
 namespace FRTools.Core.Services.Discord.Commands
 {
-    public class LookupDragonCommand : DiscordCommand
+    public class LookupDragonCommand : BaseDiscordCommand
     {
-        private readonly IDiscordService _discordService;
-
-        public LookupDragonCommand(ILogger<LookupDragonCommand> logger, IDiscordService discordService) : base(logger)
+        public LookupDragonCommand(IDiscordService discordService, ILogger<LookupDragonCommand> logger) : base(discordService, logger)
         {
-            _discordService = discordService;
         }
 
-        public override AppCommand Command { get; } = new AppCommand
+        public override AppCommand Command => new AppCommand
         {
             Name = "dragon",
             Type = AppCommandType.CHAT_INPUT,
@@ -65,29 +61,12 @@ namespace FRTools.Core.Services.Discord.Commands
             }
         };
 
-
-        public override Task<DiscordInteractionResponse> Execute(DiscordInteractionRequest interaction)
-        {
-            long? id = GetIdFromInteraction(interaction);
-            if (id == null)
-                return Task.FromResult<DiscordInteractionResponse>(new DiscordInteractionResponse.ContentResponse
-                {
-                    Data = new DiscordInteractionResponseData
-                    {
-                        Content = "Couldn't find an ID in your request!",
-                        Flags = MessageFlags.EPHEMERAL
-                    }
-                });
-
-            return Task.FromResult<DiscordInteractionResponse>(new DiscordInteractionResponse.DefferedContentResponse());
-        }
-
         public override async Task DeferedExecute(DiscordInteractionRequest interaction)
         {
             long? id = GetIdFromInteraction(interaction);
             if (id == null)
             {
-                await _discordService.EditInitialInteraction(interaction.Token, new DiscordWebhook
+                await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                 {
                     Content = "Given ID is invalid",
                     Flags = MessageFlags.EPHEMERAL
@@ -96,7 +75,7 @@ namespace FRTools.Core.Services.Discord.Commands
                 return;
             }
 
-            await _discordService.EditInitialInteraction(interaction.Token, new DiscordWebhook
+            await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
             {
                 Content = $"Looking up dragon {id}, gimme a moment..",
                 Flags = MessageFlags.EPHEMERAL
@@ -109,7 +88,7 @@ namespace FRTools.Core.Services.Discord.Commands
 
                 if (dragonProfileDoc.GetElementbyId("error-404") != null)
                 {
-                    await _discordService.EditInitialInteraction(interaction.Token, new DiscordWebhook
+                    await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                     {
                         Content = "This dragon does not exist",
                         Flags = MessageFlags.EPHEMERAL
@@ -237,12 +216,12 @@ namespace FRTools.Core.Services.Discord.Commands
                 }
                 webhookResponse.PayloadJson.Embeds = new[] { embed };
 
-                await _discordService.EditInitialInteraction(interaction.Token, webhookResponse);
+                await DiscordService.EditInitialInteraction(interaction.Token, webhookResponse);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                await _discordService.EditInitialInteraction(interaction.Token, new DiscordWebhook
+                await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                 {
                     Content = "Something went wrong parsing the dragon's profile page, maybe something changed on the page and I need to be updated. Please let <@107155889563115520> know!",
                     Flags = MessageFlags.EPHEMERAL

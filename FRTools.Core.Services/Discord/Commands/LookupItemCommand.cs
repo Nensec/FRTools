@@ -14,22 +14,20 @@ using Microsoft.Extensions.Logging;
 
 namespace FRTools.Core.Services.Discord.Commands
 {
-    public class LookupItemCommand : DiscordCommand
+    public class LookupItemCommand : BaseDiscordCommand
     {
         private readonly IFRItemService _itemService;
         private readonly IFRUserService _userService;
-        private readonly IDiscordService _discordService;
         private readonly ILogger<LookupItemCommand> _logger;
 
-        public LookupItemCommand(IFRItemService itemService, IFRUserService userService, IDiscordService discordService, ILogger<LookupItemCommand> logger) : base(logger)
+        public LookupItemCommand(IFRItemService itemService, IFRUserService userService, IDiscordService discordService, ILogger<LookupItemCommand> logger) : base(discordService, logger)
         {
             _itemService = itemService;
             _userService = userService;
-            _discordService = discordService;
             _logger = logger;
         }
 
-        public override AppCommand Command { get; } = new AppCommand
+        public override AppCommand Command => new AppCommand
         {
             Name = "lookup",
             Type = AppCommandType.CHAT_INPUT,
@@ -102,28 +100,18 @@ namespace FRTools.Core.Services.Discord.Commands
             }))
         };
 
-        public override Task<DiscordInteractionResponse> Execute(DiscordInteractionRequest interaction)
-        {
-            var command = interaction.Data.Options.First().Options.First();
-
-            if ((command.Name == "id" || command.Name == "url") && GetIdFromInteraction(interaction) == null)
-                return Task.FromResult<DiscordInteractionResponse>(new DiscordInteractionResponse.ContentResponse
-                {
-                    Data = new DiscordInteractionResponseData
-                    {
-                        Content = "Couldn't find an ID in your request! Either use the name search or provide the correct game-database URL.",
-                        Flags = MessageFlags.EPHEMERAL
-                    }
-                });
-
-            return Task.FromResult<DiscordInteractionResponse>(new DiscordInteractionResponse.DefferedContentResponse());
-        }
-
         public override async Task DeferedExecute(DiscordInteractionRequest interaction)
         {
             var command = interaction.Data.Options.First().Options.First();
 
-            await _discordService.EditInitialInteraction(interaction.Token, new DiscordWebhook
+            if ((command.Name == "id" || command.Name == "url") && GetIdFromInteraction(interaction) == null)
+                await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
+                {
+                    Content = "Couldn't find an ID in your request! Either use the name search or provide the correct game-database URL.",
+                    Flags = MessageFlags.EPHEMERAL                    
+                });
+
+            await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
             {
                 Content = $"Searching for your item in my database, this could take a {(command.Name == "name" ? "while" : "moment")}..",
                 Flags = MessageFlags.EPHEMERAL
@@ -145,7 +133,7 @@ namespace FRTools.Core.Services.Discord.Commands
             {
                 async Task NoItemFound()
                 {
-                    await _discordService.EditInitialInteraction(interaction.Token, new DiscordWebhook
+                    await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                     {
                         Content = $"There was no item matching your request",
                         Flags = MessageFlags.EPHEMERAL
@@ -172,7 +160,7 @@ namespace FRTools.Core.Services.Discord.Commands
 
             if (searchResult.Count == 1)
             {
-                await _discordService.EditInitialInteraction(interaction.Token, new DiscordWebhook
+                await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                 {
                     Content = $"I found your item! Please give me a moment while I fetch the data..",
                     Flags = MessageFlags.EPHEMERAL
@@ -181,7 +169,7 @@ namespace FRTools.Core.Services.Discord.Commands
                 var embed = new DiscordEmbed();
                 var webhook = new DiscordWebhookFiles
                 {
-                    PayloadJson = new DiscordWebhook
+                    PayloadJson = new DiscordWebhookRequest
                     {
                         Content = $"",
                         Embeds = new[]
@@ -207,8 +195,8 @@ namespace FRTools.Core.Services.Discord.Commands
                     var iconAsset = await client.GetByteArrayAsync(Helpers.GetProxyIconUrl(searchResult[0].FRId));
                     webhook.Files.Add($"icon_{searchResult[0].FRId}.png", iconAsset);
                 }
-                var reply = (await _discordService.ReplyToInteraction(interaction.Token, webhook)).First();
-                await _discordService.EditInitialInteraction(interaction.Token, new DiscordWebhook
+                var reply = (await DiscordService.ReplyToInteraction(interaction.Token, webhook)).First();
+                await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                 {
                     Content = $"Your lookup result can be found here: https://discord.com/channels/{reply.MessageReference.GuildId}/{reply.ChannelId}/{reply.Id}"
                 });
@@ -236,7 +224,7 @@ namespace FRTools.Core.Services.Discord.Commands
                         sb.AppendLine($"All of the items were part of the category **{cats.First().Key}**");
                         sb.AppendLine("Please refine your search.");
                     }
-                    await _discordService.EditInitialInteraction(interaction.Token, new DiscordWebhook
+                    await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                     {
                         Content = $"",
                         Embeds = new[]
@@ -251,7 +239,7 @@ namespace FRTools.Core.Services.Discord.Commands
                 }
                 else
                 {
-                    await _discordService.EditInitialInteraction(interaction.Token, new DiscordWebhook
+                    await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                     {
                         Content = $"",
                         Embeds = new[]

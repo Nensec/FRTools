@@ -40,6 +40,8 @@ namespace FRTools.Core.Functions
             builder.Services.AddTransient<IFRUserService, FRUserService>();
             builder.Services.AddTransient<IFRItemService, FRItemService>();
 
+            builder.Services.AddTransient<IConfigService, ConfigService>();
+
             builder.Services.AddAzureClients(builder =>
             {
                 var queueName = Environment.GetEnvironmentVariable("AzureServiceBusCommandQueue");
@@ -70,11 +72,11 @@ namespace FRTools.Core.Functions
             });
         }
 
-        public void ConfigureDiscord(IFunctionsHostBuilder builder)
+        private void ConfigureDiscord(IFunctionsHostBuilder builder)
         {
             builder.Services.AddSingleton<IDiscordService, DiscordService>();
 
-            var discordCommandClasses = Assembly.GetAssembly(typeof(DiscordCommand)).GetTypes().Where(x => typeof(DiscordCommand).IsAssignableFrom(x) && !x.IsAbstract).ToArray();
+            var discordCommandClasses = Assembly.GetAssembly(typeof(BaseDiscordCommand)).GetTypes().Where(x => typeof(BaseDiscordCommand).IsAssignableFrom(x) && !x.IsAbstract).ToArray();
 
             foreach (var command in discordCommandClasses)
                 builder.Services.AddTransient(command);
@@ -84,7 +86,7 @@ namespace FRTools.Core.Functions
             {
                 var service = x.GetRequiredService<DiscordRequestService>();
                 foreach (var command in discordCommandClasses)
-                    service.RegisterCommand((DiscordCommand)x.GetRequiredService(command));
+                    service.RegisterCommand((BaseDiscordCommand)x.GetRequiredService(command));
 
                 return service;
             });

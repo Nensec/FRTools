@@ -8,12 +8,14 @@ namespace FRTools.Core.Services.Announce.Announcers
 {
     public class DiscordWebhookAnnouncer : IFlashSaleAnnouncer, IDominanceAnnouncer, INewItemAnnouncer
     {
+        private readonly IConfigService _configService;
         private readonly IDiscordService _discordService;
         private readonly IFRUserService _userService;
         private readonly ILogger<DiscordWebhookAnnouncer> _logger;
 
-        public DiscordWebhookAnnouncer(IDiscordService discordService, IFRUserService userService, ILogger<DiscordWebhookAnnouncer> logger)
+        public DiscordWebhookAnnouncer(IConfigService configService, IDiscordService discordService, IFRUserService userService, ILogger<DiscordWebhookAnnouncer> logger)
         {
+            _configService = configService;
             _discordService = discordService;
             _userService = userService;
             _logger = logger;
@@ -23,13 +25,13 @@ namespace FRTools.Core.Services.Announce.Announcers
         {
             switch (announceData)
             {
-                case FlashSaleData flashSaleData:
+                case FlashSaleAnnounceData flashSaleData:
                     await AnnounceFlashSale(flashSaleData);
                     break;
                 case DominanceAnnounceData dominanceAnnounceData:
                     await AnnounceDominance(dominanceAnnounceData);
                     break;
-                case NewItemsData newItemsData:
+                case NewItemsAnnounceData newItemsData:
                     await AnnounceNewItems(newItemsData);
                     break;
             }
@@ -37,7 +39,7 @@ namespace FRTools.Core.Services.Announce.Announcers
 
         private async Task AnnounceDominance(DominanceAnnounceData dominanceAnnounceData)
         {
-            var webhook = new DiscordWebhook();
+            var webhook = new DiscordWebhookRequest();
             var embed = new DiscordEmbed
             {
                 Title = $"Congratulations to the **{dominanceAnnounceData.Flights[0]}** flight for claiming 1st place!",
@@ -48,10 +50,27 @@ namespace FRTools.Core.Services.Announce.Announcers
                 }
             };
             webhook.Embeds = new List<DiscordEmbed> { embed };
-            await _discordService.PostMessageToWebhook(webhook, Environment.GetEnvironmentVariable("TEST_Webhook")!);
+
+            var dominanceWebhooks = (await _configService.GetAllConfig("GUILDCONFIG_DOMINANCEWEBHOOK")).Concat(await _configService.GetAllConfig("GUILDCONFIG_DEFAULTWEBHOOK"));
+
+            foreach (var dominanceWebhook in dominanceWebhooks.GroupBy(x => x.GuildId).First())
+            {
+                try
+                {
+                    await _discordService.PostMessageToWebhook(webhook, dominanceWebhook.Value);
+                }
+                catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    await _configService.RemoveConfig("GUILDCONFIG_DOMINANCEWEBHOOK", dominanceWebhook.GuildId);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Unable to post to webhook.");
+                }
+            }
         }
 
-        private async Task AnnounceFlashSale(FlashSaleData data)
+        private async Task AnnounceFlashSale(FlashSaleAnnounceData data)
         {
             var random = new Random();
 
@@ -62,8 +81,6 @@ namespace FRTools.Core.Services.Announce.Announcers
             var embed = new DiscordEmbed
             {
                 Title = "New flash sale found! - " + data.FRItem.Name,
-                Description = data.FRItem.Description,
-                Thumbnail = new DiscordEmbedThumbnail { Url = $"attachment://icon_{data.FRItem.FRId}.png" }
             };
             var fields = new List<DiscordEmbedField>
             {
@@ -99,10 +116,27 @@ namespace FRTools.Core.Services.Announce.Announcers
             webhook.Files = files;
             webhook.PayloadJson.Embeds = embeds;
 
-            await _discordService.PostFilesToWebhook(webhook, Environment.GetEnvironmentVariable("TEST_Webhook")!);
+            var flashSaleWebhooks = (await _configService.GetAllConfig("GUILDCONFIG_FLASHSALEWEBHOOK")).Concat(await _configService.GetAllConfig("GUILDCONFIG_DEFAULTWEBHOOK"));
+
+            foreach (var flashSaleWebhook in flashSaleWebhooks.GroupBy(x => x.GuildId).First())
+            {
+                try
+                {
+                    await _discordService.PostFilesToWebhook(webhook, flashSaleWebhook.Value);
+                }
+                catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    await _configService.RemoveConfig("GUILDCONFIG_FLASHSALEWEBHOOK", flashSaleWebhook.GuildId);
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Unable to post to webhook.");
+                }
+            }
         }
 
-        private async Task AnnounceNewItems(NewItemsData data)
+        private async Task AnnounceNewItems(NewItemsAnnounceData data)
         {
             var random = new Random();
 
@@ -151,7 +185,23 @@ namespace FRTools.Core.Services.Announce.Announcers
 
             webhook.PayloadJson.Embeds = embeds;
 
-            await _discordService.PostFilesToWebhook(webhook, Environment.GetEnvironmentVariable("TEST_Webhook")!);
+            var newItemseWebhooks = (await _configService.GetAllConfig("GUILDCONFIG_NEWITEMSWEBHOOK")).Concat(await _configService.GetAllConfig("GUILDCONFIG_DEFAULTWEBHOOK"));
+
+            foreach (var newItemseWebhook in newItemseWebhooks.GroupBy(x => x.GuildId).First())
+            {
+                try
+                {
+                    await _discordService.PostFilesToWebhook(webhook, newItemseWebhook.Value);
+                }
+                catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    await _configService.RemoveConfig("GUILDCONFIG_NEWITEMSWEBHOOK", newItemseWebhook.GuildId);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Unable to post to webhook.");
+                }
+            }
         }
     }
 }

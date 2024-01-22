@@ -1,17 +1,20 @@
 ﻿using FRTools.Core.Services.Discord.DiscordModels.CommandModels;
 using FRTools.Core.Services.Discord.DiscordModels.InteractionRequestModels;
-using FRTools.Core.Services.Discord.DiscordModels.InteractionResponseModels;
+using FRTools.Core.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace FRTools.Core.Services.Discord.Commands
 {
-    public abstract class DiscordCommand
+    public abstract class BaseDiscordCommand
     {
+        protected IDiscordService DiscordService { get; }
+
         protected ILogger Logger { get; }
         protected Dictionary<string, Action> CommandActions = new Dictionary<string, Action>();
 
-        protected DiscordCommand(ILogger logger)
+        protected BaseDiscordCommand(IDiscordService discordService, ILogger logger)
         {
+            DiscordService = discordService;
             Logger = logger;
         }
 
@@ -19,8 +22,6 @@ namespace FRTools.Core.Services.Discord.Commands
 
         public abstract AppCommand Command { get; }
 
-        public abstract Task<DiscordInteractionResponse> Execute(DiscordInteractionRequest interaction);
-
-        public virtual Task DeferedExecute(DiscordInteractionRequest interaction) => Task.CompletedTask;
+        public abstract Task DeferedExecute(DiscordInteractionRequest interaction);
     }
 }
