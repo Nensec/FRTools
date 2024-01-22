@@ -23,15 +23,15 @@ namespace FRTools.Core.Services.Announce.Announcers
 
         public async Task Announce(AnnounceData announceData)
         {
-            //switch (announceData)
-            //{
-            //    case DominanceAnnounceData dominanceAnnounceData:
-            //        await AnnounceDominance(dominanceAnnounceData);
-            //        break;
-            //    case FlashSaleData flashSaleAnnounceData:
-            //        await AnnounceFlashSale(flashSaleAnnounceData);
-            //        break;
-            //}
+            switch (announceData)
+            {
+                case DominanceAnnounceData dominanceAnnounceData:
+                    await AnnounceDominance(dominanceAnnounceData);
+                    break;
+                case FlashSaleAnnounceData flashSaleAnnounceData:
+                    await AnnounceFlashSale(flashSaleAnnounceData);
+                    break;
+            }
         }
 
         private TumblrClient GetClient()
