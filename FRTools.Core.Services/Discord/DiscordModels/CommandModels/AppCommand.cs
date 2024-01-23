@@ -15,7 +15,7 @@ namespace FRTools.Core.Services.Discord.DiscordModels.CommandModels
         [JsonProperty("options")]
         public IEnumerable<AppCommandOption> Options { get; set; } = Enumerable.Empty<AppCommandOption>();
         [JsonProperty("default_member_permissions")]
-        public Permissions DefaultMemberPermissions { get; set; }
+        public Permissions DefaultMemberPermissions { get; set; } = Permissions.SEND_MESSAGES;
         [JsonProperty("dm_permission")]
         public bool? DmPermission { get; set; } = false;
     }
