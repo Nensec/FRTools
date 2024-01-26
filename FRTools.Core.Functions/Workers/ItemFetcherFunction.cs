@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FRTools.Core.Common;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
+using FRTools.Core.Services.Announce;
 using FRTools.Core.Services.Interfaces;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
@@ -18,13 +19,15 @@ namespace FRTools.Core.Functions.Workers
         private readonly IFRUserService _userService;
         private readonly IFRItemService _itemService;
         private readonly IAzurePipelineService _pipelineService;
+        private readonly IAnnounceService _announceService;
 
-        public ItemFetcherFunction(IAzureStorageService azureStorage, IFRUserService userService, IFRItemService itemService, IAzurePipelineService pipelineService)
+        public ItemFetcherFunction(IAzureStorageService azureStorage, IFRUserService userService, IFRItemService itemService, IAzurePipelineService pipelineService, IAnnounceService announceService)
         {
             _azureStorage = azureStorage;
             _userService = userService;
             _itemService = itemService;
             _pipelineService = pipelineService;
+            _announceService = announceService;
         }
 
         [FunctionName(nameof(ItemFetcher))]
@@ -77,6 +80,8 @@ namespace FRTools.Core.Functions.Workers
 
             if (items.Any())
             {
+                await _announceService.Announce(new NewItemsAnnounceData(items));
+
                 using (var stream = new MemoryStream())
                 using (var textWriter = new StreamWriter(stream))
                 using (var writer = new JsonTextWriter(textWriter))
@@ -99,11 +104,19 @@ namespace FRTools.Core.Functions.Workers
             {
                 log.LogInformation("Once a month checking for missing ids");
 
+                var missingItems = new List<FRItem>();
                 var missingIds = await _itemService.FindMissingIds();
+
                 foreach (var missingId in missingIds)
                 {
-                    await _itemService.FetchItemFromFR(missingId);
+                    var newItem = await _itemService.FetchItemFromFR(missingId);
+                    if (newItem != null)
+                        missingItems.Add(newItem);
                 }
+
+                if (missingItems.Any())
+                    await _announceService.Announce(new NewItemsAnnounceData(missingItems));
+
             }
         }
     }

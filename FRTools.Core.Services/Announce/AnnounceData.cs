@@ -39,9 +39,9 @@ namespace FRTools.Core.Services.Announce
     public class NewItemsAnnounceData : AnnounceData
     {
         public override Type AnnouncerType => typeof(INewItemAnnouncer);
-        public FRItem[] FRItems { get; }
+        public IEnumerable<FRItem> FRItems { get; }
 
-        public NewItemsAnnounceData(FRItem[] items)
+        public NewItemsAnnounceData(IEnumerable<FRItem> items)
         {
             FRItems = items;
         }
