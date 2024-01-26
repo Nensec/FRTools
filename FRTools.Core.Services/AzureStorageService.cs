@@ -38,10 +38,8 @@ namespace FRTools.Core.Services
         {
             var containerClient = GetBlobContainerClient(path, out var filePath);
             var blobClient = containerClient.GetBlobClient(filePath);
-            var appendBlobClient = containerClient.GetAppendBlobClient(filePath);
 
-            await blobClient.UploadAsync(filePath);
-            await appendBlobClient.AppendBlockAsync(stream);
+            await blobClient.UploadAsync(stream);
 
             return blobClient.Uri.AbsolutePath;
         }
@@ -59,7 +57,7 @@ namespace FRTools.Core.Services
         private BlobContainerClient GetBlobContainerClient(string path, out string filePath)
         {
             var containerName = path.Split(Path.DirectorySeparatorChar)[0];
-            filePath = Path.GetDirectoryName(string.Join(Path.DirectorySeparatorChar.ToString(), path.Split(Path.DirectorySeparatorChar).Skip(1))) ?? string.Empty;
+            filePath = Path.Combine(Path.GetDirectoryName(string.Join(Path.DirectorySeparatorChar.ToString(), path.Split(Path.DirectorySeparatorChar).Skip(1))) ?? string.Empty, Path.GetFileName(path));
 
             return _client.GetBlobContainerClient(containerName);
         }
