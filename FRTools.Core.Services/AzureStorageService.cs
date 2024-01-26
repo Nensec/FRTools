@@ -34,12 +34,12 @@ namespace FRTools.Core.Services
             return stream;
         }
 
-        public async Task<string> CreateFile(string path, Stream stream)
+        public async Task<string> CreateOrUpdateFile(string path, Stream stream)
         {
             var containerClient = GetBlobContainerClient(path, out var filePath);
             var blobClient = containerClient.GetBlobClient(filePath);
 
-            await blobClient.UploadAsync(stream);
+            await blobClient.UploadAsync(stream, true);
 
             return blobClient.Uri.AbsolutePath;
         }

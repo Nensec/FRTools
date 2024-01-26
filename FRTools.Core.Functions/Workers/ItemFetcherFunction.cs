@@ -85,7 +85,7 @@ namespace FRTools.Core.Functions.Workers
                     serializer.Serialize(writer, new { items.Count, LastSuccess = DateTime.UtcNow });
                     await writer.FlushAsync();
                     stream.Position = 0;
-                    await _azureStorage.CreateFile(lastRunPath, stream);
+                    await _azureStorage.CreateOrUpdateFile(lastRunPath, stream);
                 }
 
                 log.LogInformation($"Since items were found, saving last success at {DateTime.UtcNow}");
