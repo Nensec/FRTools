@@ -25,6 +25,7 @@ namespace FRTools.Core.Common
         public static string GetProxyDummyDragonApparelUrl(DragonType dragonBreed, int gender, int itemId) => GetProxyDummyDragonApparelUrl((int)dragonBreed, gender, itemId);
         public static string GetProxyDummyDragonApparelUrl(int dragonBreed, int gender, int itemId) => $"http{(IsLocal ? "" : "s")}://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/proxy/dragon/apparel/{dragonBreed}/{gender}/{itemId}";
         public static string GetProxyIconUrl(int itemId) => $"http{(IsLocal ? "" : "s")}://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/proxy/icon/{itemId}";
+        public static string GetDiscordInteractionUrl() => $"http{(IsLocal ? "" : "s")}://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/discord";
 
         public static async Task<HtmlDocument> LoadHtmlPage(string url)
         {
