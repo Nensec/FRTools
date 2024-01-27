@@ -5,8 +5,6 @@ namespace FRTools.Core.Data
 {
 	public enum DragonType
 	{
-		[Description("Unknown")]
-		Unknown = -1,
 		[Description("Fae")]
 		Fae = 1,
 		[Description("Guardian")]
@@ -147,8 +145,6 @@ namespace FRTools.Core.Data
 
 	public enum Color
 	{
-		[Color("#ffffff1a", -1)]
-		Unknown = 0,
 		[Color("#FFFDEA", 0)]
 		Maize = 1,
 		[Color("#FFFFFF", 3)]

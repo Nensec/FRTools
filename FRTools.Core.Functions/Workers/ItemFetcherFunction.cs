@@ -45,14 +45,13 @@ namespace FRTools.Core.Functions.Workers
                 using (var reader = new StreamReader(stream))
                 {
                     var stringData = await reader.ReadToEndAsync();
-                    var lastRunData = JsonConvert.DeserializeObject<dynamic>(stringData);
+                    var lastRunData = JsonConvert.DeserializeObject<LastRunData>(stringData);
                     if (lastRunData != null)
                     {
-                        var hasLastSuccess = DateTime.TryParse((string)lastRunData.LastSuccess, out DateTime lastSuccess);
-                        if (hasLastSuccess && DateTime.UtcNow > lastSuccess.AddDays(1))
-                            maxTries += (int)(DateTime.UtcNow - lastSuccess.AddDays(1)).TotalHours;
+                        if (DateTime.UtcNow > lastRunData.LastSuccess.AddDays(1))
+                            maxTries += (int)(DateTime.UtcNow - lastRunData.LastSuccess.AddDays(1)).TotalHours;
 
-                        log.LogInformation($"Last succesful bout of skins were found at {lastSuccess}, which makes the max tries to be {maxTries} attempts");
+                        log.LogInformation($"Last succesful bout of skins were found at {lastRunData.LastSuccess}, which makes the max tries to be {maxTries} attempts");
                     }
                 }
             }
@@ -87,7 +86,7 @@ namespace FRTools.Core.Functions.Workers
                 using (var writer = new JsonTextWriter(textWriter))
                 {
                     var serializer = new JsonSerializer();
-                    serializer.Serialize(writer, new { items.Count, LastSuccess = DateTime.UtcNow });
+                    serializer.Serialize(writer, new LastRunData { Count = items.Count, LastSuccess = DateTime.UtcNow });
                     await writer.FlushAsync();
                     stream.Position = 0;
                     await _azureStorage.CreateOrUpdateFile(lastRunPath, stream);
@@ -118,6 +117,12 @@ namespace FRTools.Core.Functions.Workers
                     await _announceService.Announce(new NewItemsAnnounceData(missingItems));
 
             }
+        }
+
+        class LastRunData
+        {
+            public int Count { get; set; }
+            public DateTime LastSuccess { get; set; }
         }
     }
 }

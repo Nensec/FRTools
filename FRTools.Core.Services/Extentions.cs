@@ -10,7 +10,7 @@ namespace FRTools.Core.Services
 {
     public static class Extentions
     {
-        public static async Task<byte[]?> ParseItemForEmbed(this DiscordEmbed embed, Random random, FRItem item, IFRUserService userService, ILogger logger)
+        public static async Task<byte[]?> ParseItemForEmbed(this DiscordEmbed embed, Random random, FRItem item, IFRUserService userService, ILogger logger, DragonType? dragonType = null, Gender? gender = null)
         {
             byte[]? itemAsset = null;
 
@@ -30,16 +30,19 @@ namespace FRTools.Core.Services
                 case FRItemCategory.Equipment:
                     {
                         var modernBreeds = GeneratedFRHelpers.GetModernBreeds();
+                        if (dragonType == null || !modernBreeds.Contains(dragonType.Value))
+                            dragonType = modernBreeds[random.Next(1, modernBreeds.Length)];
+                        
                         using (var client = new HttpClient())
-                            itemAsset = await client.GetByteArrayAsync(Helpers.GetProxyDummyDragonApparelUrl((int)modernBreeds[random.Next(1, modernBreeds.Length)], random.Next(0, 2), item.FRId));
+                            itemAsset = await client.GetByteArrayAsync(Helpers.GetProxyDummyDragonApparelUrl((int)dragonType, (int?)gender ?? random.Next(0, 2), item.FRId));
 
                         break;
                     }
                 case FRItemCategory.Skins:
                     {
                         var breed = item.ItemType.Split(' ');
-                        var dragonType = FRHelpers.GetDragonType(breed[0]);
-                        var gender = (Gender)Enum.Parse(typeof(Gender), breed[1]);
+                        dragonType = FRHelpers.GetDragonType(breed[0]);
+                        gender = (Gender)Enum.Parse(typeof(Gender), breed[1]);
 
                         using (var client = new HttpClient())
                             itemAsset = await client.GetByteArrayAsync(Helpers.GetProxyDummyDragonSkinUrl((int)dragonType, (int)gender, item.FRId));
@@ -67,10 +70,10 @@ namespace FRTools.Core.Services
                     {
                         if (item.Name.Contains('('))
                         {
-                            if (FRHelpers.TryGetDragonType(item.Name.Split('(', ')')[1], out var dragonType))
+                            if (FRHelpers.TryGetDragonType(item.Name.Split('(', ')')[1], out dragonType) && dragonType != null)
                             {
                                 using (var client = new HttpClient())
-                                    itemAsset = await client.GetByteArrayAsync(Helpers.GetProxyDummyDragonGeneUrl((int)dragonType, random.Next(0, 2), item.FRId));
+                                    itemAsset = await client.GetByteArrayAsync(Helpers.GetProxyDummyDragonGeneUrl((int)dragonType, (int?)gender ?? random.Next(0, 2), item.FRId));
                             }
                             else
                                 embed.Description += "\n\r\nBreed is not (yet) found in my data so the image is unavailable! If this breed was announced very recently it can take up to an hour or so for my systems to be auto-updated.";
@@ -78,8 +81,11 @@ namespace FRTools.Core.Services
                         else
                         {
                             var modernBreeds = GeneratedFRHelpers.GetModernBreeds();
+                            if (dragonType == null || !modernBreeds.Contains(dragonType.Value))
+                                dragonType = modernBreeds[random.Next(1, modernBreeds.Length)];
+
                             using (var client = new HttpClient())
-                                itemAsset = await client.GetByteArrayAsync(Helpers.GetProxyDummyDragonGeneUrl((int)modernBreeds[random.Next(1, modernBreeds.Length)], random.Next(0, 2), item.FRId));
+                                itemAsset = await client.GetByteArrayAsync(Helpers.GetProxyDummyDragonGeneUrl((int)dragonType, (int?)gender ?? random.Next(0, 2), item.FRId));
                         }
 
                         break;

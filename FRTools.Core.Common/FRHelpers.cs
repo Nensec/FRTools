@@ -90,7 +90,7 @@ namespace FRTools.Core.Common
             return false;
         }
 
-        public static bool TryGetDragonType(string dragontype, out DragonType result)
+        public static bool TryGetDragonType(string dragontype, out DragonType? result)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace FRTools.Core.Common
             }
             catch
             {
-                result = DragonType.Unknown;
+                result = null;
                 return false;
             }
         }

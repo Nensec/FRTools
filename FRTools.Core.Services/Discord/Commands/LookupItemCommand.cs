@@ -2,11 +2,11 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using FRTools.Core.Common;
+using FRTools.Core.Data;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
 using FRTools.Core.Services.Discord.DiscordModels.CommandModels;
 using FRTools.Core.Services.Discord.DiscordModels.Embed;
 using FRTools.Core.Services.Discord.DiscordModels.InteractionRequestModels;
-using FRTools.Core.Services.Discord.DiscordModels.InteractionResponseModels;
 using FRTools.Core.Services.Discord.DiscordModels.WebhookModels;
 using FRTools.Core.Services.DiscordModels;
 using FRTools.Core.Services.Interfaces;
@@ -47,6 +47,22 @@ namespace FRTools.Core.Services.Discord.Commands
                             Description = "Do a search with the given search parameter in an item's name or description",
                             Type = AppCommandOptionType.STRING,
                             Required = true,
+                        },
+                        new AppCommandOption
+                        {
+                            Name = "dragon_gender",
+                            Description = "If the item is equippeable, attempt to show a preview on this gender",
+                            Type = AppCommandOptionType.INTEGER,
+                            Autocomplete = true,
+                            Choices = Enum.GetValues<Gender>().Select(x => new AppCommandOptionChoice{ Name = x.ToString(), Value = (int)x })
+                        },
+                        new AppCommandOption
+                        {
+                            Name = "dragon_type",
+                            Description = "If the item is equippeable, attempt to show a preview on this breed",
+                            Type = AppCommandOptionType.INTEGER,
+                            Autocomplete = true,
+                            Choices = Enum.GetValues<DragonType>().Select(x => new AppCommandOptionChoice{ Name = x.ToString(), Value = (int)x })
                         }
                     }
                 },
@@ -63,6 +79,23 @@ namespace FRTools.Core.Services.Discord.Commands
                             Description = "The (game database) URL of the item",
                             Type = AppCommandOptionType.STRING,
                             Required = true,
+                        },
+                        new AppCommandOption
+                        {
+                            Name = "dragon_gender",
+                            Description = "If the item is equippeable, attempt to show a preview on this gender",
+                            Type = AppCommandOptionType.INTEGER,
+                            Autocomplete = true,
+                            Choices = Enum.GetValues<Gender>().Select(x => new AppCommandOptionChoice{ Name = x.ToString(), Value = (int)x })
+                        },
+                        new AppCommandOption
+                        {
+                            Name = "dragon_type",
+                            Description = "If the item is equippeable, attempt to show a preview on this breed",
+                            Type = AppCommandOptionType.INTEGER,
+                            Autocomplete = true,
+                            Choices = Enum.GetValues<DragonType>().Select(x => new AppCommandOptionChoice{ Name = x.ToString(), Value = (int)x })
+
                         }
                     }
                 },
@@ -79,10 +112,57 @@ namespace FRTools.Core.Services.Discord.Commands
                             Description = "The ID of the item",
                             Type = AppCommandOptionType.INTEGER,
                             Required = true,
+                        },
+                        new AppCommandOption
+                        {
+                            Name = "dragon_gender",
+                            Description = "If the item is equippeable, attempt to show a preview on this gender",
+                            Type = AppCommandOptionType.INTEGER,
+                            Autocomplete = true,
+                            Choices = Enum.GetValues<Gender>().Select(x => new AppCommandOptionChoice{ Name = x.ToString(), Value = (int)x })
+                        },
+                        new AppCommandOption
+                        {
+                            Name = "dragon_type",
+                            Description = "If the item is equippeable, attempt to show a preview on this breed",
+                            Type = AppCommandOptionType.INTEGER,
+                            Autocomplete = true,
+                            Choices = Enum.GetValues<DragonType>().Select(x => new AppCommandOptionChoice{ Name = x.ToString(), Value = (int)x })
                         }
                     }
                 }
-            }.Concat(Enum.GetValues<FRItemCategory>().Select(x => new AppCommandOption
+            }.Concat(Enum.GetValues<FRItemCategory>().Where(x => x == FRItemCategory.Equipment || x == FRItemCategory.Trinket).Select(x => new AppCommandOption
+            {
+                Name = x.ToString().ToLower(),
+                Type = AppCommandOptionType.SUB_COMMAND,
+                Description = $"Searches an item in the {x} category",
+                Options = new[]
+                {
+                    new AppCommandOption
+                    {
+                        Name = "query",
+                        Description = "Do a search with the given search parameter in an item's name or description",
+                        Type = AppCommandOptionType.STRING,
+                        Required = true,
+                    },
+                    new AppCommandOption
+                    {
+                        Name = "dragon_gender",
+                        Description = "If the item is equippeable, attempt to show a preview on this gender",
+                        Type = AppCommandOptionType.INTEGER,
+                        Autocomplete = true,
+                        Choices = Enum.GetValues<Gender>().Select(x => new AppCommandOptionChoice{ Name = x.ToString(), Value = (int)x })
+                    },
+                    new AppCommandOption
+                    {
+                        Name = "dragon_type",
+                        Description = "If the item is equippeable, attempt to show a preview on this breed",
+                        Type = AppCommandOptionType.INTEGER,
+                        Autocomplete = true,
+                        Choices = Enum.GetValues<DragonType>().Select(x => new AppCommandOptionChoice{ Name = x.ToString(), Value = (int)x })
+                    }
+                }
+            })).Concat(Enum.GetValues<FRItemCategory>().Where(x => x != FRItemCategory.Equipment && x != FRItemCategory.Trinket).Select(x => new AppCommandOption
             {
                 Name = x.ToString().ToLower(),
                 Type = AppCommandOptionType.SUB_COMMAND,
@@ -102,24 +182,25 @@ namespace FRTools.Core.Services.Discord.Commands
 
         public override async Task DeferedExecute(DiscordInteractionRequest interaction)
         {
-            var command = interaction.Data.Options.First().Options.First();
+            var command = interaction.Data.Options.First();
+            var commandTypeParam = command.Options.First();            
 
-            if ((command.Name == "id" || command.Name == "url") && GetIdFromInteraction(interaction) == null)
+            if ((commandTypeParam.Name == "id" || commandTypeParam.Name == "url") && GetIdFromInteraction(interaction) == null)
                 await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                 {
                     Content = "Couldn't find an ID in your request! Either use the name search or provide the correct game-database URL.",
-                    Flags = MessageFlags.EPHEMERAL                    
+                    Flags = MessageFlags.EPHEMERAL
                 });
 
             await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
             {
-                Content = $"Searching for your item in my database, this could take a {(command.Name == "name" ? "while" : "moment")}..",
+                Content = $"Searching for your item in my database, this could take a {(commandTypeParam.Name == "name" ? "while" : "moment")}..",
                 Flags = MessageFlags.EPHEMERAL
             });
 
-            Expression<Func<FRItem, bool>> query = x => x.Name.Contains((string)command.Value) || x.Description.Contains((string)command.Value);
+            Expression<Func<FRItem, bool>> query = x => x.Name.Contains((string)commandTypeParam.Value) || x.Description.Contains((string)commandTypeParam.Value);
             var id = GetIdFromInteraction(interaction);
-            switch (command.Name)
+            switch (commandTypeParam.Name)
             {
                 case "url":
                 case "id":
@@ -140,7 +221,7 @@ namespace FRTools.Core.Services.Discord.Commands
                     });
                 }
 
-                if ((command.Name == "id" || command.Name == "url") && id.HasValue)
+                if ((commandTypeParam.Name == "id" || commandTypeParam.Name == "url") && id.HasValue)
                 {
                     var item = await _itemService.FetchItemFromFR((int)id.Value);
                     if (item != null)
@@ -179,8 +260,17 @@ namespace FRTools.Core.Services.Discord.Commands
                     }
                 };
 
+
+                DragonType? dragonType = null;
+                Gender? gender = null;
+
+                if (command.Options.FirstOrDefault(x => x.Name == "dragon_type")?.Value is long dragonTypeOption)
+                    dragonType = (DragonType)dragonTypeOption;
+                if (command.Options.FirstOrDefault(X => X.Name == "dragon_gender")?.Value is long genderOption)
+                    gender = (Gender)genderOption;
+
                 var random = new Random();
-                byte[]? itemAsset = await embed.ParseItemForEmbed(random, searchResult[0], _userService, _logger);
+                byte[]? itemAsset = await embed.ParseItemForEmbed(random, searchResult[0], _userService, _logger, dragonType, gender);
 
                 if (itemAsset != null)
                 {
@@ -206,15 +296,15 @@ namespace FRTools.Core.Services.Discord.Commands
                 if (searchResult.Count > 25)
                 {
                     var sb = new StringBuilder();
-                    sb.AppendLine($"Found {searchResult.Count} items that match `{command.Value}`, but I can only display a preview of 25 items.");
+                    sb.AppendLine($"Found {searchResult.Count} items that match `{commandTypeParam.Value}`, but I can only display a preview of 25 items.");
                     var cats = searchResult.GroupBy(x => x.ItemCategory);
                     if (cats.Count() > 1)
                     {
                         foreach (var cat in searchResult.GroupBy(x => x.ItemCategory))
                             sb.AppendLine($"- {cat.Count()} in the category `{cat.Key}`");
                         sb.AppendLine();
-                        if (command.Name == "name")
-                            sb.AppendLine($"Please refine your search, perhaps use a category filter such as `/lookup {cats.First().Key.ToString().ToLower()} {command.Value}`");
+                        if (commandTypeParam.Name == "name")
+                            sb.AppendLine($"Please refine your search, perhaps use a category filter such as `/lookup {cats.First().Key.ToString().ToLower()} {commandTypeParam.Value}`");
                         else
                             sb.AppendLine($"Please refine your search");
                     }
