@@ -1,4 +1,5 @@
 ﻿using FRTools.Core.Common;
+using FRTools.Core.Data.DataModels.FlightRisingModels;
 using FRTools.Core.Services.Discord.DiscordModels.Embed;
 using FRTools.Core.Services.Discord.DiscordModels.WebhookModels;
 using FRTools.Core.Services.Interfaces;
@@ -51,22 +52,11 @@ namespace FRTools.Core.Services.Announce.Announcers
             };
             webhook.Embeds = new List<DiscordEmbed> { embed };
 
-            var dominanceWebhooks = (await _configService.GetAllConfig("GUILDCONFIG_DOMINANCEWEBHOOK")).Concat(await _configService.GetAllConfig("GUILDCONFIG_DEFAULTWEBHOOK"));
+            var allDominanceWebhooks = (await _configService.GetAllConfig("GUILDCONFIG_DOMINANCEWEBHOOK")).Concat(await _configService.GetAllConfig("GUILDCONFIG_DEFAULTWEBHOOK")).GroupBy(x => x.GuildId);
 
-            foreach (var dominanceWebhook in dominanceWebhooks.GroupBy(x => x.GuildId).First())
+            foreach (var guildWebhooks in allDominanceWebhooks)
             {
-                try
-                {
-                    await _discordService.PostMessageToWebhook(webhook, dominanceWebhook.Value);
-                }
-                catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    await _configService.RemoveConfig("GUILDCONFIG_DOMINANCEWEBHOOK", dominanceWebhook.GuildId);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Unable to post to webhook.");
-                }
+                await AttemptPostToWebhook(guildWebhooks, webhook);
             }
         }
 
@@ -116,23 +106,11 @@ namespace FRTools.Core.Services.Announce.Announcers
             webhook.Files = files;
             webhook.PayloadJson.Embeds = embeds;
 
-            var flashSaleWebhooks = (await _configService.GetAllConfig("GUILDCONFIG_FLASHSALEWEBHOOK")).Concat(await _configService.GetAllConfig("GUILDCONFIG_DEFAULTWEBHOOK"));
+            var allFlashSaleWebhooks = (await _configService.GetAllConfig("GUILDCONFIG_FLASHSALEWEBHOOK")).Concat(await _configService.GetAllConfig("GUILDCONFIG_DEFAULTWEBHOOK")).GroupBy(x => x.GuildId);
 
-            foreach (var flashSaleWebhook in flashSaleWebhooks.GroupBy(x => x.GuildId).First())
+            foreach (var guildWebhooks in allFlashSaleWebhooks)
             {
-                try
-                {
-                    await _discordService.PostFilesToWebhook(webhook, flashSaleWebhook.Value);
-                }
-                catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    await _configService.RemoveConfig("GUILDCONFIG_FLASHSALEWEBHOOK", flashSaleWebhook.GuildId);
-
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Unable to post to webhook.");
-                }
+                await AttemptPostToWebhook(guildWebhooks, webhook);
             }
         }
 
@@ -143,22 +121,19 @@ namespace FRTools.Core.Services.Announce.Announcers
             var webhook = new DiscordWebhookFiles();
             var embeds = new List<DiscordEmbed>();
 
+            var itemEmbeds = new Dictionary<FRItem, (DiscordEmbed Embed, Dictionary<string, byte[]> Files)>();
+
             foreach (var item in data.FRItems)
             {
+                var files = new Dictionary<string, byte[]>();
                 var embed = new DiscordEmbed
                 {
-                    Title = item.Name,
+                    Title = "New item found! - " + item.Name,
                     Description = item.Description,
                     Thumbnail = new DiscordEmbedThumbnail { Url = $"attachment://icon_{item.FRId}.png" }
                 };
-                var fields = new List<DiscordEmbedField>
-                {
-                    new() {
-                        Name = "Game database",
-                        Value = $"[#{item.FRId}]({string.Format(FRHelpers.GameDatabaseUrl, item.FRId)})",
-                        Inline = true
-                    }
-                };
+
+                var fields = new List<DiscordEmbedField>();
 
                 if (item.TreasureValue > 0)
                     fields.Add(new DiscordEmbedField { Name = "Treasure value", Value = $"{item.TreasureValue}", Inline = true });
@@ -171,31 +146,85 @@ namespace FRTools.Core.Services.Announce.Announcers
                 {
                     var fileName = $"asset_{item.FRId}.png";
 
-                    webhook.Files.Add(fileName, itemAsset);
+                    files.Add(fileName, itemAsset);
                     embed.Image = new DiscordEmbedImage { Url = $"attachment://{fileName}" };
 
                 }
                 using (var client = new HttpClient())
                 {
                     var iconAsset = await client.GetByteArrayAsync(Helpers.GetProxyIconUrl(item.FRId));
-                    webhook.Files.Add($"icon_{item.FRId}.png", iconAsset);
+                    files.Add($"icon_{item.FRId}.png", iconAsset);
                 }
-                embeds.Add(embed);
+
+                itemEmbeds.Add(item, (embed, files));
             }
 
+            embeds.AddRange(itemEmbeds.Values.Select(x => x.Embed));
+            foreach (var files in itemEmbeds.Values.SelectMany(x => x.Files))
+                webhook.Files.Add(files.Key, files.Value);
             webhook.PayloadJson.Embeds = embeds;
 
-            var newItemseWebhooks = (await _configService.GetAllConfig("GUILDCONFIG_NEWITEMSWEBHOOK")).Concat(await _configService.GetAllConfig("GUILDCONFIG_DEFAULTWEBHOOK"));
+            var allNewItemWebhooks = (await _configService.GetAllConfig("GUILDCONFIG_NEWITEMSWEBHOOK")).Concat(await _configService.GetAllConfig("GUILDCONFIG_DEFAULTWEBHOOK")).GroupBy(x => x.GuildId);
 
-            foreach (var newItemseWebhook in newItemseWebhooks.GroupBy(x => x.GuildId).First())
+            foreach (var guildWebhooks in allNewItemWebhooks)
+            {
+                var webhookToPost = webhook;
+
+                var guildSpecificSettings = await _configService.GetConfigValue("GUILDCONFIG_ANNOUNCE_NEWITEMTYPES", guildWebhooks.Key);
+                if (guildSpecificSettings != null)
+                {
+                    webhookToPost = new DiscordWebhookFiles();
+                    var itemCategoriesAllowed = guildSpecificSettings.Split(',').Select(x => Enum.Parse<FRItemCategory>(x)).ToList();
+
+                    foreach (var itemEmbed in itemEmbeds)
+                    {
+                        if (itemCategoriesAllowed.Contains(itemEmbed.Key.ItemCategory))
+                        {
+                            webhookToPost.PayloadJson.Embeds.Add(itemEmbed.Value.Embed);
+                            foreach (var files in itemEmbed.Value.Files)
+                                webhook.Files.Add(files.Key, files.Value);
+                        }
+                    }
+                }
+
+                await AttemptPostToWebhook(guildWebhooks, webhookToPost);
+            }
+        }
+
+        private async Task AttemptPostToWebhook(IGrouping<ulong, (string Key, string Value, ulong GuildId)> guildWebhooks, DiscordWebhookFiles webhook)
+        {
+            foreach (var guildWebhook in guildWebhooks)
             {
                 try
                 {
-                    await _discordService.PostFilesToWebhook(webhook, newItemseWebhook.Value);
+                    await _discordService.PostFilesToWebhook(webhook, guildWebhook.Value);
+                    break;
                 }
                 catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
-                    await _configService.RemoveConfig("GUILDCONFIG_NEWITEMSWEBHOOK", newItemseWebhook.GuildId);
+                    _logger.LogWarning(ex, "Unable to post to webhook, but got unauthorized. Webhook access removed, deleting record and attempting possible next registered webhook.");
+                    await _configService.RemoveConfig(guildWebhook.Key, guildWebhook.GuildId);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Unable to post to webhook.");
+                }
+            }            
+        }
+
+        private async Task AttemptPostToWebhook(IGrouping<ulong, (string Key, string Value, ulong GuildId)> guildWebhooks, DiscordWebhookRequest webhook)
+        {
+            foreach (var guildWebhook in guildWebhooks)
+            {
+                try
+                {
+                    await _discordService.PostMessageToWebhook(webhook, guildWebhook.Value);
+                    break;
+                }
+                catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    _logger.LogWarning(ex, "Unable to post to webhook, but got unauthorized. Webhook access removed, deleting record and attempting possible next registered webhook.");
+                    await _configService.RemoveConfig(guildWebhook.Key, guildWebhook.GuildId);
                 }
                 catch (Exception ex)
                 {

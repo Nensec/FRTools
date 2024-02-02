@@ -46,8 +46,24 @@ namespace FRTools.Core.Services
 
         public async Task<DiscordInteractionResponse> ExecuteInteraction(DiscordInteractionRequest interaction)
         {
-            await _serviceBusClient.SendMessageAsync(new ServiceBusMessage(JsonConvert.SerializeObject(interaction)) { ContentType = "application/json" });
-            return new DiscordInteractionResponse.DefferedContentResponse();
+            try
+            {
+                var response = await _commands.First(x => x.CommandName == interaction.Data.Name || x.ComponentInteractionCommandNames?.Contains(interaction.Data.CustomId) == true).Execute(interaction);
+                if (response is DiscordInteractionResponse.DefferedContentResponse)
+                    await _serviceBusClient.SendMessageAsync(new ServiceBusMessage(JsonConvert.SerializeObject(interaction)) { ContentType = "application/json" });
+
+                return response;
+            }
+            catch
+            {
+                return new DiscordInteractionResponse.ContentResponse
+                {
+                    Data = new DiscordInteractionResponseData
+                    {
+                        Content = ":octagonal_sign: Something went wrong executing this command, don't worry though <@107155889563115520> is on it!.. probably?"
+                    }
+                };
+            }
         }
 
         public async Task ExecuteDeferedInteraction(DiscordInteractionRequest interaction)

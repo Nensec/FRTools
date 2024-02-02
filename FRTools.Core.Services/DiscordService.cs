@@ -74,7 +74,7 @@ namespace FRTools.Core.Services
                         Content = webhook.Content,
                         Username = webhook.Username,
                         AvatarUrl = webhook.AvatarUrl,
-                        Embeds = batch.Select(x => x.e).ToArray()
+                        Embeds = batch.Select(x => x.e).ToList()
                     };
 
                     var message = await sendAction(webhookBatch, webhookUrl);
@@ -111,7 +111,7 @@ namespace FRTools.Core.Services
                                 Content = webhook.PayloadJson.Content,
                                 Username = webhook.PayloadJson.Username,
                                 AvatarUrl = webhook.PayloadJson.AvatarUrl,
-                                Embeds = batch.Select(x => x.e).ToArray()
+                                Embeds = batch.Select(x => x.e).ToList()
                             }
                         };
 
@@ -138,7 +138,7 @@ namespace FRTools.Core.Services
                                     Files = new Dictionary<string, byte[]>(fileBatch.Select(x => x.f).ToArray())
                                 };
 
-                                webhookFileBatch.PayloadJson.Embeds = webhookBatch.PayloadJson.Embeds.Where(x => webhookFileBatch.Files.Select(f => f.Key).Any(f => filesBelongingToEmbeds.Contains(f))).ToArray();
+                                webhookFileBatch.PayloadJson.Embeds = webhookBatch.PayloadJson.Embeds.Where(x => webhookFileBatch.Files.Select(f => f.Key).Any(f => filesBelongingToEmbeds.Contains(f))).ToList();
 
                                 var message = await sendAction(webhookFileBatch, webhookUrl);
                                 if (message != null)

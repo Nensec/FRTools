@@ -22,6 +22,14 @@ namespace FRTools.Core.Services.Discord.DiscordModels.InteractionResponseModels
             public override InteractionResponseType Type => InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE;
         }
 
+        public class EphemeralDeferredContentResponse : DefferedContentResponse
+        {
+            public EphemeralDeferredContentResponse()
+            {
+                Data = new DiscordInteractionResponseData { Flags = MessageFlags.EPHEMERAL };
+            }
+        }
+
         public class PongResponse : DiscordInteractionResponse
         {
             public override InteractionResponseType Type => InteractionResponseType.PONG;
@@ -33,9 +41,9 @@ namespace FRTools.Core.Services.Discord.DiscordModels.InteractionResponseModels
         [JsonProperty("content")]
         public string? Content { get; set; }
         [JsonProperty("embeds")]
-        public IEnumerable<DiscordEmbed> Embeds { get; set; } = Enumerable.Empty<DiscordEmbed>();
+        public IEnumerable<DiscordEmbed> Embeds { get; set; }
         [JsonProperty("flags")]
-        public MessageFlags Flags { get; set; }
+        public MessageFlags? Flags { get; set; }
         [JsonProperty("components")]
         public IEnumerable<DiscordInteractionResponseComponent> Components { get; set; } = Enumerable.Empty<DiscordInteractionResponseComponent>();
     }
@@ -69,7 +77,7 @@ namespace FRTools.Core.Services.Discord.DiscordModels.InteractionResponseModels
         [JsonProperty("url")]
         public string? Url { get; set; }
         [JsonProperty("disabled")]
-        public bool? DIsabled { get; set; }
+        public bool? Disabled { get; set; }
     }
 
     public abstract class DiscordInteractionResponseSelectComponent : DiscordInteractionResponseComponent, IDiscordInteractionResponseActionRowComponent
@@ -82,54 +90,39 @@ namespace FRTools.Core.Services.Discord.DiscordModels.InteractionResponseModels
         public int? MinValues { get; set; } = 1;
         [JsonProperty("max_values")]
         public int? MaxValues { get; set; } = 1;
-        [JsonProperty("channel_types")]
-        public ChannelType? ChannelTypes { get; set; }
         [JsonProperty("placeholder")]
         public string? Placeholder { get; set; }
 
         public class String : DiscordInteractionResponseSelectComponent
         {
+            [JsonProperty("label")]
+            public string? Label { get; set; }
             public override ComponentType Type => ComponentType.STRING_SELECT;
-            public IEnumerable<DiscordInteractionResponseSelectOption> options { get; set; } = Enumerable.Empty<DiscordInteractionResponseSelectOption>();
+            [JsonProperty("options")]
+            public IEnumerable<DiscordInteractionSelectOption> Options { get; set; } = Enumerable.Empty<DiscordInteractionSelectOption>();
         }
 
         public class User : DiscordInteractionResponseSelectComponent
         {
             public override ComponentType Type => ComponentType.USER_SELECT;
-            public IEnumerable<DiscordInteractionResponseDefaultSelect> options { get; set; } = Enumerable.Empty<DiscordInteractionResponseDefaultSelect>();
         }
 
         public class Role : DiscordInteractionResponseSelectComponent
         {
             public override ComponentType Type => ComponentType.ROLE_SELECT;
-            public IEnumerable<DiscordInteractionResponseDefaultSelect> options { get; set; } = Enumerable.Empty<DiscordInteractionResponseDefaultSelect>();
         }
 
         public class Mentionable : DiscordInteractionResponseSelectComponent
         {
             public override ComponentType Type => ComponentType.MENTIONABLE_SELECT;
-            public IEnumerable<DiscordInteractionResponseDefaultSelect> options { get; set; } = Enumerable.Empty<DiscordInteractionResponseDefaultSelect>();
         }
 
         public class Channel : DiscordInteractionResponseSelectComponent
         {
             public override ComponentType Type => ComponentType.CHANNEL_SELECT;
-            public IEnumerable<DiscordInteractionResponseDefaultSelect> options { get; set; } = Enumerable.Empty<DiscordInteractionResponseDefaultSelect>();
+            [JsonProperty("channel_types")]
+            public ChannelType? ChannelTypes { get; set; }
         }
-    }
-
-    public class DiscordInteractionResponseSelectOption
-    {
-        [JsonProperty("label")]
-        public string Label { get; set; }
-        [JsonProperty("value")]
-        public string Value { get; set; }
-        [JsonProperty("description")]
-        public string? Description { get; set; }
-        [JsonProperty("emoji")]
-        public Emoji? Emoji { get; set; }
-        [JsonProperty("default")]
-        public bool? Default { get; set; } = false;
     }
 
     public class DiscordInteractionResponseDefaultSelect

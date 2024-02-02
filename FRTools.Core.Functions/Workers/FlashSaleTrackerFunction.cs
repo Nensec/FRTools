@@ -56,16 +56,16 @@ namespace FRTools.Core.Functions.Workers
 
             var itemId = int.Parse(flashSaleItem.ChildNodes.First(x => x.GetAttributes().Any(a => a.Name == "data-itemid")).GetAttributeValue("data-itemid", null));
             var item = await _itemService.GetItem(itemId) ?? await _itemService.FetchItemFromFR(itemId);
-            //if (item.FlashSales.All(x => x.RemovedAt != null))
+            if (item.FlashSales.All(x => x.RemovedAt != null))
             {
                 await _announceService.Announce(new FlashSaleAnnounceData(item, link));
 
-                //item.FlashSales.Add(new FRItemFlashSale
-                //{
-                //    DiscoveredAt = DateTime.UtcNow
-                //});
-                //_dataContext.FRItemFlashSales.Where(x => x.Item.FRId != itemId && x.RemovedAt == null).ToList().ForEach(x => x.RemovedAt = DateTime.UtcNow);
-                //_dataContext.SaveChanges();
+                item.FlashSales.Add(new FRItemFlashSale
+                {
+                    DiscoveredAt = DateTime.UtcNow
+                });
+                _dataContext.FRItemFlashSales.Where(x => x.Item.FRId != itemId && x.RemovedAt == null).ToList().ForEach(x => x.RemovedAt = DateTime.UtcNow);
+                _dataContext.SaveChanges();
             }
         }
     }

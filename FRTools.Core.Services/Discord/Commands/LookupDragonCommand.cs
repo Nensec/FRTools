@@ -214,7 +214,7 @@ namespace FRTools.Core.Services.Discord.Commands
                     var dragonImage = await webClient.GetByteArrayAsync(FRHelpers.GetRenderUrl(id.Value));
                     webhookResponse.Files = new Dictionary<string, byte[]> { { $"{id}_350.png", dragonImage } };
                 }
-                webhookResponse.PayloadJson.Embeds = new[] { embed };
+                webhookResponse.PayloadJson.Embeds = new List<DiscordEmbed> { embed };
 
                 await DiscordService.EditInitialInteraction(interaction.Token, webhookResponse);
             }

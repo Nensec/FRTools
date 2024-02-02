@@ -1,4 +1,6 @@
 ﻿using FRTools.Core.Services.Discord.DiscordModels.GuildModels;
+using FRTools.Core.Services.Discord.DiscordModels.MessageModels;
+using FRTools.Core.Services.Discord.DiscordModels.UserModels;
 using FRTools.Core.Services.DiscordModels;
 using Newtonsoft.Json;
 
@@ -37,6 +39,14 @@ namespace FRTools.Core.Services.Discord.DiscordModels.InteractionRequestModels
         public IEnumerable<DiscordInteractionRequestOptionData> Options { get; set; } = Enumerable.Empty<DiscordInteractionRequestOptionData>();
         [JsonProperty("type")]
         public AppCommandType Type { get; set; }
+        [JsonProperty("custom_id")]
+        public string CustomId { get; set; }
+        [JsonProperty("component_type")]
+        public ComponentType ComponentType { get; set; }
+        [JsonProperty("values")]
+        public IEnumerable<string> Values { get; set; }
+        [JsonProperty("resolved")]
+        public DiscordInteractionRequestResolvedData ResolvedData { get; set; }
     }
 
     public class DiscordInteractionRequestOptionData
@@ -49,5 +59,27 @@ namespace FRTools.Core.Services.Discord.DiscordModels.InteractionRequestModels
         public IEnumerable<DiscordInteractionRequestOptionData> Options { get; set; } = Enumerable.Empty<DiscordInteractionRequestOptionData>();
         [JsonProperty("type")]
         public AppCommandOptionType Type { get; set; }
+    }
+
+    public class DiscordInteractionRequestResolvedData
+    {
+        [JsonProperty("users")]
+        [JsonConverter(typeof(SingleOrArrayConverter<User>))]
+        public IEnumerable<User> Users { get; set; }
+        [JsonProperty("members")]
+        [JsonConverter(typeof(SingleOrArrayConverter<Member>))]
+        public IEnumerable<Member> Members { get; set; }
+        [JsonProperty("roles")]
+        [JsonConverter(typeof(SingleOrArrayConverter<Role>))]
+        public IEnumerable<Role> Roles { get; set; }
+        [JsonProperty("channels")]
+        [JsonConverter(typeof(SingleOrArrayConverter<Channel>))]
+        public IEnumerable<Channel> Channels { get; set; }
+        [JsonProperty("messages")]
+        [JsonConverter(typeof(SingleOrArrayConverter<Message>))]
+        public IEnumerable<Message> Messages { get; set; }
+        [JsonProperty("attachments")]
+        [JsonConverter(typeof(SingleOrArrayConverter<Attachment>))]
+        public IEnumerable<Attachment> Attachments { get; set; }
     }
 }

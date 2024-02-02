@@ -1,5 +1,6 @@
 ﻿using FRTools.Core.Services.Discord.DiscordModels.CommandModels;
 using FRTools.Core.Services.Discord.DiscordModels.InteractionRequestModels;
+using FRTools.Core.Services.Discord.DiscordModels.InteractionResponseModels;
 using FRTools.Core.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -20,7 +21,11 @@ namespace FRTools.Core.Services.Discord.Commands
 
         public string CommandName { get => Command.Name; }
 
+        public virtual string[]? ComponentInteractionCommandNames { get; }
+
         public abstract AppCommand Command { get; }
+
+        public virtual Task<DiscordInteractionResponse> Execute(DiscordInteractionRequest interaction) => Task.FromResult<DiscordInteractionResponse>(new DiscordInteractionResponse.DefferedContentResponse());
 
         public abstract Task DeferedExecute(DiscordInteractionRequest interaction);
     }

@@ -9,12 +9,12 @@ namespace FRTools.Core.Services.Discord.DiscordModels.WebhookModels
     {
         [JsonProperty("content")]
         public string Content { get; set; }
-        [JsonProperty("username")] 
+        [JsonProperty("username")]
         public string Username { get; set; } = Environment.GetEnvironmentVariable("DefaultDiscordUsername")!;
         [JsonProperty("avatar_url")]
         public string AvatarUrl { get; set; } = Environment.GetEnvironmentVariable("DefaultDiscordAvatarUrl")!;
         [JsonProperty("embeds")]
-        public IEnumerable<DiscordEmbed> Embeds { get; set; } = Enumerable.Empty<DiscordEmbed>();
+        public List<DiscordEmbed> Embeds { get; set; } = new List<DiscordEmbed>();
         [JsonProperty("flags")]
         public MessageFlags Flags { get; set; }
     }

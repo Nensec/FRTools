@@ -9,10 +9,14 @@ namespace FRTools.Core.Services.Announce
         public abstract Type AnnouncerType { get; }
     }
 
-    [Description("dominance")]
-    public class DominanceAnnounceData : AnnounceData
+    public abstract class AnnounceData<T> : AnnounceData
     {
-        public override Type AnnouncerType => typeof(IDominanceAnnouncer);
+        public override Type AnnouncerType => typeof(T);
+    }
+
+    [Description("dominance")]
+    public class DominanceAnnounceData : AnnounceData<IDominanceAnnouncer>
+    {
         public Flight[] Flights { get; }
 
         public DominanceAnnounceData(Flight[] flights)
@@ -22,9 +26,8 @@ namespace FRTools.Core.Services.Announce
     }
 
     [Description("flashsale")]
-    public class FlashSaleAnnounceData : AnnounceData
+    public class FlashSaleAnnounceData : AnnounceData<IFlashSaleAnnouncer>
     {
-        public override Type AnnouncerType => typeof(IFlashSaleAnnouncer);
         public FRItem FRItem { get; }
         public string MarketplaceLink { get; }
 
@@ -36,9 +39,8 @@ namespace FRTools.Core.Services.Announce
     }
 
     [Description("new items")]
-    public class NewItemsAnnounceData : AnnounceData
+    public class NewItemsAnnounceData : AnnounceData<INewItemAnnouncer>
     {
-        public override Type AnnouncerType => typeof(INewItemAnnouncer);
         public IEnumerable<FRItem> FRItems { get; }
 
         public NewItemsAnnounceData(IEnumerable<FRItem> items)

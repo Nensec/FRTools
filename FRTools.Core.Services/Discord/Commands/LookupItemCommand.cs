@@ -253,7 +253,7 @@ namespace FRTools.Core.Services.Discord.Commands
                     PayloadJson = new DiscordWebhookRequest
                     {
                         Content = $"",
-                        Embeds = new[]
+                        Embeds = new List<DiscordEmbed>
                         {
                             embed
                         }
@@ -317,7 +317,7 @@ namespace FRTools.Core.Services.Discord.Commands
                     await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                     {
                         Content = $"",
-                        Embeds = new[]
+                        Embeds = new List<DiscordEmbed>
                         {
                             new DiscordEmbed
                             {
@@ -332,7 +332,7 @@ namespace FRTools.Core.Services.Discord.Commands
                     await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                     {
                         Content = $"",
-                        Embeds = new[]
+                        Embeds = new List<DiscordEmbed>
                         {
                             new DiscordEmbed
                             {
