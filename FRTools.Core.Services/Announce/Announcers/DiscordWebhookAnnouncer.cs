@@ -200,9 +200,9 @@ namespace FRTools.Core.Services.Announce.Announcers
                     await _discordService.PostFilesToWebhook(webhook, guildWebhook.Value);
                     break;
                 }
-                catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized || ex.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    _logger.LogWarning(ex, "Unable to post to webhook, but got unauthorized. Webhook access removed, deleting record and attempting possible next registered webhook.");
+                    _logger.LogWarning(ex, "Unable to post to webhook, but got unauthorized or not found. Webhook access or webhook removed, deleting record and attempting possible next registered webhook.");
                     await _configService.RemoveConfig(guildWebhook.Key, guildWebhook.GuildId);
                 }
                 catch (Exception ex)
