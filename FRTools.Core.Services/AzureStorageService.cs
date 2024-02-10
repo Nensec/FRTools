@@ -1,7 +1,7 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using Azure.Storage.Blobs.Specialized;
 using FRTools.Core.Services.Interfaces;
+using Microsoft.Extensions.Azure;
 
 namespace FRTools.Core.Services
 {
@@ -9,10 +9,9 @@ namespace FRTools.Core.Services
     {
         private readonly BlobServiceClient _client;
 
-        public AzureStorageService()
+        public AzureStorageService(IAzureClientFactory<BlobServiceClient> azureClientFactory)
         {
-            var connectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
-            _client = new BlobServiceClient(connectionString);
+            _client = azureClientFactory.CreateClient("frtools");
         }
 
         public async Task<bool> DeleteFile(string path)
