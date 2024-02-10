@@ -10,7 +10,7 @@ namespace FRTools.Core.Services
 {
     public static class Extentions
     {
-        public static async Task<byte[]?> ParseItemForEmbed(this DiscordEmbed embed, Random random, FRItem item, IFRUserService userService, ILogger logger, DragonType? dragonType = null, Gender? gender = null)
+        public static async Task<byte[]?> ParseItemForEmbed(this DiscordEmbed embed, Random random, FRItem item, IItemAssetDataService itemAssetDataService, IFRUserService userService, ILogger logger, DragonType? dragonType = null, Gender? gender = null)
         {
             byte[]? itemAsset = null;
 
@@ -32,9 +32,8 @@ namespace FRTools.Core.Services
                         var modernBreeds = GeneratedFRHelpers.GetModernBreeds();
                         if (dragonType == null || !modernBreeds.Contains(dragonType.Value))
                             dragonType = modernBreeds[random.Next(1, modernBreeds.Length)];
-                        
-                        using (var client = new HttpClient())
-                            itemAsset = await client.GetByteArrayAsync(Helpers.GetProxyDummyDragonApparelUrl((int)dragonType, (int?)gender ?? random.Next(0, 2), item.FRId));
+
+                        itemAsset = await itemAssetDataService.GetProxyDummyDragonApparel((int)dragonType, (int?)gender ?? random.Next(0, 2), item.FRId);
 
                         break;
                     }
@@ -44,8 +43,7 @@ namespace FRTools.Core.Services
                         dragonType = FRHelpers.GetDragonType(breed[0]);
                         gender = (Gender)Enum.Parse(typeof(Gender), breed[1]);
 
-                        using (var client = new HttpClient())
-                            itemAsset = await client.GetByteArrayAsync(Helpers.GetProxyDummyDragonSkinUrl((int)dragonType, (int)gender, item.FRId));
+                        itemAsset = await itemAssetDataService.GetProxyDummyDragonSkin((int)dragonType, (int)gender, item.FRId);
 
                         embed.Fields.Add(new DiscordEmbedField { Name = "For", Value = $"{dragonType} {gender}", Inline = true });
 
@@ -61,8 +59,7 @@ namespace FRTools.Core.Services
                     }
                 case FRItemCategory.Familiar:
                     {
-                        using (var client = new HttpClient())
-                            itemAsset = await client.GetByteArrayAsync(string.Format(FRHelpers.FamiliarArtUrl, item.FRId));
+                        itemAsset = await itemAssetDataService.GetFamiliarArt(item.FRId);
 
                         break;
                     }
@@ -71,10 +68,7 @@ namespace FRTools.Core.Services
                         if (item.Name.Contains('('))
                         {
                             if (FRHelpers.TryGetDragonType(item.Name.Split('(', ')')[1], out dragonType) && dragonType != null)
-                            {
-                                using (var client = new HttpClient())
-                                    itemAsset = await client.GetByteArrayAsync(Helpers.GetProxyDummyDragonGeneUrl((int)dragonType, (int?)gender ?? random.Next(0, 2), item.FRId));
-                            }
+                                itemAsset = await itemAssetDataService.GetProxyDummyDragonGene((int)dragonType, (int?)gender ?? random.Next(0, 2), item.FRId);
                             else
                                 embed.Description += "\n\r\nBreed is not (yet) found in my data so the image is unavailable! If this breed was announced very recently it can take up to an hour or so for my systems to be auto-updated.";
                         }
@@ -84,8 +78,7 @@ namespace FRTools.Core.Services
                             if (dragonType == null || !modernBreeds.Contains(dragonType.Value))
                                 dragonType = modernBreeds[random.Next(1, modernBreeds.Length)];
 
-                            using (var client = new HttpClient())
-                                itemAsset = await client.GetByteArrayAsync(Helpers.GetProxyDummyDragonGeneUrl((int)dragonType, (int?)gender ?? random.Next(0, 2), item.FRId));
+                            itemAsset = await itemAssetDataService.GetProxyDummyDragonGene((int)dragonType, (int?)gender ?? random.Next(0, 2), item.FRId);
                         }
 
                         break;
@@ -94,16 +87,14 @@ namespace FRTools.Core.Services
                     {
                         if (item.ItemType == "Scene")
                         {
-                            using (var client = new HttpClient())
-                                itemAsset = await client.GetByteArrayAsync(string.Format(FRHelpers.SceneArtUrl, item.FRId));
+                            itemAsset = await itemAssetDataService.GetSceneArt(item.FRId);
                         }
                         else
                         {
                             if (item.AssetUrl != null)
                             {
                                 logger.LogDebug("Unknown art type, attempting AssetURL");
-                                using (var client = new HttpClient())
-                                    itemAsset = await client.GetByteArrayAsync($"https://www1.flightrising.com{item.AssetUrl}");
+                                itemAsset = await itemAssetDataService.GetAssetArt($"https://www1.flightrising.com{item.AssetUrl}");
                             }
                         }
 

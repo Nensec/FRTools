@@ -15,8 +15,11 @@ namespace FRTools.Core.Services.Discord.Commands
 {
     public class LookupDragonCommand : BaseDiscordCommand
     {
-        public LookupDragonCommand(IDiscordService discordService, ILogger<LookupDragonCommand> logger) : base(discordService, logger)
+        private readonly IItemAssetDataService _itemAssetDataService;
+
+        public LookupDragonCommand(IItemAssetDataService itemAssetDataService, IDiscordService discordService, ILogger<LookupDragonCommand> logger) : base(discordService, logger)
         {
+            _itemAssetDataService = itemAssetDataService;
         }
 
         public override AppCommand Command => new AppCommand
@@ -97,7 +100,7 @@ namespace FRTools.Core.Services.Discord.Commands
                     return;
                 }
 
-                var webhookResponse = new DiscordWebhookFiles();
+                var webhookResponse = new DiscordWebhookFilesRequest();
                 webhookResponse.PayloadJson.Content = "";
 
                 var isExalted = dragonProfileDoc.GetElementbyId("exalted-content") != null;
@@ -209,11 +212,10 @@ namespace FRTools.Core.Services.Discord.Commands
                     }
                 }
                 embed.Fields = fields;
-                using (var webClient = new HttpClient())
-                {
-                    var dragonImage = await webClient.GetByteArrayAsync(FRHelpers.GetRenderUrl(id.Value));
-                    webhookResponse.Files = new Dictionary<string, byte[]> { { $"{id}_350.png", dragonImage } };
-                }
+
+                var dragonImage = await _itemAssetDataService.GetDragonRender(id.Value);
+                webhookResponse.Files = new Dictionary<string, byte[]> { { $"{id}_350.png", dragonImage } };
+
                 webhookResponse.PayloadJson.Embeds = new List<DiscordEmbed> { embed };
 
                 await DiscordService.EditInitialInteraction(interaction.Token, webhookResponse);
