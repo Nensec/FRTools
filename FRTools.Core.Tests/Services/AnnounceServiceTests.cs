@@ -7,7 +7,7 @@ using FRTools.Core.Services.Announce.Announcers;
 using FRTools.Core.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace FRTools.Test.Services
+namespace FRTools.Core.Tests.Services
 {
     public class AnnounceServiceTests
     {
@@ -90,9 +90,9 @@ namespace FRTools.Test.Services
             var announceData = CreateFakeData(announceDataType);
             await discordAnnouncer.Announce(announceData);
 
-            if (interfaceType.IsAssignableFrom(typeof(DiscordWebhookAnnouncer)))            
-               A.CallTo(() => fakeDiscordService.PostMessageToWebhook(null!, null!)).WithAnyArguments().MustHaveHappened();            
-            else            
+            if (interfaceType.IsAssignableFrom(typeof(DiscordWebhookAnnouncer)))
+                A.CallTo(() => fakeDiscordService.PostMessageToWebhook(null!, null!)).WithAnyArguments().MustHaveHappened();
+            else
                 A.CallTo(() => fakeDiscordService.PostMessageToWebhook(null!, null!)).WithAnyArguments().MustNotHaveHappened();
         }
 

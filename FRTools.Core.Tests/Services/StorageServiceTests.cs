@@ -2,7 +2,7 @@
 using FRTools.Core.Services;
 using Microsoft.Extensions.Azure;
 
-namespace FRTools.Test.Services
+namespace FRTools.Core.Tests.Services
 {
     public class StorageServiceTests
     {
