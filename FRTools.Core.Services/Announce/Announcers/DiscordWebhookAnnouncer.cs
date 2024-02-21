@@ -1,5 +1,4 @@
-﻿using FRTools.Core.Common;
-using FRTools.Core.Data.DataModels.FlightRisingModels;
+﻿using FRTools.Core.Data.DataModels.FlightRisingModels;
 using FRTools.Core.Services.Discord.DiscordModels.Embed;
 using FRTools.Core.Services.Discord.DiscordModels.WebhookModels;
 using FRTools.Core.Services.Interfaces;
@@ -74,21 +73,10 @@ namespace FRTools.Core.Services.Announce.Announcers
             {
                 Title = "New flash sale found! - " + data.FRItem.Name,
             };
-            var fields = new List<DiscordEmbedField>
-            {
-                new() {
-                    Name = "Game database",
-                    Value = $"[#{data.FRItem.FRId}]({string.Format(FRHelpers.GameDatabaseUrl, data.FRItem.FRId)})",
-                    Inline = true
-                }
-            };
-
-            if (data.FRItem.TreasureValue > 0)
-                fields.Add(new DiscordEmbedField { Name = "Treasure value", Value = $"~~{data.FRItem.TreasureValue * 10}~~ ***{data.FRItem.TreasureValue * .8 * 10}***", Inline = true });
 
             byte[]? itemAsset = await embed.ParseItemForEmbed(random, data.FRItem, _itemAssetDataService, _userService, _logger);
 
-            embed.Fields = fields;
+            embed.Fields.Add(new DiscordEmbedField { Inline = true, Name = "Marketplace", Value = $"[Click here]({data.MarketplaceLink})" });
 
             if (itemAsset != null)
             {
@@ -100,9 +88,9 @@ namespace FRTools.Core.Services.Announce.Announcers
             }
 
             var iconAsset = await _itemAssetDataService.GetProxyIcon(data.FRItem.FRId);
-            if(iconAsset != null)            
+            if (iconAsset != null)
                 files.Add($"icon_{data.FRItem.FRId}.png", iconAsset);
-            
+
             embeds.Add(embed);
 
             webhook.Files = files;
