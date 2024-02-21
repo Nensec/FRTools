@@ -10,11 +10,13 @@ namespace FRTools.Core.Services
     public class FRUserService : IFRUserService
     {
         private readonly DataContext _dataContext;
+        private readonly IHtmlService _htmlService;
         private readonly ILogger<FRUserService> _logger;
 
-        public FRUserService(DataContext dataContext, ILogger<FRUserService> logger)
+        public FRUserService(DataContext dataContext, IHtmlService htmlService, ILogger<FRUserService> logger)
         {
             _dataContext = dataContext;
+            _htmlService = htmlService;
             _logger = logger;
         }
 
@@ -87,7 +89,7 @@ namespace FRTools.Core.Services
         private async Task<(string Username, int UserId)> GetFRUserInfo(string? username, int? userId)
         {
             string url = $"https://www1.flightrising.com/clan-profile/{(userId?.ToString() ?? $"n/{username}")}";
-            var userProfilePage = await Helpers.LoadHtmlPage(url);
+            var userProfilePage = await _htmlService.LoadHtmlPage(url);
 
             if (userProfilePage.ParsedText.Contains("404 - Page Not Found") || userProfilePage.ParsedText.Contains("404: User not found"))
                 return default;

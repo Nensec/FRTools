@@ -14,6 +14,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="TestData\FlashSalePage.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="TestData\FlashSalePage.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\FlashSalePageFlashless.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FakeItEasy" Version="8.1.0" />
     <PackageReference Include="FluentAssertions" Version="6.12.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
