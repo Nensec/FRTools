@@ -6,6 +6,7 @@ using FRTools.Core.Data;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
 using FRTools.Core.Services.Announce;
 using FRTools.Core.Services.Interfaces;
+using HtmlAgilityPack.CssSelectors.NetCore;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 
@@ -29,14 +30,13 @@ namespace FRTools.Core.Functions.Workers
         [FunctionName(nameof(FlashTracker))]
         public async Task FlashTracker([TimerTrigger("0 1 8,20 * * *", RunOnStartup = DEBUG)] TimerInfo timer, ILogger log)
         {
-            string[] _tabs = { "apparel", "familiars", "specialty", "genes", "scenes", "skins", "battle", "bundles" };
-
             var marketPlaceDoc = await Helpers.LoadHtmlPage(FRHelpers.MarketplaceUrl);
-            var marketTabs = marketPlaceDoc.DocumentNode.SelectNodes("//*[@id=\"market-tabs\"]/div");
+            var marketTabs = marketPlaceDoc.DocumentNode.QuerySelectorAll(".market-tab .common-tab");
+            var _tabs = marketTabs.Select(x => x.SelectSingleNode("a").GetAttributeValue("href", null).Split('/').Last()).ToArray();
             var link = marketTabs.First(x => x.ChildNodes.Any(c => c.HasClass("flash_sale_tab_icon"))).SelectSingleNode("a").GetAttributeValue("href", null);
 
             var itemsDoc = await Helpers.LoadHtmlPage(string.Format(FRHelpers.MarketplaceFetchUrl, link.Split('/').Last()));
-            var items = itemsDoc.DocumentNode.SelectNodes("//*[@id=\"market-result-items-content\"]/span");
+            var items = itemsDoc.DocumentNode.QuerySelectorAll(".market-item-result");
             var flashSaleItem = items.FirstOrDefault(x => x.HasClass("market-flash-result"));
 
             if (flashSaleItem == null)
@@ -44,7 +44,7 @@ namespace FRTools.Core.Functions.Workers
                 foreach (var tab in _tabs)
                 {
                     itemsDoc = await Helpers.LoadHtmlPage(string.Format(FRHelpers.MarketplaceFetchUrl, tab));
-                    items = itemsDoc.DocumentNode.SelectNodes("//*[@id=\"market-result-items-content\"]/span");
+                    items = itemsDoc.DocumentNode.QuerySelectorAll(".market-item-result");
                     flashSaleItem = items.FirstOrDefault(x => x.HasClass("market-flash-result"));
                     if (flashSaleItem != null)
                         break;
