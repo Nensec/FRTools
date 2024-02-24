@@ -10,6 +10,7 @@ using FRTools.Core.Services.Discord.DiscordModels.InteractionRequestModels;
 using FRTools.Core.Services.Discord.DiscordModels.WebhookModels;
 using FRTools.Core.Services.DiscordModels;
 using FRTools.Core.Services.Interfaces;
+using Microsoft.Azure.Amqp.Framing;
 using Microsoft.Extensions.Logging;
 
 namespace FRTools.Core.Services.Discord.Commands
@@ -17,12 +18,14 @@ namespace FRTools.Core.Services.Discord.Commands
     public class LookupItemCommand : BaseDiscordCommand
     {
         private readonly IFRItemService _itemService;
+        private readonly IItemAssetDataService _itemAssetDataService;
         private readonly IFRUserService _userService;
         private readonly ILogger<LookupItemCommand> _logger;
 
-        public LookupItemCommand(IFRItemService itemService, IFRUserService userService, IDiscordService discordService, ILogger<LookupItemCommand> logger) : base(discordService, logger)
+        public LookupItemCommand(IFRItemService itemService, IItemAssetDataService itemAssetDataService, IFRUserService userService,  IDiscordService discordService, ILogger<LookupItemCommand> logger) : base(discordService, logger)
         {
             _itemService = itemService;
+            _itemAssetDataService = itemAssetDataService;
             _userService = userService;
             _logger = logger;
         }
@@ -248,7 +251,7 @@ namespace FRTools.Core.Services.Discord.Commands
                 });
 
                 var embed = new DiscordEmbed();
-                var webhook = new DiscordWebhookFiles
+                var webhook = new DiscordWebhookFilesRequest
                 {
                     PayloadJson = new DiscordWebhookRequest
                     {
@@ -270,7 +273,7 @@ namespace FRTools.Core.Services.Discord.Commands
                     gender = (Gender)genderOption;
 
                 var random = new Random();
-                byte[]? itemAsset = await embed.ParseItemForEmbed(random, searchResult[0], _userService, _logger, dragonType, gender);
+                byte[]? itemAsset = await embed.ParseItemForEmbed(random, searchResult[0], _itemAssetDataService, _userService, _logger, dragonType, gender);
 
                 if (itemAsset != null)
                 {
@@ -280,11 +283,10 @@ namespace FRTools.Core.Services.Discord.Commands
                     embed.Image = new DiscordEmbedImage { Url = $"attachment://{fileName}" };
 
                 }
-                using (var client = new HttpClient())
-                {
-                    var iconAsset = await client.GetByteArrayAsync(Helpers.GetProxyIconUrl(searchResult[0].FRId));
+                var iconAsset = await _itemAssetDataService.GetProxyIcon(searchResult[0].FRId);
+                if (iconAsset != null)
                     webhook.Files.Add($"icon_{searchResult[0].FRId}.png", iconAsset);
-                }
+
                 var reply = (await DiscordService.ReplyToInteraction(interaction.Token, webhook)).First();
                 await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                 {

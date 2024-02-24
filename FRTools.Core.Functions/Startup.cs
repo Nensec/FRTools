@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Azure.Messaging.ServiceBus;
+using Azure.Storage.Blobs;
 using FRTools.Core.Data;
 using FRTools.Core.Services;
 using FRTools.Core.Services.Announce;
@@ -40,6 +41,8 @@ namespace FRTools.Core.Functions
             builder.Services.AddTransient<IFRUserService, FRUserService>();
             builder.Services.AddTransient<IFRItemService, FRItemService>();
 
+            builder.Services.AddTransient<IItemAssetDataService, ItemAssetDataService>();
+            builder.Services.AddTransient<IHtmlService, HtmlService>();
             builder.Services.AddTransient<IConfigService, ConfigService>();
 
             builder.Services.AddAzureClients(builder =>
@@ -47,8 +50,12 @@ namespace FRTools.Core.Functions
                 var queueName = Environment.GetEnvironmentVariable("AzureServiceBusCommandQueue");
 
                 builder.AddServiceBusClient(Environment.GetEnvironmentVariable("AZURESBCONNSTR_defaultConnection"));
-                builder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, _, provider) => provider.GetRequiredService<ServiceBusClient>().CreateSender(queueName)).WithName(queueName);
+                builder.AddBlobServiceClient(Environment.GetEnvironmentVariable("AzureWebJobsStorage"));
+                builder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, provider) => provider.GetRequiredService<ServiceBusClient>().CreateSender(queueName)).WithName(queueName);
+                builder.AddClient<BlobServiceClient, BlobClientOptions>((_, provider) => provider.GetRequiredService<BlobServiceClient>()).WithName("frtools");
             });
+
+            builder.Services.AddSingleton<ITumblrService, TumblrService>();
 
             ConfigureAnnouncers(builder);
             ConfigureDiscord(builder);

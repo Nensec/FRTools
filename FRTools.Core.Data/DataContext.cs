@@ -17,33 +17,33 @@ namespace FRTools.Core.Data
         }
 
         // FRTools tables
-        public DbSet<Job> Jobs { get; set; }
-        public DbSet<ProfileSettings> ProfileSettings { get; set; }
+        public virtual DbSet<Job> Jobs { get; set; }
+        public virtual DbSet<ProfileSettings> ProfileSettings { get; set; }
 
         // Skintester tables
-        public DbSet<Skin> Skins { get; set; }
-        public DbSet<Preview> Previews { get; set; }
+        public virtual DbSet<Skin> Skins { get; set; }
+        public virtual DbSet<Preview> Previews { get; set; }
 
         // Newsreader tables
-        public DbSet<Topic> Topics { get; set; }
-        public DbSet<Post> Posts { get; set; }
+        public virtual DbSet<Topic> Topics { get; set; }
+        public virtual DbSet<Post> Posts { get; set; }
 
         // Pinglist tables
-        public DbSet<Pinglist> Pinglists { get; set; }
-        public DbSet<PingListEntry> PingListEntries { get; set; }
-        public DbSet<PinglistCategory> PinglistCategories { get; set; }
+        public virtual DbSet<Pinglist> Pinglists { get; set; }
+        public virtual DbSet<PingListEntry> PingListEntries { get; set; }
+        public virtual DbSet<PinglistCategory> PinglistCategories { get; set; }
 
         // Flight rising tables
-        public DbSet<DragonCache> DragonCache { get; set; }
-        public DbSet<FRUser> FRUsers { get; set; }
-        public DbSet<FRDominance> FRDominances { get; set; }
-        public DbSet<FRItem> FRItems { get; set; }
-        public DbSet<FRItemFlashSale> FRItemFlashSales { get; set; }
+        public virtual DbSet<DragonCache> DragonCache { get; set; }
+        public virtual DbSet<FRUser> FRUsers { get; set; }
+        public virtual DbSet<FRDominance> FRDominances { get; set; }
+        public virtual DbSet<FRItem> FRItems { get; set; }
+        public virtual DbSet<FRItemFlashSale> FRItemFlashSales { get; set; }
 
         // Discord tables
-        public DbSet<DiscordLog> DiscordLogs { get; set; }
-        public DbSet<DiscordServer> DiscordServers { get; set; }
-        public DbSet<DiscordSetting> DiscordSettings { get; set; }
+        public virtual DbSet<DiscordLog> DiscordLogs { get; set; }
+        public virtual DbSet<DiscordServer> DiscordServers { get; set; }
+        public virtual DbSet<DiscordSetting> DiscordSettings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

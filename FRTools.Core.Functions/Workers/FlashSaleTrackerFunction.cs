@@ -18,24 +18,26 @@ namespace FRTools.Core.Functions.Workers
         private readonly IFRUserService _userService;
         private readonly IFRItemService _itemService;
         private readonly IAnnounceService _announceService;
+        private readonly IHtmlService _htmlService;
 
-        public FlashSaleTrackerFunction(DataContext dataContext, IFRUserService userService, IFRItemService itemService, IAnnounceService announceService)
+        public FlashSaleTrackerFunction(DataContext dataContext, IFRUserService userService, IFRItemService itemService, IAnnounceService announceService, IHtmlService htmlService)
         {
             _dataContext = dataContext;
             _userService = userService;
             _itemService = itemService;
             _announceService = announceService;
+            _htmlService = htmlService;
         }
 
         [FunctionName(nameof(FlashTracker))]
         public async Task FlashTracker([TimerTrigger("0 1 8,20 * * *", RunOnStartup = DEBUG)] TimerInfo timer, ILogger log)
         {
-            var marketPlaceDoc = await Helpers.LoadHtmlPage(FRHelpers.MarketplaceUrl);
+            var marketPlaceDoc = await _htmlService.LoadHtmlPage(FRHelpers.MarketplaceUrl);
             var marketTabs = marketPlaceDoc.DocumentNode.QuerySelectorAll(".market-tab .common-tab");
             var _tabs = marketTabs.Select(x => x.SelectSingleNode("a").GetAttributeValue("href", null).Split('/').Last()).ToArray();
             var link = marketTabs.First(x => x.ChildNodes.Any(c => c.HasClass("flash_sale_tab_icon"))).SelectSingleNode("a").GetAttributeValue("href", null);
 
-            var itemsDoc = await Helpers.LoadHtmlPage(string.Format(FRHelpers.MarketplaceFetchUrl, link.Split('/').Last()));
+            var itemsDoc = await _htmlService.LoadHtmlPage(string.Format(FRHelpers.MarketplaceFetchUrl, link.Split('/').Last()));
             var items = itemsDoc.DocumentNode.QuerySelectorAll(".market-item-result");
             var flashSaleItem = items.FirstOrDefault(x => x.HasClass("market-flash-result"));
 
@@ -43,7 +45,7 @@ namespace FRTools.Core.Functions.Workers
             {
                 foreach (var tab in _tabs)
                 {
-                    itemsDoc = await Helpers.LoadHtmlPage(string.Format(FRHelpers.MarketplaceFetchUrl, tab));
+                    itemsDoc = await _htmlService.LoadHtmlPage(string.Format(FRHelpers.MarketplaceFetchUrl, tab));
                     items = itemsDoc.DocumentNode.QuerySelectorAll(".market-item-result");
                     flashSaleItem = items.FirstOrDefault(x => x.HasClass("market-flash-result"));
                     if (flashSaleItem != null)

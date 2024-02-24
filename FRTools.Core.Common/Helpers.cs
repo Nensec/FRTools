@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using FRTools.Core.Data;
-using HtmlAgilityPack;
 
 namespace FRTools.Core.Common
 {
@@ -26,21 +21,5 @@ namespace FRTools.Core.Common
         public static string GetProxyDummyDragonApparelUrl(int dragonBreed, int gender, int itemId) => $"http{(IsLocal ? "" : "s")}://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/proxy/dragon/apparel/{dragonBreed}/{gender}/{itemId}";
         public static string GetProxyIconUrl(int itemId) => $"http{(IsLocal ? "" : "s")}://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/proxy/icon/{itemId}";
         public static string GetDiscordInteractionUrl() => $"http{(IsLocal ? "" : "s")}://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/discord";
-
-        public static async Task<HtmlDocument> LoadHtmlPage(string url)
-        {
-            var client = new HttpClient(new HttpClientHandler { AllowAutoRedirect = true });
-
-            var response = await client.GetAsync(url);
-            if (response.StatusCode == HttpStatusCode.Found && response.Headers.Location != null)
-            {
-                return await LoadHtmlPage(response.Headers.Location.AbsoluteUri);
-            }
-
-            var resultDocument = new HtmlDocument();
-            resultDocument.Load(response.Content.ReadAsStream(), Encoding.GetEncoding("utf-8"));
-
-            return resultDocument;
-        }
     }
 }

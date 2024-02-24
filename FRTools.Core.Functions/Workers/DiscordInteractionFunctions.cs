@@ -30,7 +30,7 @@ namespace FRTools.Core.Functions.Workers
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            var body = GetBody(req);
+            var body = await GetBody(req);
 
             if (!CheckSecurity(req.Headers["X-Signature-Ed25519"], req.Headers["X-Signature-Timestamp"], body, log))
                 return new UnauthorizedResult();
@@ -97,10 +97,10 @@ namespace FRTools.Core.Functions.Workers
 
         private IActionResult AckResult() => new ContentResult { Content = JsonConvert.SerializeObject(new DiscordInteractionResponse.PongResponse()), ContentType = "application/json", StatusCode = 200 };
 
-        private string GetBody(HttpRequest req)
+        private async Task<string> GetBody(HttpRequest req)
         {
             using (var reader = new StreamReader(req.Body))
-                return reader.ReadToEnd();
+                return await reader.ReadToEndAsync();
         }
     }
 }

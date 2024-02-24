@@ -1,5 +1,4 @@
-﻿using FRTools.Core.Common;
-using FRTools.Core.Data.DataModels.FlightRisingModels;
+﻿using FRTools.Core.Data.DataModels.FlightRisingModels;
 using FRTools.Core.Services.Discord.DiscordModels.Embed;
 using FRTools.Core.Services.Discord.DiscordModels.WebhookModels;
 using FRTools.Core.Services.Interfaces;
@@ -11,13 +10,15 @@ namespace FRTools.Core.Services.Announce.Announcers
     {
         private readonly IConfigService _configService;
         private readonly IDiscordService _discordService;
+        private readonly IItemAssetDataService _itemAssetDataService;
         private readonly IFRUserService _userService;
         private readonly ILogger<DiscordWebhookAnnouncer> _logger;
 
-        public DiscordWebhookAnnouncer(IConfigService configService, IDiscordService discordService, IFRUserService userService, ILogger<DiscordWebhookAnnouncer> logger)
+        public DiscordWebhookAnnouncer(IConfigService configService, IDiscordService discordService, IItemAssetDataService itemAssetDataService, IFRUserService userService, ILogger<DiscordWebhookAnnouncer> logger)
         {
             _configService = configService;
             _discordService = discordService;
+            _itemAssetDataService = itemAssetDataService;
             _userService = userService;
             _logger = logger;
         }
@@ -64,7 +65,7 @@ namespace FRTools.Core.Services.Announce.Announcers
         {
             var random = new Random();
 
-            var webhook = new DiscordWebhookFiles();
+            var webhook = new DiscordWebhookFilesRequest();
             var files = new Dictionary<string, byte[]>();
             var embeds = new List<DiscordEmbed>();
 
@@ -72,21 +73,10 @@ namespace FRTools.Core.Services.Announce.Announcers
             {
                 Title = "New flash sale found! - " + data.FRItem.Name,
             };
-            var fields = new List<DiscordEmbedField>
-            {
-                new() {
-                    Name = "Game database",
-                    Value = $"[#{data.FRItem.FRId}]({string.Format(FRHelpers.GameDatabaseUrl, data.FRItem.FRId)})",
-                    Inline = true
-                }
-            };
 
-            if (data.FRItem.TreasureValue > 0)
-                fields.Add(new DiscordEmbedField { Name = "Treasure value", Value = $"~~{data.FRItem.TreasureValue * 10}~~ ***{data.FRItem.TreasureValue * .8 * 10}***", Inline = true });
+            byte[]? itemAsset = await embed.ParseItemForEmbed(random, data.FRItem, _itemAssetDataService, _userService, _logger);
 
-            byte[]? itemAsset = await embed.ParseItemForEmbed(random, data.FRItem, _userService, _logger);
-
-            embed.Fields = fields;
+            embed.Fields.Add(new DiscordEmbedField { Inline = true, Name = "Marketplace", Value = $"[Click here]({data.MarketplaceLink})" });
 
             if (itemAsset != null)
             {
@@ -96,11 +86,11 @@ namespace FRTools.Core.Services.Announce.Announcers
                 embed.Image = new DiscordEmbedImage { Url = $"attachment://{fileName}" };
 
             }
-            using (var client = new HttpClient())
-            {
-                var iconAsset = await client.GetByteArrayAsync(Helpers.GetProxyIconUrl(data.FRItem.FRId));
+
+            var iconAsset = await _itemAssetDataService.GetProxyIcon(data.FRItem.FRId);
+            if (iconAsset != null)
                 files.Add($"icon_{data.FRItem.FRId}.png", iconAsset);
-            }
+
             embeds.Add(embed);
 
             webhook.Files = files;
@@ -118,7 +108,7 @@ namespace FRTools.Core.Services.Announce.Announcers
         {
             var random = new Random();
 
-            var webhook = new DiscordWebhookFiles();
+            var webhook = new DiscordWebhookFilesRequest();
             var embeds = new List<DiscordEmbed>();
 
             var itemEmbeds = new Dictionary<FRItem, (DiscordEmbed Embed, Dictionary<string, byte[]> Files)>();
@@ -140,7 +130,7 @@ namespace FRTools.Core.Services.Announce.Announcers
 
                 embed.Fields = fields;
 
-                byte[]? itemAsset = await embed.ParseItemForEmbed(random, item, _userService, _logger);
+                byte[]? itemAsset = await embed.ParseItemForEmbed(random, item, _itemAssetDataService, _userService, _logger);
 
                 if (itemAsset != null)
                 {
@@ -150,11 +140,10 @@ namespace FRTools.Core.Services.Announce.Announcers
                     embed.Image = new DiscordEmbedImage { Url = $"attachment://{fileName}" };
 
                 }
-                using (var client = new HttpClient())
-                {
-                    var iconAsset = await client.GetByteArrayAsync(Helpers.GetProxyIconUrl(item.FRId));
+
+                var iconAsset = await _itemAssetDataService.GetProxyIcon(item.FRId);
+                if (iconAsset != null)
                     files.Add($"icon_{item.FRId}.png", iconAsset);
-                }
 
                 itemEmbeds.Add(item, (embed, files));
             }
@@ -173,7 +162,7 @@ namespace FRTools.Core.Services.Announce.Announcers
                 var guildSpecificSettings = await _configService.GetConfigValue("GUILDCONFIG_ANNOUNCE_NEWITEMTYPES", guildWebhooks.Key);
                 if (guildSpecificSettings != null)
                 {
-                    webhookToPost = new DiscordWebhookFiles();
+                    webhookToPost = new DiscordWebhookFilesRequest();
                     var itemCategoriesAllowed = guildSpecificSettings.Split(',').Select(x => Enum.Parse<FRItemCategory>(x)).ToList();
 
                     foreach (var itemEmbed in itemEmbeds)
@@ -191,34 +180,13 @@ namespace FRTools.Core.Services.Announce.Announcers
             }
         }
 
-        private async Task AttemptPostToWebhook(IGrouping<ulong, (string Key, string Value, ulong GuildId)> guildWebhooks, DiscordWebhookFiles webhook)
+        private async Task AttemptPostToWebhook(IGrouping<ulong, (string Key, string Value, ulong GuildId)> guildWebhooks, IDiscordWebhookRequest webhookRequest)
         {
             foreach (var guildWebhook in guildWebhooks)
             {
                 try
                 {
-                    await _discordService.PostFilesToWebhook(webhook, guildWebhook.Value);
-                    break;
-                }
-                catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized || ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-                {
-                    _logger.LogWarning(ex, "Unable to post to webhook, but got unauthorized or not found. Webhook access or webhook removed, deleting record and attempting possible next registered webhook.");
-                    await _configService.RemoveConfig(guildWebhook.Key, guildWebhook.GuildId);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Unable to post to webhook.");
-                }
-            }            
-        }
-
-        private async Task AttemptPostToWebhook(IGrouping<ulong, (string Key, string Value, ulong GuildId)> guildWebhooks, DiscordWebhookRequest webhook)
-        {
-            foreach (var guildWebhook in guildWebhooks)
-            {
-                try
-                {
-                    await _discordService.PostMessageToWebhook(webhook, guildWebhook.Value);
+                    await _discordService.PostMessageToWebhook(webhookRequest, guildWebhook.Value);
                     break;
                 }
                 catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using FRTools.Core.Common;
 using FRTools.Core.Data;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
 using FRTools.Core.Services.Announce;
@@ -15,11 +14,13 @@ namespace FRTools.Core.Functions.Workers
     public class DominanceTrackerFunction : FunctionBase
     {
         private readonly DataContext _dataContext;
+        private readonly IHtmlService _htmlService;
         private readonly IAnnounceService _announceService;
 
-        public DominanceTrackerFunction(DataContext dataContext, IAnnounceService announceService)
+        public DominanceTrackerFunction(DataContext dataContext, IHtmlService htmlService, IAnnounceService announceService)
         {
             _dataContext = dataContext;
+            _htmlService = htmlService;
             _announceService = announceService;
         }
 
@@ -30,7 +31,7 @@ namespace FRTools.Core.Functions.Workers
             {
                 try
                 {
-                    var dominanceHtml = await Helpers.LoadHtmlPage("https://www1.flightrising.com/dominance");
+                    var dominanceHtml = await _htmlService.LoadHtmlPage("https://www1.flightrising.com/dominance");
                     var domTexts = dominanceHtml.DocumentNode.QuerySelectorAll("#domtext > div");
 
                     Flight[] positions = new Flight[3];

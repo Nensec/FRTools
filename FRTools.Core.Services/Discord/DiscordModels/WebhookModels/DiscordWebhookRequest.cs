@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 #pragma warning disable CS8618
 namespace FRTools.Core.Services.Discord.DiscordModels.WebhookModels
 {
-    public class DiscordWebhookRequest
+    public class DiscordWebhookRequest : IDiscordWebhookRequest
     {
         [JsonProperty("content")]
         public string Content { get; set; }
@@ -19,12 +19,16 @@ namespace FRTools.Core.Services.Discord.DiscordModels.WebhookModels
         public MessageFlags Flags { get; set; }
     }
 
-    public class DiscordWebhookFiles
+    public class DiscordWebhookFilesRequest : IDiscordWebhookRequest
     {
         [JsonProperty("payload_json")]
         public DiscordWebhookRequest PayloadJson { get; set; } = new DiscordWebhookRequest();
 
         [JsonProperty("files")]
         public Dictionary<string, byte[]> Files { get; set; } = new Dictionary<string, byte[]>();
+    }
+
+    public interface IDiscordWebhookRequest
+    {
     }
 }

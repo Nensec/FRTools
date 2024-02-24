@@ -22,20 +22,22 @@ namespace FRTools.Core.Functions.Workers
         private readonly DataContext _dataContext;
         private readonly IFRItemService _itemService;
         private readonly IAzurePipelineService _pipelineService;
+        private readonly IHtmlService _htmlService;
         private ILogger _logger;
 
-        public NewsTrackerFunction(DataContext dataContext, IFRItemService itemService, IAzurePipelineService pipelineService)
+        public NewsTrackerFunction(DataContext dataContext, IFRItemService itemService, IAzurePipelineService pipelineService, IHtmlService htmlService)
         {
             _dataContext = dataContext;
             _itemService = itemService;
             _pipelineService = pipelineService;
+            _htmlService = htmlService;
         }
 
         [FunctionName(nameof(NewsTracker))]
         public async Task NewsTracker([TimerTrigger("0 */5 * * * *", RunOnStartup = DEBUG)] TimerInfo timer, ILogger log)
         {
             _logger = log;
-            var mainNewsForum = await Helpers.LoadHtmlPage("https://www1.flightrising.com/forums/ann");
+            var mainNewsForum = await _htmlService.LoadHtmlPage("https://www1.flightrising.com/forums/ann");
             var topics = mainNewsForum.GetElementbyId("postlist").SelectNodes("tr");
 
             _logger.LogInformation($"Found {topics.Count} topics");

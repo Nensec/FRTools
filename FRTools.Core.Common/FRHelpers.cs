@@ -60,26 +60,31 @@ namespace FRTools.Core.Common
 
             foreach (var item in items.Where(x => x.ItemType == "Specialty Item" && (x.Name.StartsWith("Primary") || x.Name.StartsWith("Secondary") || x.Name.StartsWith("Tertiary"))))
             {
-                // First check if the breed is known in case of an ancient breed
-                if (item.Name.Contains("("))
-                {
-                    var breed = item.Name.Split('(', ')')[1];
-                    if (!CheckIfDragonTypeIsKnown(breed))
-                    {
-                        return true;
-                    }
-                }
+                // FR seems to have two flavors now
+                // Tertiary Gene: Rockbreaker (Sandsurge) - This is the old style
+                // Tertiary Auraboa Gene: Crystalline - This is new style
+
+                // First check if the breed is known in case of an ancient breed 
+                if (item.Name.Contains("(") && !CheckIfDragonTypeIsKnown(item.Name.Split('(', ')')[1])) // old style
+                    return true;               
+                else if (!item.Name.StartsWith("Primary Gene") && !item.Name.StartsWith("Secondary Gene") && !item.Name.StartsWith("Tertiary Gene") && !CheckIfDragonTypeIsKnown(item.Name.Split(" ")[1].Trim())) // new style
+                    return true;
 
                 // Check if the gene itself is known
-                var geneName = item.Name.Split(':', '(')[0].Trim();
                 try
                 {
+                    var nameSplit = item.Name.Split(':', '(', ')');
+
+                    string enumName = item.Name.Contains('(')
+                        ? $"{nameSplit[2].Trim()}_{nameSplit[1].Trim()}"
+                        : $"{nameSplit[0].Split(" ")[1].Trim()}_{nameSplit[1].Trim()}";
+
                     if (item.Name.StartsWith("Primary"))
-                        GetBodyGene(geneName);
+                        GetBodyGene(enumName);
                     if (item.Name.StartsWith("Secondary"))
-                        GetWingGene(geneName);
+                        GetWingGene(enumName);
                     if (item.Name.StartsWith("Tertiary"))
-                        GetTertiaryGene(geneName);
+                        GetTertiaryGene(enumName);
                 }
                 catch (ArgumentException)
                 {

@@ -16,15 +16,14 @@ namespace FRTools.Core.Functions.Workers
     public class ItemFetcherFunction : FunctionBase
     {
         private readonly IAzureStorageService _azureStorage;
-        private readonly IFRUserService _userService;
         private readonly IFRItemService _itemService;
         private readonly IAzurePipelineService _pipelineService;
         private readonly IAnnounceService _announceService;
+        private readonly int _fetchDelay = int.Parse(Environment.GetEnvironmentVariable("QueryFRDelay") ?? "0");
 
-        public ItemFetcherFunction(IAzureStorageService azureStorage, IFRUserService userService, IFRItemService itemService, IAzurePipelineService pipelineService, IAnnounceService announceService)
+        public ItemFetcherFunction(IAzureStorageService azureStorage, IFRItemService itemService, IAzurePipelineService pipelineService, IAnnounceService announceService)
         {
             _azureStorage = azureStorage;
-            _userService = userService;
             _itemService = itemService;
             _pipelineService = pipelineService;
             _announceService = announceService;
@@ -72,7 +71,7 @@ namespace FRTools.Core.Functions.Workers
                 }
                 else
                     _noItemFoundCounter++;
-                await Task.Delay(100);
+                await Task.Delay(_fetchDelay);
             }
 
             log.LogInformation($"Done for now, saving {items.Count} items.");
@@ -95,7 +94,7 @@ namespace FRTools.Core.Functions.Workers
                 log.LogInformation($"Since items were found, saving last success at {DateTime.UtcNow}");
 
                 log.LogInformation("Checking if we got any new genes or breeds");
-                if (!DEBUG && FRHelpers.CheckForUnknownGenesOrBreed(items))
+                if (/*!DEBUG && */FRHelpers.CheckForUnknownGenesOrBreed(items))
                     await _pipelineService.TriggerPipeline(Environment.GetEnvironmentVariable("AzureDevOpsPipeline"));
             }
 
