@@ -18,8 +18,7 @@ namespace FRTools.Core.Services
                     var body = $"{{\"definition\":{{\"id\":{azureDevOpsPipeline}}}}}";
                     var url = $"https://dev.azure.com/{azureDevOpsAccount}/{azureDevOpsProject}/_apis/build/builds?api-version=7.0";
                     client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Basic {azureDevOpsBasicAuth}");
-                    client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
-                    await client.PostAsync(url, new StringContent(body));
+                    await client.PostAsync(url, new StringContent(body, Encoding.UTF8, "application/json"));
                 }
             }
         }
