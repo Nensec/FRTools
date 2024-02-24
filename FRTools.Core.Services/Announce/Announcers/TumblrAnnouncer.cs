@@ -36,6 +36,7 @@ namespace FRTools.Core.Services.Announce.Announcers
 
         private async Task AnnounceDominance(DominanceAnnounceData data)
         {
+            var tags = new List<string> { "frtools", "fr tools", "flight rising", "flightrising", "fr", "dominance", data.Flights[0].ToString(), data.Flights[1].ToString(), data.Flights[2].ToString() };
             var body = $"<p>Dominance has been calculated and the winner of this week is <b>{data.Flights[0]}</b>!</p>";
             body += "<p>The top 3 standings were as follows:";
             body += "<ol>";
@@ -55,12 +56,7 @@ namespace FRTools.Core.Services.Announce.Announcers
                 body += "They also get +750 treasure a day and +2 gathering turns..</p>";
             }
 
-            var tags = new List<string> { "frtools", "fr tools", "flight rising", "flightrising", "fr", "dominance", data.Flights[0].ToString(), data.Flights[1].ToString(), data.Flights[2].ToString() };
-
             var post = PostData.CreateText(body, $"Congratulations to {data.Flights[0]}!", tags);
-#if DEBUG
-            post.State = PostCreationState.Private;
-#endif
 
             await _tumblrService.CreatePost("frtools", post);
         }
@@ -68,7 +64,6 @@ namespace FRTools.Core.Services.Announce.Announcers
         private async Task AnnounceFlashSale(FlashSaleAnnounceData data)
         {
             var tags = new List<string> { "frtools", "fr tools", "flight rising", "flightrising", "fr", "flash sale", "flashsale", data.FRItem.Name.ToLower() };
-
             string body = $"<p>A new flash sale has been discovered for <b>{data.FRItem.Name}</b></p>";
             body += $"<p><i>{data.FRItem.Description}</i></p><br/>";
             body += "<p>";
@@ -155,9 +150,7 @@ namespace FRTools.Core.Services.Announce.Announcers
             body += $"<img src=\"{itemUrl ?? Common.Helpers.GetProxyIconUrl(data.FRItem.FRId)}";
 
             var post = PostData.CreateText(body, $"New Flash Sale: {data.FRItem.Name}", tags);
-#if DEBUG
-            post.State = PostCreationState.Private;
-#endif
+
             await _tumblrService.CreatePost("frtools", post);
         }
     }

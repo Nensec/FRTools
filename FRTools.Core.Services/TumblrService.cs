@@ -1,7 +1,6 @@
 ﻿using DontPanic.TumblrSharp;
 using DontPanic.TumblrSharp.Client;
 using DontPanic.TumblrSharp.OAuth;
-using FRTools.Core.Data.DataModels.NewsReaderModels;
 using FRTools.Core.Services.Interfaces;
 
 namespace FRTools.Core.Services
@@ -22,6 +21,9 @@ namespace FRTools.Core.Services
         {
             var postParamaters = (MethodParameterSet)typeof(PostData).GetField("parameters", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.GetValue(postData)!;
             postParamaters.Add("native_inline_images", true);
+#if DEBUG
+            postData.State = PostCreationState.Private;
+#endif
             using (var client = GetClient())
             {
                 return await client.CreatePostAsync("frtools", postData);

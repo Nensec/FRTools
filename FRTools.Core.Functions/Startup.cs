@@ -42,6 +42,7 @@ namespace FRTools.Core.Functions
             builder.Services.AddTransient<IFRItemService, FRItemService>();
 
             builder.Services.AddTransient<IItemAssetDataService, ItemAssetDataService>();
+            builder.Services.AddTransient<IHtmlService, HtmlService>();
             builder.Services.AddTransient<IConfigService, ConfigService>();
 
             builder.Services.AddAzureClients(builder =>
@@ -51,7 +52,7 @@ namespace FRTools.Core.Functions
                 builder.AddServiceBusClient(Environment.GetEnvironmentVariable("AZURESBCONNSTR_defaultConnection"));
                 builder.AddBlobServiceClient(Environment.GetEnvironmentVariable("AzureWebJobsStorage"));
                 builder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, provider) => provider.GetRequiredService<ServiceBusClient>().CreateSender(queueName)).WithName(queueName);
-                builder.AddClient<BlobServiceClient, BlobClientOptions>((_, provider) => provider.GetRequiredService<BlobServiceClient>());
+                builder.AddClient<BlobServiceClient, BlobClientOptions>((_, provider) => provider.GetRequiredService<BlobServiceClient>()).WithName("frtools");
             });
 
             builder.Services.AddSingleton<ITumblrService, TumblrService>();
