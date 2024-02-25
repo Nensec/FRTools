@@ -94,7 +94,7 @@ namespace FRTools.Core.Functions.Workers
                 log.LogInformation($"Since items were found, saving last success at {DateTime.UtcNow}");
 
                 log.LogInformation("Checking if we got any new genes or breeds");
-                if (/*!DEBUG && */FRHelpers.CheckForUnknownGenesOrBreed(items))
+                if (!DEBUG && FRHelpers.CheckForUnknownGenesOrBreed(items))
                     await _pipelineService.TriggerPipeline(Environment.GetEnvironmentVariable("AzureDevOpsPipeline"));
             }
 
