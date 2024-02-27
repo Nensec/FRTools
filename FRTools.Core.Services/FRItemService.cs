@@ -45,8 +45,7 @@ namespace FRTools.Core.Services
                     return await FetchItemFromFR(itemId, categoryMatch.Groups["Category"].Value);
                 }
 
-                var existingItem = _dataContext.FRItems.FirstOrDefault(x => x.FRId == itemId);
-                var item = existingItem ?? new FRItem();
+                var item = _dataContext.FRItems.FirstOrDefault(x => x.FRId == itemId) ?? _dataContext.FRItems.Add(new FRItem()).Entity;
 
                 item.FRId = itemId;
                 item.IconUrl = iconUrl;
@@ -104,7 +103,6 @@ namespace FRTools.Core.Services
                 }
 
                 item.AssetUrl = item.AssetUrl?.Replace("https://flightrising.com", "").Replace("https://www1.flightrising.com", "");
-                _dataContext.FRItems.Add(item);
                 await _dataContext.SaveChangesAsync();
                 return item;
             }

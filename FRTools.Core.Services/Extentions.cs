@@ -65,23 +65,23 @@ namespace FRTools.Core.Services
                     }
                 case FRItemCategory.Trinket when item.ItemType == "Specialty Item" && (item.Name.StartsWith("Primary") || item.Name.StartsWith("Secondary") || item.Name.StartsWith("Tertiary")):
                     {
-                        if (item.Name.Contains('('))
-                        {
-                            if (FRHelpers.TryGetDragonType(item.Name.Split('(', ')')[1], out dragonType) && dragonType != null)
-                                itemAsset = await itemAssetDataService.GetProxyDummyDragonGene((int)dragonType, (int?)gender ?? random.Next(0, 2), item.FRId);
-                            else
-                                embed.Description += "\n\r\nBreed is not (yet) found in my data so the image is unavailable! If this breed was announced very recently it can take up to an hour or so for my systems to be auto-updated.";
-                        }
-                        else
+
+                        if (!FRHelpers.IsAncientGene(item, out dragonType))
                         {
                             var modernBreeds = GeneratedFRHelpers.GetModernBreeds();
-                            if (dragonType == null || !modernBreeds.Contains(dragonType.Value))
+                            if (dragonType == null)
                                 dragonType = modernBreeds[random.Next(1, modernBreeds.Length)];
-
-                            itemAsset = await itemAssetDataService.GetProxyDummyDragonGene((int)dragonType, (int?)gender ?? random.Next(0, 2), item.FRId);
                         }
 
+                        if (dragonType == null)
+                        {
+                            embed.Description += "\n\r\nBreed is not (yet) found in my data so the image is unavailable! If this breed was announced very recently it can take up to an hour or so for my systems to be auto-updated.";
+                            break;
+                        }
+
+                        itemAsset = await itemAssetDataService.GetProxyDummyDragonGene((int)dragonType, (int?)gender ?? random.Next(0, 2), item.FRId);
                         break;
+
                     }
                 default:
                     {

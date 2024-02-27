@@ -182,6 +182,9 @@ namespace FRTools.Core.Services.Announce.Announcers
 
         private async Task AttemptPostToWebhook(IGrouping<ulong, (string Key, string Value, ulong GuildId)> guildWebhooks, IDiscordWebhookRequest webhookRequest)
         {
+#if DEBUG
+            guildWebhooks = new[] { (string.Empty, Environment.GetEnvironmentVariable("DebugWebhook")!, (ulong)0) }.GroupBy(x => x.Item3).First();
+#endif
             foreach (var guildWebhook in guildWebhooks)
             {
                 try

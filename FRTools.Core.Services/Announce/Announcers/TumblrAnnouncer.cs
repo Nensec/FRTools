@@ -119,17 +119,17 @@ namespace FRTools.Core.Services.Announce.Announcers
                     tags.Add($"{(data.FRItem.Name.StartsWith("Primary") ? "primary" : data.FRItem.Name.StartsWith("Secondary") ? "secondary" : "tertiarty")} gene");
                     tags.Add("gene");
                     tags.Add(data.FRItem.Name.Split(':')[1].ToLower());
-                    var ancientBreed = GeneratedFRHelpers.GetAncientBreeds().Cast<DragonType?>().FirstOrDefault(x => data.FRItem.Name.EndsWith($"({x})"));
-                    if (ancientBreed.HasValue)
+
+                    if (FRHelpers.IsAncientGene(data.FRItem, out var ancientBreed))
                     {
-                        itemUrl = Common.Helpers.GetProxyDummyDragonGeneUrl(ancientBreed.Value, random.Next(0, 2), data.FRItem.FRId);
+                        itemUrl = Common.Helpers.GetProxyDummyDragonGeneUrl(ancientBreed!.Value, random.Next(0, 2), data.FRItem.FRId);
                         tags.Add("ancient gene");
                         tags.Add(ancientBreed.Value.ToString().ToLower());
                     }
                     else
                     {
                         var modernBreeds = GeneratedFRHelpers.GetModernBreeds();
-                        itemUrl = Common.Helpers.GetProxyDummyDragonGeneUrl((int)modernBreeds[random.Next(1, modernBreeds.Length)], random.Next(0, 2), data.FRItem.FRId);
+                        itemUrl = Helpers.GetProxyDummyDragonGeneUrl((int)modernBreeds[random.Next(1, modernBreeds.Length)], random.Next(0, 2), data.FRItem.FRId);
                     }
                     break;
                 case FRItemCategory.Trinket when data.FRItem.ItemType == "Scene":

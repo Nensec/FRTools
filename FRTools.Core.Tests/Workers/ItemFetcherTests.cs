@@ -74,11 +74,8 @@ namespace FRTools.Core.Tests.Workers
         [InlineData(FRItemCategory.Trinket, "Specialty Item", "Tertiary Gaoler Gene: Fake", true)]
         // Real item data
         [InlineData(FRItemCategory.Skins, "Gaoler Female Only", "Accent: Gaoler Skin", false)]
-        [InlineData(FRItemCategory.Trinket, "Specialty Item", "Primary Gene: Vipera (Auraboa)", false)]
         [InlineData(FRItemCategory.Trinket, "Specialty Item", "Primary Auraboa Gene: Vipera", false)]
-        [InlineData(FRItemCategory.Trinket, "Specialty Item", "Secondary Gene: Weaver (Auraboa)", false)]
         [InlineData(FRItemCategory.Trinket, "Specialty Item", "Secondary Auraboa Gene: Weaver", false)]
-        [InlineData(FRItemCategory.Trinket, "Specialty Item", "Tertiary Gene: Stained (Auraboa)", false)]
         [InlineData(FRItemCategory.Trinket, "Specialty Item", "Tertiary Auraboa Gene: Stained", false)]
         [InlineData(FRItemCategory.Trinket, "Specialty Item", "Primary Auraboa Gene: Love", false)]
         [InlineData(FRItemCategory.Trinket, "Specialty Item", "Secondary Auraboa Gene: Affection", false)]

@@ -42,24 +42,23 @@ namespace FRTools.Core.Functions.Workers
             var item = _dataContext.FRItems.FirstOrDefault(x => x.FRId == geneId);
             int primary = 0, secondary = 0, tertiary = 0;
             int primaryColor = 0, secondaryColor = 0, tertiaryColor = 0;
-            var itemSplit = item.Name.Split(':', '(');
             var random = new Random();
             byte[] geneBytes;
-            switch (itemSplit[0])
-            {
-                case "Primary Gene":
-                    primary = (int)Enum.Parse(((DragonType)dragonType).PrimaryGeneType(), itemSplit[1].Replace("-", "").Replace(" ", ""));
-                    primaryColor = random.Next(0, Enum.GetValues(typeof(Color)).Length + 1);
-                    break;
-                case "Secondary Gene":
-                    secondary = (int)Enum.Parse(((DragonType)dragonType).SecondaryGeneType(), itemSplit[1].Replace("-", "").Replace(" ", ""));
-                    secondaryColor = random.Next(0, Enum.GetValues(typeof(Color)).Length + 1);
-                    break;
-                case "Tertiary Gene":
-                    tertiary = (int)Enum.Parse(((DragonType)dragonType).TertiaryGeneType(), itemSplit[1].Replace("-", "").Replace(" ", ""));
-                    tertiaryColor = random.Next(0, Enum.GetValues(typeof(Color)).Length + 1);
-                    break;
+
+            if (item.Name.StartsWith("Primary")){
+                primary = FRHelpers.GetGeneId(item);
+                primaryColor = random.Next(0, Enum.GetValues(typeof(Color)).Length + 1);
             }
+            if (item.Name.StartsWith("Secondary"))
+            {
+                secondary = FRHelpers.GetGeneId(item);
+                secondaryColor = random.Next(0, Enum.GetValues(typeof(Color)).Length + 1);
+            }
+            if (item.Name.StartsWith("Tertiary"))
+            {
+                tertiary = FRHelpers.GetGeneId(item);
+                tertiaryColor = random.Next(0, Enum.GetValues(typeof(Color)).Length + 1);
+            }            
 
             using (var client = new HttpClient())
                 geneBytes = await client.GetByteArrayAsync(await GeneratedFRHelpers.GenerateDragonImageUrl(dragonType, gender, 1, primary, primaryColor, secondary, secondaryColor, tertiary, tertiaryColor, random.Next(0, Enum.GetValues(typeof(Element)).Length + 1), random.Next(0, Enum.GetValues(typeof(EyeType)).Length + 1)));

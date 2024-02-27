@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using FRTools.Core.Data;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
 
@@ -66,7 +67,7 @@ namespace FRTools.Core.Common
 
                 // First check if the breed is known in case of an ancient breed 
                 if (item.Name.Contains("(") && !CheckIfDragonTypeIsKnown(item.Name.Split('(', ')')[1])) // old style
-                    return true;               
+                    return true;
                 else if (!item.Name.StartsWith("Primary Gene") && !item.Name.StartsWith("Secondary Gene") && !item.Name.StartsWith("Tertiary Gene") && !CheckIfDragonTypeIsKnown(item.Name.Split(" ")[1].Trim())) // new style
                     return true;
 
@@ -93,20 +94,6 @@ namespace FRTools.Core.Common
             }
 
             return false;
-        }
-
-        public static bool TryGetDragonType(string dragontype, out DragonType? result)
-        {
-            try
-            {
-                result = GetDragonType(dragontype);
-                return true;
-            }
-            catch
-            {
-                result = null;
-                return false;
-            }
         }
 
         public static Flight GetFlightFromGodName(string godName)
@@ -140,5 +127,45 @@ namespace FRTools.Core.Common
         }
 
         public static string GetRenderUrl(long dragonId) => $"https://www1.flightrising.com/rendern/350/{(Math.Floor(dragonId / 100d) + 1)}/{dragonId}_350.png";
+
+        public static bool IsAncientGene(FRItem item, out DragonType? dragonType)
+        {
+            dragonType = GeneratedFRHelpers.GetAncientBreeds().Cast<DragonType?>().FirstOrDefault(x =>
+            {
+                if (item.Name.EndsWith($"({x})"))
+                    return true;
+
+                var regex = GeneRegex.Match(item.Name);
+                return regex.Success && regex.Groups["Ancient"].Value == x.ToString();
+            });
+
+            return dragonType != null;
+        }
+
+        public static int GetGeneId(FRItem item)
+        {
+            if (item.ItemCategory != FRItemCategory.Trinket && item.ItemType != "Specialty Items")
+                throw new Exception("Definitely not a gene.");
+
+            Type geneType;
+            if (!IsAncientGene(item, out var dragonType))
+                dragonType = DragonType.Fae;
+
+            if (item.Name.StartsWith("Primary"))
+                geneType = dragonType!.Value.PrimaryGeneType();
+            else if (item.Name.StartsWith("Secondary"))
+                geneType = dragonType!.Value.SecondaryGeneType();
+            else if (item.Name.StartsWith("Tertiary"))
+                geneType = dragonType!.Value.TertiaryGeneType();
+            else
+                throw new Exception("Something went poopy parsing name for genetype!");
+
+            var regex = GeneRegex.Match(item.Name);
+            var geneName = regex.Groups["Name"].Value;
+
+            return (int)Enum.Parse(geneType, geneName);
+        }
+
+        private static Regex GeneRegex => new(@"(?<Type>Primary|Secondary|Tertiary) ((?<Ancient>.+) )?Gene: (?<Name>.+)");
     }
 }
