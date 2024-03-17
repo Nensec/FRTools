@@ -103,8 +103,9 @@ namespace FRTools.Core.Services
             {
                 client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "multipart/form-data");
 
-                // Webhooks can (only) have 10 embeds
-                if (webhookRequest.PayloadJson.Embeds.Count() > 10)
+                // Webhooks can (only) have 10 embeds, but because embeds will most of the time have 2 files I will limit it to 5.
+                // This also prevents a bug with this code that it can send more than 10 files if the count is less than 10 embeds
+                if (webhookRequest.PayloadJson.Embeds.Count > 5)
                 {
                     foreach (var batch in webhookRequest.PayloadJson.Embeds.Select((e, i) => new { e, i }).GroupBy(x => x.i / 10))
                     {
@@ -127,7 +128,7 @@ namespace FRTools.Core.Services
                         webhookBatch.Files = new Dictionary<string, byte[]>(webhookRequest.Files.Where(x => filesBelongingToEmbeds.Contains(x.Key)).ToArray());
 
                         // Max 10 files as well
-                        if (webhookBatch.Files.Count() > 10)
+                        if (webhookBatch.Files.Count > 10)
                         {
                             foreach (var fileBatch in webhookBatch.Files.Select((f, i) => new { f, i }).GroupBy(x => x.i / 10))
                             {
@@ -142,7 +143,7 @@ namespace FRTools.Core.Services
                                     Files = new Dictionary<string, byte[]>(fileBatch.Select(x => x.f).ToArray())
                                 };
 
-                                webhookFileBatch.PayloadJson.Embeds = webhookBatch.PayloadJson.Embeds.Where(x => webhookFileBatch.Files.Select(f => f.Key).Any(f => filesBelongingToEmbeds.Contains(f))).ToList();
+                                webhookFileBatch.PayloadJson.Embeds = webhookBatch.PayloadJson.Embeds.Where(x => webhookFileBatch.Files.Select(f => f.Key).All(f => filesBelongingToEmbeds.Contains(f))).ToList();
 
                                 var message = await sendAction(webhookFileBatch, webhookUrl);
                                 if (message != null)
