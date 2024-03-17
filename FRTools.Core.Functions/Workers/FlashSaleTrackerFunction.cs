@@ -30,7 +30,7 @@ namespace FRTools.Core.Functions.Workers
         }
 
         [FunctionName(nameof(FlashTracker))]
-        public async Task FlashTracker([TimerTrigger("0 1 8,20 * * *", RunOnStartup = DEBUG)] TimerInfo timer, ILogger log)
+        public async Task FlashTracker([TimerTrigger("0 1 7,19 * * *", RunOnStartup = DEBUG)] TimerInfo timer, ILogger log)
         {
             var marketPlaceDoc = await _htmlService.LoadHtmlPage(FRHelpers.MarketplaceUrl);
             var marketTabs = marketPlaceDoc.DocumentNode.QuerySelectorAll(".market-tab .common-tab");
