@@ -51,6 +51,8 @@ namespace FRTools.Core.Data
 		Sandsurge = 23,
 		[Description("Auraboa")]
 		Auraboa = 24,
+		[Description("Dusthide")]
+		Dusthide = 25,
 	}
 
 	public enum Gender
@@ -663,6 +665,66 @@ namespace FRTools.Core.Data
 		Wrought = 187,
 	}
 	
+	public enum DusthideBodyGene
+	{
+		[Description("Basic")]
+		Basic = 0,
+		[Description("Arc (Dusthide)")]
+		Arc = 306,
+		[Description("Bar (Dusthide)")]
+		Bar = 292,
+		[Description("Checkers (Dusthide)")]
+		Checkers = 293,
+		[Description("Cinder (Dusthide)")]
+		Cinder = 295,
+		[Description("Display (Dusthide)")]
+		Display = 317,
+		[Description("Fade (Dusthide)")]
+		Fade = 296,
+		[Description("Falcon (Dusthide)")]
+		Falcon = 301,
+		[Description("Giraffe (Dusthide)")]
+		Giraffe = 297,
+		[Description("Ground (Dusthide)")]
+		Ground = 299,
+		[Description("Harlequin (Dusthide)")]
+		Harlequin = 298,
+		[Description("Jupiter (Dusthide)")]
+		Jupiter = 300,
+		[Description("Laced (Dusthide)")]
+		Laced = 302,
+		[Description("Orb (Dusthide)")]
+		Orb = 303,
+		[Description("Petals (Dusthide)")]
+		Petals = 304,
+		[Description("Petrified (Dusthide)")]
+		Petrified = 309,
+		[Description("Piebald (Dusthide)")]
+		Piebald = 305,
+		[Description("Pinstripe (Dusthide)")]
+		Pinstripe = 308,
+		[Description("Ribbon (Dusthide)")]
+		Ribbon = 311,
+		[Description("Ripple (Dusthide)")]
+		Ripple = 312,
+		[Description("Sailfish (Dusthide)")]
+		Sailfish = 313,
+		[Description("Savannah (Dusthide)")]
+		Savannah = 314,
+		[Description("Skink (Dusthide)")]
+		Skink = 315,
+		[Description("Speckle (Dusthide)")]
+		Speckle = 294,
+		[Description("Strike (Dusthide)")]
+		Strike = 205,
+		[Description("Varnish (Dusthide)")]
+		Varnish = 316,
+		[Description("Wasp (Dusthide)")]
+		Wasp = 310,
+		[Description("Wrought (Dusthide)")]
+		Wrought = 307,
+	}
+	
 	public enum VeilspunBodyGene
 	{
 		[Description("Basic")]
@@ -1145,7 +1207,7 @@ namespace FRTools.Core.Data
 	{
 		[Description("Basic")]
 		[Order(0)]
-		[Gene(DragonType.Aberration, DragonType.Aether, DragonType.Auraboa, DragonType.Banescale, DragonType.Bogsneak, DragonType.Coatl, DragonType.Fae, DragonType.Gaoler, DragonType.Guardian, DragonType.Imperial, DragonType.Mirror, DragonType.Nocturne, DragonType.Obelisk, DragonType.Pearlcatcher, DragonType.Ridgeback, DragonType.Sandsurge, DragonType.Skydancer, DragonType.Snapper, DragonType.Spiral, DragonType.Tundra, DragonType.Undertide, DragonType.Veilspun, DragonType.Wildclaw)]
+		[Gene(DragonType.Aberration, DragonType.Aether, DragonType.Auraboa, DragonType.Banescale, DragonType.Bogsneak, DragonType.Coatl, DragonType.Dusthide, DragonType.Fae, DragonType.Gaoler, DragonType.Guardian, DragonType.Imperial, DragonType.Mirror, DragonType.Nocturne, DragonType.Obelisk, DragonType.Pearlcatcher, DragonType.Ridgeback, DragonType.Sandsurge, DragonType.Skydancer, DragonType.Snapper, DragonType.Spiral, DragonType.Tundra, DragonType.Undertide, DragonType.Veilspun, DragonType.Wildclaw)]
 		Basic = 0,		
 		[Description("Iridescent")]
 		[Order(1)]
@@ -1435,876 +1497,984 @@ namespace FRTools.Core.Data
 		[Order(72)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Wrought = 187,
-		[Description("Arc (Veilspun)")]
+		[Description("Arc (Dusthide)")]
 		[Order(73)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Arc = 306,
+		[Description("Bar (Dusthide)")]
+		[Order(74)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Bar = 292,
+		[Description("Checkers (Dusthide)")]
+		[Order(75)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Checkers = 293,
+		[Description("Cinder (Dusthide)")]
+		[Order(76)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Cinder = 295,
+		[Description("Display (Dusthide)")]
+		[Order(77)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Display = 317,
+		[Description("Fade (Dusthide)")]
+		[Order(78)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Fade = 296,
+		[Description("Falcon (Dusthide)")]
+		[Order(79)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Falcon = 301,
+		[Description("Giraffe (Dusthide)")]
+		[Order(80)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Giraffe = 297,
+		[Description("Ground (Dusthide)")]
+		[Order(81)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Ground = 299,
+		[Description("Harlequin (Dusthide)")]
+		[Order(82)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Harlequin = 298,
+		[Description("Jupiter (Dusthide)")]
+		[Order(83)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Jupiter = 300,
+		[Description("Laced (Dusthide)")]
+		[Order(84)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Laced = 302,
+		[Description("Orb (Dusthide)")]
+		[Order(85)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Orb = 303,
+		[Description("Petals (Dusthide)")]
+		[Order(86)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Petals = 304,
+		[Description("Petrified (Dusthide)")]
+		[Order(87)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Petrified = 309,
+		[Description("Piebald (Dusthide)")]
+		[Order(88)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Piebald = 305,
+		[Description("Pinstripe (Dusthide)")]
+		[Order(89)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Pinstripe = 308,
+		[Description("Ribbon (Dusthide)")]
+		[Order(90)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Ribbon = 311,
+		[Description("Ripple (Dusthide)")]
+		[Order(91)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Ripple = 312,
+		[Description("Sailfish (Dusthide)")]
+		[Order(92)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Sailfish = 313,
+		[Description("Savannah (Dusthide)")]
+		[Order(93)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Savannah = 314,
+		[Description("Skink (Dusthide)")]
+		[Order(94)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Skink = 315,
+		[Description("Speckle (Dusthide)")]
+		[Order(95)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Speckle = 294,
+		[Description("Strike (Dusthide)")]
+		[Order(96)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Strike = 205,
+		[Description("Varnish (Dusthide)")]
+		[Order(97)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Varnish = 316,
+		[Description("Wasp (Dusthide)")]
+		[Order(98)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Wasp = 310,
+		[Description("Wrought (Dusthide)")]
+		[Order(99)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Wrought = 307,
+		[Description("Arc (Veilspun)")]
+		[Order(100)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Arc = 70,
 		[Description("Bar (Veilspun)")]
-		[Order(74)]
+		[Order(101)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Bar = 145,
 		[Description("Boa (Veilspun)")]
-		[Order(75)]
+		[Order(102)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Boa = 236,
 		[Description("Boulder (Veilspun)")]
-		[Order(76)]
+		[Order(103)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Boulder = 290,
 		[Description("Bright (Veilspun)")]
-		[Order(77)]
+		[Order(104)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Bright = 69,
 		[Description("Cinder (Veilspun)")]
-		[Order(78)]
+		[Order(105)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Cinder = 219,
 		[Description("Clown (Veilspun)")]
-		[Order(79)]
+		[Order(106)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Clown = 76,
 		[Description("Crystal (Veilspun)")]
-		[Order(80)]
+		[Order(107)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Crystal = 146,
 		[Description("Fade (Veilspun)")]
-		[Order(81)]
+		[Order(108)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Fade = 60,
 		[Description("Falcon (Veilspun)")]
-		[Order(82)]
+		[Order(109)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Falcon = 139,
 		[Description("Fern (Veilspun)")]
-		[Order(83)]
+		[Order(110)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Fern = 138,
 		[Description("Giraffe (Veilspun)")]
-		[Order(84)]
+		[Order(111)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Giraffe = 83,
 		[Description("Jupiter (Veilspun)")]
-		[Order(85)]
+		[Order(112)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Jupiter = 64,
 		[Description("Laced (Veilspun)")]
-		[Order(86)]
+		[Order(113)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Laced = 61,
 		[Description("Leopard (Veilspun)")]
-		[Order(87)]
+		[Order(114)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Leopard = 142,
 		[Description("Orb (Veilspun)")]
-		[Order(88)]
+		[Order(115)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Orb = 285,
 		[Description("Petals (Veilspun)")]
-		[Order(89)]
+		[Order(116)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Petals = 143,
 		[Description("Poison (Veilspun)")]
-		[Order(90)]
+		[Order(117)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Poison = 140,
 		[Description("Shell (Veilspun)")]
-		[Order(91)]
+		[Order(118)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Shell = 71,
 		[Description("Skink (Veilspun)")]
-		[Order(92)]
+		[Order(119)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Skink = 67,
 		[Description("Slime (Veilspun)")]
-		[Order(93)]
+		[Order(120)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Slime = 141,
 		[Description("Speckle (Veilspun)")]
-		[Order(94)]
+		[Order(121)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Speckle = 144,
 		[Description("Sphinxmoth (Veilspun)")]
-		[Order(95)]
+		[Order(122)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Sphinxmoth = 72,
 		[Description("Starmap (Veilspun)")]
-		[Order(96)]
+		[Order(123)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Starmap = 65,
 		[Description("Stitched (Veilspun)")]
-		[Order(97)]
+		[Order(124)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Stitched = 66,
 		[Description("Tapir (Veilspun)")]
-		[Order(98)]
+		[Order(125)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Tapir = 62,
 		[Description("Vipera (Veilspun)")]
-		[Order(99)]
+		[Order(126)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Vipera = 63,
 		[Description("Wasp (Veilspun)")]
-		[Order(100)]
+		[Order(127)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Wasp = 68,
 		[Description("Bar (Aberration)")]
-		[Order(101)]
+		[Order(128)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Bar = 89,
 		[Description("Boa (Aberration)")]
-		[Order(102)]
+		[Order(129)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Boa = 233,
 		[Description("Boulder (Aberration)")]
-		[Order(103)]
+		[Order(130)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Boulder = 220,
 		[Description("Cherub (Aberration)")]
-		[Order(104)]
+		[Order(131)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Cherub = 221,
 		[Description("Cinder (Aberration)")]
-		[Order(105)]
+		[Order(132)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Cinder = 214,
 		[Description("Clown (Aberration)")]
-		[Order(106)]
+		[Order(133)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Clown = 222,
 		[Description("Crystal (Aberration)")]
-		[Order(107)]
+		[Order(134)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Crystal = 91,
 		[Description("Diamond (Aberration)")]
-		[Order(108)]
+		[Order(135)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Diamond = 93,
 		[Description("Fade (Aberration)")]
-		[Order(109)]
+		[Order(136)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Fade = 90,
 		[Description("Falcon (Aberration)")]
-		[Order(110)]
+		[Order(137)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Falcon = 92,
 		[Description("Fern (Aberration)")]
-		[Order(111)]
+		[Order(138)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Fern = 223,
 		[Description("Flaunt (Aberration)")]
-		[Order(112)]
+		[Order(139)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Flaunt = 112,
 		[Description("Giraffe (Aberration)")]
-		[Order(113)]
+		[Order(140)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Giraffe = 94,
 		[Description("Ground (Aberration)")]
-		[Order(114)]
+		[Order(141)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Ground = 97,
 		[Description("Harlequin (Aberration)")]
-		[Order(115)]
+		[Order(142)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Harlequin = 224,
 		[Description("Jaguar (Aberration)")]
-		[Order(116)]
+		[Order(143)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Jaguar = 99,
 		[Description("Leopard (Aberration)")]
-		[Order(117)]
+		[Order(144)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Leopard = 225,
 		[Description("Lionfish (Aberration)")]
-		[Order(118)]
+		[Order(145)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Lionfish = 100,
 		[Description("Orb (Aberration)")]
-		[Order(119)]
+		[Order(146)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Orb = 102,
 		[Description("Pharaoh (Aberration)")]
-		[Order(120)]
+		[Order(147)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Pharaoh = 101,
 		[Description("Pinstripe (Aberration)")]
-		[Order(121)]
+		[Order(148)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Pinstripe = 226,
 		[Description("Poison (Aberration)")]
-		[Order(122)]
+		[Order(149)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Poison = 227,
 		[Description("Ribbon (Aberration)")]
-		[Order(123)]
+		[Order(150)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Ribbon = 105,
 		[Description("Ripple (Aberration)")]
-		[Order(124)]
+		[Order(151)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Ripple = 228,
 		[Description("Savannah (Aberration)")]
-		[Order(125)]
+		[Order(152)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Savannah = 103,
 		[Description("Skink (Aberration)")]
-		[Order(126)]
+		[Order(153)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Skink = 229,
 		[Description("Slime (Aberration)")]
-		[Order(127)]
+		[Order(154)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Slime = 106,
 		[Description("Speckle (Aberration)")]
-		[Order(128)]
+		[Order(155)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Speckle = 98,
 		[Description("Starmap (Aberration)")]
-		[Order(129)]
+		[Order(156)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Starmap = 230,
 		[Description("Stitched (Aberration)")]
-		[Order(130)]
+		[Order(157)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Stitched = 107,
 		[Description("Swirl (Aberration)")]
-		[Order(131)]
+		[Order(158)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Swirl = 104,
 		[Description("Tapir (Aberration)")]
-		[Order(132)]
+		[Order(159)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Tapir = 95,
 		[Description("Tide (Aberration)")]
-		[Order(133)]
+		[Order(160)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Tide = 231,
 		[Description("Vipera (Aberration)")]
-		[Order(134)]
+		[Order(161)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Vipera = 96,
 		[Description("Wasp (Aberration)")]
-		[Order(135)]
+		[Order(162)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Wasp = 108,
 		[Description("Bar (Aether)")]
-		[Order(136)]
+		[Order(163)]
 		[Gene(DragonType.Aether)]
 		Aether_Bar = 150,
 		[Description("Boa (Aether)")]
-		[Order(137)]
+		[Order(164)]
 		[Gene(DragonType.Aether)]
 		Aether_Boa = 234,
 		[Description("Boulder (Aether)")]
-		[Order(138)]
+		[Order(165)]
 		[Gene(DragonType.Aether)]
 		Aether_Boulder = 151,
 		[Description("Candy (Aether)")]
-		[Order(139)]
+		[Order(166)]
 		[Gene(DragonType.Aether)]
 		Aether_Candy = 167,
 		[Description("Cinder (Aether)")]
-		[Order(140)]
+		[Order(167)]
 		[Gene(DragonType.Aether)]
 		Aether_Cinder = 163,
 		[Description("Clown (Aether)")]
-		[Order(141)]
+		[Order(168)]
 		[Gene(DragonType.Aether)]
 		Aether_Clown = 169,
 		[Description("Fade (Aether)")]
-		[Order(142)]
+		[Order(169)]
 		[Gene(DragonType.Aether)]
 		Aether_Fade = 148,
 		[Description("Flaunt (Aether)")]
-		[Order(143)]
+		[Order(170)]
 		[Gene(DragonType.Aether)]
 		Aether_Flaunt = 149,
 		[Description("Jaguar (Aether)")]
-		[Order(144)]
+		[Order(171)]
 		[Gene(DragonType.Aether)]
 		Aether_Jaguar = 152,
 		[Description("Jupiter (Aether)")]
-		[Order(145)]
+		[Order(172)]
 		[Gene(DragonType.Aether)]
 		Aether_Jupiter = 153,
 		[Description("Laced (Aether)")]
-		[Order(146)]
+		[Order(173)]
 		[Gene(DragonType.Aether)]
 		Aether_Laced = 156,
 		[Description("Lionfish (Aether)")]
-		[Order(147)]
+		[Order(174)]
 		[Gene(DragonType.Aether)]
 		Aether_Lionfish = 158,
 		[Description("Metallic (Aether)")]
-		[Order(148)]
+		[Order(175)]
 		[Gene(DragonType.Aether)]
 		Aether_Metallic = 157,
 		[Description("Mosaic (Aether)")]
-		[Order(149)]
+		[Order(176)]
 		[Gene(DragonType.Aether)]
 		Aether_Mosaic = 155,
 		[Description("Orb (Aether)")]
-		[Order(150)]
+		[Order(177)]
 		[Gene(DragonType.Aether)]
 		Aether_Orb = 288,
 		[Description("Petals (Aether)")]
-		[Order(151)]
+		[Order(178)]
 		[Gene(DragonType.Aether)]
 		Aether_Petals = 154,
 		[Description("Piebald (Aether)")]
-		[Order(152)]
+		[Order(179)]
 		[Gene(DragonType.Aether)]
 		Aether_Piebald = 159,
 		[Description("Python (Aether)")]
-		[Order(153)]
+		[Order(180)]
 		[Gene(DragonType.Aether)]
 		Aether_Python = 160,
 		[Description("Skink (Aether)")]
-		[Order(154)]
+		[Order(181)]
 		[Gene(DragonType.Aether)]
 		Aether_Skink = 161,
 		[Description("Spool (Aether)")]
-		[Order(155)]
+		[Order(182)]
 		[Gene(DragonType.Aether)]
 		Aether_Spool = 162,
 		[Description("Starmap (Aether)")]
-		[Order(156)]
+		[Order(183)]
 		[Gene(DragonType.Aether)]
 		Aether_Starmap = 168,
 		[Description("Stitched (Aether)")]
-		[Order(157)]
+		[Order(184)]
 		[Gene(DragonType.Aether)]
 		Aether_Stitched = 165,
 		[Description("Tide (Aether)")]
-		[Order(158)]
+		[Order(185)]
 		[Gene(DragonType.Aether)]
 		Aether_Tide = 164,
 		[Description("Twinkle (Aether)")]
-		[Order(159)]
+		[Order(186)]
 		[Gene(DragonType.Aether)]
 		Aether_Twinkle = 166,
 		[Description("Bar (Auraboa)")]
-		[Order(160)]
+		[Order(187)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Bar = 238,
 		[Description("Boa (Auraboa)")]
-		[Order(161)]
+		[Order(188)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Boa = 239,
 		[Description("Boulder (Auraboa)")]
-		[Order(162)]
+		[Order(189)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Boulder = 240,
 		[Description("Caterpillar (Auraboa)")]
-		[Order(163)]
+		[Order(190)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Caterpillar = 241,
 		[Description("Fade (Auraboa)")]
-		[Order(164)]
+		[Order(191)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Fade = 242,
 		[Description("Falcon (Auraboa)")]
-		[Order(165)]
+		[Order(192)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Falcon = 243,
 		[Description("Fern (Auraboa)")]
-		[Order(166)]
+		[Order(193)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Fern = 244,
 		[Description("Flaunt (Auraboa)")]
-		[Order(167)]
+		[Order(194)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Flaunt = 245,
 		[Description("Giraffe (Auraboa)")]
-		[Order(168)]
+		[Order(195)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Giraffe = 246,
 		[Description("Harlequin (Auraboa)")]
-		[Order(169)]
+		[Order(196)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Harlequin = 247,
 		[Description("Jaguar (Auraboa)")]
-		[Order(170)]
+		[Order(197)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Jaguar = 248,
 		[Description("Laced (Auraboa)")]
-		[Order(171)]
+		[Order(198)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Laced = 249,
 		[Description("Love (Auraboa)")]
-		[Order(172)]
+		[Order(199)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Love = 279,
 		[Description("Metallic (Auraboa)")]
-		[Order(173)]
+		[Order(200)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Metallic = 250,
 		[Description("Mochlus (Auraboa)")]
-		[Order(174)]
+		[Order(201)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Mochlus = 251,
 		[Description("Mosaic (Auraboa)")]
-		[Order(175)]
+		[Order(202)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Mosaic = 252,
 		[Description("Orb (Auraboa)")]
-		[Order(176)]
+		[Order(203)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Orb = 253,
 		[Description("Piebald (Auraboa)")]
-		[Order(177)]
+		[Order(204)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Piebald = 254,
 		[Description("Python (Auraboa)")]
-		[Order(178)]
+		[Order(205)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Python = 255,
 		[Description("Rattlesnake (Auraboa)")]
-		[Order(179)]
+		[Order(206)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Rattlesnake = 256,
 		[Description("Ripple (Auraboa)")]
-		[Order(180)]
+		[Order(207)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Ripple = 257,
 		[Description("Starmap (Auraboa)")]
-		[Order(181)]
+		[Order(208)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Starmap = 263,
 		[Description("Tapir (Auraboa)")]
-		[Order(182)]
+		[Order(209)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Tapir = 258,
 		[Description("Tiger (Auraboa)")]
-		[Order(183)]
+		[Order(210)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Tiger = 259,
 		[Description("Varnish (Auraboa)")]
-		[Order(184)]
+		[Order(211)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Varnish = 261,
 		[Description("Vipera (Auraboa)")]
-		[Order(185)]
+		[Order(212)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Vipera = 260,
 		[Description("Wicker (Auraboa)")]
-		[Order(186)]
+		[Order(213)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Wicker = 262,
 		[Description("Bar (Banescale)")]
-		[Order(187)]
+		[Order(214)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Bar = 181,
 		[Description("Boa (Banescale)")]
-		[Order(188)]
+		[Order(215)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Boa = 235,
 		[Description("Boulder (Banescale)")]
-		[Order(189)]
+		[Order(216)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Boulder = 291,
 		[Description("Candycane (Banescale)")]
-		[Order(190)]
+		[Order(217)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Candycane = 55,
 		[Description("Cherub (Banescale)")]
-		[Order(191)]
+		[Order(218)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Cherub = 43,
 		[Description("Chevron (Banescale)")]
-		[Order(192)]
+		[Order(219)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Chevron = 54,
 		[Description("Cinder (Banescale)")]
-		[Order(193)]
+		[Order(220)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Cinder = 215,
 		[Description("Clown (Banescale)")]
-		[Order(194)]
+		[Order(221)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Clown = 75,
 		[Description("Crystal (Banescale)")]
-		[Order(195)]
+		[Order(222)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Crystal = 182,
 		[Description("Fade (Banescale)")]
-		[Order(196)]
+		[Order(223)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Fade = 85,
 		[Description("Falcon (Banescale)")]
-		[Order(197)]
+		[Order(224)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Falcon = 80,
 		[Description("Fern (Banescale)")]
-		[Order(198)]
+		[Order(225)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Fern = 137,
 		[Description("Giraffe (Banescale)")]
-		[Order(199)]
+		[Order(226)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Giraffe = 81,
 		[Description("Jaguar (Banescale)")]
-		[Order(200)]
+		[Order(227)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Jaguar = 44,
 		[Description("Laced (Banescale)")]
-		[Order(201)]
+		[Order(228)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Laced = 48,
 		[Description("Leopard (Banescale)")]
-		[Order(202)]
+		[Order(229)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Leopard = 109,
 		[Description("Marble (Banescale)")]
-		[Order(203)]
+		[Order(230)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Marble = 47,
 		[Description("Metallic (Banescale)")]
-		[Order(204)]
+		[Order(231)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Metallic = 49,
 		[Description("Orb (Banescale)")]
-		[Order(205)]
+		[Order(232)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Orb = 287,
 		[Description("Petals (Banescale)")]
-		[Order(206)]
+		[Order(233)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Petals = 51,
 		[Description("Pharaoh (Banescale)")]
-		[Order(207)]
+		[Order(234)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Pharaoh = 185,
 		[Description("Pinstripe (Banescale)")]
-		[Order(208)]
+		[Order(235)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Pinstripe = 45,
 		[Description("Poison (Banescale)")]
-		[Order(209)]
+		[Order(236)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Poison = 53,
 		[Description("Ragged (Banescale)")]
-		[Order(210)]
+		[Order(237)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Ragged = 56,
 		[Description("Ribbon (Banescale)")]
-		[Order(211)]
+		[Order(238)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Ribbon = 183,
 		[Description("Ripple (Banescale)")]
-		[Order(212)]
+		[Order(239)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Ripple = 79,
 		[Description("Savannah (Banescale)")]
-		[Order(213)]
+		[Order(240)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Savannah = 50,
 		[Description("Skink (Banescale)")]
-		[Order(214)]
+		[Order(241)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Skink = 52,
 		[Description("Speckle (Banescale)")]
-		[Order(215)]
+		[Order(242)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Speckle = 147,
 		[Description("Tapir (Banescale)")]
-		[Order(216)]
+		[Order(243)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Tapir = 74,
 		[Description("Tide (Banescale)")]
-		[Order(217)]
+		[Order(244)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Tide = 184,
 		[Description("Tiger (Banescale)")]
-		[Order(218)]
+		[Order(245)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Tiger = 46,
 		[Description("Bar (Gaoler)")]
-		[Order(219)]
+		[Order(246)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Bar = 34,
 		[Description("Boa (Gaoler)")]
-		[Order(220)]
+		[Order(247)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Boa = 171,
 		[Description("Boulder (Gaoler)")]
-		[Order(221)]
+		[Order(248)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Boulder = 289,
 		[Description("Cinder (Gaoler)")]
-		[Order(222)]
+		[Order(249)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Cinder = 216,
 		[Description("Clown (Gaoler)")]
-		[Order(223)]
+		[Order(250)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Clown = 77,
 		[Description("Crystal (Gaoler)")]
-		[Order(224)]
+		[Order(251)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Crystal = 37,
 		[Description("Fade (Gaoler)")]
-		[Order(225)]
+		[Order(252)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Fade = 86,
 		[Description("Falcon (Gaoler)")]
-		[Order(226)]
+		[Order(253)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Falcon = 30,
 		[Description("Flaunt (Gaoler)")]
-		[Order(227)]
+		[Order(254)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Flaunt = 111,
 		[Description("Giraffe (Gaoler)")]
-		[Order(228)]
+		[Order(255)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Giraffe = 27,
 		[Description("Jaguar (Gaoler)")]
-		[Order(229)]
+		[Order(256)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Jaguar = 33,
 		[Description("Laced (Gaoler)")]
-		[Order(230)]
+		[Order(257)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Laced = 73,
 		[Description("Leopard (Gaoler)")]
-		[Order(231)]
+		[Order(258)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Leopard = 173,
 		[Description("Mosaic (Gaoler)")]
-		[Order(232)]
+		[Order(259)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Mosaic = 38,
 		[Description("Orb (Gaoler)")]
-		[Order(233)]
+		[Order(260)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Orb = 286,
 		[Description("Phantom (Gaoler)")]
-		[Order(234)]
+		[Order(261)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Phantom = 39,
 		[Description("Piebald (Gaoler)")]
-		[Order(235)]
+		[Order(262)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Piebald = 31,
 		[Description("Pinstripe (Gaoler)")]
-		[Order(236)]
+		[Order(263)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Pinstripe = 32,
 		[Description("Poison (Gaoler)")]
-		[Order(237)]
+		[Order(264)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Poison = 174,
 		[Description("Ribbon (Gaoler)")]
-		[Order(238)]
+		[Order(265)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Ribbon = 175,
 		[Description("Ripple (Gaoler)")]
-		[Order(239)]
+		[Order(266)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Ripple = 78,
 		[Description("Savannah (Gaoler)")]
-		[Order(240)]
+		[Order(267)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Savannah = 176,
 		[Description("Shaggy (Gaoler)")]
-		[Order(241)]
+		[Order(268)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Shaggy = 29,
 		[Description("Skink (Gaoler)")]
-		[Order(242)]
+		[Order(269)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Skink = 177,
 		[Description("Slime (Gaoler)")]
-		[Order(243)]
+		[Order(270)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Slime = 178,
 		[Description("Stitched (Gaoler)")]
-		[Order(244)]
+		[Order(271)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Stitched = 180,
 		[Description("Swirl (Gaoler)")]
-		[Order(245)]
+		[Order(272)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Swirl = 179,
 		[Description("Tapir (Gaoler)")]
-		[Order(246)]
+		[Order(273)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Tapir = 35,
 		[Description("Tide (Gaoler)")]
-		[Order(247)]
+		[Order(274)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Tide = 172,
 		[Description("Tiger (Gaoler)")]
-		[Order(248)]
+		[Order(275)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Tiger = 36,
 		[Description("Wasp (Gaoler)")]
-		[Order(249)]
+		[Order(276)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Wasp = 28,
 		[Description("Bar (Undertide)")]
-		[Order(250)]
+		[Order(277)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Bar = 117,
 		[Description("Boa (Undertide)")]
-		[Order(251)]
+		[Order(278)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Boa = 128,
 		[Description("Boulder (Undertide)")]
-		[Order(252)]
+		[Order(279)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Boulder = 135,
 		[Description("Checkers (Undertide)")]
-		[Order(253)]
+		[Order(280)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Checkers = 127,
 		[Description("Cherub (Undertide)")]
-		[Order(254)]
+		[Order(281)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Cherub = 119,
 		[Description("Chrysocolla (Undertide)")]
-		[Order(255)]
+		[Order(282)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Chrysocolla = 264,
 		[Description("Cinder (Undertide)")]
-		[Order(256)]
+		[Order(283)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Cinder = 218,
 		[Description("Clown (Undertide)")]
-		[Order(257)]
+		[Order(284)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Clown = 265,
 		[Description("Crystal (Undertide)")]
-		[Order(258)]
+		[Order(285)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Crystal = 118,
 		[Description("Fade (Undertide)")]
-		[Order(259)]
+		[Order(286)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Fade = 115,
 		[Description("Falcon (Undertide)")]
-		[Order(260)]
+		[Order(287)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Falcon = 122,
 		[Description("Fern (Undertide)")]
-		[Order(261)]
+		[Order(288)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Fern = 266,
 		[Description("Flaunt (Undertide)")]
-		[Order(262)]
+		[Order(289)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Flaunt = 267,
 		[Description("Giraffe (Undertide)")]
-		[Order(263)]
+		[Order(290)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Giraffe = 123,
 		[Description("Ground (Undertide)")]
-		[Order(264)]
+		[Order(291)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Ground = 268,
 		[Description("Harlequin (Undertide)")]
-		[Order(265)]
+		[Order(292)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Harlequin = 280,
 		[Description("Jaguar (Undertide)")]
-		[Order(266)]
+		[Order(293)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Jaguar = 269,
 		[Description("Jupiter (Undertide)")]
-		[Order(267)]
+		[Order(294)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Jupiter = 270,
 		[Description("Lionfish (Undertide)")]
-		[Order(268)]
+		[Order(295)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Lionfish = 126,
 		[Description("Metallic (Undertide)")]
-		[Order(269)]
+		[Order(296)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Metallic = 278,
 		[Description("Octopus (Undertide)")]
-		[Order(270)]
+		[Order(297)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Octopus = 133,
 		[Description("Orb (Undertide)")]
-		[Order(271)]
+		[Order(298)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Orb = 271,
 		[Description("Petals (Undertide)")]
-		[Order(272)]
+		[Order(299)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Petals = 281,
 		[Description("Pharaoh (Undertide)")]
-		[Order(273)]
+		[Order(300)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Pharaoh = 120,
 		[Description("Piebald (Undertide)")]
-		[Order(274)]
+		[Order(301)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Piebald = 272,
 		[Description("Pinstripe (Undertide)")]
-		[Order(275)]
+		[Order(302)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Pinstripe = 121,
 		[Description("Poison (Undertide)")]
-		[Order(276)]
+		[Order(303)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Poison = 131,
 		[Description("Ribbon (Undertide)")]
-		[Order(277)]
+		[Order(304)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Ribbon = 124,
 		[Description("Ripple (Undertide)")]
-		[Order(278)]
+		[Order(305)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Ripple = 130,
 		[Description("Savannah (Undertide)")]
-		[Order(279)]
+		[Order(306)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Savannah = 129,
 		[Description("Speckle (Undertide)")]
-		[Order(280)]
+		[Order(307)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Speckle = 132,
 		[Description("Starmap (Undertide)")]
-		[Order(281)]
+		[Order(308)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Starmap = 273,
 		[Description("Stitched (Undertide)")]
-		[Order(282)]
+		[Order(309)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Stitched = 282,
 		[Description("Swirl (Undertide)")]
-		[Order(283)]
+		[Order(310)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Swirl = 134,
 		[Description("Tapir (Undertide)")]
-		[Order(284)]
+		[Order(311)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Tapir = 274,
 		[Description("Tide (Undertide)")]
-		[Order(285)]
+		[Order(312)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Tide = 113,
 		[Description("Tiger (Undertide)")]
-		[Order(286)]
+		[Order(313)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Tiger = 275,
 		[Description("Varnish (Undertide)")]
-		[Order(287)]
+		[Order(314)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Varnish = 276,
 		[Description("Wasp (Undertide)")]
-		[Order(288)]
+		[Order(315)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Wasp = 125,
 		[Description("Wolf (Undertide)")]
-		[Order(289)]
+		[Order(316)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Wolf = 116,
 		[Description("Wrought (Undertide)")]
-		[Order(290)]
+		[Order(317)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Wrought = 277,
 	}
@@ -2813,6 +2983,66 @@ namespace FRTools.Core.Data
 		Weaver = 102,
 	}
 	
+	public enum DusthideWingGene
+	{
+		[Description("Basic")]
+		Basic = 0,
+		[Description("Bee (Dusthide)")]
+		Bee = 310,
+		[Description("Blaze (Dusthide)")]
+		Blaze = 295,
+		[Description("Blend (Dusthide)")]
+		Blend = 296,
+		[Description("Butterfly (Dusthide)")]
+		Butterfly = 304,
+		[Description("Chess (Dusthide)")]
+		Chess = 293,
+		[Description("Coil (Dusthide)")]
+		Coil = 205,
+		[Description("Current (Dusthide)")]
+		Current = 312,
+		[Description("Daub (Dusthide)")]
+		Daub = 292,
+		[Description("Edged (Dusthide)")]
+		Edged = 302,
+		[Description("Eel (Dusthide)")]
+		Eel = 311,
+		[Description("Fissure (Dusthide)")]
+		Fissure = 298,
+		[Description("Freckle (Dusthide)")]
+		Freckle = 294,
+		[Description("Hex (Dusthide)")]
+		Hex = 297,
+		[Description("Jester (Dusthide)")]
+		Jester = 299,
+		[Description("Lacquer (Dusthide)")]
+		Lacquer = 316,
+		[Description("Lode (Dusthide)")]
+		Lode = 309,
+		[Description("Loop (Dusthide)")]
+		Loop = 306,
+		[Description("Marlin (Dusthide)")]
+		Marlin = 313,
+		[Description("Paint (Dusthide)")]
+		Paint = 305,
+		[Description("Parade (Dusthide)")]
+		Parade = 317,
+		[Description("Peregrine (Dusthide)")]
+		Peregrine = 301,
+		[Description("Safari (Dusthide)")]
+		Safari = 314,
+		[Description("Saturn (Dusthide)")]
+		Saturn = 300,
+		[Description("Spinner (Dusthide)")]
+		Spinner = 315,
+		[Description("Spire (Dusthide)")]
+		Spire = 307,
+		[Description("Trail (Dusthide)")]
+		Trail = 308,
+		[Description("Weaver (Dusthide)")]
+		Weaver = 303,
+	}
+	
 	public enum GaolerWingGene
 	{
 		[Description("Basic")]
@@ -2947,7 +3177,7 @@ namespace FRTools.Core.Data
 	{
 		[Description("Basic")]
 		[Order(0)]
-		[Gene(DragonType.Aberration, DragonType.Aether, DragonType.Auraboa, DragonType.Banescale, DragonType.Bogsneak, DragonType.Coatl, DragonType.Fae, DragonType.Gaoler, DragonType.Guardian, DragonType.Imperial, DragonType.Mirror, DragonType.Nocturne, DragonType.Obelisk, DragonType.Pearlcatcher, DragonType.Ridgeback, DragonType.Sandsurge, DragonType.Skydancer, DragonType.Snapper, DragonType.Spiral, DragonType.Tundra, DragonType.Undertide, DragonType.Veilspun, DragonType.Wildclaw)]
+		[Gene(DragonType.Aberration, DragonType.Aether, DragonType.Auraboa, DragonType.Banescale, DragonType.Bogsneak, DragonType.Coatl, DragonType.Dusthide, DragonType.Fae, DragonType.Gaoler, DragonType.Guardian, DragonType.Imperial, DragonType.Mirror, DragonType.Nocturne, DragonType.Obelisk, DragonType.Pearlcatcher, DragonType.Ridgeback, DragonType.Sandsurge, DragonType.Skydancer, DragonType.Snapper, DragonType.Spiral, DragonType.Tundra, DragonType.Undertide, DragonType.Veilspun, DragonType.Wildclaw)]
 		Basic = 0,
 		[Description("Shimmer")]
 		[Order(1)]
@@ -3873,240 +4103,348 @@ namespace FRTools.Core.Data
 		[Order(231)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Weaver = 102,
-		[Description("Bee (Gaoler)")]
+		[Description("Bee (Dusthide)")]
 		[Order(232)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Bee = 310,
+		[Description("Blaze (Dusthide)")]
+		[Order(233)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Blaze = 295,
+		[Description("Blend (Dusthide)")]
+		[Order(234)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Blend = 296,
+		[Description("Butterfly (Dusthide)")]
+		[Order(235)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Butterfly = 304,
+		[Description("Chess (Dusthide)")]
+		[Order(236)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Chess = 293,
+		[Description("Coil (Dusthide)")]
+		[Order(237)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Coil = 205,
+		[Description("Current (Dusthide)")]
+		[Order(238)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Current = 312,
+		[Description("Daub (Dusthide)")]
+		[Order(239)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Daub = 292,
+		[Description("Edged (Dusthide)")]
+		[Order(240)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Edged = 302,
+		[Description("Eel (Dusthide)")]
+		[Order(241)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Eel = 311,
+		[Description("Fissure (Dusthide)")]
+		[Order(242)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Fissure = 298,
+		[Description("Freckle (Dusthide)")]
+		[Order(243)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Freckle = 294,
+		[Description("Hex (Dusthide)")]
+		[Order(244)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Hex = 297,
+		[Description("Jester (Dusthide)")]
+		[Order(245)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Jester = 299,
+		[Description("Lacquer (Dusthide)")]
+		[Order(246)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Lacquer = 316,
+		[Description("Lode (Dusthide)")]
+		[Order(247)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Lode = 309,
+		[Description("Loop (Dusthide)")]
+		[Order(248)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Loop = 306,
+		[Description("Marlin (Dusthide)")]
+		[Order(249)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Marlin = 313,
+		[Description("Paint (Dusthide)")]
+		[Order(250)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Paint = 305,
+		[Description("Parade (Dusthide)")]
+		[Order(251)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Parade = 317,
+		[Description("Peregrine (Dusthide)")]
+		[Order(252)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Peregrine = 301,
+		[Description("Safari (Dusthide)")]
+		[Order(253)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Safari = 314,
+		[Description("Saturn (Dusthide)")]
+		[Order(254)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Saturn = 300,
+		[Description("Spinner (Dusthide)")]
+		[Order(255)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Spinner = 315,
+		[Description("Spire (Dusthide)")]
+		[Order(256)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Spire = 307,
+		[Description("Trail (Dusthide)")]
+		[Order(257)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Trail = 308,
+		[Description("Weaver (Dusthide)")]
+		[Order(258)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Weaver = 303,
+		[Description("Bee (Gaoler)")]
+		[Order(259)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Bee = 28,
 		[Description("Blaze (Gaoler)")]
-		[Order(233)]
+		[Order(260)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Blaze = 216,
 		[Description("Blend (Gaoler)")]
-		[Order(234)]
+		[Order(261)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Blend = 86,
 		[Description("Breakup (Gaoler)")]
-		[Order(235)]
+		[Order(262)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Breakup = 38,
 		[Description("Clouded (Gaoler)")]
-		[Order(236)]
+		[Order(263)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Clouded = 180,
 		[Description("Current (Gaoler)")]
-		[Order(237)]
+		[Order(264)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Current = 78,
 		[Description("Daub (Gaoler)")]
-		[Order(238)]
+		[Order(265)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Daub = 34,
 		[Description("Edged (Gaoler)")]
-		[Order(239)]
+		[Order(266)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Edged = 73,
 		[Description("Eel (Gaoler)")]
-		[Order(240)]
+		[Order(267)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Eel = 174,
 		[Description("Eye Spots (Gaoler)")]
-		[Order(241)]
+		[Order(268)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_EyeSpots = 77,
 		[Description("Facet (Gaoler)")]
-		[Order(242)]
+		[Order(269)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Facet = 37,
 		[Description("Flair (Gaoler)")]
-		[Order(243)]
+		[Order(270)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Flair = 111,
 		[Description("Foam (Gaoler)")]
-		[Order(244)]
+		[Order(271)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Foam = 172,
 		[Description("Hex (Gaoler)")]
-		[Order(245)]
+		[Order(272)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Hex = 27,
 		[Description("Marbled (Gaoler)")]
-		[Order(246)]
+		[Order(273)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Marbled = 178,
 		[Description("Myrid (Gaoler)")]
-		[Order(247)]
+		[Order(274)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Myrid = 290,
 		[Description("Paint (Gaoler)")]
-		[Order(248)]
+		[Order(275)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Paint = 31,
 		[Description("Patchwork (Gaoler)")]
-		[Order(249)]
+		[Order(276)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Patchwork = 179,
 		[Description("Peregrine (Gaoler)")]
-		[Order(250)]
+		[Order(277)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Peregrine = 30,
 		[Description("Rosette (Gaoler)")]
-		[Order(251)]
+		[Order(278)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Rosette = 33,
 		[Description("Saddle (Gaoler)")]
-		[Order(252)]
+		[Order(279)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Saddle = 171,
 		[Description("Safari (Gaoler)")]
-		[Order(253)]
+		[Order(280)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Safari = 175,
 		[Description("Sludge (Gaoler)")]
-		[Order(254)]
+		[Order(281)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Sludge = 177,
 		[Description("Spinner (Gaoler)")]
-		[Order(255)]
+		[Order(282)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Spinner = 176,
 		[Description("Spirit (Gaoler)")]
-		[Order(256)]
+		[Order(283)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Spirit = 39,
 		[Description("Streak (Gaoler)")]
-		[Order(257)]
+		[Order(284)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Streak = 29,
 		[Description("Striation (Gaoler)")]
-		[Order(258)]
+		[Order(285)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Striation = 35,
 		[Description("Stripes (Gaoler)")]
-		[Order(259)]
+		[Order(286)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Stripes = 36,
 		[Description("Toxin (Gaoler)")]
-		[Order(260)]
+		[Order(287)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Toxin = 173,
 		[Description("Trail (Gaoler)")]
-		[Order(261)]
+		[Order(288)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Trail = 32,
 		[Description("Weaver (Gaoler)")]
-		[Order(262)]
+		[Order(289)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Weaver = 286,
 		[Description("Bee (Veilspun)")]
-		[Order(263)]
+		[Order(290)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Bee = 60,
 		[Description("Blaze (Veilspun)")]
-		[Order(264)]
+		[Order(291)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Blaze = 219,
 		[Description("Blend (Veilspun)")]
-		[Order(265)]
+		[Order(292)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Blend = 61,
 		[Description("Butterfly (Veilspun)")]
-		[Order(266)]
+		[Order(293)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Butterfly = 144,
 		[Description("Clouded (Veilspun)")]
-		[Order(267)]
+		[Order(294)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Clouded = 142,
 		[Description("Constellation (Veilspun)")]
-		[Order(268)]
+		[Order(295)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Constellation = 66,
 		[Description("Daub (Veilspun)")]
-		[Order(269)]
+		[Order(296)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Daub = 145,
 		[Description("Edged (Veilspun)")]
-		[Order(270)]
+		[Order(297)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Edged = 62,
 		[Description("Eye Spots (Veilspun)")]
-		[Order(271)]
+		[Order(298)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_EyeSpots = 76,
 		[Description("Facet (Veilspun)")]
-		[Order(272)]
+		[Order(299)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Facet = 146,
 		[Description("Freckle (Veilspun)")]
-		[Order(273)]
+		[Order(300)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Freckle = 143,
 		[Description("Hawkmoth (Veilspun)")]
-		[Order(274)]
+		[Order(301)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Hawkmoth = 72,
 		[Description("Hex (Veilspun)")]
-		[Order(275)]
+		[Order(302)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Hex = 83,
 		[Description("Hypnotic (Veilspun)")]
-		[Order(276)]
+		[Order(303)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Hypnotic = 64,
 		[Description("Loop (Veilspun)")]
-		[Order(277)]
+		[Order(304)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Loop = 70,
 		[Description("Myrid (Veilspun)")]
-		[Order(278)]
+		[Order(305)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Myrid = 291,
 		[Description("Paisley (Veilspun)")]
-		[Order(279)]
+		[Order(306)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Paisley = 138,
 		[Description("Patchwork (Veilspun)")]
-		[Order(280)]
+		[Order(307)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Patchwork = 67,
 		[Description("Peregrine (Veilspun)")]
-		[Order(281)]
+		[Order(308)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Peregrine = 139,
 		[Description("Saddle (Veilspun)")]
-		[Order(282)]
+		[Order(309)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Saddle = 236,
 		[Description("Saturn (Veilspun)")]
-		[Order(283)]
+		[Order(310)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Saturn = 65,
 		[Description("Sludge (Veilspun)")]
-		[Order(284)]
+		[Order(311)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Sludge = 141,
 		[Description("Spinner (Veilspun)")]
-		[Order(285)]
+		[Order(312)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Spinner = 68,
 		[Description("Striation (Veilspun)")]
-		[Order(286)]
+		[Order(313)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Striation = 63,
 		[Description("Toxin (Veilspun)")]
-		[Order(287)]
+		[Order(314)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Toxin = 140,
 		[Description("Vivid (Veilspun)")]
-		[Order(288)]
+		[Order(315)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Vivid = 69,
 		[Description("Weaver (Veilspun)")]
-		[Order(289)]
+		[Order(316)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Weaver = 288,
 		[Description("Web (Veilspun)")]
-		[Order(290)]
+		[Order(317)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Web = 71,
 	}
@@ -4181,6 +4519,64 @@ namespace FRTools.Core.Data
 		Polkadot = 168,
 		[Description("Wish")]
 		Wish = 213,
+	}
+	
+	public enum DusthideTertGene
+	{
+		[Description("Basic")]
+		Basic = 0,
+		[Description("Angler (Dusthide)")]
+		Angler = 286,
+		[Description("Antlers (Dusthide)")]
+		Antlers = 276,
+		[Description("Augment (Dusthide)")]
+		Augment = 280,
+		[Description("Batty (Dusthide)")]
+		Batty = 289,
+		[Description("Blossom (Dusthide)")]
+		Blossom = 281,
+		[Description("Carnivore (Dusthide)")]
+		Carnivore = 282,
+		[Description("Dewlap (Dusthide)")]
+		Dewlap = 288,
+		[Description("Fishbone (Dusthide)")]
+		Fishbone = 277,
+		[Description("Gembond (Dusthide)")]
+		Gembond = 287,
+		[Description("Ghost (Dusthide)")]
+		Ghost = 278,
+		[Description("Glowtail (Dusthide)")]
+		Glowtail = 279,
+		[Description("Mandibles (Dusthide)")]
+		Mandibles = 283,
+		[Description("Okapi (Dusthide)")]
+		Okapi = 284,
+		[Description("Opal (Dusthide)")]
+		Opal = 285,
+		[Description("Pachy (Dusthide)")]
+		Pachy = 290,
+		[Description("Polkadot (Dusthide)")]
+		Polkadot = 293,
+		[Description("Ringlets (Dusthide)")]
+		Ringlets = 294,
+		[Description("Smoke (Dusthide)")]
+		Smoke = 297,
+		[Description("Sparkle (Dusthide)")]
+		Sparkle = 292,
+		[Description("Spines (Dusthide)")]
+		Spines = 298,
+		[Description("Spores (Dusthide)")]
+		Spores = 295,
+		[Description("Stained (Dusthide)")]
+		Stained = 274,
+		[Description("Topcoat (Dusthide)")]
+		Topcoat = 299,
+		[Description("Underbelly (Dusthide)")]
+		Underbelly = 275,
+		[Description("Veil (Dusthide)")]
+		Veil = 296,
+		[Description("Whiskers (Dusthide)")]
+		Whiskers = 291,
 	}
 	
 	public enum GaolerTertGene
@@ -4715,7 +5111,7 @@ namespace FRTools.Core.Data
 	{
 		[Description("Basic")]
 		[Order(0)]
-		[Gene(DragonType.Aberration, DragonType.Aether, DragonType.Auraboa, DragonType.Banescale, DragonType.Bogsneak, DragonType.Coatl, DragonType.Fae, DragonType.Gaoler, DragonType.Guardian, DragonType.Imperial, DragonType.Mirror, DragonType.Nocturne, DragonType.Obelisk, DragonType.Pearlcatcher, DragonType.Ridgeback, DragonType.Sandsurge, DragonType.Skydancer, DragonType.Snapper, DragonType.Spiral, DragonType.Tundra, DragonType.Undertide, DragonType.Veilspun, DragonType.Wildclaw)]
+		[Gene(DragonType.Aberration, DragonType.Aether, DragonType.Auraboa, DragonType.Banescale, DragonType.Bogsneak, DragonType.Coatl, DragonType.Dusthide, DragonType.Fae, DragonType.Gaoler, DragonType.Guardian, DragonType.Imperial, DragonType.Mirror, DragonType.Nocturne, DragonType.Obelisk, DragonType.Pearlcatcher, DragonType.Ridgeback, DragonType.Sandsurge, DragonType.Skydancer, DragonType.Snapper, DragonType.Spiral, DragonType.Tundra, DragonType.Undertide, DragonType.Veilspun, DragonType.Wildclaw)]
 		Basic = 0,
 		[Description("Circuit")]
 		[Order(1)]
@@ -4849,964 +5245,1068 @@ namespace FRTools.Core.Data
 		[Order(33)]
 		[Gene(DragonType.Bogsneak, DragonType.Coatl, DragonType.Fae, DragonType.Guardian, DragonType.Imperial, DragonType.Mirror, DragonType.Nocturne, DragonType.Obelisk, DragonType.Pearlcatcher, DragonType.Ridgeback, DragonType.Skydancer, DragonType.Snapper, DragonType.Spiral, DragonType.Tundra, DragonType.Wildclaw)]
 		Wish = 213,
-		[Description("Angler (Gaoler)")]
+		[Description("Angler (Dusthide)")]
 		[Order(34)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Angler = 286,
+		[Description("Antlers (Dusthide)")]
+		[Order(35)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Antlers = 276,
+		[Description("Augment (Dusthide)")]
+		[Order(36)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Augment = 280,
+		[Description("Batty (Dusthide)")]
+		[Order(37)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Batty = 289,
+		[Description("Blossom (Dusthide)")]
+		[Order(38)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Blossom = 281,
+		[Description("Carnivore (Dusthide)")]
+		[Order(39)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Carnivore = 282,
+		[Description("Dewlap (Dusthide)")]
+		[Order(40)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Dewlap = 288,
+		[Description("Fishbone (Dusthide)")]
+		[Order(41)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Fishbone = 277,
+		[Description("Gembond (Dusthide)")]
+		[Order(42)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Gembond = 287,
+		[Description("Ghost (Dusthide)")]
+		[Order(43)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Ghost = 278,
+		[Description("Glowtail (Dusthide)")]
+		[Order(44)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Glowtail = 279,
+		[Description("Mandibles (Dusthide)")]
+		[Order(45)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Mandibles = 283,
+		[Description("Okapi (Dusthide)")]
+		[Order(46)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Okapi = 284,
+		[Description("Opal (Dusthide)")]
+		[Order(47)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Opal = 285,
+		[Description("Pachy (Dusthide)")]
+		[Order(48)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Pachy = 290,
+		[Description("Polkadot (Dusthide)")]
+		[Order(49)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Polkadot = 293,
+		[Description("Ringlets (Dusthide)")]
+		[Order(50)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Ringlets = 294,
+		[Description("Smoke (Dusthide)")]
+		[Order(51)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Smoke = 297,
+		[Description("Sparkle (Dusthide)")]
+		[Order(52)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Sparkle = 292,
+		[Description("Spines (Dusthide)")]
+		[Order(53)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Spines = 298,
+		[Description("Spores (Dusthide)")]
+		[Order(54)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Spores = 295,
+		[Description("Stained (Dusthide)")]
+		[Order(55)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Stained = 274,
+		[Description("Topcoat (Dusthide)")]
+		[Order(56)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Topcoat = 299,
+		[Description("Underbelly (Dusthide)")]
+		[Order(57)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Underbelly = 275,
+		[Description("Veil (Dusthide)")]
+		[Order(58)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Veil = 296,
+		[Description("Whiskers (Dusthide)")]
+		[Order(59)]
+		[Gene(DragonType.Dusthide)]
+		Dusthide_Whiskers = 291,
+		[Description("Angler (Gaoler)")]
+		[Order(60)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Angler = 156,
 		[Description("Blossom (Gaoler)")]
-		[Order(35)]
+		[Order(61)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Blossom = 36,
 		[Description("Braids (Gaoler)")]
-		[Order(36)]
+		[Order(62)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Braids = 55,
 		[Description("Capsule (Gaoler)")]
-		[Order(37)]
+		[Order(63)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Capsule = 75,
 		[Description("Carnivore (Gaoler)")]
-		[Order(38)]
+		[Order(64)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Carnivore = 166,
 		[Description("Contour (Gaoler)")]
-		[Order(39)]
+		[Order(65)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Contour = 157,
 		[Description("Crystalline (Gaoler)")]
-		[Order(40)]
+		[Order(66)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Crystalline = 265,
 		[Description("Fans (Gaoler)")]
-		[Order(41)]
+		[Order(67)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Fans = 3,
 		[Description("Ghost (Gaoler)")]
-		[Order(42)]
+		[Order(68)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Ghost = 25,
 		[Description("Glimmer (Gaoler)")]
-		[Order(43)]
+		[Order(69)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Glimmer = 101,
 		[Description("Gnarlhorns (Gaoler)")]
-		[Order(44)]
+		[Order(70)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Gnarlhorns = 27,
 		[Description("Opal (Gaoler)")]
-		[Order(45)]
+		[Order(71)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Opal = 37,
 		[Description("Pinions (Gaoler)")]
-		[Order(46)]
+		[Order(72)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Pinions = 77,
 		[Description("Ringlets (Gaoler)")]
-		[Order(47)]
+		[Order(73)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Ringlets = 30,
 		[Description("Riot (Gaoler)")]
-		[Order(48)]
+		[Order(74)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Riot = 212,
 		[Description("Runes (Gaoler)")]
-		[Order(49)]
+		[Order(75)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Runes = 32,
 		[Description("Scorpion (Gaoler)")]
-		[Order(50)]
+		[Order(76)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Scorpion = 33,
 		[Description("Shardflank (Gaoler)")]
-		[Order(51)]
+		[Order(77)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Shardflank = 26,
 		[Description("Smoke (Gaoler)")]
-		[Order(52)]
+		[Order(78)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Smoke = 28,
 		[Description("Sparkle (Gaoler)")]
-		[Order(53)]
+		[Order(79)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Sparkle = 99,
 		[Description("Stained (Gaoler)")]
-		[Order(54)]
+		[Order(80)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Stained = 71,
 		[Description("Thundercrack (Gaoler)")]
-		[Order(55)]
+		[Order(81)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Thundercrack = 195,
 		[Description("Thylacine (Gaoler)")]
-		[Order(56)]
+		[Order(82)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Thylacine = 29,
 		[Description("Underbelly (Gaoler)")]
-		[Order(57)]
+		[Order(83)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Underbelly = 31,
 		[Description("Veined (Gaoler)")]
-		[Order(58)]
+		[Order(84)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Veined = 2,
 		[Description("Weathered (Gaoler)")]
-		[Order(59)]
+		[Order(85)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Weathered = 35,
 		[Description("Wintercoat (Gaoler)")]
-		[Order(60)]
+		[Order(86)]
 		[Gene(DragonType.Gaoler)]
 		Gaoler_Wintercoat = 34,
 		[Description("Angler (Undertide)")]
-		[Order(61)]
+		[Order(87)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Angler = 246,
 		[Description("Blossom (Undertide)")]
-		[Order(62)]
+		[Order(88)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Blossom = 267,
 		[Description("Branches (Undertide)")]
-		[Order(63)]
+		[Order(89)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Branches = 248,
 		[Description("Brightshine (Undertide)")]
-		[Order(64)]
+		[Order(90)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Brightshine = 170,
 		[Description("Capsule (Undertide)")]
-		[Order(65)]
+		[Order(91)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Capsule = 111,
 		[Description("Carnivore (Undertide)")]
-		[Order(66)]
+		[Order(92)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Carnivore = 165,
 		[Description("Circuit (Undertide)")]
-		[Order(67)]
+		[Order(93)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Circuit = 117,
 		[Description("Contour (Undertide)")]
-		[Order(68)]
+		[Order(94)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Contour = 249,
 		[Description("Crackle (Undertide)")]
-		[Order(69)]
+		[Order(95)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Crackle = 115,
 		[Description("Crest (Undertide)")]
-		[Order(70)]
+		[Order(96)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Crest = 250,
 		[Description("Fans (Undertide)")]
-		[Order(71)]
+		[Order(97)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Fans = 251,
 		[Description("Featherbeard (Undertide)")]
-		[Order(72)]
+		[Order(98)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Featherbeard = 118,
 		[Description("Filigree (Undertide)")]
-		[Order(73)]
+		[Order(99)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Filigree = 116,
 		[Description("Firebreather (Undertide)")]
-		[Order(74)]
+		[Order(100)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Firebreather = 252,
 		[Description("Firefly (Undertide)")]
-		[Order(75)]
+		[Order(101)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Firefly = 253,
 		[Description("Flecks (Undertide)")]
-		[Order(76)]
+		[Order(102)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Flecks = 112,
 		[Description("Gembond (Undertide)")]
-		[Order(77)]
+		[Order(103)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Gembond = 123,
 		[Description("Ghost (Undertide)")]
-		[Order(78)]
+		[Order(104)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Ghost = 121,
 		[Description("Jellyfish (Undertide)")]
-		[Order(79)]
+		[Order(105)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Jellyfish = 269,
 		[Description("Keel (Undertide)")]
-		[Order(80)]
+		[Order(106)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Keel = 268,
 		[Description("Koi (Undertide)")]
-		[Order(81)]
+		[Order(107)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Koi = 254,
 		[Description("Medusa (Undertide)")]
-		[Order(82)]
+		[Order(108)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Medusa = 255,
 		[Description("Mistral (Undertide)")]
-		[Order(83)]
+		[Order(109)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Mistral = 272,
 		[Description("Nudibranch (Undertide)")]
-		[Order(84)]
+		[Order(110)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Nudibranch = 126,
 		[Description("Okapi (Undertide)")]
-		[Order(85)]
+		[Order(111)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Okapi = 129,
 		[Description("Opal (Undertide)")]
-		[Order(86)]
+		[Order(112)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Opal = 247,
 		[Description("Plating (Undertide)")]
-		[Order(87)]
+		[Order(113)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Plating = 128,
 		[Description("Porcupine (Undertide)")]
-		[Order(88)]
+		[Order(114)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Porcupine = 256,
 		[Description("Pufferfish (Undertide)")]
-		[Order(89)]
+		[Order(115)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Pufferfish = 127,
 		[Description("Remora (Undertide)")]
-		[Order(90)]
+		[Order(116)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Remora = 119,
 		[Description("Ringlets (Undertide)")]
-		[Order(91)]
+		[Order(117)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Ringlets = 120,
 		[Description("Runes (Undertide)")]
-		[Order(92)]
+		[Order(118)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Runes = 114,
 		[Description("Sailfin (Undertide)")]
-		[Order(93)]
+		[Order(119)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Sailfin = 130,
 		[Description("Scales (Undertide)")]
-		[Order(94)]
+		[Order(120)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Scales = 257,
 		[Description("Shark (Undertide)")]
-		[Order(95)]
+		[Order(121)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Shark = 258,
 		[Description("Smirch (Undertide)")]
-		[Order(96)]
+		[Order(122)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Smirch = 259,
 		[Description("Smoke (Undertide)")]
-		[Order(97)]
+		[Order(123)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Smoke = 260,
 		[Description("Soap (Undertide)")]
-		[Order(98)]
+		[Order(124)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Soap = 124,
 		[Description("Sparkle (Undertide)")]
-		[Order(99)]
+		[Order(125)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Sparkle = 122,
 		[Description("Spines (Undertide)")]
-		[Order(100)]
+		[Order(126)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Spines = 261,
 		[Description("Stained (Undertide)")]
-		[Order(101)]
+		[Order(127)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Stained = 110,
 		[Description("Stinger (Undertide)")]
-		[Order(102)]
+		[Order(128)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Stinger = 262,
 		[Description("Tentacles (Undertide)")]
-		[Order(103)]
+		[Order(129)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Tentacles = 125,
 		[Description("Thorns (Undertide)")]
-		[Order(104)]
+		[Order(130)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Thorns = 263,
 		[Description("Topcoat (Undertide)")]
-		[Order(105)]
+		[Order(131)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Topcoat = 264,
 		[Description("Underbelly (Undertide)")]
-		[Order(106)]
+		[Order(132)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Underbelly = 109,
 		[Description("Veined (Undertide)")]
-		[Order(107)]
+		[Order(133)]
 		[Gene(DragonType.Undertide)]
 		Undertide_Veined = 113,
 		[Description("Angler (Veilspun)")]
-		[Order(108)]
+		[Order(134)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Angler = 78,
 		[Description("Beetle (Veilspun)")]
-		[Order(109)]
+		[Order(135)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Beetle = 65,
 		[Description("Branches (Veilspun)")]
-		[Order(110)]
+		[Order(136)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Branches = 63,
 		[Description("Brightshine (Veilspun)")]
-		[Order(111)]
+		[Order(137)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Brightshine = 169,
 		[Description("Capsule (Veilspun)")]
-		[Order(112)]
+		[Order(138)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Capsule = 56,
 		[Description("Carnivore (Veilspun)")]
-		[Order(113)]
+		[Order(139)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Carnivore = 167,
 		[Description("Crackle (Veilspun)")]
-		[Order(114)]
+		[Order(140)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Crackle = 58,
 		[Description("Diaphanous (Veilspun)")]
-		[Order(115)]
+		[Order(141)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Diaphanous = 66,
 		[Description("Filigree (Veilspun)")]
-		[Order(116)]
+		[Order(142)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Filigree = 133,
 		[Description("Firefly (Veilspun)")]
-		[Order(117)]
+		[Order(143)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Firefly = 61,
 		[Description("Flecks (Veilspun)")]
-		[Order(118)]
+		[Order(144)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Flecks = 64,
 		[Description("Ghost (Veilspun)")]
-		[Order(119)]
+		[Order(145)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Ghost = 131,
 		[Description("Glimmer (Veilspun)")]
-		[Order(120)]
+		[Order(146)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Glimmer = 102,
 		[Description("Koi (Veilspun)")]
-		[Order(121)]
+		[Order(147)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Koi = 108,
 		[Description("Mop (Veilspun)")]
-		[Order(122)]
+		[Order(148)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Mop = 67,
 		[Description("Okapi (Veilspun)")]
-		[Order(123)]
+		[Order(149)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Okapi = 59,
 		[Description("Opal (Veilspun)")]
-		[Order(124)]
+		[Order(150)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Opal = 62,
 		[Description("Peacock (Veilspun)")]
-		[Order(125)]
+		[Order(151)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Peacock = 60,
 		[Description("Runes (Veilspun)")]
-		[Order(126)]
+		[Order(152)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Runes = 57,
 		[Description("Sparkle (Veilspun)")]
-		[Order(127)]
+		[Order(153)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Sparkle = 100,
 		[Description("Stained (Veilspun)")]
-		[Order(128)]
+		[Order(154)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Stained = 72,
 		[Description("Thorns (Veilspun)")]
-		[Order(129)]
+		[Order(155)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Thorns = 68,
 		[Description("Trickmurk (Veilspun)")]
-		[Order(130)]
+		[Order(156)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Trickmurk = 270,
 		[Description("Underbelly (Veilspun)")]
-		[Order(131)]
+		[Order(157)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Underbelly = 70,
 		[Description("Veined (Veilspun)")]
-		[Order(132)]
+		[Order(158)]
 		[Gene(DragonType.Veilspun)]
 		Veilspun_Veined = 134,
 		[Description("Augment (Aberration)")]
-		[Order(133)]
+		[Order(159)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Augment = 198,
 		[Description("Braids (Aberration)")]
-		[Order(134)]
+		[Order(160)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Braids = 199,
 		[Description("Capsule (Aberration)")]
-		[Order(135)]
+		[Order(161)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Capsule = 83,
 		[Description("Carnivore (Aberration)")]
-		[Order(136)]
+		[Order(162)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Carnivore = 162,
 		[Description("Contour (Aberration)")]
-		[Order(137)]
+		[Order(163)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Contour = 200,
 		[Description("Fangs (Aberration)")]
-		[Order(138)]
+		[Order(164)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Fangs = 84,
 		[Description("Fans (Aberration)")]
-		[Order(139)]
+		[Order(165)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Fans = 201,
 		[Description("Firebreather (Aberration)")]
-		[Order(140)]
+		[Order(166)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Firebreather = 202,
 		[Description("Firefly (Aberration)")]
-		[Order(141)]
+		[Order(167)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Firefly = 85,
 		[Description("Flameforger (Aberration)")]
-		[Order(142)]
+		[Order(168)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Flameforger = 197,
 		[Description("Flecks (Aberration)")]
-		[Order(143)]
+		[Order(169)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Flecks = 104,
 		[Description("Frills (Aberration)")]
-		[Order(144)]
+		[Order(170)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Frills = 86,
 		[Description("Ghost (Aberration)")]
-		[Order(145)]
+		[Order(171)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Ghost = 88,
 		[Description("Glimmer (Aberration)")]
-		[Order(146)]
+		[Order(172)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Glimmer = 94,
 		[Description("Glowtail (Aberration)")]
-		[Order(147)]
+		[Order(173)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Glowtail = 89,
 		[Description("Jewels (Aberration)")]
-		[Order(148)]
+		[Order(174)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Jewels = 87,
 		[Description("Koi (Aberration)")]
-		[Order(149)]
+		[Order(175)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Koi = 203,
 		[Description("Kumo (Aberration)")]
-		[Order(150)]
+		[Order(176)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Kumo = 80,
 		[Description("Mucous (Aberration)")]
-		[Order(151)]
+		[Order(177)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Mucous = 81,
 		[Description("Peacock (Aberration)")]
-		[Order(152)]
+		[Order(178)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Peacock = 90,
 		[Description("Polkadot (Aberration)")]
-		[Order(153)]
+		[Order(179)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Polkadot = 79,
 		[Description("Polypore (Aberration)")]
-		[Order(154)]
+		[Order(180)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Polypore = 82,
 		[Description("Riot (Aberration)")]
-		[Order(155)]
+		[Order(181)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Riot = 211,
 		[Description("Scales (Aberration)")]
-		[Order(156)]
+		[Order(182)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Scales = 92,
 		[Description("Skeletal (Aberration)")]
-		[Order(157)]
+		[Order(183)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Skeletal = 204,
 		[Description("Smirch (Aberration)")]
-		[Order(158)]
+		[Order(184)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Smirch = 205,
 		[Description("Sparkle (Aberration)")]
-		[Order(159)]
+		[Order(185)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Sparkle = 96,
 		[Description("Spines (Aberration)")]
-		[Order(160)]
+		[Order(186)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Spines = 206,
 		[Description("Stained (Aberration)")]
-		[Order(161)]
+		[Order(187)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Stained = 207,
 		[Description("Thorns (Aberration)")]
-		[Order(162)]
+		[Order(188)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Thorns = 208,
 		[Description("Thylacine (Aberration)")]
-		[Order(163)]
+		[Order(189)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Thylacine = 93,
 		[Description("Underbelly (Aberration)")]
-		[Order(164)]
+		[Order(190)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Underbelly = 132,
 		[Description("Veined (Aberration)")]
-		[Order(165)]
+		[Order(191)]
 		[Gene(DragonType.Aberration)]
 		Aberration_Veined = 91,
 		[Description("Augment (Sandsurge)")]
-		[Order(166)]
+		[Order(192)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Augment = 173,
 		[Description("Beard (Sandsurge)")]
-		[Order(167)]
+		[Order(193)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Beard = 174,
 		[Description("Branches (Sandsurge)")]
-		[Order(168)]
+		[Order(194)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Branches = 189,
 		[Description("Chitin (Sandsurge)")]
-		[Order(169)]
+		[Order(195)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Chitin = 183,
 		[Description("Crest (Sandsurge)")]
-		[Order(170)]
+		[Order(196)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Crest = 184,
 		[Description("Darts (Sandsurge)")]
-		[Order(171)]
+		[Order(197)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Darts = 177,
 		[Description("Fishbone (Sandsurge)")]
-		[Order(172)]
+		[Order(198)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Fishbone = 185,
 		[Description("Gembond (Sandsurge)")]
-		[Order(173)]
+		[Order(199)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Gembond = 176,
 		[Description("Keel (Sandsurge)")]
-		[Order(174)]
+		[Order(200)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Keel = 186,
 		[Description("Kumo (Sandsurge)")]
-		[Order(175)]
+		[Order(201)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Kumo = 175,
 		[Description("Lace (Sandsurge)")]
-		[Order(176)]
+		[Order(202)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Lace = 187,
 		[Description("Okapi (Sandsurge)")]
-		[Order(177)]
+		[Order(203)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Okapi = 182,
 		[Description("Peacock (Sandsurge)")]
-		[Order(178)]
+		[Order(204)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Peacock = 191,
 		[Description("Rockbreaker (Sandsurge)")]
-		[Order(179)]
+		[Order(205)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Rockbreaker = 245,
 		[Description("Runes (Sandsurge)")]
-		[Order(180)]
+		[Order(206)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Runes = 178,
 		[Description("Shark (Sandsurge)")]
-		[Order(181)]
+		[Order(207)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Shark = 190,
 		[Description("Smirch (Sandsurge)")]
-		[Order(182)]
+		[Order(208)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Smirch = 192,
 		[Description("Soap (Sandsurge)")]
-		[Order(183)]
+		[Order(209)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Soap = 180,
 		[Description("Sparkle (Sandsurge)")]
-		[Order(184)]
+		[Order(210)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Sparkle = 193,
 		[Description("Spectre (Sandsurge)")]
-		[Order(185)]
+		[Order(211)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Spectre = 188,
 		[Description("Spines (Sandsurge)")]
-		[Order(186)]
+		[Order(212)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Spines = 181,
 		[Description("Stained (Sandsurge)")]
-		[Order(187)]
+		[Order(213)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Stained = 172,
 		[Description("Starfall (Sandsurge)")]
-		[Order(188)]
+		[Order(214)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Starfall = 210,
 		[Description("Thundercrack (Sandsurge)")]
-		[Order(189)]
+		[Order(215)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Thundercrack = 194,
 		[Description("Thylacine (Sandsurge)")]
-		[Order(190)]
+		[Order(216)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Thylacine = 179,
 		[Description("Underbelly (Sandsurge)")]
-		[Order(191)]
+		[Order(217)]
 		[Gene(DragonType.Sandsurge)]
 		Sandsurge_Underbelly = 171,
 		[Description("Batty (Auraboa)")]
-		[Order(192)]
+		[Order(218)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Batty = 214,
 		[Description("Branches (Auraboa)")]
-		[Order(193)]
+		[Order(219)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Branches = 217,
 		[Description("Capsule (Auraboa)")]
-		[Order(194)]
+		[Order(220)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Capsule = 229,
 		[Description("Contour (Auraboa)")]
-		[Order(195)]
+		[Order(221)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Contour = 230,
 		[Description("Crackle (Auraboa)")]
-		[Order(196)]
+		[Order(222)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Crackle = 231,
 		[Description("Crest (Auraboa)")]
-		[Order(197)]
+		[Order(223)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Crest = 215,
 		[Description("Crystalline (Auraboa)")]
-		[Order(198)]
+		[Order(224)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Crystalline = 266,
 		[Description("Firebreather (Auraboa)")]
-		[Order(199)]
+		[Order(225)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Firebreather = 233,
 		[Description("Firefly (Auraboa)")]
-		[Order(200)]
+		[Order(226)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Firefly = 232,
 		[Description("Fishbone (Auraboa)")]
-		[Order(201)]
+		[Order(227)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Fishbone = 216,
 		[Description("Keel (Auraboa)")]
-		[Order(202)]
+		[Order(228)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Keel = 234,
 		[Description("Koi (Auraboa)")]
-		[Order(203)]
+		[Order(229)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Koi = 235,
 		[Description("Medusa (Auraboa)")]
-		[Order(204)]
+		[Order(230)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Medusa = 218,
 		[Description("Opal (Auraboa)")]
-		[Order(205)]
+		[Order(231)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Opal = 236,
 		[Description("Paradise (Auraboa)")]
-		[Order(206)]
+		[Order(232)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Paradise = 219,
 		[Description("Peacock (Auraboa)")]
-		[Order(207)]
+		[Order(233)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Peacock = 237,
 		[Description("Plumage (Auraboa)")]
-		[Order(208)]
+		[Order(234)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Plumage = 220,
 		[Description("Polkadot (Auraboa)")]
-		[Order(209)]
+		[Order(235)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Polkadot = 238,
 		[Description("Porcupine (Auraboa)")]
-		[Order(210)]
+		[Order(236)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Porcupine = 221,
 		[Description("Rockbreaker (Auraboa)")]
-		[Order(211)]
+		[Order(237)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Rockbreaker = 244,
 		[Description("Sailfin (Auraboa)")]
-		[Order(212)]
+		[Order(238)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Sailfin = 222,
 		[Description("Scales (Auraboa)")]
-		[Order(213)]
+		[Order(239)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Scales = 239,
 		[Description("Scuttle (Auraboa)")]
-		[Order(214)]
+		[Order(240)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Scuttle = 223,
 		[Description("Smoke (Auraboa)")]
-		[Order(215)]
+		[Order(241)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Smoke = 240,
 		[Description("Spines (Auraboa)")]
-		[Order(216)]
+		[Order(242)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Spines = 241,
 		[Description("Stained (Auraboa)")]
-		[Order(217)]
+		[Order(243)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Stained = 242,
 		[Description("Stinger (Auraboa)")]
-		[Order(218)]
+		[Order(244)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Stinger = 224,
 		[Description("Terracotta (Auraboa)")]
-		[Order(219)]
+		[Order(245)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Terracotta = 225,
 		[Description("Thorns (Auraboa)")]
-		[Order(220)]
+		[Order(246)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Thorns = 226,
 		[Description("Topcoat (Auraboa)")]
-		[Order(221)]
+		[Order(247)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Topcoat = 243,
 		[Description("Underbelly (Auraboa)")]
-		[Order(222)]
+		[Order(248)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Underbelly = 228,
 		[Description("Willow (Auraboa)")]
-		[Order(223)]
+		[Order(249)]
 		[Gene(DragonType.Auraboa)]
 		Auraboa_Willow = 227,
 		[Description("Capsule (Banescale)")]
-		[Order(224)]
+		[Order(250)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Capsule = 74,
 		[Description("Carnivore (Banescale)")]
-		[Order(225)]
+		[Order(251)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Carnivore = 164,
 		[Description("Contour (Banescale)")]
-		[Order(226)]
+		[Order(252)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Contour = 46,
 		[Description("Crackle (Banescale)")]
-		[Order(227)]
+		[Order(253)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Crackle = 50,
 		[Description("Fans (Banescale)")]
-		[Order(228)]
+		[Order(254)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Fans = 41,
 		[Description("Filigree (Banescale)")]
-		[Order(229)]
+		[Order(255)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Filigree = 43,
 		[Description("Flameforger (Banescale)")]
-		[Order(230)]
+		[Order(256)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Flameforger = 196,
 		[Description("Ghost (Banescale)")]
-		[Order(231)]
+		[Order(257)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Ghost = 47,
 		[Description("Gliders (Banescale)")]
-		[Order(232)]
+		[Order(258)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Gliders = 76,
 		[Description("Glimmer (Banescale)")]
-		[Order(233)]
+		[Order(259)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Glimmer = 95,
 		[Description("Lace (Banescale)")]
-		[Order(234)]
+		[Order(260)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Lace = 44,
 		[Description("Mistral (Banescale)")]
-		[Order(235)]
+		[Order(261)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Mistral = 273,
 		[Description("Monarch (Banescale)")]
-		[Order(236)]
+		[Order(262)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Monarch = 158,
 		[Description("Peacock (Banescale)")]
-		[Order(237)]
+		[Order(263)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Peacock = 106,
 		[Description("Plumage (Banescale)")]
-		[Order(238)]
+		[Order(264)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Plumage = 51,
 		[Description("Porcupine (Banescale)")]
-		[Order(239)]
+		[Order(265)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Porcupine = 49,
 		[Description("Ringlets (Banescale)")]
-		[Order(240)]
+		[Order(266)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Ringlets = 40,
 		[Description("Skeletal (Banescale)")]
-		[Order(241)]
+		[Order(267)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Skeletal = 45,
 		[Description("Soap (Banescale)")]
-		[Order(242)]
+		[Order(268)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Soap = 159,
 		[Description("Sparkle (Banescale)")]
-		[Order(243)]
+		[Order(269)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Sparkle = 98,
 		[Description("Spines (Banescale)")]
-		[Order(244)]
+		[Order(270)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Spines = 160,
 		[Description("Squiggle (Banescale)")]
-		[Order(245)]
+		[Order(271)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Squiggle = 42,
 		[Description("Stained (Banescale)")]
-		[Order(246)]
+		[Order(272)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Stained = 69,
 		[Description("Trimmings (Banescale)")]
-		[Order(247)]
+		[Order(273)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Trimmings = 39,
 		[Description("Underbelly (Banescale)")]
-		[Order(248)]
+		[Order(274)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Underbelly = 52,
 		[Description("Wraith (Banescale)")]
-		[Order(249)]
+		[Order(275)]
 		[Gene(DragonType.Banescale)]
 		Banescale_Wraith = 48,
 		[Description("Carnivore (Aether)")]
-		[Order(250)]
+		[Order(276)]
 		[Gene(DragonType.Aether)]
 		Aether_Carnivore = 163,
 		[Description("Circuit (Aether)")]
-		[Order(251)]
+		[Order(277)]
 		[Gene(DragonType.Aether)]
 		Aether_Circuit = 135,
 		[Description("Contour (Aether)")]
-		[Order(252)]
+		[Order(278)]
 		[Gene(DragonType.Aether)]
 		Aether_Contour = 136,
 		[Description("Flutter (Aether)")]
-		[Order(253)]
+		[Order(279)]
 		[Gene(DragonType.Aether)]
 		Aether_Flutter = 141,
 		[Description("Gembond (Aether)")]
-		[Order(254)]
+		[Order(280)]
 		[Gene(DragonType.Aether)]
 		Aether_Gembond = 137,
 		[Description("Glowtail (Aether)")]
-		[Order(255)]
+		[Order(281)]
 		[Gene(DragonType.Aether)]
 		Aether_Glowtail = 138,
 		[Description("Keel (Aether)")]
-		[Order(256)]
+		[Order(282)]
 		[Gene(DragonType.Aether)]
 		Aether_Keel = 139,
 		[Description("Lace (Aether)")]
-		[Order(257)]
+		[Order(283)]
 		[Gene(DragonType.Aether)]
 		Aether_Lace = 142,
 		[Description("Mandibles (Aether)")]
-		[Order(258)]
+		[Order(284)]
 		[Gene(DragonType.Aether)]
 		Aether_Mandibles = 143,
 		[Description("Monarch (Aether)")]
-		[Order(259)]
+		[Order(285)]
 		[Gene(DragonType.Aether)]
 		Aether_Monarch = 140,
 		[Description("Points (Aether)")]
-		[Order(260)]
+		[Order(286)]
 		[Gene(DragonType.Aether)]
 		Aether_Points = 146,
 		[Description("Scales (Aether)")]
-		[Order(261)]
+		[Order(287)]
 		[Gene(DragonType.Aether)]
 		Aether_Scales = 147,
 		[Description("Smirch (Aether)")]
-		[Order(262)]
+		[Order(288)]
 		[Gene(DragonType.Aether)]
 		Aether_Smirch = 150,
 		[Description("Smoke (Aether)")]
-		[Order(263)]
+		[Order(289)]
 		[Gene(DragonType.Aether)]
 		Aether_Smoke = 151,
 		[Description("Space (Aether)")]
-		[Order(264)]
+		[Order(290)]
 		[Gene(DragonType.Aether)]
 		Aether_Space = 149,
 		[Description("Sparkle (Aether)")]
-		[Order(265)]
+		[Order(291)]
 		[Gene(DragonType.Aether)]
 		Aether_Sparkle = 152,
 		[Description("Spines (Aether)")]
-		[Order(266)]
+		[Order(292)]
 		[Gene(DragonType.Aether)]
 		Aether_Spines = 153,
 		[Description("Stained (Aether)")]
-		[Order(267)]
+		[Order(293)]
 		[Gene(DragonType.Aether)]
 		Aether_Stained = 145,
 		[Description("Starfall (Aether)")]
-		[Order(268)]
+		[Order(294)]
 		[Gene(DragonType.Aether)]
 		Aether_Starfall = 209,
 		[Description("Stinger (Aether)")]
-		[Order(269)]
+		[Order(295)]
 		[Gene(DragonType.Aether)]
 		Aether_Stinger = 148,
 		[Description("Trickmurk (Aether)")]
-		[Order(270)]
+		[Order(296)]
 		[Gene(DragonType.Aether)]
 		Aether_Trickmurk = 271,
 		[Description("Underbelly (Aether)")]
-		[Order(271)]
+		[Order(297)]
 		[Gene(DragonType.Aether)]
 		Aether_Underbelly = 144,
 		[Description("Whiskers (Aether)")]
-		[Order(272)]
+		[Order(298)]
 		[Gene(DragonType.Aether)]
 		Aether_Whiskers = 154,
 		[Description("Wish (Aether)")]
-		[Order(273)]
+		[Order(299)]
 		[Gene(DragonType.Aether)]
 		Aether_Wish = 155,
 	}
@@ -5831,6 +6331,8 @@ namespace FRTools.Core.Data
 				return true;
 			if ((int)type == 24)
 				return true;
+			if ((int)type == 25)
+				return true;
 			return false;
 		}
 
@@ -5852,6 +6354,8 @@ namespace FRTools.Core.Data
 				return typeof(SandsurgeBodyGene);
 			if ((int)type == 24)
 				return typeof(AuraboaBodyGene);
+			if ((int)type == 25)
+				return typeof(DusthideBodyGene);
 			return typeof(BodyGene);
 		}
 
@@ -5873,6 +6377,8 @@ namespace FRTools.Core.Data
 				return typeof(SandsurgeWingGene);
 			if ((int)type == 24)
 				return typeof(AuraboaWingGene);
+			if ((int)type == 25)
+				return typeof(DusthideWingGene);
 			return typeof(WingGene);
 		}
 
@@ -5894,6 +6400,8 @@ namespace FRTools.Core.Data
 				return typeof(SandsurgeTertGene);
 			if ((int)type == 24)
 				return typeof(AuraboaTertGene);
+			if ((int)type == 25)
+				return typeof(DusthideTertGene);
 			return typeof(TertiaryGene);
 		}
 	}
@@ -5912,7 +6420,7 @@ namespace FRTools.Core.Data
 		{
 			return new[]
 			{
-				DragonType.Gaoler, DragonType.Banescale, DragonType.Veilspun, DragonType.Aberration, DragonType.Undertide, DragonType.Aether, DragonType.Sandsurge, DragonType.Auraboa, 
+				DragonType.Gaoler, DragonType.Banescale, DragonType.Veilspun, DragonType.Aberration, DragonType.Undertide, DragonType.Aether, DragonType.Sandsurge, DragonType.Auraboa, DragonType.Dusthide, 
 			};
 		}
 
@@ -5953,6 +6461,10 @@ namespace FRTools.Core.Data
 					return GenerateDragonImageUrl(dragon.DragonType, gender, dragon.Age, (AuraboaBodyGene)dragon.BodyGene,
 						dragon.BodyColor, (AuraboaWingGene)dragon.WingGene, dragon.WingColor, (AuraboaTertGene)dragon.TertiaryGene,
 						dragon.TertiaryColor, dragon.Element, dragon.EyeType);
+				case DragonType.Dusthide:
+					return GenerateDragonImageUrl(dragon.DragonType, gender, dragon.Age, (DusthideBodyGene)dragon.BodyGene,
+						dragon.BodyColor, (DusthideWingGene)dragon.WingGene, dragon.WingColor, (DusthideTertGene)dragon.TertiaryGene,
+						dragon.TertiaryColor, dragon.Element, dragon.EyeType);
 				default:
 					return GenerateDragonImageUrl(dragon.DragonType, gender, dragon.Age, (BodyGene)dragon.BodyGene,
 						dragon.BodyColor, (WingGene)dragon.WingGene, dragon.WingColor, (TertiaryGene)dragon.TertiaryGene,
@@ -5975,6 +6487,8 @@ namespace FRTools.Core.Data
 		public static Task<string> GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, SandsurgeBodyGene bodygene, Color body, SandsurgeWingGene winggene, Color wings, SandsurgeTertGene tertgene, Color tert, Element element, EyeType eyetype)
 			=> GenerateDragonImageUrl((int)breed, (int)gender, (int)age, (int)bodygene, (int)body, (int)winggene, (int)wings, (int)tertgene, (int)tert, (int)element, (int)eyetype);
 		public static Task<string> GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, AuraboaBodyGene bodygene, Color body, AuraboaWingGene winggene, Color wings, AuraboaTertGene tertgene, Color tert, Element element, EyeType eyetype)
+			=> GenerateDragonImageUrl((int)breed, (int)gender, (int)age, (int)bodygene, (int)body, (int)winggene, (int)wings, (int)tertgene, (int)tert, (int)element, (int)eyetype);
+		public static Task<string> GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, DusthideBodyGene bodygene, Color body, DusthideWingGene winggene, Color wings, DusthideTertGene tertgene, Color tert, Element element, EyeType eyetype)
 			=> GenerateDragonImageUrl((int)breed, (int)gender, (int)age, (int)bodygene, (int)body, (int)winggene, (int)wings, (int)tertgene, (int)tert, (int)element, (int)eyetype);
 		public static Task<string> GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, BodyGene bodygene, Color body, WingGene winggene, Color wings, TertiaryGene tertgene, Color tert, Element element, EyeType eyetype)
 			=> GenerateDragonImageUrl((int)breed, (int)gender, (int)age, (int)bodygene, (int)body, (int)winggene, (int)wings, (int)tertgene, (int)tert, (int)element, (int)eyetype);
