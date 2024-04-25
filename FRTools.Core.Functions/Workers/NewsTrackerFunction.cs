@@ -11,9 +11,9 @@ using FRTools.Core.Data.DataModels.NewsReaderModels;
 using FRTools.Core.Services.Interfaces;
 using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
-using Microsoft.Azure.WebJobs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Azure.Functions.Worker;
 
 namespace FRTools.Core.Functions.Workers
 {
@@ -25,18 +25,18 @@ namespace FRTools.Core.Functions.Workers
         private readonly IHtmlService _htmlService;
         private ILogger _logger;
 
-        public NewsTrackerFunction(DataContext dataContext, IFRItemService itemService, IAzurePipelineService pipelineService, IHtmlService htmlService)
+        public NewsTrackerFunction(DataContext dataContext, IFRItemService itemService, IAzurePipelineService pipelineService, IHtmlService htmlService, ILogger<NewsTrackerFunction> logger)
         {
             _dataContext = dataContext;
             _itemService = itemService;
             _pipelineService = pipelineService;
             _htmlService = htmlService;
+            _logger = logger;
         }
 
-        [FunctionName(nameof(NewsTracker))]
-        public async Task NewsTracker([TimerTrigger("0 */5 * * * *", RunOnStartup = DEBUG)] TimerInfo timer, ILogger log)
+        [Function(nameof(NewsTracker))]
+        public async Task NewsTracker([TimerTrigger("0 */5 * * * *", RunOnStartup = DEBUG)] TimerInfo timer)
         {
-            _logger = log;
             var mainNewsForum = await _htmlService.LoadHtmlPage("https://www1.flightrising.com/forums/ann");
             var topics = mainNewsForum.GetElementbyId("postlist").SelectNodes("tr");
 

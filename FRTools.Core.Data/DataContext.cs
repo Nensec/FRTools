@@ -7,15 +7,12 @@ using FRTools.Core.Data.DataModels.PinglistModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace FRTools.Core.Data
 {
-    public class DataContext : IdentityDbContext<User, Role, int, UserClaim, UserRole, UserLogin, IdentityRoleClaim<int>, IdentityUserToken<int>>
+    public class DataContext(DbContextOptions<DataContext> options) : IdentityDbContext<User, Role, int, UserClaim, UserRole, UserLogin, IdentityRoleClaim<int>, IdentityUserToken<int>>(options)
     {
-        public DataContext(DbContextOptions<DataContext> options) : base(options)
-        {            
-        }
-
         // FRTools tables
         public virtual DbSet<Job> Jobs { get; set; }
         public virtual DbSet<ProfileSettings> ProfileSettings { get; set; }
@@ -58,7 +55,7 @@ namespace FRTools.Core.Data
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
                 var properties = entityType.GetProperties()
-                    .Where(property => property.IsForeignKey() && !property.DeclaringEntityType.IsOwned());
+                    .Where(property => property.IsForeignKey() && !((IMutableEntityType)property.DeclaringType).IsOwned());
 
                 foreach (var property in properties)
                 {

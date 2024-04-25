@@ -6,25 +6,26 @@ using FRTools.Core.Common;
 using FRTools.Core.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Azure.Functions.Worker;
 
 namespace FRTools.Core.Functions.Workers
 {
     public class ProxyFunctions : FunctionBase
     {
         private readonly DataContext _dataContext;
+        private readonly ILogger<ProxyFunctions> _logger;
 
-        public ProxyFunctions(DataContext dataContext)
+        public ProxyFunctions(DataContext dataContext, ILogger<ProxyFunctions> logger)
         {
             _dataContext = dataContext;
+            _logger = logger;
         }
 
-        [FunctionName(nameof(ProxyDummyDragonSkin))]
-        public async Task<IActionResult> ProxyDummyDragonSkin([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "proxy/dragon/skin/{dragonType:int}/{gender:int}/{skinId:int}")] HttpRequest request, int dragonType, int gender, int skinId, ILogger log)
+        [Function(nameof(ProxyDummyDragonSkin))]
+        public async Task<IActionResult> ProxyDummyDragonSkin([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "proxy/dragon/skin/{dragonType:int}/{gender:int}/{skinId:int}")] HttpRequest request, int dragonType, int gender, int skinId)
         {
-            log.LogInformation("C# HTTP trigger function processed a ProxyDummyDragonSkin request.");
+            _logger.LogInformation("C# HTTP trigger function processed a ProxyDummyDragonSkin request.");
 
             using (var client = new HttpClient())
             {
@@ -34,10 +35,10 @@ namespace FRTools.Core.Functions.Workers
             }
         }
 
-        [FunctionName(nameof(ProxyDummyDragonGene))]
-        public async Task<IActionResult> ProxyDummyDragonGene([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "proxy/dragon/gene/{dragonType:int}/{gender:int}/{geneId:int}")] HttpRequest request, int dragonType, int gender, int geneId, ILogger log)
+        [Function(nameof(ProxyDummyDragonGene))]
+        public async Task<IActionResult> ProxyDummyDragonGene([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "proxy/dragon/gene/{dragonType:int}/{gender:int}/{geneId:int}")] HttpRequest request, int dragonType, int gender, int geneId)
         {
-            log.LogInformation("C# HTTP trigger function processed a ProxyDummyDragonGene request.");
+            _logger.LogInformation("C# HTTP trigger function processed a ProxyDummyDragonGene request.");
 
             var item = _dataContext.FRItems.FirstOrDefault(x => x.FRId == geneId);
             int primary = 0, secondary = 0, tertiary = 0;
@@ -66,10 +67,10 @@ namespace FRTools.Core.Functions.Workers
             return new FileContentResult(geneBytes, "image/png");
         }
 
-        [FunctionName(nameof(ProxyDummyDragonApparel))]
-        public async Task<IActionResult> ProxyDummyDragonApparel([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "proxy/dragon/apparel/{dragonType:int}/{gender:int}/{apparelId:int}")] HttpRequest request, int dragonType, int gender, int apparelId, ILogger log)
+        [Function(nameof(ProxyDummyDragonApparel))]
+        public async Task<IActionResult> ProxyDummyDragonApparel([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "proxy/dragon/apparel/{dragonType:int}/{gender:int}/{apparelId:int}")] HttpRequest request, int dragonType, int gender, int apparelId)
         {
-            log.LogInformation("C# HTTP trigger function processed a ProxyDummyDragonApparel request.");
+            _logger.LogInformation("C# HTTP trigger function processed a ProxyDummyDragonApparel request.");
 
             using (var client = new HttpClient())
             {
@@ -79,10 +80,10 @@ namespace FRTools.Core.Functions.Workers
             }
         }
 
-        [FunctionName(nameof(ProxyIcon))]
-        public async Task<IActionResult> ProxyIcon([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "proxy/icon/{itemId:int}")] HttpRequest request, int itemId, ILogger log)
+        [Function(nameof(ProxyIcon))]
+        public async Task<IActionResult> ProxyIcon([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "proxy/icon/{itemId:int}")] HttpRequest request, int itemId)
         {
-            log.LogInformation("C# HTTP trigger function processed a ProxyIcon request.");
+            _logger.LogInformation("C# HTTP trigger function processed a ProxyIcon request.");
 
             var item = _dataContext.FRItems.FirstOrDefault(x => x.FRId == itemId);
             if (item == null)

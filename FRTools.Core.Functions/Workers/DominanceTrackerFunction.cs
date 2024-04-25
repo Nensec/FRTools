@@ -6,8 +6,8 @@ using FRTools.Core.Data.DataModels.FlightRisingModels;
 using FRTools.Core.Services.Announce;
 using FRTools.Core.Services.Interfaces;
 using HtmlAgilityPack.CssSelectors.NetCore;
-using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
+using Microsoft.Azure.Functions.Worker;
 
 namespace FRTools.Core.Functions.Workers
 {
@@ -16,16 +16,18 @@ namespace FRTools.Core.Functions.Workers
         private readonly DataContext _dataContext;
         private readonly IHtmlService _htmlService;
         private readonly IAnnounceService _announceService;
+        private readonly ILogger<DominanceTrackerFunction> _logger;
 
-        public DominanceTrackerFunction(DataContext dataContext, IHtmlService htmlService, IAnnounceService announceService)
+        public DominanceTrackerFunction(DataContext dataContext, IHtmlService htmlService, IAnnounceService announceService, ILogger<DominanceTrackerFunction> logger)
         {
             _dataContext = dataContext;
             _htmlService = htmlService;
             _announceService = announceService;
+            _logger = logger;
         }
 
-        [FunctionName(nameof(DominanceTracker))]
-        public async Task DominanceTracker([TimerTrigger("30 0 8 * * 0", RunOnStartup = DEBUG)] TimerInfo timer, ILogger log)
+        [Function(nameof(DominanceTracker))]
+        public async Task DominanceTracker([TimerTrigger("30 0 8 * * 0", RunOnStartup = DEBUG)] TimerInfo timer)
         {
             while (true)
             {
@@ -38,7 +40,7 @@ namespace FRTools.Core.Functions.Workers
                     for (var i = 0; i <= 2; i++)
                     {
                         positions[i] = Enum.Parse<Flight>(domTexts[i].QuerySelector(".domglow").InnerText);
-                        log.LogInformation($"{i + 1}: {positions[i]}");
+                        _logger.LogInformation($"{i + 1}: {positions[i]}");
                     }
 
                     var previousDom = _dataContext.FRDominances.OrderByDescending(x => x.Timestamp).FirstOrDefault();
@@ -52,14 +54,14 @@ namespace FRTools.Core.Functions.Workers
                     }
                     else
                     {
-                        log.LogWarning("Results were the same, not updated yet?");
+                        _logger.LogWarning("Results were the same, not updated yet?");
                     }
                 }
                 catch (Exception ex)
                 {
-                    log.LogError(ex.ToString());
+                    _logger.LogError(ex.ToString());
                 }
-                log.LogInformation("Waiting 30 seconds to try again..");
+                _logger.LogInformation("Waiting 30 seconds to try again..");
                 await Task.Delay(30000);
             }
         }
