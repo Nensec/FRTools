@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
+using FRTools.Core.Functions.Workers;
 using FRTools.Core.Services.Announce;
 using FRTools.Core.Services.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -17,11 +18,11 @@ namespace FRTools.Core.Tests.Workers
 
             // Not including this in this test makes FakeItEasy return a non-null FRItem which makes the function loop endlessly expecting a null item eventually
             var fakeItemService = A.Fake<IFRItemService>();
-            A.CallTo(() => fakeItemService.FetchItemFromFR(0, "skins")).WithAnyArguments().Returns((FRItem)null!); 
+            A.CallTo(() => fakeItemService.FetchItemFromFR(0, "skins")).WithAnyArguments().Returns((FRItem)null!);
 
-            var itemFetcherFunction = new Functions.Workers.ItemFetcherFunction(fakeAzureStorage, fakeItemService, A.Fake<IAzurePipelineService>(), A.Fake<IAnnounceService>());
+            var itemFetcherFunction = new ItemFetcherFunction(fakeAzureStorage, fakeItemService, A.Fake<IAzurePipelineService>(), A.Fake<IAnnounceService>(), A.Fake<ILogger<ItemFetcherFunction>>());
 
-            await itemFetcherFunction.ItemFetcher(null, A.Fake<ILogger>());
+            await itemFetcherFunction.ItemFetcher(null);
 
             A.CallTo(() => fakeAzureStorage.Exists("general-data\\item-fetch\\lastrun.json")).MustHaveHappened();
             A.CallTo(() => fakeAzureStorage.GetFile("general-data\\item-fetch\\lastrun.json")).MustHaveHappened();
@@ -37,9 +38,9 @@ namespace FRTools.Core.Tests.Workers
             A.CallTo(() => fakeItemService.FetchItemFromFR(0, "skins")).WithAnyArguments().ReturnsNextFromSequence(fakeItemSequence);
             var fakeAnnouncerService = A.Fake<IAnnounceService>();
 
-            var itemFetcherFunction = new Functions.Workers.ItemFetcherFunction(A.Fake<IAzureStorageService>(), fakeItemService, A.Fake<IAzurePipelineService>(), fakeAnnouncerService);
+            var itemFetcherFunction = new ItemFetcherFunction(A.Fake<IAzureStorageService>(), fakeItemService, A.Fake<IAzurePipelineService>(), fakeAnnouncerService, A.Fake<ILogger<ItemFetcherFunction>>());
 
-            await itemFetcherFunction.ItemFetcher(null, A.Fake<ILogger>());
+            await itemFetcherFunction.ItemFetcher(null);
 
             A.CallTo(() => fakeItemService.FetchItemFromFR(0, string.Empty)).WithAnyArguments().MustHaveHappened(fakeItemSequence.Count(), Times.Exactly);
             A.CallTo(() => fakeAnnouncerService.Announce(null!)).WhenArgumentsMatch(x => x[0] is NewItemsAnnounceData newItemsData).MustHaveHappened();
@@ -55,9 +56,9 @@ namespace FRTools.Core.Tests.Workers
             A.CallTo(() => fakeItemService.FetchItemFromFR(0, "skins")).WithAnyArguments().ReturnsNextFromSequence(fakeItemSequence);
             var fakeAnnouncerService = A.Fake<IAnnounceService>();
 
-            var itemFetcherFunction = new Functions.Workers.ItemFetcherFunction(A.Fake<IAzureStorageService>(), fakeItemService, A.Fake<IAzurePipelineService>(), fakeAnnouncerService);
+            var itemFetcherFunction = new ItemFetcherFunction(A.Fake<IAzureStorageService>(), fakeItemService, A.Fake<IAzurePipelineService>(), fakeAnnouncerService, A.Fake<ILogger<ItemFetcherFunction>>());
 
-            await itemFetcherFunction.ItemFetcher(null, A.Fake<ILogger>());
+            await itemFetcherFunction.ItemFetcher(null);
 
             A.CallTo(() => fakeItemService.FetchItemFromFR(0, string.Empty)).WithAnyArguments().MustHaveHappened(fakeItemSequence.Count(), Times.Exactly);
             A.CallTo(() => fakeAnnouncerService.Announce(null!)).WhenArgumentsMatch(x => x[0] is NewItemsAnnounceData newItemsData).MustNotHaveHappened();
@@ -89,9 +90,9 @@ namespace FRTools.Core.Tests.Workers
             A.CallTo(() => fakeItemService.FetchItemFromFR(0, "skins")).WithAnyArguments().ReturnsNextFromSequence(fakeItemSequence);
             var fakePipeLineService = A.Fake<IAzurePipelineService>();
 
-            var itemFetcherFunction = new Functions.Workers.ItemFetcherFunction(A.Fake<IAzureStorageService>(), fakeItemService, fakePipeLineService, A.Fake<IAnnounceService>());
+            var itemFetcherFunction = new ItemFetcherFunction(A.Fake<IAzureStorageService>(), fakeItemService, fakePipeLineService, A.Fake<IAnnounceService>(), A.Fake<ILogger<ItemFetcherFunction>>());
 
-            await itemFetcherFunction.ItemFetcher(null, A.Fake<ILogger>());
+            await itemFetcherFunction.ItemFetcher(null);
 
             A.CallTo(() => fakeItemService.FetchItemFromFR(0, string.Empty)).WithAnyArguments().MustHaveHappened(fakeItemSequence.Count(), Times.Exactly);
             A.CallTo(() => fakePipeLineService.TriggerPipeline(string.Empty)).WithAnyArguments().MustHaveHappened(result ? 1 : 0, Times.Exactly);
