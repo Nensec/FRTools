@@ -1,19 +1,15 @@
 {
   "version": "2.0",
   "extensions": {
-    "http": {
-      "routePrefix": ""
-    }
+    "http": { "routePrefix": "" }
   },
   "logging": {
     "applicationInsights": {
       "samplingSettings": {
         "isEnabled": true,
         "excludedTypes": "Request"
-      }
-    },
-    "logLevel": {
-      "FRTools": "Debug"
+      },
+      "enableLiveMetricsFilters": true
     }
   }
 }

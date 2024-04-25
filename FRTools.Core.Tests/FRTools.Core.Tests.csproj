@@ -1,22 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>$(DefineConstants);TEST</DefineConstants>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="TestData\FlashSalePage.html" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Include="TestData\FlashSalePage.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -25,7 +20,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="FakeItEasy" Version="8.1.0" />
     <PackageReference Include="FluentAssertions" Version="6.12.0" />
@@ -40,12 +34,10 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\FRTools.Core.Functions\FRTools.Core.Functions.csproj">
       <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\FRTools.Core.Services\FRTools.Core.Services.csproj" />
   </ItemGroup>
-
 </Project>

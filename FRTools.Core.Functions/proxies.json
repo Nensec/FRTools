@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json.schemastore.org/proxies",
+  "proxies": {
+    "Site": {
+      "matchCondition": {
+        "route": "site/{*args}"
+      },
+      "backendUri": "https://localhost/site?args={args}"
+    },
+    "Root": {
+      "matchCondition": {
+        "route": "",
+        "methods": [
+          "GET", "POST"
+        ]
+      },
+      "backendUri": "https://localhost/site"
+    }
+  }
+}

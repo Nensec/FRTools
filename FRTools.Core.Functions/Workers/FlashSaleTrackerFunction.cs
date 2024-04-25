@@ -7,8 +7,8 @@ using FRTools.Core.Data.DataModels.FlightRisingModels;
 using FRTools.Core.Services.Announce;
 using FRTools.Core.Services.Interfaces;
 using HtmlAgilityPack.CssSelectors.NetCore;
-using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
+using Microsoft.Azure.Functions.Worker;
 
 namespace FRTools.Core.Functions.Workers
 {
@@ -19,18 +19,20 @@ namespace FRTools.Core.Functions.Workers
         private readonly IFRItemService _itemService;
         private readonly IAnnounceService _announceService;
         private readonly IHtmlService _htmlService;
+        private readonly ILogger<FlashSaleTrackerFunction> _logger;
 
-        public FlashSaleTrackerFunction(DataContext dataContext, IFRUserService userService, IFRItemService itemService, IAnnounceService announceService, IHtmlService htmlService)
+        public FlashSaleTrackerFunction(DataContext dataContext, IFRUserService userService, IFRItemService itemService, IAnnounceService announceService, IHtmlService htmlService, ILogger<FlashSaleTrackerFunction> logger)
         {
             _dataContext = dataContext;
             _userService = userService;
             _itemService = itemService;
             _announceService = announceService;
             _htmlService = htmlService;
+            _logger = logger;
         }
 
-        [FunctionName(nameof(FlashTracker))]
-        public async Task FlashTracker([TimerTrigger("0 1 7,19 * * *", RunOnStartup = DEBUG)] TimerInfo timer, ILogger log)
+        [Function(nameof(FlashTracker))]
+        public async Task FlashTracker([TimerTrigger("0 1 7,19 * * *", RunOnStartup = DEBUG)] TimerInfo timer)
         {
             var marketPlaceDoc = await _htmlService.LoadHtmlPage(FRHelpers.MarketplaceUrl);
             var marketTabs = marketPlaceDoc.DocumentNode.QuerySelectorAll(".market-tab .common-tab");

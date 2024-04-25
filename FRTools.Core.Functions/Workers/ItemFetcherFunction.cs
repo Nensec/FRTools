@@ -7,7 +7,7 @@ using FRTools.Core.Common;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
 using FRTools.Core.Services.Announce;
 using FRTools.Core.Services.Interfaces;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -19,23 +19,25 @@ namespace FRTools.Core.Functions.Workers
         private readonly IFRItemService _itemService;
         private readonly IAzurePipelineService _pipelineService;
         private readonly IAnnounceService _announceService;
+        private readonly ILogger<ItemFetcherFunction> _logger;
         private readonly int _fetchDelay = int.Parse(Environment.GetEnvironmentVariable("QueryFRDelay") ?? "0");
 
-        public ItemFetcherFunction(IAzureStorageService azureStorage, IFRItemService itemService, IAzurePipelineService pipelineService, IAnnounceService announceService)
+        public ItemFetcherFunction(IAzureStorageService azureStorage, IFRItemService itemService, IAzurePipelineService pipelineService, IAnnounceService announceService, ILogger<ItemFetcherFunction> logger)
         {
             _azureStorage = azureStorage;
             _itemService = itemService;
             _pipelineService = pipelineService;
             _announceService = announceService;
+            _logger = logger;
         }
 
-        [FunctionName(nameof(ItemFetcher))]
-        public async Task ItemFetcher([TimerTrigger("0 */15 * * * *", RunOnStartup = DEBUG)] TimerInfo timer, ILogger log)
+        [Function(nameof(ItemFetcher))]
+        public async Task ItemFetcher([TimerTrigger("0 */15 * * * *", RunOnStartup = DEBUG)] TimerInfo timer)
         {
             var _noItemFoundCounter = 0;
             var lastRunPath = @"general-data\item-fetch\lastrun.json";
 
-            log.LogInformation($"Timer trigger function FetchItems executed at: {DateTime.Now}");
+            _logger.LogInformation($"Timer trigger function FetchItems executed at: {DateTime.Now}");
 
             int maxTries = 3;
             if (await _azureStorage.Exists(lastRunPath))
@@ -50,19 +52,19 @@ namespace FRTools.Core.Functions.Workers
                         if (DateTime.UtcNow > lastRunData.LastSuccess.AddDays(1))
                             maxTries += (int)(DateTime.UtcNow - lastRunData.LastSuccess.AddDays(1)).TotalHours;
 
-                        log.LogInformation($"Last succesful bout of skins were found at {lastRunData.LastSuccess}, which makes the max tries to be {maxTries} attempts");
+                        _logger.LogInformation($"Last succesful bout of skins were found at {lastRunData.LastSuccess}, which makes the max tries to be {maxTries} attempts");
                     }
                 }
             }
             else
-                log.LogWarning($"No last run found, max tries is {maxTries} attempts");
+                _logger.LogWarning($"No last run found, max tries is {maxTries} attempts");
 
             var highestItemId = await _itemService.GetHighestItemId();
             var items = new List<FRItem>();
             while (_noItemFoundCounter < maxTries)
             {
                 ++highestItemId;
-                log.LogInformation($"Fetching item: {highestItemId}");
+                _logger.LogInformation($"Fetching item: {highestItemId}");
                 var item = await _itemService.FetchItemFromFR(highestItemId);
                 if (item != null)
                 {
@@ -74,7 +76,7 @@ namespace FRTools.Core.Functions.Workers
                 await Task.Delay(_fetchDelay);
             }
 
-            log.LogInformation($"Done for now, saving {items.Count} items.");
+            _logger.LogInformation($"Done for now, saving {items.Count} items.");
 
             if (items.Any())
             {
@@ -91,16 +93,16 @@ namespace FRTools.Core.Functions.Workers
                     await _azureStorage.CreateOrUpdateFile(lastRunPath, stream);
                 }
 
-                log.LogInformation($"Since items were found, saving last success at {DateTime.UtcNow}");
+                _logger.LogInformation($"Since items were found, saving last success at {DateTime.UtcNow}");
 
-                log.LogInformation("Checking if we got any new genes or breeds");
+                _logger.LogInformation("Checking if we got any new genes or breeds");
                 if (!DEBUG && FRHelpers.CheckForUnknownGenesOrBreed(items))
                     await _pipelineService.TriggerPipeline(Environment.GetEnvironmentVariable("AzureDevOpsPipeline"));
             }
 
             if (DateTime.UtcNow.Date.Day == DateTime.DaysInMonth(DateTime.UtcNow.Year, DateTime.UtcNow.Month) && DateTime.UtcNow.Hour == 23 && DateTime.UtcNow.Minute >= 45)
             {
-                log.LogInformation("Once a month checking for missing ids");
+                _logger.LogInformation("Once a month checking for missing ids");
 
                 var missingItems = new List<FRItem>();
                 var missingIds = await _itemService.FindMissingIds();

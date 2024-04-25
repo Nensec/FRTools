@@ -4,15 +4,22 @@ using FRTools.Core.Common;
 using FRTools.Core.Common.Extentions;
 using FRTools.Core.Services.Discord.DiscordModels.InteractionRequestModels;
 using FRTools.Core.Services.DiscordModels;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 
 namespace FRTools.Core.Functions.Workers
 {
     public class GeneralFunctions
     {
-        [FunctionName(nameof(KeepSiteHot))]
-        public async Task KeepSiteHot([TimerTrigger("0 */4 * * * *")] TimerInfo timer, ILogger log)
+        private readonly ILogger<GeneralFunctions> _logger;
+
+        public GeneralFunctions(ILogger<GeneralFunctions> logger)
+        {
+            _logger = logger;
+        }
+
+        [Function(nameof(KeepSiteHot))]
+        public async Task KeepSiteHot([TimerTrigger("0 */4 * * * *")] TimerInfo timer)
         {
             try
             {

@@ -8,34 +8,35 @@ using FRTools.Core.Services.DiscordModels;
 using FRTools.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NSec.Cryptography;
+using Microsoft.Azure.Functions.Worker;
 
 namespace FRTools.Core.Functions.Workers
 {
     public class DiscordInteractionFunctions : FunctionBase
     {
         private readonly IDiscordRequestService _discordService;
+        private readonly ILogger<DiscordInteractionFunctions> _logger;
 
-        public DiscordInteractionFunctions(IDiscordRequestService discordService)
+        public DiscordInteractionFunctions(IDiscordRequestService discordService, ILogger<DiscordInteractionFunctions> logger)
         {
             _discordService = discordService;
+            _logger = logger;
         }
 
-        [FunctionName(nameof(DiscordInteractionEndpoint))]
-        public async Task<IActionResult> DiscordInteractionEndpoint([HttpTrigger(AuthorizationLevel.Function, "post", Route = "discord")] HttpRequest req, ILogger log)
+        [Function(nameof(DiscordInteractionEndpoint))]
+        public async Task<IActionResult> DiscordInteractionEndpoint([HttpTrigger(AuthorizationLevel.Function, "post", Route = "discord")] HttpRequest req)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
+            _logger.LogInformation("C# HTTP trigger function processed a request.");
 
             var body = await GetBody(req);
 
-            if (!CheckSecurity(req.Headers["X-Signature-Ed25519"], req.Headers["X-Signature-Timestamp"], body, log))
+            if (!CheckSecurity(req.Headers["X-Signature-Ed25519"], req.Headers["X-Signature-Timestamp"], body))
                 return new UnauthorizedResult();
 
-            log.LogInformation($"Command received:\n{body}");
+            _logger.LogInformation($"Command received:\n{body}");
 
             try
             {
@@ -43,45 +44,45 @@ namespace FRTools.Core.Functions.Workers
 
                 if (interactionData.Type == InteractionType.PING)
                 {
-                    log.LogInformation("Ping found, returning pong.");
+                    _logger.LogInformation("Ping found, returning pong.");
                     return AckResult();
                 }
 
                 var response = await _discordService.ExecuteInteraction(interactionData);
 
                 var responseContent = JsonConvert.SerializeObject(response);
-                log.LogInformation("Sending response: {0}", responseContent);
+                _logger.LogInformation("Sending response: {0}", responseContent);
 
                 return new ContentResult { Content = responseContent, ContentType = "application/json", StatusCode = 200 };
             }
             catch (Exception ex)
             {
-                log.LogError(ex, "Something went wrong sending interaction response. Request {0}", body);
+                _logger.LogError(ex, "Something went wrong sending interaction response. Request {0}", body);
             }
 
             return new BadRequestResult();
         }
 
-        [FunctionName(nameof(RegisterCommands))]
-        public async Task<IActionResult> RegisterCommands([HttpTrigger(AuthorizationLevel.Admin, "get", Route = "discord/registerCommands")] HttpRequest req, ILogger log)
+        [Function(nameof(RegisterCommands))]
+        public async Task<IActionResult> RegisterCommands([HttpTrigger(AuthorizationLevel.Admin, "get", Route = "discord/registerCommands")] HttpRequest req)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
+            _logger.LogInformation("C# HTTP trigger function processed a request.");
 
             await _discordService.RegisterAllCommands();
             return new OkResult();
         }
 
-        [FunctionName(nameof(ProcessCommand))]
-        public async Task ProcessCommand([ServiceBusTrigger("%AzureServiceBusCommandQueue%", AutoCompleteMessages = true, Connection = "AZURESBCONNSTR_defaultConnection")] DiscordInteractionRequest interaction, ILogger log)
+        [Function(nameof(ProcessCommand))]
+        public async Task ProcessCommand([ServiceBusTrigger("%AzureServiceBusCommandQueue%", AutoCompleteMessages = true, Connection = "AZURESBCONNSTR_defaultConnection")] DiscordInteractionRequest interaction)
         {
-            log.LogInformation($"C# ServiceBus queue trigger function processed command: {interaction.Data.Name}");
+            _logger.LogInformation($"C# ServiceBus queue trigger function processed command: {interaction.Data.Name}");
 
             await _discordService.ExecuteDeferedInteraction(interaction);
         }
 
-        private bool CheckSecurity(string signature, string timestamp, string body, ILogger log)
+        private bool CheckSecurity(string signature, string timestamp, string body)
         {
-            log.LogInformation("Checking security for request.");
+            _logger.LogInformation("Checking security for request.");
             var algorithm = SignatureAlgorithm.Ed25519;
 
             var publicKeyBytes = Convert.FromHexString(Environment.GetEnvironmentVariable("DiscordPublicKey"));
@@ -90,7 +91,7 @@ namespace FRTools.Core.Functions.Workers
             var signatureBytes = Convert.FromHexString(signature);
 
             var result = algorithm.Verify(publicKey, Encoding.UTF8.GetBytes(timestamp + body), signatureBytes);
-            log.LogInformation($"Result checking security: {result}.");
+            _logger.LogInformation($"Result checking security: {result}.");
 
             return result;
         }
