@@ -2,10 +2,9 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<AzureFunctionsVersion>v4</AzureFunctionsVersion>
-		<UserSecretsId>30ba2713-09fa-43fc-bb75-534bb9003903</UserSecretsId>
-		<Configurations>Debug;Release</Configurations>
 		<OutputType>Exe</OutputType>
 		<ImplicitUsings>enabled</ImplicitUsings>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
@@ -38,9 +37,6 @@
 		<None Update="local.settings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
-		</None>
-		<None Update="proxies.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 	<ItemGroup>
