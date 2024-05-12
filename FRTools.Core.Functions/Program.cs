@@ -31,39 +31,39 @@ namespace FRTools.Core.Functions
             };
 
             var host = new HostBuilder()
-                .ConfigureFunctionsWebApplication()
+                .ConfigureFunctionsWorkerDefaults()
                 .ConfigureServices(services =>
                 {
                     services.AddApplicationInsightsTelemetryWorkerService();
                     services.ConfigureFunctionsApplicationInsights();
 
-                    //services.AddDbContext<DataContext>(options => options.UseLazyLoadingProxies().UseSqlServer(Environment.GetEnvironmentVariable("SQLAZURECONNSTR_defaultConnection")));
-                    //services.AddTransient<DataContext>();
+                    services.AddDbContext<DataContext>(options => options.UseLazyLoadingProxies().UseSqlServer(Environment.GetEnvironmentVariable("SQLAZURECONNSTR_defaultConnection")));
+                    services.AddTransient<DataContext>();
 
-                    //services.AddSingleton<IAzureStorageService, AzureStorageService>();
-                    //services.AddSingleton<IAzurePipelineService, AzurePipelineService>();
+                    services.AddSingleton<IAzureStorageService, AzureStorageService>();
+                    services.AddSingleton<IAzurePipelineService, AzurePipelineService>();
 
-                    //services.AddTransient<IFRUserService, FRUserService>();
-                    //services.AddTransient<IFRItemService, FRItemService>();
+                    services.AddTransient<IFRUserService, FRUserService>();
+                    services.AddTransient<IFRItemService, FRItemService>();
 
-                    //services.AddTransient<IItemAssetDataService, ItemAssetDataService>();
-                    //services.AddTransient<IHtmlService, HtmlService>();
-                    //services.AddTransient<IConfigService, ConfigService>();
+                    services.AddTransient<IItemAssetDataService, ItemAssetDataService>();
+                    services.AddTransient<IHtmlService, HtmlService>();
+                    services.AddTransient<IConfigService, ConfigService>();
 
-                    //services.AddAzureClients(builder =>
-                    //{
-                    //    var queueName = Environment.GetEnvironmentVariable("AzureServiceBusCommandQueue");
+                    services.AddAzureClients(builder =>
+                    {
+                        var queueName = Environment.GetEnvironmentVariable("AzureServiceBusCommandQueue");
 
-                    //    builder.AddServiceBusClient(Environment.GetEnvironmentVariable("AZURESBCONNSTR_defaultConnection"));
-                    //    builder.AddBlobServiceClient(Environment.GetEnvironmentVariable("AzureWebJobsStorage"));
-                    //    builder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, provider) => provider.GetRequiredService<ServiceBusClient>().CreateSender(queueName)).WithName(queueName);
-                    //    builder.AddClient<BlobServiceClient, BlobClientOptions>((_, provider) => provider.GetRequiredService<BlobServiceClient>()).WithName("frtools");
-                    //});
+                        builder.AddServiceBusClient(Environment.GetEnvironmentVariable("AZURESBCONNSTR_defaultConnection"));
+                        builder.AddBlobServiceClient(Environment.GetEnvironmentVariable("AzureWebJobsStorage"));
+                        builder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, provider) => provider.GetRequiredService<ServiceBusClient>().CreateSender(queueName)).WithName(queueName);
+                        builder.AddClient<BlobServiceClient, BlobClientOptions>((_, provider) => provider.GetRequiredService<BlobServiceClient>()).WithName("frtools");
+                    });
 
-                    //services.AddSingleton<ITumblrService, TumblrService>();
+                    services.AddSingleton<ITumblrService, TumblrService>();
 
-                    //ConfigureAnnouncers(services);
-                    //ConfigureDiscord(services);
+                    ConfigureAnnouncers(services);
+                    ConfigureDiscord(services);
                 })
                 .Build();
 
