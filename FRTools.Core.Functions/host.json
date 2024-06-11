@@ -9,6 +9,5 @@
       },
       "enableLiveMetricsFilters": true
     }
-  },
-  "functions": ["WebRoot"]
+  }
 }
