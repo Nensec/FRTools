@@ -17,12 +17,12 @@ namespace FRTools.Core.Services
         private readonly string _commandsUrl = $"https://discord.com/api/v10/applications/{Environment.GetEnvironmentVariable("DiscordApplicationId")}/commands";
 
         private readonly ServiceBusSender _serviceBusClient;
-        private readonly DiscordService _discordService;
+        private readonly IDiscordService _discordService;
         private readonly ILogger<DiscordRequestService> _logger;
 
         private readonly List<BaseDiscordCommand> _commands = new List<BaseDiscordCommand>();
 
-        public DiscordRequestService(IAzureClientFactory<ServiceBusSender> azureClientFactory, DiscordService discordService, ILogger<DiscordRequestService> logger)
+        public DiscordRequestService(IAzureClientFactory<ServiceBusSender> azureClientFactory, IDiscordService discordService, ILogger<DiscordRequestService> logger)
         {
             _serviceBusClient = azureClientFactory.CreateClient(Environment.GetEnvironmentVariable("AzureServiceBusCommandQueue"));
             _discordService = discordService;
