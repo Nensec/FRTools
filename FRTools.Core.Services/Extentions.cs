@@ -41,9 +41,12 @@ namespace FRTools.Core.Services
                     {
                         var breed = item.ItemType.Split(' ');
                         dragonType = FRHelpers.GetDragonType(breed[0]);
-                        gender = (Gender)Enum.Parse(typeof(Gender), breed[1]);
+                        if (Enum.TryParse<Gender>(breed[1], out var genderParse))
+                        {
+                            gender = genderParse;
 
-                        itemAsset = await itemAssetDataService.GetProxyDummyDragonSkin((int)dragonType, (int)gender, item.FRId);
+                            itemAsset = await itemAssetDataService.GetProxyDummyDragonSkin((int)dragonType, (int)gender, item.FRId);
+                        }
 
                         embed.Fields.Add(new DiscordEmbedField { Name = "For", Value = $"{dragonType} {gender}", Inline = true });
 
