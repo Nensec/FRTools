@@ -24,7 +24,7 @@ namespace FRTools.Core.Services
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Something went wrong attempting to announce {0} using {1}", announceData.GetType().Name, announcer.GetType().Name);
+                    _logger.LogError(ex, "Something went wrong attempting to announce {0} using {1}: {2}", announceData.GetType().Name, announcer.GetType().Name, ex.ToString());
                 }
             }
         }
