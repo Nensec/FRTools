@@ -84,8 +84,9 @@ namespace FRTools.Core.Services.Announce.Announcers
                 case FRItemCategory.Skins:
                     var skinType = data.FRItem.ItemType.Split(' ');
                     var dragonType = (DragonType)Enum.Parse(typeof(DragonType), skinType[0]);
-                    var gender = (Gender)Enum.Parse(typeof(Gender), skinType[1]);
-                    itemUrl = Common.Helpers.GetProxyDummyDragonSkinUrl(dragonType, gender, data.FRItem.Id);
+                    if (Enum.TryParse<Gender>(skinType[1], out var gender))
+                        itemUrl = Helpers.GetProxyDummyDragonSkinUrl(dragonType, gender, data.FRItem.Id);
+
                     body += $"For: {dragonType} {gender}<br/>";
 
                     var username = Regex.Match(data.FRItem.Description, @"Designed by ([^.]+)[.|\)]");
@@ -106,7 +107,7 @@ namespace FRTools.Core.Services.Announce.Announcers
                 case FRItemCategory.Equipment:
                     {
                         var modernBreeds = GeneratedFRHelpers.GetModernBreeds();
-                        itemUrl = Common.Helpers.GetProxyDummyDragonApparelUrl(modernBreeds[random.Next(1, modernBreeds.Length)], random.Next(0, 2), data.FRItem.FRId);
+                        itemUrl = Helpers.GetProxyDummyDragonApparelUrl(modernBreeds[random.Next(1, modernBreeds.Length)], random.Next(0, 2), data.FRItem.FRId);
                         tags.Add(data.FRItem.ItemType.ToLower());
                         break;
                     }
@@ -122,7 +123,7 @@ namespace FRTools.Core.Services.Announce.Announcers
 
                     if (FRHelpers.IsAncientGene(data.FRItem, out var ancientBreed))
                     {
-                        itemUrl = Common.Helpers.GetProxyDummyDragonGeneUrl(ancientBreed!.Value, random.Next(0, 2), data.FRItem.FRId);
+                        itemUrl = Helpers.GetProxyDummyDragonGeneUrl(ancientBreed!.Value, random.Next(0, 2), data.FRItem.FRId);
                         tags.Add("ancient gene");
                         tags.Add(ancientBreed.Value.ToString().ToLower());
                     }
@@ -147,7 +148,7 @@ namespace FRTools.Core.Services.Announce.Announcers
                     break;
             }
 
-            body += $"<img src=\"{itemUrl ?? Common.Helpers.GetProxyIconUrl(data.FRItem.FRId)}";
+            body += $"<img src=\"{itemUrl ?? Helpers.GetProxyIconUrl(data.FRItem.FRId)}";
 
             var post = PostData.CreateText(body, $"New Flash Sale: {data.FRItem.Name}", tags);
 
