@@ -4,6 +4,7 @@ VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{717F4F05-C6A5-43BE-9C81-4B25A18B9955}"
 	ProjectSection(SolutionItems) = preProject
+		BuildFRClasses.ps1 = BuildFRClasses.ps1
 		debug.config = debug.config
 		nuget.config = nuget.config
 	EndProjectSection
