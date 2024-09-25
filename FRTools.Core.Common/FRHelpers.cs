@@ -163,7 +163,7 @@ namespace FRTools.Core.Common
             var regex = GeneRegex.Match(item.Name);
             var geneName = regex.Groups["Name"].Value;
 
-            return (int)Enum.Parse(geneType, geneName);
+            return (int)Enum.Parse(geneType, geneName.Replace(" ", ""));
         }
 
         private static Regex GeneRegex => new(@"(?<Type>Primary|Secondary|Tertiary) ((?<Ancient>.+) )?Gene: (?<Name>.+)");
