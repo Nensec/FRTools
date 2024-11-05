@@ -27,7 +27,7 @@ namespace FRTools.Core.Functions.Workers
         }
 
         [Function(nameof(DominanceTracker))]
-        public async Task DominanceTracker([TimerTrigger("30 0 8 * * 0", RunOnStartup = DEBUG)] TimerInfo timer)
+        public async Task DominanceTracker([TimerTrigger("30 0 9 * * 0", RunOnStartup = DEBUG)] TimerInfo timer)
         {
             while (true)
             {
