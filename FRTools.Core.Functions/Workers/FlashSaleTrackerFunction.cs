@@ -36,8 +36,8 @@ namespace FRTools.Core.Functions.Workers
         {
             var marketPlaceDoc = await _htmlService.LoadHtmlPage(FRHelpers.MarketplaceUrl);
             var marketTabs = marketPlaceDoc.DocumentNode.QuerySelectorAll(".market-tab .common-tab");
-            var _tabs = marketTabs.Select(x => x.SelectSingleNode("a").GetAttributeValue("href", null).Split('/').Last()).ToArray();
-            var link = marketTabs.First(x => x.ChildNodes.Any(c => c.HasClass("flash_sale_tab_icon"))).SelectSingleNode("a").GetAttributeValue("href", null);
+            var _tabs = marketTabs.Select(x => x.SelectSingleNode("a").GetAttributeValue("href", null!).Split('/').Last()).ToArray();
+            var link = marketTabs.First(x => x.ChildNodes.Any(c => c.HasClass("flash_sale_tab_icon"))).SelectSingleNode("a").GetAttributeValue("href", null!);
 
             var itemsDoc = await _htmlService.LoadHtmlPage(string.Format(FRHelpers.MarketplaceFetchUrl, link.Split('/').Last()));
             var items = itemsDoc.DocumentNode.QuerySelectorAll(".market-item-result");
@@ -58,9 +58,9 @@ namespace FRTools.Core.Functions.Workers
             if (flashSaleItem == null)
                 return;
 
-            var itemId = int.Parse(flashSaleItem.ChildNodes.First(x => x.GetAttributes().Any(a => a.Name == "data-itemid")).GetAttributeValue("data-itemid", null));
+            var itemId = int.Parse(flashSaleItem.ChildNodes.First(x => x.GetAttributes().Any(a => a.Name == "data-itemid")).GetAttributeValue("data-itemid", null!));
             var item = await _itemService.GetItem(itemId) ?? await _itemService.FetchItemFromFR(itemId);
-            if (item.FlashSales.All(x => x.RemovedAt != null))
+            if (item != null && item.FlashSales.All(x => x.RemovedAt != null))
             {
                 await _announceService.Announce(new FlashSaleAnnounceData(item, link));
 

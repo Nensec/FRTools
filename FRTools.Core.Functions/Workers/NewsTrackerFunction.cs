@@ -211,12 +211,12 @@ namespace FRTools.Core.Functions.Workers
                     if (postId == topicInfo.FRId)
                     {
                         var itemsInContent = postContent.QuerySelectorAll(".bbcode-item-icon")
-                            .Select(x => x.GetAttributeValue("data-itemid", null))
+                            .Select(x => x.GetAttributeValue("data-itemid", null!))
                             .Where(x => x != null)
                             .Select(x => Convert.ToInt32(x));
 
                         var skinsInContent = postContent.QuerySelectorAll(".skin-bbcode")
-                            .Select(x => x.GetAttributeValue("skin-id", null))
+                            .Select(x => x.GetAttributeValue("skin-id", null!))
                             .Where(x => x != null)
                             .Select(x => Convert.ToInt32(x));
 
@@ -239,7 +239,7 @@ namespace FRTools.Core.Functions.Workers
                                 await _pipelineService.TriggerPipeline(Environment.GetEnvironmentVariable("AzureDevOpsPipeline"));
                         }
                     }
-                    (await _dataContext.Topics.FirstOrDefaultAsync(x => x.FRTopicId == topicInfo.FRId)).Posts.Add(new Post
+                    (await _dataContext.Topics.FirstOrDefaultAsync(x => x.FRTopicId == topicInfo.FRId))?.Posts.Add(new Post
                     {
                         FRPostId = postId,
                         PostAuthor = postAuthorName,
@@ -260,17 +260,19 @@ namespace FRTools.Core.Functions.Workers
                 var lastPostId = Convert.ToInt32(Regex.Match(posts.Last().GetAttributeValue("id", ""), @"post_(\d+)").Groups[1].Value);
                 _logger.LogInformation($"Checking if any post is deleted between first post (id: {firstPostId}) and last post (id: {lastPostId})");
 
-                var expectedPosts = (await _dataContext.Topics.FirstOrDefaultAsync(x => x.FRTopicId == topicInfo.FRId)).Posts.Where(x => !x.Deleted && x.FRPostId >= firstPostId && x.FRPostId <= lastPostId).Select(x => new Post { Id = x.Id, FRPostId = x.FRPostId }).ToList();
+                var expectedPosts = (await _dataContext.Topics.FirstOrDefaultAsync(x => x.FRTopicId == topicInfo.FRId))?.Posts.Where(x => !x.Deleted && x.FRPostId >= firstPostId && x.FRPostId <= lastPostId).Select(x => new Post { Id = x.Id, FRPostId = x.FRPostId }).ToList();
                 var givenPostIds = posts.Select(x => Convert.ToInt32(Regex.Match(x.GetAttributeValue("id", ""), @"post_(\d+)").Groups[1].Value)).OrderBy(x => x).ToList();
 
-                if (!expectedPosts.Select(x => x.FRPostId).OrderBy(x => x).SequenceEqual(givenPostIds))
+                if (expectedPosts != null && !expectedPosts.Select(x => x.FRPostId).OrderBy(x => x).SequenceEqual(givenPostIds))
                 {
                     _logger.LogInformation("Delete detected! Expected posts do not match up. Checking which post is deleted..");
                     foreach (var expectedPost in expectedPosts)
                         if (!givenPostIds.Contains(expectedPost.FRPostId))
                         {
                             _logger.LogInformation($"Found {expectedPost.FRPostId} to be deleted!");
-                            _dataContext.Posts.Find(expectedPost.Id).Deleted = true;
+                            var dbPost = await _dataContext.Posts.FindAsync(expectedPost.Id);
+                            if(dbPost != null)
+                                dbPost.Deleted = true;
                         }
                     hasChanges = true;
                     await _dataContext.SaveChangesAsync();
@@ -285,14 +287,14 @@ namespace FRTools.Core.Functions.Workers
         private class TopicInfo
         {
             public int FRId { get; set; }
-            public string Name { get; set; }
+            public string? Name { get; set; }
             public int FRAuthorId { get; set; }
-            public string AuthorName { get; set; }
+            public string? AuthorName { get; set; }
             public bool RequireParse { get; set; }
             public int TotalPages { get; internal set; }
             public int ClaimedReplies { get; internal set; }
             public int LastPostFRAuthorId { get; internal set; }
-            public string LastPostAuthorName { get; internal set; }
+            public string? LastPostAuthorName { get; internal set; }
             public DateTime LastPostTimestamp { get; internal set; }
         }
     }

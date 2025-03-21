@@ -25,7 +25,7 @@ namespace FRTools.Core.Tests.Workers
 
             var flashSaleFunction = new FlashSaleTrackerFunction(fakeDataContext, A.Fake<IFRUserService>(), A.Fake<IFRItemService>(), fakeAnnouncerService, fakeHtmlService, A.Fake<ILogger<FlashSaleTrackerFunction>>());
 
-            await flashSaleFunction.FlashTracker(null);
+            await flashSaleFunction.FlashTracker(null!);
             A.CallTo(() => fakeAnnouncerService.Announce(null!)).WhenArgumentsMatch(x => x[0] is FlashSaleAnnounceData newItemsData).MustHaveHappened();
         }
 
@@ -41,7 +41,7 @@ namespace FRTools.Core.Tests.Workers
 
             var flashSaleFunction = new FlashSaleTrackerFunction(fakeDataContext, A.Fake<IFRUserService>(), A.Fake<IFRItemService>(), A.Fake<IAnnounceService>(), fakeHtmlService, A.Fake<ILogger<FlashSaleTrackerFunction>>());
 
-            await flashSaleFunction.FlashTracker(null);
+            await flashSaleFunction.FlashTracker(null!);
             A.CallTo(() => fakeHtmlService.LoadHtmlPage(string.Format(FRHelpers.MarketplaceFetchUrl, "apparel"))).MustHaveHappenedTwiceExactly();
         }
 
@@ -66,7 +66,7 @@ namespace FRTools.Core.Tests.Workers
 
             var flashSaleFunction = new FlashSaleTrackerFunction(fakeDataContext, A.Fake<IFRUserService>(), fakeItemService, A.Fake<IAnnounceService>(), fakeHtmlService, A.Fake<ILogger<FlashSaleTrackerFunction>>());
 
-            await flashSaleFunction.FlashTracker(null);
+            await flashSaleFunction.FlashTracker(null!);
 
             A.CallTo(() => fakeItemService.GetItem(1)).WithAnyArguments().MustHaveHappened();
             if (getItem == null)
