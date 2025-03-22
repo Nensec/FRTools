@@ -191,8 +191,7 @@ namespace FRTools.Core.Services
                 var response = await client.PatchAsJsonAsync(url, webhookRequest);
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogError("Error posting to webhook, response code: {0}\n\tUrl: {1}\n\tData: {2}", response.StatusCode, url, JsonConvert.SerializeObject(webhookRequest));
-                    throw new HttpRequestException(null, null, response.StatusCode);
+                    throw new HttpRequestException(string.Format("Error posting to webhook, response code: {0}\\n\\tUrl: {1}\\n\\tData: {2}", response.StatusCode, url, JsonConvert.SerializeObject(webhookRequest)), null, response.StatusCode);
                 }
 
                 return JsonConvert.DeserializeObject<Message>(await response.Content.ReadAsStringAsync());
@@ -213,8 +212,7 @@ namespace FRTools.Core.Services
 
                     if (!response.IsSuccessStatusCode)
                     {
-                        _logger.LogError("Error posting to webhook, response code: {0}\n\tUrl: {1}\n\tData: {2}", response.StatusCode, url, JsonConvert.SerializeObject(webhookRequest));
-                        throw new HttpRequestException(null, null, response.StatusCode);
+                        throw new HttpRequestException(string.Format("Error posting to webhook, response code: {0}\\n\\tUrl: {1}\\n\\tData: {2}", response.StatusCode, url, JsonConvert.SerializeObject(webhookRequest)), null, response.StatusCode);
                     }
 
                     return JsonConvert.DeserializeObject<Message>(await response.Content.ReadAsStringAsync());
@@ -244,8 +242,7 @@ namespace FRTools.Core.Services
                 var response = await client.PostAsJsonAsync(url, webhookRequest);
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogError("Error posting to webhook, response code: {0}\n\tUrl: {1}\n\tData: {2}", response.StatusCode, url, JsonConvert.SerializeObject(webhookRequest));
-                    throw new HttpRequestException(null, null, response.StatusCode);
+                    throw new HttpRequestException(string.Format("Error posting to webhook, response code: {0}\\n\\tUrl: {1}\\n\\tData: {2}", response.StatusCode, url, JsonConvert.SerializeObject(webhookRequest)), null, response.StatusCode);
                 }
 
                 return JsonConvert.DeserializeObject<Message>(await response.Content.ReadAsStringAsync());
@@ -266,8 +263,7 @@ namespace FRTools.Core.Services
 
                     if (!response.IsSuccessStatusCode)
                     {
-                        _logger.LogError("Error posting to webhook, response code: {0}\n\tUrl: {1}\n\tData: {2}", response.StatusCode, url, JsonConvert.SerializeObject(webhookRequest));
-                        throw new HttpRequestException(null, null, response.StatusCode);
+                        throw new HttpRequestException(string.Format("Error posting to webhook, response code: {0}\\n\\tUrl: {1}\\n\\tData: {2}", response.StatusCode, url, JsonConvert.SerializeObject(webhookRequest)), null, response.StatusCode);
                     }
 
                     return JsonConvert.DeserializeObject<Message>(await response.Content.ReadAsStringAsync());

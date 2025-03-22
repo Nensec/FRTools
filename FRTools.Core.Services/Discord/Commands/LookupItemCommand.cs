@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using FRTools.Core.Common;
 using FRTools.Core.Data;
@@ -351,8 +352,8 @@ namespace FRTools.Core.Services.Discord.Commands
         {
             long? id = null;
             var input = interaction.Data.Options.First().Options.First();
-            if (input.Value is long idParameter)
-                id = idParameter;
+            if (input.Value is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.Number)
+                id = jsonElement.Deserialize<long>();
             else if (input.Name == "url" && input.Value is string url)
             {
                 var urlParse = Regex.Match(url, @"/(?<id>\d+)");
