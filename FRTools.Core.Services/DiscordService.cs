@@ -171,6 +171,8 @@ namespace FRTools.Core.Services
 
         private async Task<Message?> SendPatchRequest(IDiscordWebhookRequest webhookRequest, string url)
         {
+            _logger.LogDebug($"Sending patch request to '{url}'");
+
             switch (webhookRequest)
             {
                 case DiscordWebhookRequest discordWebhookRequest:
@@ -222,6 +224,8 @@ namespace FRTools.Core.Services
 
         private async Task<Message?> SendPostRequest(IDiscordWebhookRequest webhookRequest, string url)
         {
+            _logger.LogDebug($"Sending post request to '{url}'");
+
             switch (webhookRequest)
             {
                 case DiscordWebhookRequest discordWebhookRequest:

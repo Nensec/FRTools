@@ -20,7 +20,7 @@ namespace FRTools.Core.Services
         private readonly IDiscordService _discordService;
         private readonly ILogger<DiscordRequestService> _logger;
 
-        private readonly List<BaseDiscordCommand> _commands = new List<BaseDiscordCommand>();
+        private readonly List<BaseDiscordCommand> _commands = [];
 
         public DiscordRequestService(IAzureClientFactory<ServiceBusSender> azureClientFactory, IDiscordService discordService, ILogger<DiscordRequestService> logger)
         {
@@ -31,6 +31,7 @@ namespace FRTools.Core.Services
 
         public void RegisterCommand(BaseDiscordCommand command)
         {
+            _logger.LogDebug("Registering command: '{0}' {1}", command.CommandName, command.ComponentInteractionCommandNames != null ? string.Join(", ", command.ComponentInteractionCommandNames) : "");
             _commands.Add(command);
         }
 
@@ -40,12 +41,13 @@ namespace FRTools.Core.Services
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bot", Environment.GetEnvironmentVariable("DiscordBotToken"));
                 var response = await client.PutAsJsonAsync(_commandsUrl, _commands.Select(x => x.Command).ToArray());
-                _logger.LogInformation("Response: ({0}) {0}", response.StatusCode, await response.Content.ReadAsStringAsync());
+                _logger.LogInformation("Response: ({0}) {1}", response.StatusCode, await response.Content.ReadAsStringAsync());
             }
         }
 
         public async Task<DiscordInteractionResponse> ExecuteInteraction(DiscordInteractionRequest interaction)
         {
+            _logger.LogDebug("Attempting to execute command:\n\tName: '{0}'\n\tCustomId: '{1}'", interaction.Data.Name, interaction.Data.CustomId);
             try
             {
                 var response = await _commands.First(x => x.CommandName == interaction.Data.Name || x.ComponentInteractionCommandNames?.Contains(interaction.Data.CustomId) == true).Execute(interaction);
