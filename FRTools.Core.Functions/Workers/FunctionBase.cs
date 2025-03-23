@@ -28,7 +28,7 @@ namespace FRTools.Core.Functions.Workers
         protected async Task<HttpResponseData> JsonResult<T>(HttpRequestData request, T content)
         {
             var response = request.CreateResponse(HttpStatusCode.OK);
-            response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
+            response.Headers.Add("Content-Type", "application/json; charset=utf-8");
             await response.WriteStringAsync(JsonConvert.SerializeObject(content));
 
             return response;
