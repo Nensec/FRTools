@@ -1,4 +1,5 @@
-﻿using FRTools.Core.Services.Discord.DiscordModels.GuildModels;
+﻿using System.Collections;
+using FRTools.Core.Services.Discord.DiscordModels.GuildModels;
 using FRTools.Core.Services.Discord.DiscordModels.MessageModels;
 using FRTools.Core.Services.Discord.DiscordModels.UserModels;
 using FRTools.Core.Services.DiscordModels;
@@ -36,7 +37,7 @@ namespace FRTools.Core.Services.Discord.DiscordModels.InteractionRequestModels
         [JsonProperty("name")]
         public string Name { get; set; }
         [JsonProperty("options")]
-        public IEnumerable<DiscordInteractionRequestOptionData> Options { get; set; } = Enumerable.Empty<DiscordInteractionRequestOptionData>();
+        public DiscordInteractionRequestOptionDataOptions Options { get; set; } = new DiscordInteractionRequestOptionDataOptions();
         [JsonProperty("type")]
         public AppCommandType Type { get; set; }
         [JsonProperty("custom_id")]
@@ -56,7 +57,7 @@ namespace FRTools.Core.Services.Discord.DiscordModels.InteractionRequestModels
         [JsonProperty("value")]
         public object Value { get; set; }
         [JsonProperty("options")]
-        public IEnumerable<DiscordInteractionRequestOptionData> Options { get; set; } = Enumerable.Empty<DiscordInteractionRequestOptionData>();
+        public DiscordInteractionRequestOptionDataOptions Options { get; set; } = new DiscordInteractionRequestOptionDataOptions();
         [JsonProperty("type")]
         public AppCommandOptionType Type { get; set; }
     }
@@ -81,5 +82,10 @@ namespace FRTools.Core.Services.Discord.DiscordModels.InteractionRequestModels
         [JsonProperty("attachments")]
         [JsonConverter(typeof(SingleOrArrayConverter<Attachment>))]
         public IEnumerable<Attachment> Attachments { get; set; }
+    }
+
+    public class DiscordInteractionRequestOptionDataOptions : List<DiscordInteractionRequestOptionData>
+    {
+        public DiscordInteractionRequestOptionData this[string name] => this.First(x => x.Name == name);
     }
 }

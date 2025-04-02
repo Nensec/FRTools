@@ -14,7 +14,7 @@ using FRTools.Core.Services.Interfaces;
 using Microsoft.Azure.Amqp.Framing;
 using Microsoft.Extensions.Logging;
 
-namespace FRTools.Core.Services.Discord.Commands
+namespace FRTools.Core.Services.Discord.Commands.Lookup
 {
     public class LookupItemCommand : BaseDiscordCommand
     {
@@ -23,7 +23,7 @@ namespace FRTools.Core.Services.Discord.Commands
         private readonly IFRUserService _userService;
         private readonly ILogger<LookupItemCommand> _logger;
 
-        public LookupItemCommand(IFRItemService itemService, IItemAssetDataService itemAssetDataService, IFRUserService userService,  IDiscordService discordService, ILogger<LookupItemCommand> logger) : base(discordService, logger)
+        public LookupItemCommand(IFRItemService itemService, IItemAssetDataService itemAssetDataService, IFRUserService userService, IDiscordService discordService, ILogger<LookupItemCommand> logger) : base(discordService, logger)
         {
             _itemService = itemService;
             _itemAssetDataService = itemAssetDataService;
@@ -187,7 +187,7 @@ namespace FRTools.Core.Services.Discord.Commands
         public override async Task DeferedExecute(DiscordInteractionRequest interaction)
         {
             var command = interaction.Data.Options.First();
-            var commandTypeParam = command.Options.First();            
+            var commandTypeParam = command.Options.First();
 
             if ((commandTypeParam.Name == "id" || commandTypeParam.Name == "url") && GetIdFromInteraction(interaction) == null)
                 await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest

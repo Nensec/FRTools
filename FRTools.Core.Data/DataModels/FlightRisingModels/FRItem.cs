@@ -19,6 +19,9 @@
         public virtual FRUser Creator { get; set; }
 
         public virtual ICollection<FRItemFlashSale> FlashSales { get; set; } = new HashSet<FRItemFlashSale>();
+        public virtual ICollection<FRItem> BundleItems { get; set; } = new HashSet<FRItem>();
+
+        public bool IsBundle => BundleItems.Count != 0;
     }
 
     public enum FRItemCategory

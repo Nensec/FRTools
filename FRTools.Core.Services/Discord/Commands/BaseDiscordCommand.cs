@@ -27,6 +27,6 @@ namespace FRTools.Core.Services.Discord.Commands
 
         public virtual Task<DiscordInteractionResponse> Execute(DiscordInteractionRequest interaction) => Task.FromResult<DiscordInteractionResponse>(new DiscordInteractionResponse.DefferedContentResponse());
 
-        public abstract Task DeferedExecute(DiscordInteractionRequest interaction);
+        public virtual Task DeferedExecute(DiscordInteractionRequest interaction) => Task.CompletedTask;
     }
 }

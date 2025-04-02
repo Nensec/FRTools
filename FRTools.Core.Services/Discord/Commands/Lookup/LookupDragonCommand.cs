@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using FRTools.Core.Common;
 using FRTools.Core.Data;
@@ -13,7 +12,7 @@ using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
 using Microsoft.Extensions.Logging;
 
-namespace FRTools.Core.Services.Discord.Commands
+namespace FRTools.Core.Services.Discord.Commands.Lookup
 {
     public class LookupDragonCommand : BaseDiscordCommand
     {

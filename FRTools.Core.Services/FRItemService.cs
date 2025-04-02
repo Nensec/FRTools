@@ -122,8 +122,17 @@ namespace FRTools.Core.Services
 
         public Task<List<int>> FindMissingIds() => Task.Run(() => _dataContext.FRItems.FromSqlRaw("SELECT * FROM FRItems [first] WHERE NOT EXISTS (SELECT NULL FROM FRItems [second] WHERE [second].FRId = [first].FRId + 1) ORDER BY FRId").Select(x => x.FRId + 1).ToList());
 
-        public async Task<FRItem?> GetItem(int itemId) => await _dataContext.FRItems.FirstOrDefaultAsync(x => x.FRId == itemId);
+        public async Task<FRItem?> GetItem(int frItemId) => await _dataContext.FRItems.FirstOrDefaultAsync(x => x.FRId == frItemId);
 
         public async Task<IEnumerable<FRItem>> SearchItems(Expression<Func<FRItem, bool>> expression) => await _dataContext.FRItems.Where(expression).ToListAsync();
+
+        public async Task SetItemBundle(FRItem fRItem, IEnumerable<FRItem> fRItems)
+        {
+            fRItem.BundleItems.Clear();
+            foreach(var item in fRItems)
+                fRItem.BundleItems.Add(item);
+
+            await _dataContext.SaveChangesAsync();
+        }
     }
 }

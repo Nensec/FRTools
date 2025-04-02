@@ -10,5 +10,6 @@ namespace FRTools.Core.Services.Interfaces
         Task<int> GetHighestItemId();
         Task<FRItem?> GetItem(int itemId);
         Task<IEnumerable<FRItem>> SearchItems(Expression<Func<FRItem, bool>> expression);
+        Task SetItemBundle(FRItem fRItem, IEnumerable<FRItem> fRItems);
     }
 }
