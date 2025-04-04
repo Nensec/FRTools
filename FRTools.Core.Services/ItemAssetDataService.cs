@@ -52,5 +52,11 @@ namespace FRTools.Core.Services
             using (var client = new HttpClient())
                 return await client.GetByteArrayAsync($"https://www1.flightrising.com{assetUrl}");
         }
+
+        public async Task<byte[]> GetApparalRender(int dragonBreed, int gender, IEnumerable<int> itemIds)
+        {
+            using (var client = new HttpClient())
+                return await client.GetByteArrayAsync(Helpers.GetProxyDummyDragonApparelUrl(dragonBreed, gender, itemIds));
+        }
     }
 }

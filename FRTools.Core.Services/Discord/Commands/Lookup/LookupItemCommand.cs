@@ -11,7 +11,6 @@ using FRTools.Core.Services.Discord.DiscordModels.InteractionRequestModels;
 using FRTools.Core.Services.Discord.DiscordModels.WebhookModels;
 using FRTools.Core.Services.DiscordModels;
 using FRTools.Core.Services.Interfaces;
-using Microsoft.Azure.Amqp.Framing;
 using Microsoft.Extensions.Logging;
 
 namespace FRTools.Core.Services.Discord.Commands.Lookup
@@ -60,14 +59,8 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
                             Autocomplete = true,
                             Choices = Enum.GetValues<Gender>().Select(x => new AppCommandOptionChoice{ Name = x.ToString(), Value = (int)x })
                         },
-                        new AppCommandOption
-                        {
-                            Name = "dragon_type",
-                            Description = "If the item is equippeable, attempt to show a preview on this breed",
-                            Type = AppCommandOptionType.INTEGER,
-                            Autocomplete = true,
-                            Choices = Enum.GetValues<DragonType>().Select(x => new AppCommandOptionChoice{ Name = x.ToString(), Value = (int)x })
-                        }
+                        DragontypeModernOption(),
+                        DragontypeAncientOption()
                     }
                 },
                 new AppCommandOption
@@ -92,15 +85,8 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
                             Autocomplete = true,
                             Choices = Enum.GetValues<Gender>().Select(x => new AppCommandOptionChoice{ Name = x.ToString(), Value = (int)x })
                         },
-                        new AppCommandOption
-                        {
-                            Name = "dragon_type",
-                            Description = "If the item is equippeable, attempt to show a preview on this breed",
-                            Type = AppCommandOptionType.INTEGER,
-                            Autocomplete = true,
-                            Choices = Enum.GetValues<DragonType>().Select(x => new AppCommandOptionChoice{ Name = x.ToString(), Value = (int)x })
-
-                        }
+                        DragontypeModernOption(),
+                        DragontypeAncientOption()
                     }
                 },
                 new AppCommandOption
@@ -125,14 +111,8 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
                             Autocomplete = true,
                             Choices = Enum.GetValues<Gender>().Select(x => new AppCommandOptionChoice{ Name = x.ToString(), Value = (int)x })
                         },
-                        new AppCommandOption
-                        {
-                            Name = "dragon_type",
-                            Description = "If the item is equippeable, attempt to show a preview on this breed",
-                            Type = AppCommandOptionType.INTEGER,
-                            Autocomplete = true,
-                            Choices = Enum.GetValues<DragonType>().Select(x => new AppCommandOptionChoice{ Name = x.ToString(), Value = (int)x })
-                        }
+                        DragontypeModernOption(),
+                        DragontypeAncientOption()
                     }
                 }
             }.Concat(Enum.GetValues<FRItemCategory>().Where(x => x == FRItemCategory.Equipment || x == FRItemCategory.Trinket).Select(x => new AppCommandOption
@@ -157,14 +137,8 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
                         Autocomplete = true,
                         Choices = Enum.GetValues<Gender>().Select(x => new AppCommandOptionChoice{ Name = x.ToString(), Value = (int)x })
                     },
-                    new AppCommandOption
-                    {
-                        Name = "dragon_type",
-                        Description = "If the item is equippeable, attempt to show a preview on this breed",
-                        Type = AppCommandOptionType.INTEGER,
-                        Autocomplete = true,
-                        Choices = Enum.GetValues<DragonType>().Select(x => new AppCommandOptionChoice{ Name = x.ToString(), Value = (int)x })
-                    }
+                    DragontypeModernOption(),
+                    DragontypeAncientOption()
                 }
             })).Concat(Enum.GetValues<FRItemCategory>().Where(x => x != FRItemCategory.Equipment && x != FRItemCategory.Trinket).Select(x => new AppCommandOption
             {
@@ -183,6 +157,30 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
                 }
             }))
         };
+
+        private static AppCommandOption DragontypeModernOption()
+        {
+            return new AppCommandOption
+            {
+                Name = "dragon_type_modern",
+                Description = "If the item is equippeable, attempt to show a preview on this modern breed",
+                Type = AppCommandOptionType.INTEGER,
+                Autocomplete = true,
+                Choices = GeneratedFRHelpers.GetModernBreeds().Select(x => new AppCommandOptionChoice { Name = x.ToString(), Value = (int)x })
+            };
+        }
+
+        private static AppCommandOption DragontypeAncientOption()
+        {
+            return new AppCommandOption
+            {
+                Name = "dragon_type_ancient",
+                Description = "If the item is equippeable, attempt to show a preview on this ancient breed",
+                Type = AppCommandOptionType.INTEGER,
+                Autocomplete = true,
+                Choices = GeneratedFRHelpers.GetAncientBreeds().Select(x => new AppCommandOptionChoice { Name = x.ToString(), Value = (int)x })
+            };
+        }
 
         public override async Task DeferedExecute(DiscordInteractionRequest interaction)
         {
@@ -268,8 +266,10 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
                 DragonType? dragonType = null;
                 Gender? gender = null;
 
-                if (command.Options.FirstOrDefault(x => x.Name == "dragon_type")?.Value is long dragonTypeOption)
-                    dragonType = (DragonType)dragonTypeOption;
+                if (command.Options.FirstOrDefault(x => x.Name == "dragon_type_modern")?.Value is long dragonTypeModernOption)
+                    dragonType = (DragonType)dragonTypeModernOption;
+                if (command.Options.FirstOrDefault(x => x.Name == "dragon_type_ancient")?.Value is long dragonTypeAncientOption)
+                    dragonType = (DragonType)dragonTypeAncientOption;
                 if (command.Options.FirstOrDefault(X => X.Name == "dragon_gender")?.Value is long genderOption)
                     gender = (Gender)genderOption;
 

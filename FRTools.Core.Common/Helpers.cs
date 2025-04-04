@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using FRTools.Core.Data;
 
 namespace FRTools.Core.Common
@@ -19,6 +21,10 @@ namespace FRTools.Core.Common
         public static string GetProxyDummyDragonApparelUrl(int dragonBreed, Gender gender, int itemId) => GetProxyDummyDragonApparelUrl(dragonBreed, (int)gender, itemId);
         public static string GetProxyDummyDragonApparelUrl(DragonType dragonBreed, int gender, int itemId) => GetProxyDummyDragonApparelUrl((int)dragonBreed, gender, itemId);
         public static string GetProxyDummyDragonApparelUrl(int dragonBreed, int gender, int itemId) => $"http{(IsLocal ? "" : "s")}://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/proxy/dragon/apparel/{dragonBreed}/{gender}/{itemId}";
+        public static string GetProxyDummyDragonApparelUrl(DragonType dragonBreed, Gender gender, IEnumerable<int> itemIds) => GetProxyDummyDragonApparelUrl((int)dragonBreed, (int)gender, itemIds);
+        public static string GetProxyDummyDragonApparelUrl(int dragonBreed, Gender gender, IEnumerable<int> itemIds) => GetProxyDummyDragonApparelUrl(dragonBreed, (int)gender, itemIds);
+        public static string GetProxyDummyDragonApparelUrl(DragonType dragonBreed, int gender, IEnumerable<int> itemIds) => GetProxyDummyDragonApparelUrl((int)dragonBreed, gender, itemIds);
+        public static string GetProxyDummyDragonApparelUrl(int dragonBreed, int gender, IEnumerable<int> itemIds) => $"http{(IsLocal ? "" : "s")}://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/proxy/dragon/apparel/{dragonBreed}/{gender}/{string.Join(",", itemIds)}";
         public static string GetProxyIconUrl(int itemId) => $"http{(IsLocal ? "" : "s")}://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/proxy/icon/{itemId}";
         public static string GetDiscordInteractionUrl() => $"http{(IsLocal ? "" : "s")}://{Environment.GetEnvironmentVariable("WEBSITE_HOSTNAME")}/discord";
     }

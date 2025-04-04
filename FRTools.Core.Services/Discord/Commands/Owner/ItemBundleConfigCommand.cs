@@ -15,7 +15,7 @@ namespace FRTools.Core.Services.Discord.Commands.Owner
     {
         private readonly IFRItemService _fRItemService;
 
-        public ItemBundleConfigCommand(IFRItemService fRItemService, IDiscordService discordService, ILogger logger) : base(discordService, logger)
+        public ItemBundleConfigCommand(IFRItemService fRItemService, IDiscordService discordService, ILogger<ItemBundleConfigCommand> logger) : base(discordService, logger)
         {
             _fRItemService = fRItemService;
         }
@@ -46,7 +46,7 @@ namespace FRTools.Core.Services.Discord.Commands.Owner
                         new AppCommandOption
                         {
                             Name = "items",
-                            Description = "Delimited string of fr items that this bundle contains",
+                            Description = "Delimited string of fr items",
                             Type = AppCommandOptionType.STRING,
                             Required = true,
                         }
@@ -75,8 +75,8 @@ namespace FRTools.Core.Services.Discord.Commands.Owner
         {
             var parameters = interaction.Data.Options.First().Options;
 
-            var itemsString = (string)parameters["items"].Value;
-            var itemMatches = Regex.Matches(itemsString, @"(?<id>\d+)\D*").Where(x => x.Success).Select(x => x.Groups["id"]).Select(x => int.Parse(x.Value));
+            var itemsString = ((JsonElement)parameters["items"].Value).Deserialize<string>();
+            var itemMatches = Regex.Matches(itemsString!, @"(?<id>\d+)\D*").Where(x => x.Success).Select(x => x.Groups["id"]).Select(x => int.Parse(x.Value));
 
             var bundleItemId = ((JsonElement)parameters["item"].Value).Deserialize<long>();
 

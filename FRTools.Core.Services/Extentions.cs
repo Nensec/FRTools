@@ -86,6 +86,19 @@ namespace FRTools.Core.Services
                         break;
 
                     }
+                case FRItemCategory.Trinket when item.ItemType == "Chest" && item.IsBundle:
+                    {
+                        var modernBreeds = GeneratedFRHelpers.GetModernBreeds();
+                        if (dragonType == null || !modernBreeds.Contains(dragonType.Value))
+                            dragonType = modernBreeds[random.Next(1, modernBreeds.Length)];
+
+                        if (item.BundleItems.All(x => x.ItemCategory == FRItemCategory.Equipment))
+                            itemAsset = await itemAssetDataService.GetApparalRender((int)dragonType, (int?)gender ?? random.Next(0, 2), item.BundleItems.Select(x => x.FRId));
+                        else
+                            goto default;
+                        
+                        break;
+                    }
                 default:
                     {
                         if (item.ItemType == "Scene")

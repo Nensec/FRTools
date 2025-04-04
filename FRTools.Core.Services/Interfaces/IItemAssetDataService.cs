@@ -12,5 +12,6 @@ namespace FRTools.Core.Services.Interfaces
         Task<byte[]> GetAssetArt(string assetUrl);
         Task<byte[]> GetFamiliarArt(int itemId);
         Task<byte[]> GetDragonRender(long dragonId);
+        Task<byte[]> GetApparalRender(int dragonBreed, int gender, IEnumerable<int> itemIds);
     }
 }

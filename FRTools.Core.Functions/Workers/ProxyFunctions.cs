@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using FRTools.Core.Common;
 using FRTools.Core.Data;
@@ -50,33 +51,34 @@ namespace FRTools.Core.Functions.Workers
             if (item.Name.StartsWith("Primary"))
             {
                 primary = FRHelpers.GetGeneId(item);
-                primaryColor = random.Next(0, Enum.GetValues(typeof(Color)).Length + 1);
+                primaryColor = random.Next(0, Enum.GetValues<Color>().Length + 1);
             }
             if (item.Name.StartsWith("Secondary"))
             {
                 secondary = FRHelpers.GetGeneId(item);
-                secondaryColor = random.Next(0, Enum.GetValues(typeof(Color)).Length + 1);
+                secondaryColor = random.Next(0, Enum.GetValues<Color>().Length + 1);
             }
             if (item.Name.StartsWith("Tertiary"))
             {
                 tertiary = FRHelpers.GetGeneId(item);
-                tertiaryColor = random.Next(0, Enum.GetValues(typeof(Color)).Length + 1);
+                tertiaryColor = random.Next(0, Enum.GetValues<Color>().Length + 1);
             }
 
             using (var client = new HttpClient())
-                geneBytes = await client.GetByteArrayAsync(await GeneratedFRHelpers.GenerateDragonImageUrl(dragonType, gender, 1, primary, primaryColor, secondary, secondaryColor, tertiary, tertiaryColor, random.Next(0, Enum.GetValues(typeof(Element)).Length + 1), random.Next(0, Enum.GetValues(typeof(EyeType)).Length + 1)));
+                geneBytes = await client.GetByteArrayAsync(await GeneratedFRHelpers.GenerateDragonImageUrl(dragonType, gender, 1, primary, primaryColor, secondary, secondaryColor, tertiary, tertiaryColor, random.Next(0, Enum.GetValues<Element>().Length + 1), random.Next(0, Enum.GetValues<EyeType>().Length + 1)));
 
             return await FileResult(request, geneBytes);
         }
 
         [Function(nameof(ProxyDummyDragonApparel))]
-        public async Task<HttpResponseData> ProxyDummyDragonApparel([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "proxy/dragon/apparel/{dragonType:int}/{gender:int}/{apparelId:int}")] HttpRequestData request, int dragonType, int gender, int apparelId)
+        public async Task<HttpResponseData> ProxyDummyDragonApparel([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "proxy/dragon/apparel/{dragonType:int}/{gender:int}/{apparelIds}")] HttpRequestData request, int dragonType, int gender, string apparelIds)
         {
             _logger.LogInformation("C# HTTP trigger function processed a ProxyDummyDragonApparel request.");
 
             using (var client = new HttpClient())
             {
-                var apparelBytes = await client.GetByteArrayAsync(string.Format(FRHelpers.DressingRoomDummyApparalUrl, dragonType, gender, apparelId));
+                var parsedIds = Regex.Matches(apparelIds, @"(?<id>\d+)\D*").Where(x => x.Success).Select(x => x.Groups["id"]).Select(x => int.Parse(x.Value));
+                var apparelBytes = await client.GetByteArrayAsync(string.Format(FRHelpers.DressingRoomDummyApparalUrl, dragonType, gender, string.Join(",", parsedIds)));
 
                 return await FileResult(request, apparelBytes);
             }
