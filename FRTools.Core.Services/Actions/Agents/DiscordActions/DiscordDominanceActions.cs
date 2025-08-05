@@ -6,6 +6,7 @@ namespace FRTools.Core.Services.Actions.Agents.DiscordActions
 {
     public interface IDiscordDominanceActions
     {
+        Task AssignDominanceRole(DominanceAgentData data, ulong guildId);
         Task PerformDominanceTasks(DominanceAgentData dominanceAgentData);
     }
 
@@ -30,57 +31,7 @@ namespace FRTools.Core.Services.Actions.Agents.DiscordActions
             {
                 try
                 {
-                    // Check if all config is present
-                    var domRole = await _configService.GetConfigValue("GUILDCONFIG_DOMINANCE_ROLE", dominanceEnabledGuild.GuildId);
-                    if (domRole == null)
-                        continue;
-
-                    var flights = Enum.GetValues<Flight>().Except([Flight.Beastclans]);
-                    var guildFlightRoles = new Dictionary<Flight, ulong>();
-                    foreach (var flight in flights)
-                    {
-                        var flightRole = await _configService.GetConfigValue($"GUILDCONFIG_{flight.ToString().ToUpper()}_ROLE", dominanceEnabledGuild.GuildId);
-                        if (flightRole == null)
-                            break;
-
-                        guildFlightRoles.Add(flight, ulong.Parse(flightRole));
-                    }
-
-                    if (guildFlightRoles.Count != flights.Count())
-                        continue;
-
-                    var winningFlight = guildFlightRoles[data.Flights[0]];
-
-                    // Get al the users who opted in
-                    var userIds = ((await _configService.GetConfigValue($"GUILDCONFIG_DOMINANCE_OPTIN", dominanceEnabledGuild.GuildId))?.Split(';') ?? []).Select(x => ulong.Parse(x));
-
-                    foreach (var userId in userIds)
-                    {
-                        try
-                        {
-                            var guildMember = await _discordGuildService.GetGuildMember(dominanceEnabledGuild.GuildId, userId);
-                            if (guildMember == null)
-                                continue;
-
-                            if (guildMember.Roles.Intersect(guildFlightRoles.Values).Any())
-                            {
-                                // Taketh Dominance role
-                                guildMember.Roles = [.. guildMember.Roles.Except([ulong.Parse(domRole)])];
-                            }
-
-                            if (guildMember.Roles.Any(x => x == winningFlight))
-                            {
-                                // Giveth Dominance role
-                                guildMember.Roles = [.. guildMember.Roles, ulong.Parse(domRole)];
-                            }
-
-                            await _discordGuildService.ModifyGuildMember(dominanceEnabledGuild.GuildId, guildMember);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex, $"Error updating user {userId}, dom role id: {domRole}");
-                        }
-                    }
+                    await AssignDominanceRole(data, dominanceEnabledGuild.GuildId);
                 }
                 catch (Exception ex)
                 {
@@ -89,5 +40,59 @@ namespace FRTools.Core.Services.Actions.Agents.DiscordActions
             }
         }
 
+        public async Task AssignDominanceRole(DominanceAgentData data, ulong guildId)
+        {
+            // Check if all config is present
+            var domRole = await _configService.GetConfigValue("GUILDCONFIG_DOMINANCE_ROLE", guildId);
+            if (domRole == null)
+                return;
+
+            var flights = Enum.GetValues<Flight>().Except([Flight.Beastclans]);
+            var guildFlightRoles = new Dictionary<Flight, ulong>();
+            foreach (var flight in flights)
+            {
+                var flightRole = await _configService.GetConfigValue($"GUILDCONFIG_{flight.ToString().ToUpper()}_ROLE", guildId);
+                if (flightRole == null)
+                    break;
+
+                guildFlightRoles.Add(flight, ulong.Parse(flightRole));
+            }
+
+            if (guildFlightRoles.Count != flights.Count())
+                return;
+
+            var winningFlight = guildFlightRoles[data.Flights[0]];
+
+            // Get al the users who opted in
+            var userIds = ((await _configService.GetConfigValue($"GUILDCONFIG_DOMINANCE_OPTIN", guildId))?.Split(';') ?? []).Select(x => ulong.Parse(x));
+
+            foreach (var userId in userIds)
+            {
+                try
+                {
+                    var guildMember = await _discordGuildService.GetGuildMember(guildId, userId);
+                    if (guildMember == null)
+                        continue;
+
+                    if (guildMember.Roles.Intersect(guildFlightRoles.Values).Any())
+                    {
+                        // Taketh Dominance role
+                        guildMember.Roles = [.. guildMember.Roles.Except([ulong.Parse(domRole)])];
+                    }
+
+                    if (guildMember.Roles.Any(x => x == winningFlight))
+                    {
+                        // Giveth Dominance role
+                        guildMember.Roles = [.. guildMember.Roles, ulong.Parse(domRole)];
+                    }
+
+                    await _discordGuildService.ModifyGuildMember(guildId, guildMember);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Error updating user {userId}, dom role id: {domRole}");
+                }
+            }
+        }
     }
 }
