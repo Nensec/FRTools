@@ -15,12 +15,14 @@ namespace FRTools.Core.Services.Discord.Commands.DominanceAssign
         private readonly IConfigService _configService;
         private readonly IDiscordDominanceActions _discordDominanceActions;
         private readonly DataContext _dataContext;
+        private readonly ILogger<ConfigCommand> _logger;
 
         public DominanceAssignCommand(IConfigService configService, IDiscordInteractionService discordInteractionService, IDiscordDominanceActions discordDominanceActions, DataContext dataContext, ILogger<ConfigCommand> logger) : base(discordInteractionService, logger)
         {
             _configService = configService;
             _discordDominanceActions = discordDominanceActions;
             _dataContext = dataContext;
+            _logger = logger;
         }
 
         public override AppCommand Command => new AppCommand
@@ -50,8 +52,24 @@ namespace FRTools.Core.Services.Discord.Commands.DominanceAssign
                 Content = "Assigning or removing Dominance role from users.."
             });
 
-            var lastDominance = _dataContext.FRDominances.OrderByDescending(x => x.Timestamp).First();
-            await _discordDominanceActions.AssignDominanceRole(new DominanceAgentData([(Flight)lastDominance.First, (Flight)lastDominance.Second, (Flight)lastDominance.Third]), interaction.GuildId);
+            try
+            {
+                var lastDominance = _dataContext.FRDominances.OrderByDescending(x => x.Timestamp).First();
+                await _discordDominanceActions.AssignDominanceRole(new DominanceAgentData([(Flight)lastDominance.First, (Flight)lastDominance.Second, (Flight)lastDominance.Third]), interaction.GuildId);
+                await DiscordInteractionService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
+                {
+                    Content = "Dominance role is now assigned to everyone that belongs to the winning flight."
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error executing command.");
+
+                await DiscordInteractionService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
+                {
+                    Content = "Something went wrong assigning the dominance role to users. Double check if I have the `MANAGE_ROLES` permission!"
+                });
+            }
         }
     }
 }

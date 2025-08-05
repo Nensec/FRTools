@@ -74,8 +74,10 @@ namespace FRTools.Core.Services
             {
                 await _commands.First(x => x.CommandName == interaction.Data.Name).DeferedExecute(interaction);
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error executing command.");
+
                 await _discordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                 {
                     Content = ":octagonal_sign: Something went wrong executing this command, don't worry though <@107155889563115520> is on it!.. probably?"
