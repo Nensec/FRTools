@@ -3,7 +3,7 @@ using FRTools.Core.Services.Discord.DiscordModels.WebhookModels;
 
 namespace FRTools.Core.Services.Interfaces
 {
-    public interface IDiscordService
+    public interface IDiscordInteractionService
     {
         Task DeleteInteraction(string token);
         Task<IEnumerable<Message>> EditInitialInteraction(string token, IDiscordWebhookRequest response);

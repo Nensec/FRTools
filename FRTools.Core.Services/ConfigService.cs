@@ -12,11 +12,13 @@ namespace FRTools.Core.Services
 
         public async Task AddOrUpdateConfig(string key, string value, ulong guildId)
         {
-            var setting = _dataContext.DiscordSettings.FirstOrDefault(x => x.Server.ServerId == (long)guildId) ?? new Data.DataModels.DiscordModels.DiscordSetting();
+            var setting = _dataContext.DiscordSettings.FirstOrDefault(x => x.Server.ServerId == (long)guildId && x.Key == key) ??
+                _dataContext.DiscordSettings.Add(new Data.DataModels.DiscordModels.DiscordSetting
+                {
+                    Server = _dataContext.DiscordServers.FirstOrDefault(x => x.ServerId == (long)guildId) ?? new Data.DataModels.DiscordModels.DiscordServer { ServerId = (long)guildId }
+                }).Entity;
             setting.Key = key;
             setting.Value = value;
-            setting.Server ??= new Data.DataModels.DiscordModels.DiscordServer { ServerId = (long)guildId };
-            _dataContext.DiscordSettings.Update(setting);
             await _dataContext.SaveChangesAsync();
         }
 

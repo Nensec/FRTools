@@ -3,11 +3,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using FRTools.Core.Data;
 using FRTools.Core.Data.DataModels.FlightRisingModels;
+using FRTools.Core.Services.Actions;
 using FRTools.Core.Services.Announce;
 using FRTools.Core.Services.Interfaces;
 using HtmlAgilityPack.CssSelectors.NetCore;
-using Microsoft.Extensions.Logging;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Logging;
 
 namespace FRTools.Core.Functions.Workers
 {
@@ -16,13 +17,15 @@ namespace FRTools.Core.Functions.Workers
         private readonly DataContext _dataContext;
         private readonly IHtmlService _htmlService;
         private readonly IAnnounceService _announceService;
+        private readonly IAgentService _agentService;
         private readonly ILogger<DominanceTrackerFunction> _logger;
 
-        public DominanceTrackerFunction(DataContext dataContext, IHtmlService htmlService, IAnnounceService announceService, ILogger<DominanceTrackerFunction> logger)
+        public DominanceTrackerFunction(DataContext dataContext, IHtmlService htmlService, IAnnounceService announceService, IAgentService agentService, ILogger<DominanceTrackerFunction> logger)
         {
             _dataContext = dataContext;
             _htmlService = htmlService;
             _announceService = announceService;
+            _agentService = agentService;
             _logger = logger;
         }
 
@@ -46,10 +49,14 @@ namespace FRTools.Core.Functions.Workers
                     var previousDom = _dataContext.FRDominances.OrderByDescending(x => x.Timestamp).FirstOrDefault();
                     if (previousDom == null || previousDom.First != (int)positions[0] || previousDom.Second != (int)positions[1] || previousDom.Third != (int)positions[2])
                     {
-                        _dataContext.FRDominances.Add(new FRDominance { Timestamp = DateTime.UtcNow, First = (int)positions[0], Second = (int)positions[1], Third = (int)positions[2] });
-                        await _dataContext.SaveChangesAsync();
+                        if (!DEBUG)
+                        {
+                            _dataContext.FRDominances.Add(new FRDominance { Timestamp = DateTime.UtcNow, First = (int)positions[0], Second = (int)positions[1], Third = (int)positions[2] });
+                            await _dataContext.SaveChangesAsync();
+                        }
 
                         await _announceService.Announce(new DominanceAnnounceData(positions));
+                        await _agentService.Act(new DominanceAgentData(positions));
                         break;
                     }
                     else

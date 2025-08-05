@@ -4,7 +4,7 @@ using FRTools.Core.Data.DataModels.FlightRisingModels;
 using FRTools.Core.Services;
 using FRTools.Core.Services.Announce;
 using FRTools.Core.Services.Announce.Announcers;
-using FRTools.Core.Services.Interfaces;
+using FRTools.Core.Services.Announce.Announcers.DiscordAnnouncers;
 using Microsoft.Extensions.Logging;
 
 namespace FRTools.Core.Tests.Services
@@ -26,18 +26,6 @@ namespace FRTools.Core.Tests.Services
                 return (AnnounceData)Create.Fake(announceData, x => x.WithArgumentsForConstructor(new object[] { A.CollectionOfFake<FRItem>(10, (x, i) => x.ConfigureFake(item => { item.Name = "Fake Item"; item.FRId = i; })) }));
 
             throw new NotImplementedException();
-        }
-
-        private IConfigService CreateFakeConfig()
-        {
-            var configService = A.Fake<IConfigService>();
-            A.CallTo(() => configService.GetAllConfig(null!)).WithAnyArguments().Returns(new[]
-            {
-                ("GUILDCONFIG_DEFAULTWEBHOOK", string.Empty, (ulong)1)
-            });
-            A.CallTo(() => configService.GetConfigValue(null!, 0)).WithAnyArguments().Returns((string)null!);
-
-            return configService;
         }
 
         [Theory]
@@ -84,32 +72,44 @@ namespace FRTools.Core.Tests.Services
         [MemberData(nameof(AnnouncerData))]
         public async Task DiscordAnnouncer_Should_Announce_When_Interface_Matches_Data(Type announceDataType, Type interfaceType)
         {
-            var fakeDiscordService = A.Fake<IDiscordService>();
-            var discordAnnouncer = new DiscordWebhookAnnouncer(CreateFakeConfig(), fakeDiscordService, A.Fake<IItemAssetDataService>(), A.Fake<IFRUserService>(), A.Fake<ILogger<DiscordWebhookAnnouncer>>());
+            var fakeDiscordFlashSaleAnnouncer = A.Fake<IDiscordFlashSaleAnnouncer>();
+            var fakeDiscordDominanceAnnouncer = A.Fake<IDiscordDominanceAnnouncer>();
+            var fakeDiscordNewItemsAnnouncer = A.Fake<IDiscordNewItemsAnnouncer>();
+
+            var discordAnnouncer = new DiscordWebhookAnnouncer(fakeDiscordFlashSaleAnnouncer, fakeDiscordDominanceAnnouncer, fakeDiscordNewItemsAnnouncer);
 
             var announceData = CreateFakeData(announceDataType);
             await discordAnnouncer.Announce(announceData);
 
             if (interfaceType.IsAssignableFrom(typeof(DiscordWebhookAnnouncer)))
-                A.CallTo(() => fakeDiscordService.PostMessageToWebhook(null!, null!)).WithAnyArguments().MustHaveHappened();
+            {
+                if (interfaceType == typeof(IDominanceAnnouncer))
+                {
+                    A.CallTo(() => fakeDiscordFlashSaleAnnouncer.AnnounceFlashSale(null!)).WithAnyArguments().MustNotHaveHappened();
+                    A.CallTo(() => fakeDiscordDominanceAnnouncer.AnnounceDominance(null!)).WithAnyArguments().MustHaveHappened();
+                    A.CallTo(() => fakeDiscordNewItemsAnnouncer.AnnounceNewItems(null!)).WithAnyArguments().MustNotHaveHappened();
+                }
+                else if (interfaceType == typeof(IFlashSaleAnnouncer))
+                {
+                    A.CallTo(() => fakeDiscordFlashSaleAnnouncer.AnnounceFlashSale(null!)).WithAnyArguments().MustHaveHappened();
+                    A.CallTo(() => fakeDiscordDominanceAnnouncer.AnnounceDominance(null!)).WithAnyArguments().MustNotHaveHappened();
+                    A.CallTo(() => fakeDiscordNewItemsAnnouncer.AnnounceNewItems(null!)).WithAnyArguments().MustNotHaveHappened();
+                }
+                else if (interfaceType == typeof(INewItemAnnouncer))
+                {
+                    A.CallTo(() => fakeDiscordFlashSaleAnnouncer.AnnounceFlashSale(null!)).WithAnyArguments().MustNotHaveHappened();
+                    A.CallTo(() => fakeDiscordDominanceAnnouncer.AnnounceDominance(null!)).WithAnyArguments().MustNotHaveHappened();
+                    A.CallTo(() => fakeDiscordNewItemsAnnouncer.AnnounceNewItems(null!)).WithAnyArguments().MustHaveHappened();
+                }
+                else
+                    throw new Exception("Unknown interface?");
+            }
             else
-                A.CallTo(() => fakeDiscordService.PostMessageToWebhook(null!, null!)).WithAnyArguments().MustNotHaveHappened();
-        }
-
-        [Theory]
-        [MemberData(nameof(AnnouncerData))]
-        public async Task TumblrAnnouncer_Should_Announce_When_Interface_Matches_Data(Type announceDataType, Type interfaceType)
-        {
-            var tumblrService = A.Fake<ITumblrService>();
-            var tumblrAnnouncer = new TumblrAnnouncer(A.Fake<IFRUserService>(), tumblrService, A.Fake<ILogger<TumblrAnnouncer>>());
-
-            var announceData = CreateFakeData(announceDataType);
-            await tumblrAnnouncer.Announce(announceData);
-
-            if (interfaceType.IsAssignableFrom(typeof(TumblrAnnouncer)))
-                A.CallTo(() => tumblrService.CreatePost(null!, null!)).WithAnyArguments().MustHaveHappened();
-            else
-                A.CallTo(() => tumblrService.CreatePost(null!, null!)).WithAnyArguments().MustNotHaveHappened();
+            {
+                A.CallTo(() => fakeDiscordFlashSaleAnnouncer.AnnounceFlashSale(null!)).WithAnyArguments().MustNotHaveHappened();
+                A.CallTo(() => fakeDiscordDominanceAnnouncer.AnnounceDominance(null!)).WithAnyArguments().MustNotHaveHappened();
+                A.CallTo(() => fakeDiscordNewItemsAnnouncer.AnnounceNewItems(null!)).WithAnyArguments().MustNotHaveHappened();
+            }
         }
     }
 }

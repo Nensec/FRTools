@@ -2,11 +2,16 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Azure.Core.Serialization;
 using Azure.Messaging.ServiceBus;
 using Azure.Storage.Blobs;
 using FRTools.Core.Data;
 using FRTools.Core.Services;
+using FRTools.Core.Services.Actions;
+using FRTools.Core.Services.Actions.Agents.DiscordActions;
 using FRTools.Core.Services.Announce;
+using FRTools.Core.Services.Announce.Announcers.DiscordAnnouncers;
+using FRTools.Core.Services.Announce.Announcers.TumblrAnnouncers;
 using FRTools.Core.Services.Discord.Commands;
 using FRTools.Core.Services.Interfaces;
 using Microsoft.Azure.Functions.Worker;
@@ -31,7 +36,12 @@ namespace FRTools.Core.Functions
             };
 
             var host = new HostBuilder()
-                .ConfigureFunctionsWorkerDefaults()
+                .ConfigureFunctionsWorkerDefaults((WorkerOptions options) =>
+                {
+                    var settings = NewtonsoftJsonObjectSerializer.CreateJsonSerializerSettings();
+                    settings.NullValueHandling = NullValueHandling.Ignore;
+                    options.Serializer = new NewtonsoftJsonObjectSerializer(settings);
+                })
                 .ConfigureServices(services =>
                 {
                     services.AddApplicationInsightsTelemetryWorkerService();
@@ -63,6 +73,7 @@ namespace FRTools.Core.Functions
                     services.AddSingleton<ITumblrService, TumblrService>();
 
                     ConfigureAnnouncers(services);
+                    ConfigureAgents(services);
                     ConfigureDiscord(services);
                 })
                 .Build();
@@ -72,6 +83,12 @@ namespace FRTools.Core.Functions
 
         private static void ConfigureAnnouncers(IServiceCollection services)
         {
+            services.AddTransient<IDiscordDominanceAnnouncer, DiscordDominanceAnnouncer>();
+            services.AddTransient<IDiscordNewItemsAnnouncer, DiscordNewItemsAnnouncer>();
+            services.AddTransient<IDiscordFlashSaleAnnouncer, DiscordFlashSaleAnnouncer>();
+            services.AddTransient<ITumblrFlashSaleAnnouncer, TumblrFlashSaleAnnouncer>();
+            services.AddTransient<ITumbleDominanceAnnouncer, TumbleDominanceAnnouncer>();
+
             var announcers = Assembly.GetAssembly(typeof(IAnnouncer))!.GetTypes().Where(x => typeof(IAnnouncer).IsAssignableFrom(x) && !x.IsInterface).ToArray();
 
             foreach (var announcer in announcers)
@@ -88,9 +105,30 @@ namespace FRTools.Core.Functions
             });
         }
 
+        private static void ConfigureAgents(IServiceCollection services)
+        {
+            services.AddTransient<IDiscordDominanceActions, DiscordDominanceActions>();
+
+            var agents = Assembly.GetAssembly(typeof(IAgent))!.GetTypes().Where(x => typeof(IAgent).IsAssignableFrom(x) && !x.IsInterface).ToArray();
+
+            foreach (var agent in agents)
+                services.AddTransient(agent);
+
+            services.AddTransient<AgentService>();
+            services.AddSingleton<IAgentService>(x =>
+            {
+                var service = x.GetRequiredService<AgentService>();
+                foreach (var agent in agents)
+                    service.RegisterAgent((IAgent)x.GetRequiredService(agent));
+
+                return service;
+            });
+        }
+
         private static void ConfigureDiscord(IServiceCollection services)
         {
-            services.AddSingleton<IDiscordService, DiscordService>();
+            services.AddSingleton<IDiscordInteractionService, DiscordInteractionService>();
+            services.AddSingleton<IDiscordGuildService, DiscordGuildService>();
 
             var discordCommandClasses = Assembly.GetAssembly(typeof(BaseDiscordCommand))!.GetTypes().Where(x => typeof(BaseDiscordCommand).IsAssignableFrom(x) && !x.IsAbstract).ToArray();
 

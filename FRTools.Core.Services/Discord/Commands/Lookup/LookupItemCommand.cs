@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using FRTools.Core.Common;
 using FRTools.Core.Data;
@@ -22,7 +21,7 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
         private readonly IFRUserService _userService;
         private readonly ILogger<LookupItemCommand> _logger;
 
-        public LookupItemCommand(IFRItemService itemService, IItemAssetDataService itemAssetDataService, IFRUserService userService, IDiscordService discordService, ILogger<LookupItemCommand> logger) : base(discordService, logger)
+        public LookupItemCommand(IFRItemService itemService, IItemAssetDataService itemAssetDataService, IFRUserService userService, IDiscordInteractionService discordService, ILogger<LookupItemCommand> logger) : base(discordService, logger)
         {
             _itemService = itemService;
             _itemAssetDataService = itemAssetDataService;
@@ -188,13 +187,13 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
             var commandTypeParam = command.Options.First();
 
             if ((commandTypeParam.Name == "id" || commandTypeParam.Name == "url") && GetIdFromInteraction(interaction) == null)
-                await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
+                await DiscordInteractionService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                 {
                     Content = "Couldn't find an ID in your request! Either use the name search or provide the correct game-database URL.",
                     Flags = MessageFlags.EPHEMERAL
                 });
 
-            await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
+            await DiscordInteractionService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
             {
                 Content = $"Searching for your item in my database, this could take a {(commandTypeParam.Name == "name" ? "while" : "moment")}..",
                 Flags = MessageFlags.EPHEMERAL
@@ -216,7 +215,7 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
             {
                 async Task NoItemFound()
                 {
-                    await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
+                    await DiscordInteractionService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                     {
                         Content = $"There was no item matching your request",
                         Flags = MessageFlags.EPHEMERAL
@@ -243,7 +242,7 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
 
             if (searchResult.Count == 1)
             {
-                await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
+                await DiscordInteractionService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                 {
                     Content = $"I found your item! Please give me a moment while I fetch the data..",
                     Flags = MessageFlags.EPHEMERAL
@@ -274,7 +273,15 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
                     gender = (Gender)genderOption;
 
                 var random = new Random();
-                byte[]? itemAsset = await embed.ParseItemForEmbed(random, searchResult[0], _itemAssetDataService, _userService, _logger, dragonType, gender);
+                byte[]? itemAsset = null;
+                try
+                {
+                    itemAsset = await embed.ParseItemForEmbed(random, searchResult[0], _itemAssetDataService, _userService, _logger, dragonType, gender);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Unable to obtain item asset for item {searchResult[0].Id}");
+                }
 
                 if (itemAsset != null)
                 {
@@ -288,8 +295,8 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
                 if (iconAsset != null)
                     webhook.Files.Add($"icon_{searchResult[0].FRId}.png", iconAsset);
 
-                var reply = (await DiscordService.ReplyToInteraction(interaction.Token, webhook)).First();
-                await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
+                var reply = (await DiscordInteractionService.ReplyToInteraction(interaction.Token, webhook)).First();
+                await DiscordInteractionService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                 {
                     Content = $"Your lookup result can be found here: https://discord.com/channels/{reply.MessageReference.GuildId}/{reply.ChannelId}/{reply.Id}"
                 });
@@ -317,7 +324,7 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
                         sb.AppendLine($"All of the items were part of the category **{cats.First().Key}**");
                         sb.AppendLine("Please refine your search.");
                     }
-                    await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
+                    await DiscordInteractionService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                     {
                         Content = $"",
                         Embeds = new List<DiscordEmbed>
@@ -332,7 +339,7 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
                 }
                 else
                 {
-                    await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
+                    await DiscordInteractionService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                     {
                         Content = $"",
                         Embeds = new List<DiscordEmbed>
@@ -352,14 +359,15 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
         {
             long? id = null;
             var input = interaction.Data.Options.First().Options.First();
-            if (input.Value is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.Number)
-                id = jsonElement.Deserialize<long>();
-            else if (input.Name == "url" && input.Value is string url)
+
+            if (input.Name == "url" && input.Value is string url)
             {
                 var urlParse = Regex.Match(url, @"/(?<id>\d+)");
                 if (urlParse.Success)
                     id = int.Parse(urlParse.Groups["id"].Value);
             }
+            else
+                id = long.Parse((string)input.Value);
 
             return id;
         }

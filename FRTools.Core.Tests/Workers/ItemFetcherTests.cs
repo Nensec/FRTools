@@ -65,6 +65,7 @@ namespace FRTools.Core.Tests.Workers
         }
 
         [Theory]
+#if !DEBUG
         // Fake items
         [InlineData(FRItemCategory.Skins, "Fake Female Only", "Accent: Fake Skin", true)]
         [InlineData(FRItemCategory.Trinket, "Specialty Item", "Primary Fake Gene: Fake", true)]
@@ -73,6 +74,7 @@ namespace FRTools.Core.Tests.Workers
         [InlineData(FRItemCategory.Trinket, "Specialty Item", "Primary Gaoler Gene: Fake", true)]
         [InlineData(FRItemCategory.Trinket, "Specialty Item", "Secondary Gaoler Gene: Fake", true)]
         [InlineData(FRItemCategory.Trinket, "Specialty Item", "Tertiary Gaoler Gene: Fake", true)]
+#endif
         // Real item data
         [InlineData(FRItemCategory.Skins, "Gaoler Female Only", "Accent: Gaoler Skin", false)]
         [InlineData(FRItemCategory.Trinket, "Specialty Item", "Primary Auraboa Gene: Vipera", false)]

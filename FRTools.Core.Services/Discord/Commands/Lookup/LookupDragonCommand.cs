@@ -18,7 +18,7 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
     {
         private readonly IItemAssetDataService _itemAssetDataService;
 
-        public LookupDragonCommand(IItemAssetDataService itemAssetDataService, IDiscordService discordService, ILogger<LookupDragonCommand> logger) : base(discordService, logger)
+        public LookupDragonCommand(IItemAssetDataService itemAssetDataService, IDiscordInteractionService discordService, ILogger<LookupDragonCommand> logger) : base(discordService, logger)
         {
             _itemAssetDataService = itemAssetDataService;
         }
@@ -70,7 +70,7 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
             long? id = GetIdFromInteraction(interaction);
             if (id == null)
             {
-                await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
+                await DiscordInteractionService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                 {
                     Content = "Given ID is invalid",
                     Flags = MessageFlags.EPHEMERAL
@@ -79,7 +79,7 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
                 return;
             }
 
-            await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
+            await DiscordInteractionService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
             {
                 Content = $"Looking up dragon {id}, gimme a moment..",
                 Flags = MessageFlags.EPHEMERAL
@@ -92,7 +92,7 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
 
                 if (dragonProfileDoc.GetElementbyId("error-404") != null)
                 {
-                    await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
+                    await DiscordInteractionService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                     {
                         Content = "This dragon does not exist",
                         Flags = MessageFlags.EPHEMERAL
@@ -219,12 +219,12 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
 
                 webhookResponse.PayloadJson.Embeds = new List<DiscordEmbed> { embed };
 
-                await DiscordService.EditInitialInteraction(interaction.Token, webhookResponse);
+                await DiscordInteractionService.EditInitialInteraction(interaction.Token, webhookResponse);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
+                await DiscordInteractionService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                 {
                     Content = "Something went wrong parsing the dragon's profile page, maybe something changed on the page and I need to be updated. Please let <@107155889563115520> know!",
                     Flags = MessageFlags.EPHEMERAL
@@ -238,14 +238,15 @@ namespace FRTools.Core.Services.Discord.Commands.Lookup
         {
             long? id = 0;
             var input = interaction.Data.Options.First().Options.First();
-            if (input.Value is JsonElement jsonElement && jsonElement.ValueKind == JsonValueKind.Number)
-                id = jsonElement.Deserialize<long>();
-            else if (input.Name == "url" && input.Value is string url)
+
+            if (input.Name == "url" && input.Value is string url)
             {
                 var urlParse = Regex.Match(url, @"/(?<id>\d+)");
                 if (urlParse.Success)
                     id = long.Parse(urlParse.Groups["id"].Value);
             }
+            else
+                id = long.Parse((string)input.Value);
 
             return id;
         }

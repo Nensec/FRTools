@@ -9,15 +9,15 @@ using Newtonsoft.Json;
 
 namespace FRTools.Core.Services
 {
-    public class DiscordService : IDiscordService
+    public class DiscordInteractionService : IDiscordInteractionService
     {
         private const string INTERACTIONURL = "https://discord.com/api/v10/webhooks/{0}/{1}";
         private const string ORIGINALINTERACTIONURL = "https://discord.com/api/v10/webhooks/{0}/{1}/messages/@original";
         private const string CHANNELWEBHOOKURL = "https://discord.com/api/v10/channels/{0}/webhooks";
 
-        private readonly ILogger<DiscordService> _logger;
+        private readonly ILogger<DiscordInteractionService> _logger;
 
-        public DiscordService(ILogger<DiscordService> logger)
+        public DiscordInteractionService(ILogger<DiscordInteractionService> logger)
         {
             _logger = logger;
         }

@@ -15,7 +15,7 @@ namespace FRTools.Core.Services.Discord.Commands.Owner
     {
         private readonly IFRItemService _fRItemService;
 
-        public ItemBundleConfigCommand(IFRItemService fRItemService, IDiscordService discordService, ILogger<ItemBundleConfigCommand> logger) : base(discordService, logger)
+        public ItemBundleConfigCommand(IFRItemService fRItemService, IDiscordInteractionService discordService, ILogger<ItemBundleConfigCommand> logger) : base(discordService, logger)
         {
             _fRItemService = fRItemService;
         }
@@ -75,12 +75,12 @@ namespace FRTools.Core.Services.Discord.Commands.Owner
         {
             var parameters = interaction.Data.Options.First().Options;
 
-            var itemsString = ((JsonElement)parameters["items"].Value).Deserialize<string>();
+            var itemsString = (string)parameters["items"].Value;
             var itemMatches = Regex.Matches(itemsString!, @"(?<id>\d+)\D*").Where(x => x.Success).Select(x => x.Groups["id"]).Select(x => int.Parse(x.Value));
 
-            var bundleItemId = ((JsonElement)parameters["item"].Value).Deserialize<long>();
+            var bundleItemId = long.Parse((string)parameters["item"].Value);
 
-            await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
+            await DiscordInteractionService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
             {
                 Content = $"Fetching the bundle item..",
             });
@@ -89,14 +89,14 @@ namespace FRTools.Core.Services.Discord.Commands.Owner
 
             if (bundleItem == null)
             {
-                await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
+                await DiscordInteractionService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                 {
                     Content = $"Item not found.",
                 });
                 return;
             }
 
-            await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
+            await DiscordInteractionService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
             {
                 Content = $"Fetching the bundle contents..",
             });
@@ -112,7 +112,7 @@ namespace FRTools.Core.Services.Discord.Commands.Owner
 
             await _fRItemService.SetItemBundle(bundleItem, fRItems);
 
-            await DiscordService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
+            await DiscordInteractionService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
             {
                 Content = $"Bundle saved.",
             });

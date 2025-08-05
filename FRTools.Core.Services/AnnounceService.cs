@@ -7,7 +7,7 @@ namespace FRTools.Core.Services
     public class AnnounceService : IAnnounceService
     {
         private readonly ILogger<AnnounceService> _logger;
-        private readonly List<IAnnouncer> _announcers = new();
+        private readonly List<IAnnouncer> _announcers = [];
 
         public AnnounceService(ILogger<AnnounceService> logger)
         {

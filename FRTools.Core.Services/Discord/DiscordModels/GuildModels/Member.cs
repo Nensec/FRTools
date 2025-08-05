@@ -14,7 +14,7 @@ namespace FRTools.Core.Services.Discord.DiscordModels.GuildModels
         [JsonProperty("permissions")]
         public Permissions Permissions { get; set; }
         [JsonProperty("nick")]
-        public object Nick { get; set; }
+        public string Nick { get; set; }
         [JsonProperty("joined_at")]
         public DateTime JoinedAt { get; set; }
     }

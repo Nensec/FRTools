@@ -9,5 +9,6 @@
       },
       "enableLiveMetricsFilters": true
     }
-  }
+  },
+  "functions": [ "DiscordInteractionEndpoint", "RegisterCommands", "ProcessCommand", "DominanceTracker" ]
 }

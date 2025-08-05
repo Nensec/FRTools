@@ -9,17 +9,6 @@ namespace FRTools.Core.Common.Extentions
 {
     public static class NewtonsoftHttpClientExtensions
     {
-        public static async Task<T> GetFromJsonAsync<T>(this HttpClient httpClient, string uri, JsonSerializerSettings? settings = null, CancellationToken cancellationToken = default)
-        {
-            ThrowIfInvalidParams(httpClient, uri);
-
-            var response = await httpClient.GetAsync(uri, cancellationToken);
-
-            var json = await response.Content.ReadAsStringAsync();
-
-            return JsonConvert.DeserializeObject<T>(json, settings)!;
-        }
-
         public static async Task<HttpResponseMessage> PostAsJsonAsync<T>(this HttpClient httpClient, string uri, T value, JsonSerializerSettings? settings = null, string contentType = "application/json", CancellationToken cancellationToken = default)
         {
             ThrowIfInvalidParams(httpClient, uri);

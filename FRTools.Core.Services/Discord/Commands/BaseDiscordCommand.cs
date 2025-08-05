@@ -8,14 +8,14 @@ namespace FRTools.Core.Services.Discord.Commands
 {
     public abstract class BaseDiscordCommand
     {
-        protected IDiscordService DiscordService { get; }
+        protected IDiscordInteractionService DiscordInteractionService { get; }
 
         protected ILogger Logger { get; }
         protected Dictionary<string, Action> CommandActions = new Dictionary<string, Action>();
 
-        protected BaseDiscordCommand(IDiscordService discordService, ILogger logger)
+        protected BaseDiscordCommand(IDiscordInteractionService discordInteractionService, ILogger logger)
         {
-            DiscordService = discordService;
+            DiscordInteractionService = discordInteractionService;
             Logger = logger;
         }
 
