@@ -174,13 +174,19 @@ namespace FRTools.Core.Services.Discord.Commands
                 new AppCommandOption
                 {
                     Name = "dom_enable",
-                    Description = "Enables the dominance role assingment",
+                    Description = "Enables dominance announcements, if roles are set this will also assign dominance role",
                     Type = AppCommandOptionType.SUB_COMMAND
                 },
                 new AppCommandOption
                 {
                     Name = "dom_disable",
-                    Description = "Disables the dominance role assingment",
+                    Description = "Disables dominance announcements and role assingement",
+                    Type = AppCommandOptionType.SUB_COMMAND
+                },
+                new AppCommandOption
+                {
+                    Name = "dom_clear",
+                    Description = "Clears all role assignments, does not disable announcing on its own",
                     Type = AppCommandOptionType.SUB_COMMAND
                 },
                 new AppCommandOption
@@ -380,6 +386,20 @@ namespace FRTools.Core.Services.Discord.Commands
                 await DiscordInteractionService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
                 {
                     Content = $"Dominance role assignement has been disabled."
+                });
+            }
+
+            if (command.Name == "dom_clear")
+            {
+                await _configService.RemoveConfig("GUILDCONFIG_DOMINANCE_ROLE", interaction.GuildId);
+                var flights = Enum.GetValues<Flight>().Except([Flight.Beastclans]);
+                foreach (var flight in flights)
+                {
+                    await _configService.RemoveConfig($"GUILDCONFIG_{flight.ToString().ToUpper()}_ROLE", interaction.GuildId);
+                }
+                await DiscordInteractionService.EditInitialInteraction(interaction.Token, new DiscordWebhookRequest
+                {
+                    Content = $"Dominance role assignements have been cleared."
                 });
             }
 
