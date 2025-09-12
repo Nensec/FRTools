@@ -17,7 +17,7 @@
 
 	var cssPageUrl = predictPage.DocumentNode.SelectNodes(@"/html/head/link").First(x => x.Attributes["href"].Value.StartsWith("https://www1.flightrising.com/assets/application")).Attributes["href"].Value;
 
-	var dragonBreeds = predictPage.DocumentNode.SelectNodes(@"//*[@id=""predict-morphology""]/div[2]/div[1]/div[2]/select/option");
+	var dragonBreeds = predictPage.DocumentNode.SelectNodes(@"//*[@id=""predict-morphology""]/div[2]/div[1]/div[2]/select//option");
 	foreach(var breedOption in dragonBreeds)
 	{
 		var breed = new DragonBreed();
