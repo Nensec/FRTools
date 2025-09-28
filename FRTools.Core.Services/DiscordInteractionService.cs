@@ -105,9 +105,9 @@ namespace FRTools.Core.Services
 
                 // Webhooks can (only) have 10 embeds, but because embeds will most of the time have 2 files I will limit it to 5.
                 // This also prevents a bug with this code that it can send more than 10 files if the count is less than 10 embeds
-                if (webhookRequest.PayloadJson.Embeds.Count > 5)
+                if (webhookRequest.PayloadJson.Embeds.Count >= 5)
                 {
-                    foreach (var batch in webhookRequest.PayloadJson.Embeds.Select((e, i) => new { e, i }).GroupBy(x => x.i / 10))
+                    foreach (var batch in webhookRequest.PayloadJson.Embeds.Select((e, i) => new { e, i }).GroupBy(x => x.i / 5))
                     {
                         var webhookBatch = new DiscordWebhookFilesRequest
                         {
