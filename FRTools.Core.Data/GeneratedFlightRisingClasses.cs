@@ -7721,6 +7721,8 @@ namespace FRTools.Core.Data
 		Coral = 437,
 		[Description("Crackle (Cirrus)")]
 		Crackle = 438,
+		[Description("Crystalline (Cirrus)")]
+		Crystalline = 538,
 		[Description("Deco (Cirrus)")]
 		Deco = 440,
 		[Description("Eclipse (Cirrus)")]
@@ -7799,6 +7801,8 @@ namespace FRTools.Core.Data
 		Coral = 501,
 		[Description("Crackle (Thorntail)")]
 		Crackle = 502,
+		[Description("Crystalline (Thorntail)")]
+		Crystalline = 539,
 		[Description("Dewlap (Thorntail)")]
 		Dewlap = 503,
 		[Description("Diaphanous (Thorntail)")]
@@ -7849,6 +7853,8 @@ namespace FRTools.Core.Data
 		Spines = 525,
 		[Description("Stained (Thorntail)")]
 		Stained = 526,
+		[Description("Sweet (Thorntail)")]
+		Sweet = 540,
 		[Description("Tentacles (Thorntail)")]
 		Tentacles = 527,
 		[Description("Tusked (Thorntail)")]
@@ -9745,272 +9751,284 @@ namespace FRTools.Core.Data
 		[Order(469)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Crackle = 438,
-		[Description("Deco (Cirrus)")]
+		[Description("Crystalline (Cirrus)")]
 		[Order(470)]
+		[Gene(DragonType.Cirrus)]
+		Cirrus_Crystalline = 538,
+		[Description("Deco (Cirrus)")]
+		[Order(471)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Deco = 440,
 		[Description("Eclipse (Cirrus)")]
-		[Order(471)]
+		[Order(472)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Eclipse = 439,
 		[Description("Flameforger (Cirrus)")]
-		[Order(472)]
+		[Order(473)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Flameforger = 482,
 		[Description("Flames (Cirrus)")]
-		[Order(473)]
+		[Order(474)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Flames = 441,
 		[Description("Ghost (Cirrus)")]
-		[Order(474)]
+		[Order(475)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Ghost = 442,
 		[Description("Glitch (Cirrus)")]
-		[Order(475)]
+		[Order(476)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Glitch = 443,
 		[Description("Gnarlhorns (Cirrus)")]
-		[Order(476)]
+		[Order(477)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Gnarlhorns = 444,
 		[Description("Greenskeeper (Cirrus)")]
-		[Order(477)]
+		[Order(478)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Greenskeeper = 463,
 		[Description("Kumo (Cirrus)")]
-		[Order(478)]
+		[Order(479)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Kumo = 445,
 		[Description("Medusa (Cirrus)")]
-		[Order(479)]
+		[Order(480)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Medusa = 446,
 		[Description("Mist (Cirrus)")]
-		[Order(480)]
+		[Order(481)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Mist = 448,
 		[Description("Okapi (Cirrus)")]
-		[Order(481)]
+		[Order(482)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Okapi = 447,
 		[Description("Ornaments (Cirrus)")]
-		[Order(482)]
+		[Order(483)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Ornaments = 487,
 		[Description("Paradise (Cirrus)")]
-		[Order(483)]
+		[Order(484)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Paradise = 449,
 		[Description("Peacock (Cirrus)")]
-		[Order(484)]
+		[Order(485)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Peacock = 450,
 		[Description("Polypore (Cirrus)")]
-		[Order(485)]
+		[Order(486)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Polypore = 451,
 		[Description("Quagga (Cirrus)")]
-		[Order(486)]
+		[Order(487)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Quagga = 460,
 		[Description("Runes (Cirrus)")]
-		[Order(487)]
+		[Order(488)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Runes = 462,
 		[Description("Sailfin (Cirrus)")]
-		[Order(488)]
+		[Order(489)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Sailfin = 452,
 		[Description("Scales (Cirrus)")]
-		[Order(489)]
+		[Order(490)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Scales = 433,
 		[Description("Skeletal (Cirrus)")]
-		[Order(490)]
+		[Order(491)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Skeletal = 453,
 		[Description("Sparkle (Cirrus)")]
-		[Order(491)]
+		[Order(492)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Sparkle = 461,
 		[Description("Spectre (Cirrus)")]
-		[Order(492)]
+		[Order(493)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Spectre = 454,
 		[Description("Spores (Cirrus)")]
-		[Order(493)]
+		[Order(494)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Spores = 459,
 		[Description("Thorns (Cirrus)")]
-		[Order(494)]
+		[Order(495)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Thorns = 455,
 		[Description("Thundercrack (Cirrus)")]
-		[Order(495)]
+		[Order(496)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Thundercrack = 477,
 		[Description("Topscale (Cirrus)")]
-		[Order(496)]
+		[Order(497)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Topscale = 456,
 		[Description("Underbelly (Cirrus)")]
-		[Order(497)]
+		[Order(498)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Underbelly = 434,
 		[Description("Warrior (Cirrus)")]
-		[Order(498)]
+		[Order(499)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Warrior = 479,
 		[Description("Willow (Cirrus)")]
-		[Order(499)]
+		[Order(500)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Willow = 457,
 		[Description("Wool (Cirrus)")]
-		[Order(500)]
+		[Order(501)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Wool = 458,
 		[Description("Angler (Thorntail)")]
-		[Order(501)]
+		[Order(502)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Angler = 498,
 		[Description("Beetle (Thorntail)")]
-		[Order(502)]
+		[Order(503)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Beetle = 499,
 		[Description("Blossom (Thorntail)")]
-		[Order(503)]
+		[Order(504)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Blossom = 500,
 		[Description("Coral (Thorntail)")]
-		[Order(504)]
+		[Order(505)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Coral = 501,
 		[Description("Crackle (Thorntail)")]
-		[Order(505)]
+		[Order(506)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Crackle = 502,
+		[Description("Crystalline (Thorntail)")]
+		[Order(507)]
+		[Gene(DragonType.Thorntail)]
+		Thorntail_Crystalline = 539,
 		[Description("Dewlap (Thorntail)")]
-		[Order(506)]
+		[Order(508)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Dewlap = 503,
 		[Description("Diaphanous (Thorntail)")]
-		[Order(507)]
+		[Order(509)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Diaphanous = 504,
 		[Description("Fishbone (Thorntail)")]
-		[Order(508)]
+		[Order(510)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Fishbone = 505,
 		[Description("Flames (Thorntail)")]
-		[Order(509)]
+		[Order(511)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Flames = 506,
 		[Description("Flutter (Thorntail)")]
-		[Order(510)]
+		[Order(512)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Flutter = 507,
 		[Description("Gecko (Thorntail)")]
-		[Order(511)]
+		[Order(513)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Gecko = 508,
 		[Description("Ghost (Thorntail)")]
-		[Order(512)]
+		[Order(514)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Ghost = 509,
 		[Description("Glitch (Thorntail)")]
-		[Order(513)]
+		[Order(515)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Glitch = 510,
 		[Description("Hornet (Thorntail)")]
-		[Order(514)]
+		[Order(516)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Hornet = 511,
 		[Description("Kumo (Thorntail)")]
-		[Order(515)]
+		[Order(517)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Kumo = 512,
 		[Description("Mandibles (Thorntail)")]
-		[Order(516)]
+		[Order(518)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Mandibles = 513,
 		[Description("Medusa (Thorntail)")]
-		[Order(517)]
+		[Order(519)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Medusa = 514,
 		[Description("Monarch (Thorntail)")]
-		[Order(518)]
+		[Order(520)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Monarch = 515,
 		[Description("Moss (Thorntail)")]
-		[Order(519)]
+		[Order(521)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Moss = 516,
 		[Description("Paradise (Thorntail)")]
-		[Order(520)]
+		[Order(522)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Paradise = 517,
 		[Description("Peacock (Thorntail)")]
-		[Order(521)]
+		[Order(523)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Peacock = 518,
 		[Description("Polkadot (Thorntail)")]
-		[Order(522)]
+		[Order(524)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Polkadot = 519,
 		[Description("Rockbreaker (Thorntail)")]
-		[Order(523)]
+		[Order(525)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Rockbreaker = 534,
 		[Description("Runes (Thorntail)")]
-		[Order(524)]
+		[Order(526)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Runes = 520,
 		[Description("Sailfin (Thorntail)")]
-		[Order(525)]
+		[Order(527)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Sailfin = 521,
 		[Description("Skeletal (Thorntail)")]
-		[Order(526)]
+		[Order(528)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Skeletal = 522,
 		[Description("Space (Thorntail)")]
-		[Order(527)]
+		[Order(529)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Space = 523,
 		[Description("Spectre (Thorntail)")]
-		[Order(528)]
+		[Order(530)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Spectre = 524,
 		[Description("Spines (Thorntail)")]
-		[Order(529)]
+		[Order(531)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Spines = 525,
 		[Description("Stained (Thorntail)")]
-		[Order(530)]
+		[Order(532)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Stained = 526,
+		[Description("Sweet (Thorntail)")]
+		[Order(533)]
+		[Gene(DragonType.Thorntail)]
+		Thorntail_Sweet = 540,
 		[Description("Tentacles (Thorntail)")]
-		[Order(531)]
+		[Order(534)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Tentacles = 527,
 		[Description("Tusked (Thorntail)")]
-		[Order(532)]
+		[Order(535)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Tusked = 528,
 		[Description("Underbelly (Thorntail)")]
-		[Order(533)]
+		[Order(536)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Underbelly = 529,
 		[Description("Wish (Thorntail)")]
-		[Order(534)]
+		[Order(537)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Wish = 530,
 		[Description("Wool (Thorntail)")]
-		[Order(535)]
+		[Order(538)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Wool = 531,
 		[Description("Yarn (Thorntail)")]
-		[Order(536)]
+		[Order(539)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Yarn = 532,
 	}
