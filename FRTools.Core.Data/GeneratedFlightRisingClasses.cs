@@ -59,6 +59,8 @@ namespace FRTools.Core.Data
 		Everlux = 26,
 		[Description("Cirrus")]
 		Cirrus = 27,
+		[Description("Vigil")]
+		Vigil = 28,
 		[Description("Thorntail")]
 		Thorntail = 29,
 	}
@@ -1553,6 +1555,64 @@ namespace FRTools.Core.Data
 		Wasp = 433,
 	}
 	
+	public enum VigilBodyGene
+	{
+		[Description("Basic")]
+		Basic = 0,
+		[Description("Arapaima (Vigil)")]
+		Arapaima = 511,
+		[Description("Bar (Vigil)")]
+		Bar = 512,
+		[Description("Caterpillar (Vigil)")]
+		Caterpillar = 514,
+		[Description("Checkers (Vigil)")]
+		Checkers = 515,
+		[Description("Cinder (Vigil)")]
+		Cinder = 525,
+		[Description("Clown (Vigil)")]
+		Clown = 513,
+		[Description("Criculaworm (Vigil)")]
+		Criculaworm = 526,
+		[Description("Crosshatch (Vigil)")]
+		Crosshatch = 527,
+		[Description("Dimension (Vigil)")]
+		Dimension = 528,
+		[Description("Fade (Vigil)")]
+		Fade = 529,
+		[Description("Jaguar (Vigil)")]
+		Jaguar = 530,
+		[Description("Leopard (Vigil)")]
+		Leopard = 531,
+		[Description("Marble (Vigil)")]
+		Marble = 532,
+		[Description("Metallic (Vigil)")]
+		Metallic = 533,
+		[Description("Patina (Vigil)")]
+		Patina = 534,
+		[Description("Piebald (Vigil)")]
+		Piebald = 535,
+		[Description("Ribbon (Vigil)")]
+		Ribbon = 536,
+		[Description("Ripple (Vigil)")]
+		Ripple = 537,
+		[Description("Sailfish (Vigil)")]
+		Sailfish = 538,
+		[Description("Skink (Vigil)")]
+		Skink = 539,
+		[Description("Strike (Vigil)")]
+		Strike = 516,
+		[Description("Swirl (Vigil)")]
+		Swirl = 540,
+		[Description("Tapir (Vigil)")]
+		Tapir = 541,
+		[Description("Varnish (Vigil)")]
+		Varnish = 544,
+		[Description("Vipera (Vigil)")]
+		Vipera = 542,
+		[Description("Wrought (Vigil)")]
+		Wrought = 543,
+	}
+	
 	public enum ThorntailBodyGene
 	{
 		[Description("Basic")]
@@ -1633,7 +1693,7 @@ namespace FRTools.Core.Data
 	{
 		[Description("Basic")]
 		[Order(0)]
-		[Gene(DragonType.Bogsneak, DragonType.Coatl, DragonType.Fae, DragonType.Fathom, DragonType.Guardian, DragonType.Imperial, DragonType.Mirror, DragonType.Nocturne, DragonType.Obelisk, DragonType.Pearlcatcher, DragonType.Ridgeback, DragonType.Skydancer, DragonType.Snapper, DragonType.Spiral, DragonType.Tundra, DragonType.Wildclaw, DragonType.Aberration, DragonType.Aether, DragonType.Auraboa, DragonType.Banescale, DragonType.Cirrus, DragonType.Dusthide, DragonType.Everlux, DragonType.Gaoler, DragonType.Sandsurge, DragonType.Thorntail, DragonType.Undertide, DragonType.Veilspun)]
+		[Gene(DragonType.Bogsneak, DragonType.Coatl, DragonType.Fae, DragonType.Fathom, DragonType.Guardian, DragonType.Imperial, DragonType.Mirror, DragonType.Nocturne, DragonType.Obelisk, DragonType.Pearlcatcher, DragonType.Ridgeback, DragonType.Skydancer, DragonType.Snapper, DragonType.Spiral, DragonType.Tundra, DragonType.Wildclaw, DragonType.Aberration, DragonType.Aether, DragonType.Auraboa, DragonType.Banescale, DragonType.Cirrus, DragonType.Dusthide, DragonType.Everlux, DragonType.Gaoler, DragonType.Sandsurge, DragonType.Thorntail, DragonType.Undertide, DragonType.Veilspun, DragonType.Vigil)]
 		Basic = 0,		
 		[Description("Iridescent")]
 		[Order(1)]
@@ -3563,144 +3623,248 @@ namespace FRTools.Core.Data
 		[Order(482)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Wasp = 433,
-		[Description("Arapaima (Thorntail)")]
+		[Description("Arapaima (Vigil)")]
 		[Order(483)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Arapaima = 511,
+		[Description("Bar (Vigil)")]
+		[Order(484)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Bar = 512,
+		[Description("Caterpillar (Vigil)")]
+		[Order(485)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Caterpillar = 514,
+		[Description("Checkers (Vigil)")]
+		[Order(486)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Checkers = 515,
+		[Description("Cinder (Vigil)")]
+		[Order(487)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Cinder = 525,
+		[Description("Clown (Vigil)")]
+		[Order(488)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Clown = 513,
+		[Description("Criculaworm (Vigil)")]
+		[Order(489)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Criculaworm = 526,
+		[Description("Crosshatch (Vigil)")]
+		[Order(490)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Crosshatch = 527,
+		[Description("Dimension (Vigil)")]
+		[Order(491)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Dimension = 528,
+		[Description("Fade (Vigil)")]
+		[Order(492)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Fade = 529,
+		[Description("Jaguar (Vigil)")]
+		[Order(493)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Jaguar = 530,
+		[Description("Leopard (Vigil)")]
+		[Order(494)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Leopard = 531,
+		[Description("Marble (Vigil)")]
+		[Order(495)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Marble = 532,
+		[Description("Metallic (Vigil)")]
+		[Order(496)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Metallic = 533,
+		[Description("Patina (Vigil)")]
+		[Order(497)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Patina = 534,
+		[Description("Piebald (Vigil)")]
+		[Order(498)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Piebald = 535,
+		[Description("Ribbon (Vigil)")]
+		[Order(499)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Ribbon = 536,
+		[Description("Ripple (Vigil)")]
+		[Order(500)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Ripple = 537,
+		[Description("Sailfish (Vigil)")]
+		[Order(501)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Sailfish = 538,
+		[Description("Skink (Vigil)")]
+		[Order(502)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Skink = 539,
+		[Description("Strike (Vigil)")]
+		[Order(503)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Strike = 516,
+		[Description("Swirl (Vigil)")]
+		[Order(504)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Swirl = 540,
+		[Description("Tapir (Vigil)")]
+		[Order(505)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Tapir = 541,
+		[Description("Varnish (Vigil)")]
+		[Order(506)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Varnish = 544,
+		[Description("Vipera (Vigil)")]
+		[Order(507)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Vipera = 542,
+		[Description("Wrought (Vigil)")]
+		[Order(508)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Wrought = 543,
+		[Description("Arapaima (Thorntail)")]
+		[Order(509)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Arapaima = 458,
 		[Description("Arc (Thorntail)")]
-		[Order(484)]
+		[Order(510)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Arc = 457,
 		[Description("Bar (Thorntail)")]
-		[Order(485)]
+		[Order(511)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Bar = 460,
 		[Description("Boa (Thorntail)")]
-		[Order(486)]
+		[Order(512)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Boa = 462,
 		[Description("Caiman (Thorntail)")]
-		[Order(487)]
+		[Order(513)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Caiman = 463,
 		[Description("Candycane (Thorntail)")]
-		[Order(488)]
+		[Order(514)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Candycane = 464,
 		[Description("Cherub (Thorntail)")]
-		[Order(489)]
+		[Order(515)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Cherub = 465,
 		[Description("Chorus (Thorntail)")]
-		[Order(490)]
+		[Order(516)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Chorus = 466,
 		[Description("Cinder (Thorntail)")]
-		[Order(491)]
+		[Order(517)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Cinder = 467,
 		[Description("Criculaworm (Thorntail)")]
-		[Order(492)]
+		[Order(518)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Criculaworm = 468,
 		[Description("Dimension (Thorntail)")]
-		[Order(493)]
+		[Order(519)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Dimension = 459,
 		[Description("Fade (Thorntail)")]
-		[Order(494)]
+		[Order(520)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Fade = 469,
 		[Description("Fern (Thorntail)")]
-		[Order(495)]
+		[Order(521)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Fern = 470,
 		[Description("Glass (Thorntail)")]
-		[Order(496)]
+		[Order(522)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Glass = 489,
 		[Description("Glow (Thorntail)")]
-		[Order(497)]
+		[Order(523)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Glow = 461,
 		[Description("Ink (Thorntail)")]
-		[Order(498)]
+		[Order(524)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Ink = 471,
 		[Description("Jaguar (Thorntail)")]
-		[Order(499)]
+		[Order(525)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Jaguar = 472,
 		[Description("Marble (Thorntail)")]
-		[Order(500)]
+		[Order(526)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Marble = 473,
 		[Description("Orb (Thorntail)")]
-		[Order(501)]
+		[Order(527)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Orb = 474,
 		[Description("Petals (Thorntail)")]
-		[Order(502)]
+		[Order(528)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Petals = 475,
 		[Description("Pharaoh (Thorntail)")]
-		[Order(503)]
+		[Order(529)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Pharaoh = 476,
 		[Description("Piebald (Thorntail)")]
-		[Order(504)]
+		[Order(530)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Piebald = 477,
 		[Description("Python (Thorntail)")]
-		[Order(505)]
+		[Order(531)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Python = 478,
 		[Description("Radio (Thorntail)")]
-		[Order(506)]
+		[Order(532)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Radio = 490,
 		[Description("Ragged (Thorntail)")]
-		[Order(507)]
+		[Order(533)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Ragged = 479,
 		[Description("Rattlesnake (Thorntail)")]
-		[Order(508)]
+		[Order(534)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Rattlesnake = 480,
 		[Description("Ripple (Thorntail)")]
-		[Order(509)]
+		[Order(535)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Ripple = 481,
 		[Description("Sailfish (Thorntail)")]
-		[Order(510)]
+		[Order(536)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Sailfish = 482,
 		[Description("Skink (Thorntail)")]
-		[Order(511)]
+		[Order(537)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Skink = 483,
 		[Description("Soil (Thorntail)")]
-		[Order(512)]
+		[Order(538)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Soil = 484,
 		[Description("Splatter (Thorntail)")]
-		[Order(513)]
+		[Order(539)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Splatter = 491,
 		[Description("Tapir (Thorntail)")]
-		[Order(514)]
+		[Order(540)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Tapir = 485,
 		[Description("Tide (Thorntail)")]
-		[Order(515)]
+		[Order(541)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Tide = 486,
 		[Description("Varnish (Thorntail)")]
-		[Order(516)]
+		[Order(542)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Varnish = 487,
 		[Description("Vipera (Thorntail)")]
-		[Order(517)]
+		[Order(543)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Vipera = 488,
 	}
@@ -4741,6 +4905,64 @@ namespace FRTools.Core.Data
 		Weaver = 425,
 	}
 	
+	public enum VigilWingGene
+	{
+		[Description("Basic")]
+		Basic = 0,
+		[Description("Alloy (Vigil)")]
+		Alloy = 533,
+		[Description("Arowana (Vigil)")]
+		Arowana = 511,
+		[Description("Blaze (Vigil)")]
+		Blaze = 525,
+		[Description("Blend (Vigil)")]
+		Blend = 529,
+		[Description("Chess (Vigil)")]
+		Chess = 515,
+		[Description("Clouded (Vigil)")]
+		Clouded = 531,
+		[Description("Coil (Vigil)")]
+		Coil = 516,
+		[Description("Current (Vigil)")]
+		Current = 540,
+		[Description("Daub (Vigil)")]
+		Daub = 512,
+		[Description("Eel (Vigil)")]
+		Eel = 536,
+		[Description("Eye Spots (Vigil)")]
+		EyeSpots = 513,
+		[Description("Hatch (Vigil)")]
+		Hatch = 527,
+		[Description("Hypnotic (Vigil)")]
+		Hypnotic = 542,
+		[Description("Lacquer (Vigil)")]
+		Lacquer = 544,
+		[Description("Larvae (Vigil)")]
+		Larvae = 514,
+		[Description("Marbled (Vigil)")]
+		Marbled = 539,
+		[Description("Marlin (Vigil)")]
+		Marlin = 537,
+		[Description("Mottle (Vigil)")]
+		Mottle = 532,
+		[Description("Oxidize (Vigil)")]
+		Oxidize = 534,
+		[Description("Paint (Vigil)")]
+		Paint = 535,
+		[Description("Rosette (Vigil)")]
+		Rosette = 530,
+		[Description("Silkspot (Vigil)")]
+		Silkspot = 526,
+		[Description("Spinner (Vigil)")]
+		Spinner = 538,
+		[Description("Spire (Vigil)")]
+		Spire = 543,
+		[Description("Striation (Vigil)")]
+		Striation = 541,
+		[Description("Warp (Vigil)")]
+		Warp = 528,
+	}
+	
 	public enum ThorntailWingGene
 	{
 		[Description("Basic")]
@@ -4821,7 +5043,7 @@ namespace FRTools.Core.Data
 	{
 		[Description("Basic")]
 		[Order(0)]
-		[Gene(DragonType.Bogsneak, DragonType.Coatl, DragonType.Fae, DragonType.Fathom, DragonType.Guardian, DragonType.Imperial, DragonType.Mirror, DragonType.Nocturne, DragonType.Obelisk, DragonType.Pearlcatcher, DragonType.Ridgeback, DragonType.Skydancer, DragonType.Snapper, DragonType.Spiral, DragonType.Tundra, DragonType.Wildclaw, DragonType.Aberration, DragonType.Aether, DragonType.Auraboa, DragonType.Banescale, DragonType.Cirrus, DragonType.Dusthide, DragonType.Everlux, DragonType.Gaoler, DragonType.Sandsurge, DragonType.Thorntail, DragonType.Undertide, DragonType.Veilspun)]
+		[Gene(DragonType.Bogsneak, DragonType.Coatl, DragonType.Fae, DragonType.Fathom, DragonType.Guardian, DragonType.Imperial, DragonType.Mirror, DragonType.Nocturne, DragonType.Obelisk, DragonType.Pearlcatcher, DragonType.Ridgeback, DragonType.Skydancer, DragonType.Snapper, DragonType.Spiral, DragonType.Tundra, DragonType.Wildclaw, DragonType.Aberration, DragonType.Aether, DragonType.Auraboa, DragonType.Banescale, DragonType.Cirrus, DragonType.Dusthide, DragonType.Everlux, DragonType.Gaoler, DragonType.Sandsurge, DragonType.Thorntail, DragonType.Undertide, DragonType.Veilspun, DragonType.Vigil)]
 		Basic = 0,
 		[Description("Shimmer")]
 		[Order(1)]
@@ -6751,144 +6973,248 @@ namespace FRTools.Core.Data
 		[Order(482)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Weaver = 425,
-		[Description("Arowana (Thorntail)")]
+		[Description("Alloy (Vigil)")]
 		[Order(483)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Alloy = 533,
+		[Description("Arowana (Vigil)")]
+		[Order(484)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Arowana = 511,
+		[Description("Blaze (Vigil)")]
+		[Order(485)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Blaze = 525,
+		[Description("Blend (Vigil)")]
+		[Order(486)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Blend = 529,
+		[Description("Chess (Vigil)")]
+		[Order(487)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Chess = 515,
+		[Description("Clouded (Vigil)")]
+		[Order(488)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Clouded = 531,
+		[Description("Coil (Vigil)")]
+		[Order(489)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Coil = 516,
+		[Description("Current (Vigil)")]
+		[Order(490)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Current = 540,
+		[Description("Daub (Vigil)")]
+		[Order(491)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Daub = 512,
+		[Description("Eel (Vigil)")]
+		[Order(492)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Eel = 536,
+		[Description("Eye Spots (Vigil)")]
+		[Order(493)]
+		[Gene(DragonType.Vigil)]
+		Vigil_EyeSpots = 513,
+		[Description("Hatch (Vigil)")]
+		[Order(494)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Hatch = 527,
+		[Description("Hypnotic (Vigil)")]
+		[Order(495)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Hypnotic = 542,
+		[Description("Lacquer (Vigil)")]
+		[Order(496)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Lacquer = 544,
+		[Description("Larvae (Vigil)")]
+		[Order(497)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Larvae = 514,
+		[Description("Marbled (Vigil)")]
+		[Order(498)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Marbled = 539,
+		[Description("Marlin (Vigil)")]
+		[Order(499)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Marlin = 537,
+		[Description("Mottle (Vigil)")]
+		[Order(500)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Mottle = 532,
+		[Description("Oxidize (Vigil)")]
+		[Order(501)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Oxidize = 534,
+		[Description("Paint (Vigil)")]
+		[Order(502)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Paint = 535,
+		[Description("Rosette (Vigil)")]
+		[Order(503)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Rosette = 530,
+		[Description("Silkspot (Vigil)")]
+		[Order(504)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Silkspot = 526,
+		[Description("Spinner (Vigil)")]
+		[Order(505)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Spinner = 538,
+		[Description("Spire (Vigil)")]
+		[Order(506)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Spire = 543,
+		[Description("Striation (Vigil)")]
+		[Order(507)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Striation = 541,
+		[Description("Warp (Vigil)")]
+		[Order(508)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Warp = 528,
+		[Description("Arowana (Thorntail)")]
+		[Order(509)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Arowana = 458,
 		[Description("Blaze (Thorntail)")]
-		[Order(484)]
+		[Order(510)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Blaze = 467,
 		[Description("Blend (Thorntail)")]
-		[Order(485)]
+		[Order(511)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Blend = 469,
 		[Description("Butterfly (Thorntail)")]
-		[Order(486)]
+		[Order(512)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Butterfly = 475,
 		[Description("Chalice (Thorntail)")]
-		[Order(487)]
+		[Order(513)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Chalice = 489,
 		[Description("Choir (Thorntail)")]
-		[Order(488)]
+		[Order(514)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Choir = 466,
 		[Description("Croc (Thorntail)")]
-		[Order(489)]
+		[Order(515)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Croc = 463,
 		[Description("Current (Thorntail)")]
-		[Order(490)]
+		[Order(516)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Current = 481,
 		[Description("Daub (Thorntail)")]
-		[Order(491)]
+		[Order(517)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Daub = 460,
 		[Description("Diamondback (Thorntail)")]
-		[Order(492)]
+		[Order(518)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Diamondback = 480,
 		[Description("Drip (Thorntail)")]
-		[Order(493)]
+		[Order(519)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Drip = 491,
 		[Description("Dye (Thorntail)")]
-		[Order(494)]
+		[Order(520)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Dye = 471,
 		[Description("Foam (Thorntail)")]
-		[Order(495)]
+		[Order(521)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Foam = 486,
 		[Description("Hypnotic (Thorntail)")]
-		[Order(496)]
+		[Order(522)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Hypnotic = 488,
 		[Description("Lacquer (Thorntail)")]
-		[Order(497)]
+		[Order(523)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Lacquer = 487,
 		[Description("Loam (Thorntail)")]
-		[Order(498)]
+		[Order(524)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Loam = 484,
 		[Description("Loop (Thorntail)")]
-		[Order(499)]
+		[Order(525)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Loop = 457,
 		[Description("Lumen (Thorntail)")]
-		[Order(500)]
+		[Order(526)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Lumen = 461,
 		[Description("Marlin (Thorntail)")]
-		[Order(501)]
+		[Order(527)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Marlin = 482,
 		[Description("Morph (Thorntail)")]
-		[Order(502)]
+		[Order(528)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Morph = 478,
 		[Description("Mottle (Thorntail)")]
-		[Order(503)]
+		[Order(529)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Mottle = 473,
 		[Description("Paint (Thorntail)")]
-		[Order(504)]
+		[Order(530)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Paint = 477,
 		[Description("Paisley (Thorntail)")]
-		[Order(505)]
+		[Order(531)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Paisley = 470,
 		[Description("Rosette (Thorntail)")]
-		[Order(506)]
+		[Order(532)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Rosette = 472,
 		[Description("Saddle (Thorntail)")]
-		[Order(507)]
+		[Order(533)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Saddle = 462,
 		[Description("Sarcophagus (Thorntail)")]
-		[Order(508)]
+		[Order(534)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Sarcophagus = 476,
 		[Description("Seraph (Thorntail)")]
-		[Order(509)]
+		[Order(535)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Seraph = 465,
 		[Description("Signal (Thorntail)")]
-		[Order(510)]
+		[Order(536)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Signal = 490,
 		[Description("Silkspot (Thorntail)")]
-		[Order(511)]
+		[Order(537)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Silkspot = 468,
 		[Description("Spinner (Thorntail)")]
-		[Order(512)]
+		[Order(538)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Spinner = 483,
 		[Description("Striation (Thorntail)")]
-		[Order(513)]
+		[Order(539)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Striation = 485,
 		[Description("Sugarplum (Thorntail)")]
-		[Order(514)]
+		[Order(540)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Sugarplum = 464,
 		[Description("Tear (Thorntail)")]
-		[Order(515)]
+		[Order(541)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Tear = 479,
 		[Description("Warp (Thorntail)")]
-		[Order(516)]
+		[Order(542)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Warp = 459,
 		[Description("Weaver (Thorntail)")]
-		[Order(517)]
+		[Order(543)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Weaver = 474,
 	}
@@ -7971,6 +8297,86 @@ namespace FRTools.Core.Data
 		Wool = 458,
 	}
 	
+	public enum VigilTertGene
+	{
+		[Description("Basic")]
+		Basic = 0,
+		[Description("Agate (Vigil)")]
+		Agate = 547,
+		[Description("Barnacle (Vigil)")]
+		Barnacle = 551,
+		[Description("Belfry (Vigil)")]
+		Belfry = 567,
+		[Description("Branches (Vigil)")]
+		Branches = 548,
+		[Description("Candlelight (Vigil)")]
+		Candlelight = 553,
+		[Description("Capsule (Vigil)")]
+		Capsule = 545,
+		[Description("Carnivore (Vigil)")]
+		Carnivore = 549,
+		[Description("Coral (Vigil)")]
+		Coral = 552,
+		[Description("Crest (Vigil)")]
+		Crest = 554,
+		[Description("Deco (Vigil)")]
+		Deco = 555,
+		[Description("Dewlap (Vigil)")]
+		Dewlap = 556,
+		[Description("Eclipse (Vigil)")]
+		Eclipse = 557,
+		[Description("Fangs (Vigil)")]
+		Fangs = 568,
+		[Description("Firebreather (Vigil)")]
+		Firebreather = 559,
+		[Description("Gecko (Vigil)")]
+		Gecko = 560,
+		[Description("Ghost (Vigil)")]
+		Ghost = 561,
+		[Description("Glitch (Vigil)")]
+		Glitch = 558,
+		[Description("Gnarlhorns (Vigil)")]
+		Gnarlhorns = 562,
+		[Description("Kumo (Vigil)")]
+		Kumo = 563,
+		[Description("Mandibles (Vigil)")]
+		Mandibles = 564,
+		[Description("Medusa (Vigil)")]
+		Medusa = 565,
+		[Description("Overgrow (Vigil)")]
+		Overgrow = 566,
+		[Description("Plating (Vigil)")]
+		Plating = 569,
+		[Description("Plumage (Vigil)")]
+		Plumage = 570,
+		[Description("Polkadot (Vigil)")]
+		Polkadot = 571,
+		[Description("Porcelain (Vigil)")]
+		Porcelain = 572,
+		[Description("Quagga (Vigil)")]
+		Quagga = 573,
+		[Description("Rift (Vigil)")]
+		Rift = 574,
+		[Description("Rooster (Vigil)")]
+		Rooster = 550,
+		[Description("Smirch (Vigil)")]
+		Smirch = 580,
+		[Description("Tentacles (Vigil)")]
+		Tentacles = 575,
+		[Description("Thorns (Vigil)")]
+		Thorns = 576,
+		[Description("Underbelly (Vigil)")]
+		Underbelly = 546,
+		[Description("Veined (Vigil)")]
+		Veined = 579,
+		[Description("Webmane (Vigil)")]
+		Webmane = 577,
+		[Description("Willow (Vigil)")]
+		Willow = 578,
+		[Description("Wish (Vigil)")]
+		Wish = 581,
+	}
+	
 	public enum ThorntailTertGene
 	{
 		[Description("Basic")]
@@ -8061,7 +8467,7 @@ namespace FRTools.Core.Data
 	{
 		[Description("Basic")]
 		[Order(0)]
-		[Gene(DragonType.Bogsneak, DragonType.Coatl, DragonType.Fae, DragonType.Fathom, DragonType.Guardian, DragonType.Imperial, DragonType.Mirror, DragonType.Nocturne, DragonType.Obelisk, DragonType.Pearlcatcher, DragonType.Ridgeback, DragonType.Skydancer, DragonType.Snapper, DragonType.Spiral, DragonType.Tundra, DragonType.Wildclaw, DragonType.Aberration, DragonType.Aether, DragonType.Auraboa, DragonType.Banescale, DragonType.Cirrus, DragonType.Dusthide, DragonType.Everlux, DragonType.Gaoler, DragonType.Sandsurge, DragonType.Thorntail, DragonType.Undertide, DragonType.Veilspun)]
+		[Gene(DragonType.Bogsneak, DragonType.Coatl, DragonType.Fae, DragonType.Fathom, DragonType.Guardian, DragonType.Imperial, DragonType.Mirror, DragonType.Nocturne, DragonType.Obelisk, DragonType.Pearlcatcher, DragonType.Ridgeback, DragonType.Skydancer, DragonType.Snapper, DragonType.Spiral, DragonType.Tundra, DragonType.Wildclaw, DragonType.Aberration, DragonType.Aether, DragonType.Auraboa, DragonType.Banescale, DragonType.Cirrus, DragonType.Dusthide, DragonType.Everlux, DragonType.Gaoler, DragonType.Sandsurge, DragonType.Thorntail, DragonType.Undertide, DragonType.Veilspun, DragonType.Vigil)]
 		Basic = 0,
 		[Description("Circuit")]
 		[Order(1)]
@@ -10075,164 +10481,312 @@ namespace FRTools.Core.Data
 		[Order(503)]
 		[Gene(DragonType.Cirrus)]
 		Cirrus_Wool = 458,
-		[Description("Angler (Thorntail)")]
+		[Description("Agate (Vigil)")]
 		[Order(504)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Agate = 547,
+		[Description("Barnacle (Vigil)")]
+		[Order(505)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Barnacle = 551,
+		[Description("Belfry (Vigil)")]
+		[Order(506)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Belfry = 567,
+		[Description("Branches (Vigil)")]
+		[Order(507)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Branches = 548,
+		[Description("Candlelight (Vigil)")]
+		[Order(508)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Candlelight = 553,
+		[Description("Capsule (Vigil)")]
+		[Order(509)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Capsule = 545,
+		[Description("Carnivore (Vigil)")]
+		[Order(510)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Carnivore = 549,
+		[Description("Coral (Vigil)")]
+		[Order(511)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Coral = 552,
+		[Description("Crest (Vigil)")]
+		[Order(512)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Crest = 554,
+		[Description("Deco (Vigil)")]
+		[Order(513)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Deco = 555,
+		[Description("Dewlap (Vigil)")]
+		[Order(514)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Dewlap = 556,
+		[Description("Eclipse (Vigil)")]
+		[Order(515)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Eclipse = 557,
+		[Description("Fangs (Vigil)")]
+		[Order(516)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Fangs = 568,
+		[Description("Firebreather (Vigil)")]
+		[Order(517)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Firebreather = 559,
+		[Description("Gecko (Vigil)")]
+		[Order(518)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Gecko = 560,
+		[Description("Ghost (Vigil)")]
+		[Order(519)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Ghost = 561,
+		[Description("Glitch (Vigil)")]
+		[Order(520)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Glitch = 558,
+		[Description("Gnarlhorns (Vigil)")]
+		[Order(521)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Gnarlhorns = 562,
+		[Description("Kumo (Vigil)")]
+		[Order(522)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Kumo = 563,
+		[Description("Mandibles (Vigil)")]
+		[Order(523)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Mandibles = 564,
+		[Description("Medusa (Vigil)")]
+		[Order(524)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Medusa = 565,
+		[Description("Overgrow (Vigil)")]
+		[Order(525)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Overgrow = 566,
+		[Description("Plating (Vigil)")]
+		[Order(526)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Plating = 569,
+		[Description("Plumage (Vigil)")]
+		[Order(527)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Plumage = 570,
+		[Description("Polkadot (Vigil)")]
+		[Order(528)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Polkadot = 571,
+		[Description("Porcelain (Vigil)")]
+		[Order(529)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Porcelain = 572,
+		[Description("Quagga (Vigil)")]
+		[Order(530)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Quagga = 573,
+		[Description("Rift (Vigil)")]
+		[Order(531)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Rift = 574,
+		[Description("Rooster (Vigil)")]
+		[Order(532)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Rooster = 550,
+		[Description("Smirch (Vigil)")]
+		[Order(533)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Smirch = 580,
+		[Description("Tentacles (Vigil)")]
+		[Order(534)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Tentacles = 575,
+		[Description("Thorns (Vigil)")]
+		[Order(535)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Thorns = 576,
+		[Description("Underbelly (Vigil)")]
+		[Order(536)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Underbelly = 546,
+		[Description("Veined (Vigil)")]
+		[Order(537)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Veined = 579,
+		[Description("Webmane (Vigil)")]
+		[Order(538)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Webmane = 577,
+		[Description("Willow (Vigil)")]
+		[Order(539)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Willow = 578,
+		[Description("Wish (Vigil)")]
+		[Order(540)]
+		[Gene(DragonType.Vigil)]
+		Vigil_Wish = 581,
+		[Description("Angler (Thorntail)")]
+		[Order(541)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Angler = 498,
 		[Description("Beetle (Thorntail)")]
-		[Order(505)]
+		[Order(542)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Beetle = 499,
 		[Description("Blossom (Thorntail)")]
-		[Order(506)]
+		[Order(543)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Blossom = 500,
 		[Description("Coral (Thorntail)")]
-		[Order(507)]
+		[Order(544)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Coral = 501,
 		[Description("Crackle (Thorntail)")]
-		[Order(508)]
+		[Order(545)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Crackle = 502,
 		[Description("Crystalline (Thorntail)")]
-		[Order(509)]
+		[Order(546)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Crystalline = 539,
 		[Description("Dewlap (Thorntail)")]
-		[Order(510)]
+		[Order(547)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Dewlap = 503,
 		[Description("Diaphanous (Thorntail)")]
-		[Order(511)]
+		[Order(548)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Diaphanous = 504,
 		[Description("Fishbone (Thorntail)")]
-		[Order(512)]
+		[Order(549)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Fishbone = 505,
 		[Description("Flames (Thorntail)")]
-		[Order(513)]
+		[Order(550)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Flames = 506,
 		[Description("Flutter (Thorntail)")]
-		[Order(514)]
+		[Order(551)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Flutter = 507,
 		[Description("Gecko (Thorntail)")]
-		[Order(515)]
+		[Order(552)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Gecko = 508,
 		[Description("Ghost (Thorntail)")]
-		[Order(516)]
+		[Order(553)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Ghost = 509,
 		[Description("Glitch (Thorntail)")]
-		[Order(517)]
+		[Order(554)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Glitch = 510,
 		[Description("Hornet (Thorntail)")]
-		[Order(518)]
+		[Order(555)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Hornet = 511,
 		[Description("Kumo (Thorntail)")]
-		[Order(519)]
+		[Order(556)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Kumo = 512,
 		[Description("Mandibles (Thorntail)")]
-		[Order(520)]
+		[Order(557)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Mandibles = 513,
 		[Description("Medusa (Thorntail)")]
-		[Order(521)]
+		[Order(558)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Medusa = 514,
 		[Description("Mistral (Thorntail)")]
-		[Order(522)]
+		[Order(559)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Mistral = 543,
 		[Description("Monarch (Thorntail)")]
-		[Order(523)]
+		[Order(560)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Monarch = 515,
 		[Description("Moss (Thorntail)")]
-		[Order(524)]
+		[Order(561)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Moss = 516,
 		[Description("Paradise (Thorntail)")]
-		[Order(525)]
+		[Order(562)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Paradise = 517,
 		[Description("Peacock (Thorntail)")]
-		[Order(526)]
+		[Order(563)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Peacock = 518,
 		[Description("Polkadot (Thorntail)")]
-		[Order(527)]
+		[Order(564)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Polkadot = 519,
 		[Description("Rockbreaker (Thorntail)")]
-		[Order(528)]
+		[Order(565)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Rockbreaker = 534,
 		[Description("Runes (Thorntail)")]
-		[Order(529)]
+		[Order(566)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Runes = 520,
 		[Description("Sailfin (Thorntail)")]
-		[Order(530)]
+		[Order(567)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Sailfin = 521,
 		[Description("Skeletal (Thorntail)")]
-		[Order(531)]
+		[Order(568)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Skeletal = 522,
 		[Description("Space (Thorntail)")]
-		[Order(532)]
+		[Order(569)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Space = 523,
 		[Description("Spectre (Thorntail)")]
-		[Order(533)]
+		[Order(570)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Spectre = 524,
 		[Description("Spines (Thorntail)")]
-		[Order(534)]
+		[Order(571)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Spines = 525,
 		[Description("Stained (Thorntail)")]
-		[Order(535)]
+		[Order(572)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Stained = 526,
 		[Description("Sweet (Thorntail)")]
-		[Order(536)]
+		[Order(573)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Sweet = 540,
 		[Description("Tentacles (Thorntail)")]
-		[Order(537)]
+		[Order(574)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Tentacles = 527,
 		[Description("Trickmurk (Thorntail)")]
-		[Order(538)]
+		[Order(575)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Trickmurk = 541,
 		[Description("Tusked (Thorntail)")]
-		[Order(539)]
+		[Order(576)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Tusked = 528,
 		[Description("Underbelly (Thorntail)")]
-		[Order(540)]
+		[Order(577)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Underbelly = 529,
 		[Description("Wish (Thorntail)")]
-		[Order(541)]
+		[Order(578)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Wish = 530,
 		[Description("Wool (Thorntail)")]
-		[Order(542)]
+		[Order(579)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Wool = 531,
 		[Description("Yarn (Thorntail)")]
-		[Order(543)]
+		[Order(580)]
 		[Gene(DragonType.Thorntail)]
 		Thorntail_Yarn = 532,
 	}
@@ -10263,6 +10817,8 @@ namespace FRTools.Core.Data
 				return true;
 			if ((int)type == 27)
 				return true;
+			if ((int)type == 28)
+				return true;
 			if ((int)type == 29)
 				return true;
 			return false;
@@ -10292,6 +10848,8 @@ namespace FRTools.Core.Data
 				return typeof(EverluxBodyGene);
 			if ((int)type == 27)
 				return typeof(CirrusBodyGene);
+			if ((int)type == 28)
+				return typeof(VigilBodyGene);
 			if ((int)type == 29)
 				return typeof(ThorntailBodyGene);
 			return typeof(BodyGene);
@@ -10321,6 +10879,8 @@ namespace FRTools.Core.Data
 				return typeof(EverluxWingGene);
 			if ((int)type == 27)
 				return typeof(CirrusWingGene);
+			if ((int)type == 28)
+				return typeof(VigilWingGene);
 			if ((int)type == 29)
 				return typeof(ThorntailWingGene);
 			return typeof(WingGene);
@@ -10350,6 +10910,8 @@ namespace FRTools.Core.Data
 				return typeof(EverluxTertGene);
 			if ((int)type == 27)
 				return typeof(CirrusTertGene);
+			if ((int)type == 28)
+				return typeof(VigilTertGene);
 			if ((int)type == 29)
 				return typeof(ThorntailTertGene);
 			return typeof(TertiaryGene);
@@ -10370,7 +10932,7 @@ namespace FRTools.Core.Data
 		{
 			return new[]
 			{
-				DragonType.Gaoler, DragonType.Banescale, DragonType.Veilspun, DragonType.Aberration, DragonType.Undertide, DragonType.Aether, DragonType.Sandsurge, DragonType.Auraboa, DragonType.Dusthide, DragonType.Everlux, DragonType.Cirrus, DragonType.Thorntail, 
+				DragonType.Gaoler, DragonType.Banescale, DragonType.Veilspun, DragonType.Aberration, DragonType.Undertide, DragonType.Aether, DragonType.Sandsurge, DragonType.Auraboa, DragonType.Dusthide, DragonType.Everlux, DragonType.Cirrus, DragonType.Vigil, DragonType.Thorntail, 
 			};
 		}
 
@@ -10423,6 +10985,10 @@ namespace FRTools.Core.Data
 					return GenerateDragonImageUrl(dragon.DragonType, gender, dragon.Age, (CirrusBodyGene)dragon.BodyGene,
 						dragon.BodyColor, (CirrusWingGene)dragon.WingGene, dragon.WingColor, (CirrusTertGene)dragon.TertiaryGene,
 						dragon.TertiaryColor, dragon.Element, dragon.EyeType);
+				case DragonType.Vigil:
+					return GenerateDragonImageUrl(dragon.DragonType, gender, dragon.Age, (VigilBodyGene)dragon.BodyGene,
+						dragon.BodyColor, (VigilWingGene)dragon.WingGene, dragon.WingColor, (VigilTertGene)dragon.TertiaryGene,
+						dragon.TertiaryColor, dragon.Element, dragon.EyeType);
 				case DragonType.Thorntail:
 					return GenerateDragonImageUrl(dragon.DragonType, gender, dragon.Age, (ThorntailBodyGene)dragon.BodyGene,
 						dragon.BodyColor, (ThorntailWingGene)dragon.WingGene, dragon.WingColor, (ThorntailTertGene)dragon.TertiaryGene,
@@ -10455,6 +11021,8 @@ namespace FRTools.Core.Data
 		public static Task<string> GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, EverluxBodyGene bodygene, Color body, EverluxWingGene winggene, Color wings, EverluxTertGene tertgene, Color tert, Element element, EyeType eyetype)
 			=> GenerateDragonImageUrl((int)breed, (int)gender, (int)age, (int)bodygene, (int)body, (int)winggene, (int)wings, (int)tertgene, (int)tert, (int)element, (int)eyetype);
 		public static Task<string> GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, CirrusBodyGene bodygene, Color body, CirrusWingGene winggene, Color wings, CirrusTertGene tertgene, Color tert, Element element, EyeType eyetype)
+			=> GenerateDragonImageUrl((int)breed, (int)gender, (int)age, (int)bodygene, (int)body, (int)winggene, (int)wings, (int)tertgene, (int)tert, (int)element, (int)eyetype);
+		public static Task<string> GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, VigilBodyGene bodygene, Color body, VigilWingGene winggene, Color wings, VigilTertGene tertgene, Color tert, Element element, EyeType eyetype)
 			=> GenerateDragonImageUrl((int)breed, (int)gender, (int)age, (int)bodygene, (int)body, (int)winggene, (int)wings, (int)tertgene, (int)tert, (int)element, (int)eyetype);
 		public static Task<string> GenerateDragonImageUrl(DragonType breed, Gender gender, Age age, ThorntailBodyGene bodygene, Color body, ThorntailWingGene winggene, Color wings, ThorntailTertGene tertgene, Color tert, Element element, EyeType eyetype)
 			=> GenerateDragonImageUrl((int)breed, (int)gender, (int)age, (int)bodygene, (int)body, (int)winggene, (int)wings, (int)tertgene, (int)tert, (int)element, (int)eyetype);
