@@ -36,8 +36,8 @@ namespace FRTools.Core.Functions.Workers
         {
             var marketPlaceDoc = await _htmlService.LoadHtmlPage(FRHelpers.MarketplaceUrl);
             var marketTabs = marketPlaceDoc.DocumentNode.QuerySelectorAll(".market-tab .common-tab");
-            var _tabs = marketTabs.Select(x => x.SelectSingleNode("a").GetAttributeValue("href", null!).Split('/').Last()).ToArray();
-            var link = marketTabs.First(x => x.ChildNodes.Any(c => c.HasClass("flash_sale_tab_icon"))).SelectSingleNode("a").GetAttributeValue("href", null!);
+            var _tabs = marketTabs.Select(x => x.GetAttributeValue("href", null!).Split('/').Last()).ToArray();
+            var link = marketTabs.First(x => x.ChildNodes.Any(c => c.HasClass("flash_sale_tab_icon"))).GetAttributeValue("href", null!);
 
             var itemsDoc = await _htmlService.LoadHtmlPage(string.Format(FRHelpers.MarketplaceFetchUrl, link.Split('/').Last()));
             var items = itemsDoc.DocumentNode.QuerySelectorAll(".market-item-result");
