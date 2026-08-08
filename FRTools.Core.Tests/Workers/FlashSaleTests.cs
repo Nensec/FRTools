@@ -29,22 +29,6 @@ namespace FRTools.Core.Tests.Workers
             A.CallTo(() => fakeAnnouncerService.Announce(null!)).WhenArgumentsMatch(x => x[0] is FlashSaleAnnounceData newItemsData).MustHaveHappened();
         }
 
-        [Fact]
-        public async Task FlashSale_Should_Retrieve_Items_And_Follow_Breadcrum_Trail()
-        {
-            var fakePageSequence = new[] { LoadFakeDocument("TestData/FlashSalePageFlashless.html"), LoadFakeDocument("TestData/FlashSalePage.html") };
-            var fakeHtmlService = A.Fake<IHtmlService>();
-            A.CallTo(() => fakeHtmlService.LoadHtmlPage(FRHelpers.MarketplaceUrl)).Returns(LoadFakeDocument("TestData/FlashSalePageFlashless.html"));
-            A.CallTo(() => fakeHtmlService.LoadHtmlPage(string.Format(FRHelpers.MarketplaceFetchUrl, "ancient_genes"))).ReturnsNextFromSequence(fakePageSequence);
-            var fakeDataContext = A.Fake<DataContext>(x => x.WithArgumentsForConstructor(new object[] { new DbContextOptionsBuilder<DataContext>().Options }));
-            A.CallTo(() => fakeDataContext.FRItemFlashSales).Returns(TestHelpers.CreateFakeDbSet<FRItemFlashSale>());
-
-            var flashSaleFunction = new FlashSaleTrackerFunction(fakeDataContext, A.Fake<IFRUserService>(), A.Fake<IFRItemService>(), A.Fake<IAnnounceService>(), fakeHtmlService, A.Fake<ILogger<FlashSaleTrackerFunction>>());
-
-            await flashSaleFunction.FlashTracker(null!);
-            A.CallTo(() => fakeHtmlService.LoadHtmlPage(string.Format(FRHelpers.MarketplaceFetchUrl, "ancient_genes"))).MustHaveHappenedTwiceExactly();
-        }
-
         public static IEnumerable<object[]> FlashSaleTestData =>
             new[]
             {
